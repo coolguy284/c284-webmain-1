@@ -1,0 +1,22 @@
+{
+  "name": "node-server",
+  "version": "1.0.0",
+  "description": "Node server for c284-webmain-1.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "server",
+    "http",
+    "https"
+  ],
+  "author": "coolguy284",
+  "license": "MIT",
+  "dependencies": {
+    "mongodb": "^3.6.4",
+    "winston": "^3.3.3",
+    "ws": "^7.4.4"
+  }
+}
