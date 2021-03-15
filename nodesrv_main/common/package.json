@@ -1,0 +1,10 @@
+{
+  "name": "c284-webmain-1-common",
+  "description": "The common library package for c284-webmain-1-nodesrv_main, not intended to be used by itself without the server.",
+  "main": "common.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "coolguy284",
+  "license": "MIT"
+}

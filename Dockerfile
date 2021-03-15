@@ -34,7 +34,8 @@ COPY index.js /home/webmain/index.js
 
 COPY nodesrv_main/logutils.js /home/webmain/nodesrv_main/logutils.js
 COPY nodesrv_main/index.js /home/webmain/nodesrv_main/index.js
-COPY nodesrv_main/common.js /home/webmain/nodesrv_main/common.js
-#COPY nodesrv_main/websites /home/webmain/nodesrv_main/websites
+COPY nodesrv_main/common /home/webmain/nodesrv_main/common
+COPY nodesrv_main/requests /home/webmain/nodesrv_main/requests
+COPY nodesrv_main/websites /home/webmain/nodesrv_main/websites
 
 CMD ["node", "index.js"]
