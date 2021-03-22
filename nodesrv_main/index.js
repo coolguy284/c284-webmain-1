@@ -42,6 +42,13 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
   });
 }
 
+if (process.env.NODESRVMAIN_HTTP_IP || process.env.NODESRVMAIN_HTTPS_IP) {
+  global.echoWSServer = new ws.Server({ noServer: true, maxPayload: 2 ** 20 });
+  echoWSServer.on('connection', function echoWSFunc(ws, req, requestProps) {
+    ws.on('message', msg => ws.send(msg));
+  });
+}
+
 
 // responding to pings from main process
 process.on('message', msg => {

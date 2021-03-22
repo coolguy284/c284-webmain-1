@@ -4,6 +4,11 @@ var mime = require('mime');
 var logger = require('../logutils.js')('common/send');
 
 module.exports = exports = {
+  ws: (WSServer, req, socket, head, requestProps) =>
+    WSServer.handleUpgrade(req, socket, head, ws => {
+      WSServer.emit('connection', ws, req, requestProps);
+    }),
+  
   file: async (requestProps, filename, statusCode, headOnly) => {
     var stats = await fs.promises.stat(filename);
     var size = stats.size;

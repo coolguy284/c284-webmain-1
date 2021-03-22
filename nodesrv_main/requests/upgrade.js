@@ -8,8 +8,12 @@ module.exports = function serverUpgradeFunc(req, socket, head) {
     
     logger.info(common.getReqLogStr(requestProps));
     
-    socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
-    socket.end();
+    if (requestProps.url.pathname == '/echows') {
+      common.resp.ws(echoWSServer, req, socket, head, requestProps);
+    } else {
+      socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+      socket.end();
+    }
   } catch (err) {
     logger.error(err);
   }
