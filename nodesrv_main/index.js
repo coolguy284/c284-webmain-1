@@ -35,7 +35,7 @@ if (process.env.NODESRVMAIN_HTTP_IP) {
   
   
   tcpServer.listen({ host: process.env.NODESRVMAIN_HTTP_IP, port: process.env.NODESRVMAIN_HTTP_PORT }, () => {
-    logger.info(`HTTP server listening on ${process.env.NODESRVMAIN_HTTP_IP}:${process.env.NODESRVMAIN_HTTP_PORT}`);
+    logger.info(`HTTP server listening on ${common.mergeIPPort(process.env.NODESRVMAIN_HTTP_IP, process.env.NODESRVMAIN_HTTP_PORT)}`);
   });
   
   global.httpServer = http.createServer(require('./requests/main'));
@@ -62,7 +62,7 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
   });
   
   tlsServer.listen({ host: process.env.NODESRVMAIN_HTTPS_IP, port: process.env.NODESRVMAIN_HTTPS_PORT }, () => {
-    logger.info(`HTTPS/H2 server listening on ${process.env.NODESRVMAIN_HTTPS_IP}:${process.env.NODESRVMAIN_HTTPS_PORT}`);
+    logger.info(`HTTPS/H2 server listening on ${common.mergeIPPort(process.env.NODESRVMAIN_HTTPS_IP, process.env.NODESRVMAIN_HTTPS_PORT)}`);
   });
   
   global.httpsServer = https.createServer(require('./requests/main'));

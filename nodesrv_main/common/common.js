@@ -4,12 +4,15 @@ module.exports = exports = {
   formatIP: ip => {
     if (typeof ip != 'string') return '';
     if (/^::ffff:[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/.test(ip))
-      return '::ffff:' + ip.slice(7, Infinity).split('.').map(x => x.padStart('-', 3)).join('.');
+      return '::ffff:' + ip.slice(7, Infinity).split('.').map(x => x.padStart(3, '-')).join('.');
     else if (/^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$/.test(ip))
-      return ip.split('.').map(x => x.padStart('-', 3)).join('.');
+      return ip.split('.').map(x => x.padStart(3, '-')).join('.');
     else
       return ip;
   },
+  
+  mergeIPPort: (ip, port) =>
+    ip.includes(':') ? `[${ip}]:${port}` : `${ip}:${port}`,
   
   isSubDir: (parent, dir) => {
     var relativePath = path.relative(parent, dir);
