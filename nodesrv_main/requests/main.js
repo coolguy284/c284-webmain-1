@@ -27,7 +27,7 @@ module.exports = async function main(...args) {
     logger.info(common.getReqLogStr(requestProps));
     
     if (!(requestProps.method in methods && methods[requestProps.method](requestProps) != 1)) {
-      common.resp.header(requestProps, 501);
+      common.resp.headers(requestProps, 501);
       common.resp.end(requestProps);
     }
   } catch (err) {
