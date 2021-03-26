@@ -9,21 +9,45 @@ module.exports = exports = {
       WSServer.emit('connection', ws, req, requestProps);
     }),
   
+  headers: async (requestProps, statusCode, headers) => {
+    if (requestProps.httpVersion == 1) {
+      requestProps.res.writeHead(statusCode, headers);
+    } else if (requestProps.httpVersion == 2) {
+      requestProps.stream.respond({ ':status': statusCode, ...headers });
+    }
+  },
+  
+  end: async (requestProps, str) => {
+    if (requestProps.httpVersion == 1) {
+      requestProps.res.end(str);
+    } else if (requestProps.httpVersion == 2) {
+      requestProps.stream.end(str);
+    }
+  },
+  
+  stream: async (requestProps, stream) => {
+    if (requestProps.httpVersion == 1) {
+      stream.pipe(requestProps.res);
+    } else if (requestProps.httpVersion == 2) {
+      stream.pipe(requestProps.stream);
+    }
+  },
+  
   file: async (requestProps, filename, statusCode, headOnly) => {
     var stats = await fs.promises.stat(filename);
     var size = stats.size;
     var mimeType = mime.getType(filename);
     
     // range headers
-    if (requestProps.req.headers.range && !statusCode) {
+    if (requestProps.headers.range && !statusCode) {
       // check if it matches bytes=xxxx-xxxx form (multipart not supported yet), and file is not directory
-      if (!stats.isDirectory() && /^bytes=[0-9]*-[0-9]*$/.test(requestProps.req.headers.range)) {
-        var [ start, end ] = requestProps.req.headers.range.slice(6).split('-');
+      if (!stats.isDirectory() && /^bytes=[0-9]*-[0-9]*$/.test(requestProps.headers.range)) {
+        var [ start, end ] = requestProps.headers.range.slice(6).split('-');
         
         if (!start && !end) {
           // bytes=- is invalid
-          requestProps.res.writeHead(416, { 'content-range': `*/${size}` });
-          requestProps.res.end();
+          exports.headers(requestProps, 416, { 'content-range': `*/${size}` });
+          exports.end(requestProps);
         } else {
           if (!start && end) {
             // bytes=-xxxx is not from beginning to point, it is a certain number of bytes from the end
@@ -42,11 +66,11 @@ module.exports = exports = {
           // check for range parts not being an int, start or end being out of bounds, or end being less than start
           if (!Number.isSafeInteger(start) || start < 0 || start > size ||
             !Number.isSafeInteger(end) || end < 0 || end > size || end < start) {
-            requestProps.res.writeHead(416, { 'content-range': `*/${size}` });
-            requestProps.res.end();
+            exports.headers(requestProps, { 'content-range': `*/${size}` });
+            exports.end(requestProps);
           } else {
             // everything is correct
-            requestProps.res.writeHead(206, {
+            exports.headers(requestProps, {
               'content-type': `${mimeType}${mimeType.split('/')[0] == 'text' ? '; charset=utf-8' : ''}`,
               'content-length': end - start + 1,
               'content-range': `bytes ${start}-${end}/${size}`,
@@ -54,23 +78,23 @@ module.exports = exports = {
             });
             
             if (headOnly) {
-              requestProps.res.end();
+              exports.end(requestProps);
             } else {
               var readStream = fs.createReadStream(filename, { start, end });
-              readStream.pipe(requestProps.res);
+              exports.stream(requestProps, readStream);
               readStream.on('error', logger.error);
             }
           }
         }
       } else {
-        requestProps.res.writeHead(416, { 'content-range': `*/${size}` });
-        requestProps.res.end();
+        exports.headers(requestProps, { 'content-range': `*/${size}` });
+        exports.end(requestProps);
       }
     } else {
       // normal request, check for modified since and no statusCode var set
-      if (statusCode || !requestProps.req.headers['if-modified-since'] || Math.floor(stats.mtime.getTime() / 1000) > Math.floor(new Date(requestProps.req.headers['if-modified-since']).getTime() / 1000)) {
+      if (statusCode || !requestProps.headers['if-modified-since'] || Math.floor(stats.mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000)) {
         // modified since
-        requestProps.res.writeHead(statusCode || 200, {
+        exports.headers(requestProps, statusCode || 200, {
           'content-type': `${mimeType}${mimeType.split('/')[0] == 'text' ? '; charset=utf-8' : ''}`,
           'content-length': size,
           'last-modified': stats.mtime.toUTCString(),
@@ -78,16 +102,16 @@ module.exports = exports = {
         });
         
         if (headOnly) {
-          requestProps.res.end();
+          exports.end(requestProps);
         } else {
           var readStream = fs.createReadStream(filename);
-          readStream.pipe(requestProps.res);
+          exports.stream(requestProps, readStream);
           readStream.on('error', logger.error);
         }
       } else {
         // not modified since
-        requestProps.res.writeHead(304);
-        requestProps.res.end();
+        exports.headers(requestProps, 304);
+        exports.end(requestProps);
       }
     }
   },
@@ -96,11 +120,11 @@ module.exports = exports = {
     try {
       await exports.file(requestProps, 'websites/public/errors/404.html', 404, headOnly);
     } catch (err) {
-      requestProps.res.writeHead(404, { 'content-type': 'text/plain; charset=utf-8' });
+      exports.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
       if (headOnly)
-        requestProps.res.end();
+        exports.end(requestProps);
       else
-        requestProps.res.end('404 Not Found');
+        exports.end(requestProps, '404 Not Found');
     }
   },
   
@@ -108,11 +132,11 @@ module.exports = exports = {
     try {
       await exports.file(requestProps, 'websites/public/errors/500.html', 500, headOnly);
     } catch (err) {
-      requestProps.res.writeHead(500, { 'content-type': 'text/plain; charset=utf-8' });
+      exports.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
       if (headOnly)
-        requestProps.res.end();
+        exports.end(requestProps);
       else
-        requestProps.res.end('500 Internal Server Error');
+        exports.end(requestProps, '500 Internal Server Error');
     }
   },
   

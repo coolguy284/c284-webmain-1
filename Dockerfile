@@ -14,7 +14,7 @@ RUN apt-get install mongodb-org -y
 
 RUN npm install -g npm
 
-RUN adduser webmain -u 1002
+RUN adduser webmain -u 2201
 USER webmain
 WORKDIR /home/webmain
 

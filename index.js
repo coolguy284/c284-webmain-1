@@ -117,11 +117,11 @@ nodesrv_main.on('exit', () => {
 
 // so server doesnt go down for an error
 process.on('uncaughtException', err => {
-  logger.error('UncaughtException');
-  logger.error(err);
+  console.error('UncaughtException');
+  console.error(err);
 });
 
 process.on('unhandledRejection', err => {
-  logger.error('UnhandledRejection');
-  logger.error(err);
+  console.error('UnhandledRejection');
+  console.error(err);
 });

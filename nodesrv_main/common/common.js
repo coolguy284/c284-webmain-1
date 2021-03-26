@@ -16,40 +16,83 @@ module.exports = exports = {
     return relativePath && relativePath != '..' && !relativePath.startsWith('../');
   },
   
-  getRequestProps: (req, res, type) => {
-    var requestProps = {
-      type,
-      req, res,
-      ip: req.socket.remoteAddress,
-      proto: req.socket.encrypted ? 'https' : 'http',
-      host: null,
-      urlString: null,
-      url: null,
-      timestamp: new Date(),
-      id: currentRequestID++,
-    };
-    
-    if ('host' in req.headers) {
-      if (/[a-z0-9-]+/.test(req.headers.host))
-        requestProps.host = req.headers.host;
-      else
-        requestProps.host = 'INVALID';
-    } else {
-      requestProps.host = 'NULL';
+  getRequestProps: (...args) => {
+    if (args.length == 3) {
+      var [ req, res, type ] = args;
+      
+      var requestProps = {
+        httpVersion: 1,
+        type,
+        req, res, headers: req.headers,
+        ip: req.socket.remoteAddress,
+        proto: req.socket.encrypted ? 'https' : 'http',
+        host: null,
+        method: req.method.toLowerCase(),
+        rawUrl: req.url,
+        urlString: null,
+        url: null,
+        timestamp: new Date(),
+        id: currentRequestID++,
+      };
+      
+      if ('host' in req.headers) {
+        if (/[a-z0-9-.]+/.test(req.headers.host))
+          requestProps.host = req.headers.host;
+        else
+          requestProps.host = 'INVALID';
+      } else {
+        requestProps.host = 'NULL';
+      }
+      
+      requestProps.urlString = req.url.replace(/[@:]+/g, '');
+      
+      if (!requestProps.urlString.startsWith('/'))
+        requestProps.urlString = '/' + requestProps.urlString;
+      
+      requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://${requestProps.host}${requestProps.urlString}`);
+      
+      return requestProps;
+    } else if (args.length == 5) {
+      var [ stream, headers, flags, rawHeaders, type ] = args;
+      
+      var requestProps = {
+        httpVersion: 2,
+        type,
+        stream, headers, flags, rawHeaders,
+        ip: stream.session.socket.remoteAddress,
+        proto: 'http2',
+        host: null,
+        method: headers[':method'].toLowerCase(),
+        rawUrl: headers[':path'],
+        urlString: null,
+        url: null,
+        timestamp: new Date(),
+        id: currentRequestID++,
+      };
+      
+      var hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
+      if (hostHeader != null) {
+        if (/[a-z0-9-.]+/.test(hostHeader))
+          requestProps.host = hostHeader;
+        else
+          requestProps.host = 'INVALID';
+      } else {
+        requestProps.host = 'NULL';
+      }
+      
+      requestProps.urlString = headers[':path'].replace(/[@:]+/g, '');
+      
+      if (!requestProps.urlString.startsWith('/'))
+        requestProps.urlString = '/' + requestProps.urlString;
+      
+      requestProps.url = new URL(`https://${requestProps.host}${requestProps.urlString}`);
+      
+      return requestProps;
     }
-    
-    requestProps.urlString = req.url.replace(/[@:]+/g, '');
-    
-    if (!requestProps.urlString.startsWith('/'))
-      requestProps.urlString = '/' + requestProps.urlString;
-    
-    requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://${requestProps.host}${requestProps.urlString}`);
-    
-    return requestProps;
   },
   
   getReqLogStr: requestProps =>
-    `${requestProps.id.toString().padStart(5, '0')} ${exports.formatIP(requestProps.ip)} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.req.method} ${requestProps.req.url}`,
+    `${requestProps.id.toString().padStart(5, '0')} ${exports.formatIP(requestProps.ip)} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} ${requestProps.method} ${requestProps.rawUrl}`,
   
   resp: require('./resp'),
 };

@@ -10,21 +10,25 @@ var methods = {
   //put: require('./put'),
   //patch: require('./patch'),
   //delete: require('./delete'),
+  connect: require('./connect'),
 };
 
-module.exports = async function main(req, res) {
+module.exports = async function main(...args) {
+  // args.length == 2 is req, res (http1.1), while args.length == 4 is stream, headers, flags, rawHeaders (http2)
+  
   try {
-    var requestProps = common.getRequestProps(req, res, 'main');
-
+    if (args.length == 4 && args[1][':scheme'] != 'https') {
+      args[0].close();
+      return;
+    }
+    
+    var requestProps = common.getRequestProps(...args, 'main');
+    
     logger.info(common.getReqLogStr(requestProps));
     
-    var method = req.method.toLowerCase();
-    
-    if (method in methods) {
-      methods[method](requestProps);
-    } else {
-      res.writeHead(501);
-      res.end();
+    if (!(requestProps.method in methods && methods[requestProps.method](requestProps) != 1)) {
+      common.resp.header(requestProps, 501);
+      common.resp.end(requestProps);
     }
   } catch (err) {
     logger.error(err);
