@@ -68,7 +68,7 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
   global.httpsServer = https.createServer(require('./requests/main'));
   httpsServer.on('upgrade', require('./requests/upgrade'));
   
-  global.http2Server = http2.createSecureServer({});
+  global.http2Server = http2.createSecureServer({ settings: { enableConnectProtocol: true } });
   http2Server.on('stream', require('./requests/main'));
 }
 
