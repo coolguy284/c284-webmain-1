@@ -1,0 +1,2 @@
+libs/*: 1
+favicon.ico: 1
