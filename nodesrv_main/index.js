@@ -14,10 +14,12 @@ var ws = require('ws');
 var common = require('./common');
 
 
-// initalize mongo client
-var mongodb = require('mongodb');
+if (!process.env.DISABLE_MONGODB) {
+  // initalize mongo client
+  var mongodb = require('mongodb');
 
-global.mongoServer = mongodb.MongoClient('mongodb://localhost', { useUnifiedTopology: true });
+  global.mongoServer = mongodb.MongoClient('mongodb://localhost', { useUnifiedTopology: true });
+}
 
 
 // servers

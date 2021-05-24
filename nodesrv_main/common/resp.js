@@ -4,44 +4,71 @@ var mime = require('mime');
 var logger = require('../logutils.js')('common/send');
 
 module.exports = exports = {
-  ws: (WSServer, req, socket, head, requestProps) =>
-    WSServer.handleUpgrade(req, socket, head, ws => {
-      WSServer.emit('connection', ws, req, requestProps);
-    }),
+  // http1.1: (WSServer, req, socket, head, requestProps)
+  // http2: (WSServer, requestProps)
+  ws: (WSServer, ...args) => {
+    if (args.length == 4) {
+      let [ req, socket, head, requestProps ] = args;
+      WSServer.handleUpgrade(req, socket, head, ws => {
+        WSServer.emit('connection', ws, req, requestProps);
+      });
+    } else {
+      let [ requestProps ] = args;
+      
+      let req = {
+        method: 'GET',
+        headers: { ...requestProps.headers, 'sec-websocket-key': 'aaaaaaaaaaaaaaaaaaaaaa==', upgrade: 'websocket' },
+      };
+      
+      let streamWrite = requestProps.stream.write;
+      requestProps.stream.write = v => {
+        requestProps.stream.respond({ ':status': 200 });
+        requestProps.stream.write = streamWrite;
+      };
+      
+      requestProps.stream.setNoDelay = () => {};
+      
+      WSServer.handleUpgrade(req, requestProps.stream, Buffer.alloc(0), ws => {
+        WSServer.emit('connection', ws, req, requestProps);
+      });
+    }
+  },
   
   headers: async (requestProps, statusCode, headers) => {
-    if (requestProps.httpVersion == 1) {
+    if (requestProps.httpVersion == 1)
       requestProps.res.writeHead(statusCode, headers);
-    } else if (requestProps.httpVersion == 2) {
+    else if (requestProps.httpVersion == 2)
       requestProps.stream.respond({ ':status': statusCode, ...headers });
-    }
   },
   
   end: async (requestProps, str) => {
-    if (requestProps.httpVersion == 1) {
+    if (requestProps.httpVersion == 1)
       requestProps.res.end(str);
-    } else if (requestProps.httpVersion == 2) {
+    else if (requestProps.httpVersion == 2)
       requestProps.stream.end(str);
-    }
   },
   
   stream: async (requestProps, stream) => {
-    if (requestProps.httpVersion == 1) {
+    if (requestProps.httpVersion == 1)
       stream.pipe(requestProps.res);
-    } else if (requestProps.httpVersion == 2) {
+    else if (requestProps.httpVersion == 2)
       stream.pipe(requestProps.stream);
-    }
   },
   
   file: async (requestProps, filename, statusCode, headOnly) => {
-    var stats = await fs.promises.stat(filename);
+    try {
+      var stats = await fs.promises.stat(filename);
+    } catch (e) { await exports.s404(requestProps); return; }
+    if (stats.isDirectory()) { await exports.s404(requestProps); return; }
+    
     var size = stats.size;
+    
     var mimeType = mime.getType(filename);
     
     // range headers
     if (requestProps.headers.range && !statusCode) {
-      // check if it matches bytes=xxxx-xxxx form (multipart not supported yet), and file is not directory
-      if (!stats.isDirectory() && /^bytes=[0-9]*-[0-9]*$/.test(requestProps.headers.range)) {
+      // check if it matches bytes=xxxx-xxxx form (multipart not supported yet)
+      if (/^bytes=[0-9]*-[0-9]*$/.test(requestProps.headers.range)) {
         var [ start, end ] = requestProps.headers.range.slice(6).split('-');
         
         if (!start && !end) {
@@ -66,7 +93,7 @@ module.exports = exports = {
           // check for range parts not being an int, start or end being out of bounds, or end being less than start
           if (!Number.isSafeInteger(start) || start < 0 || start > size ||
             !Number.isSafeInteger(end) || end < 0 || end > size || end < start) {
-            exports.headers(requestProps, { 'content-range': `*/${size}` });
+            exports.headers(requestProps, 416, { 'content-range': `*/${size}` });
             exports.end(requestProps);
           } else {
             // everything is correct
@@ -75,6 +102,7 @@ module.exports = exports = {
               'content-length': end - start + 1,
               'content-range': `bytes ${start}-${end}/${size}`,
               'last-modified': stats.mtime.toUTCString(),
+              'x-content-type-options': 'nosniff',
             });
             
             if (headOnly) {
@@ -87,7 +115,7 @@ module.exports = exports = {
           }
         }
       } else {
-        exports.headers(requestProps, { 'content-range': `*/${size}` });
+        exports.headers(requestProps, 416, { 'content-range': `*/${size}` });
         exports.end(requestProps);
       }
     } else {
@@ -99,6 +127,7 @@ module.exports = exports = {
           'content-length': size,
           'last-modified': stats.mtime.toUTCString(),
           'accept-ranges': 'bytes',
+          'x-content-type-options': 'nosniff',
         });
         
         if (headOnly) {

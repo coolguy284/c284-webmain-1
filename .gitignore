@@ -1,0 +1,7 @@
+.vs
+node_modules
+.env
+package-lock.json
+
+nodesrv_main/node_modules
+nodesrv_main/package-lock.json

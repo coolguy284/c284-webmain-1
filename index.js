@@ -25,51 +25,53 @@ function toBool(str) {
 }
 
 
-// complicated mongodb log file naming process
-var date = new Date();
-var datePart = date.toUTCString().replace(',', '').split(' ').slice(0, 3);
-var mongoLogFile = `logs-mongodb/` +
-  `${date.getUTCFullYear()}_${(date.getUTCMonth() + 1 + '').padStart(2, '0')}_${(date.getUTCDate() + '').padStart(2, '0')} ` +
-  `${(date.getUTCHours() + '').padStart(2, '0')}_${(date.getUTCMinutes() + '').padStart(2, '0')}_${(date.getUTCSeconds() + '').padStart(2, '0')} ` +
-  `${[datePart[0], datePart[2], datePart[1]].join(' ')} ` +
-  `${((date.getUTCHours() % 12 + 11) % 12 + 1 + '').padStart(2, '0')}_${(date.getUTCMinutes() + '').padStart(2, '0')}_${(date.getUTCSeconds() + '').padStart(2, '0')} ` +
-  `${date.getUTCHours() < 12 ? 'AM' : 'PM'} ` +
-  `UTC.log`;
+if (!process.env.DISABLE_MONGODB) {
+  // complicated mongodb log file naming process
+  var date = new Date();
+  var datePart = date.toUTCString().replace(',', '').split(' ').slice(0, 3);
+  var mongoLogFile = `logs-mongodb/` +
+    `${date.getUTCFullYear()}_${(date.getUTCMonth() + 1 + '').padStart(2, '0')}_${(date.getUTCDate() + '').padStart(2, '0')} ` +
+    `${(date.getUTCHours() + '').padStart(2, '0')}_${(date.getUTCMinutes() + '').padStart(2, '0')}_${(date.getUTCSeconds() + '').padStart(2, '0')} ` +
+    `${[datePart[0], datePart[2], datePart[1]].join(' ')} ` +
+    `${((date.getUTCHours() % 12 + 11) % 12 + 1 + '').padStart(2, '0')}_${(date.getUTCMinutes() + '').padStart(2, '0')}_${(date.getUTCSeconds() + '').padStart(2, '0')} ` +
+    `${date.getUTCHours() < 12 ? 'AM' : 'PM'} ` +
+    `UTC.log`;
 
-// mongodb server for database of server
-var logMongodb = toBool(process.env.MONGODB_LOG_CONS);
+  // mongodb server for database of server
+  var logMongodb = toBool(process.env.MONGODB_LOG_CONS);
 
-var mongod = cp.spawn('mongod', ['--dbpath', 'mongodb' , '--bind_ip', '127.0.0.1'], { stdio: ['ignore', logMongodb ? 'pipe' : 'ignore', logMongodb ? 'pipe' : 'ignore'] });
+  var mongod = cp.spawn('mongod', ['--dbpath', 'mongodb' , '--bind_ip', '127.0.0.1'], { stdio: ['ignore', logMongodb ? 'pipe' : 'ignore', logMongodb ? 'pipe' : 'ignore'] });
 
-if (logMongodb) {
-  // takes mongodb's fancy JSON logging and makes it pretty for printing to console
-  var logMongodJSON = function logMongodJSON(logElem) {
-    fs.appendFile(mongoLogFile, logElem.endsWith('\n') ? logElem : logElem + '\n', err => { if (err) console.error(err); });
-    try {
-      let logElemJSON = JSON.parse(logElem);
-      let logString = `[${logElemJSON.t['$date'].split('+')[0]}Z] [MONGODB:${logElemJSON.ctx}] ${logElemJSON.c}: ${logElemJSON.msg}`;
-      if (logElemJSON.attr && logElemJSON.attr.error) {
-        if (typeof logElemJSON.attr.error == 'string')
-          logString += `\n  Error: ${logElemJSON.attr.error}`;
-        else if (typeof logElemJSON.attr.error == 'object')
-          logString += `\n  Error: ${logElemJSON.attr.error.codeName} (${logElemJSON.attr.error.code}): ${logElemJSON.attr.error.errmsg}`;
-        else if (typeof logElemJSON.attr.error == 'number')
-          logString += `\n  Error: ${logElemJSON.attr.message}`;
+  if (logMongodb) {
+    // takes mongodb's fancy JSON logging and makes it pretty for printing to console
+    var logMongodJSON = function logMongodJSON(logElem) {
+      fs.appendFile(mongoLogFile, logElem.endsWith('\n') ? logElem : logElem + '\n', err => { if (err) console.error(err); });
+      try {
+        let logElemJSON = JSON.parse(logElem);
+        let logString = `[${logElemJSON.t['$date'].split('+')[0]}Z] [MONGODB:${logElemJSON.ctx}] ${logElemJSON.c}: ${logElemJSON.msg}`;
+        if (logElemJSON.attr && logElemJSON.attr.error) {
+          if (typeof logElemJSON.attr.error == 'string')
+            logString += `\n  Error: ${logElemJSON.attr.error}`;
+          else if (typeof logElemJSON.attr.error == 'object')
+            logString += `\n  Error: ${logElemJSON.attr.error.codeName} (${logElemJSON.attr.error.code}): ${logElemJSON.attr.error.errmsg}`;
+          else if (typeof logElemJSON.attr.error == 'number')
+            logString += `\n  Error: ${logElemJSON.attr.message}`;
+        }
+        console.log(logString);
+      } catch (e) {
+        console.log(c);
       }
-      console.log(logString);
-    } catch (e) {
-      console.log(c);
     }
+
+    // stdout and stderr of mongodb piped thru readlinestream so it can be parsed with logMongodJSON for pretty printing
+    var mongod_stdout = new ReadlineStream({});
+    mongod.stdout.pipe(mongod_stdout);
+    mongod_stdout.on('data', logMongodJSON);
+
+    var mongod_stderr = new ReadlineStream({});
+    mongod.stderr.pipe(mongod_stderr);
+    mongod_stderr.on('data', logMongodJSON);
   }
-
-  // stdout and stderr of mongodb piped thru readlinestream so it can be parsed with logMongodJSON for pretty printing
-  var mongod_stdout = new ReadlineStream({});
-  mongod.stdout.pipe(mongod_stdout);
-  mongod_stdout.on('data', logMongodJSON);
-
-  var mongod_stderr = new ReadlineStream({});
-  mongod.stderr.pipe(mongod_stderr);
-  mongod_stderr.on('data', logMongodJSON);
 }
 
 

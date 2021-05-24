@@ -7,7 +7,7 @@ module.exports = async function getMethod(requestProps) {
     return;
   }
   
-  var publicPath = path.join('websites/public', requestProps.url.pathname);
+  var publicPath = path.join('websites/public', decodeURIComponent(requestProps.url.pathname));
   
   if (!common.isSubDir('websites/public', publicPath)) {
     await common.resp.s404(requestProps);
