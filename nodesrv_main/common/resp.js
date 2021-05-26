@@ -56,10 +56,12 @@ module.exports = exports = {
   },
   
   file: async (requestProps, filename, statusCode, headOnly) => {
-    try {
-      var stats = await fs.promises.stat(filename);
-    } catch (e) { await exports.s404(requestProps); return; }
-    if (stats.isDirectory()) { await exports.s404(requestProps); return; }
+    // this is supposed to throw on purpose unless filename is a file so functions like fileFull know to send a 404 instead
+    var stats = await fs.promises.stat(filename);
+    if (stats.isDirectory()) {
+      let error = new Error('EISDIR'); error.code = 'ENOENT';
+      throw error;
+    }
     
     var size = stats.size;
     
@@ -122,9 +124,32 @@ module.exports = exports = {
       // normal request, check for modified since and no statusCode var set
       if (statusCode || !requestProps.headers['if-modified-since'] || Math.floor(stats.mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000)) {
         // modified since
+        let encodings;
+        if (requestProps.headers['accept-encoding'])
+          encodings = new Set(requestProps.headers['accept-encoding'].split(', ').map(x => x.split(';')[0]));
+        else
+          encodings = new Set();
+        
+        let hasVal = 0, stat;
+        if (encodings.has('br') || encodings.has('*')) {
+          try {
+            stat = await fs.promises.stat(filename + '.br');
+            stat.isDirectory() ? hasVal++ : (size = stat.size, filename += '.br');
+          } catch (e) { hasVal++; }
+        } else hasVal++;
+        if (hasVal == 1) {
+          if (encodings.has('gzip')) {
+            try {
+              stat = await fs.promises.stat(filename + '.gz');
+              stat.isDirectory() ? hasVal++ : (size = stat.size, filename += '.gz');
+            } catch (e) { hasVal++; }
+          } else hasVal++;
+        }
+        
         exports.headers(requestProps, statusCode || 200, {
           'content-type': `${mimeType}${mimeType.split('/')[0] == 'text' ? '; charset=utf-8' : ''}`,
           'content-length': size,
+          ...(hasVal < 2 ? { 'content-encoding': hasVal == 0 ? 'br' : 'gzip' } : {}),
           'last-modified': stats.mtime.toUTCString(),
           'accept-ranges': 'bytes',
           'x-content-type-options': 'nosniff',

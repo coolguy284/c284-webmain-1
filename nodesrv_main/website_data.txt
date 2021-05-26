@@ -1,2 +1,10 @@
+# immutable files
 libs/*: 1
 favicon.ico: 1
+
+# files to compress:
+*.css: 2
+*.html: 2
+*.ico: 2
+*.js: 2
+*.map: 2

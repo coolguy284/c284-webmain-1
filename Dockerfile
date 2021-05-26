@@ -37,5 +37,6 @@ COPY nodesrv_main/index.js /home/webmain/nodesrv_main/index.js
 COPY nodesrv_main/common /home/webmain/nodesrv_main/common
 COPY nodesrv_main/requests /home/webmain/nodesrv_main/requests
 COPY nodesrv_main/websites /home/webmain/nodesrv_main/websites
+RUN (cd nodesrv_main; node helpers/compress_files.js)
 
 CMD ["node", "index.js"]
