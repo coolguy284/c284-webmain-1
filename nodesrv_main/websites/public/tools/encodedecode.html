@@ -6,23 +6,37 @@
     <title>coolguy284.com: Encoding and Decoding</title>
     
     <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
-    <meta name = 'description' content = 'Encoding and Decoding for various formats, including Base64, URI, URIComponent, and HTML Escaping.'>
+    <meta name = 'description' content = 'Encode and decode text in various formats such as Base64, Hex, URI, and URI Component, and escape HTML.'>
     <meta name = 'keywords' content = 'Base64, URI, URIComponent, encode, decode'>
     <meta name = 'author' content = 'coolguy284'>
     
-    <link rel = 'stylesheet' href = '/libs/bootstrap.min.css'>
+    <meta name = 'og:title' content = 'coolguy284.com: Encoding and Decoding'>
+    <meta name = 'og:description' content = 'Encode and decode text in various formats such as Base64, Hex, URI, and URI Component, and escape HTML.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/encodedecode.html'>
+    
+    <!-- super hacky async css -->
+    <link rel = 'stylesheet' href = '/libs/bootstrap.min.css' media = 'none' onload = 'media = "all";'>
+    
     <style>
       textarea {
         font-family: monospace;
         height: 200px;
-        min-height: 200px !important;
+      }
+      
+      #encodingbuttons { display: flex; }
+      #encodingselect { display: none; }
+      
+      @media (width <= 29rem) {
+        #encodingbuttons { display: none; }
+        #encodingselect { display: flex; }
       }
     </style>
   </head>
   <body>
     <div class = 'container-fluid'>
       <div class = 'row'>
-        <div class = 'btn-group' role = 'group'>
+        <div class = 'btn-group' role = 'group' id = 'encodingbuttons'>
           <input type = 'radio' class = 'btn-check' name = 'encodings' id = 'encoding1' value = 'base64' onchange = 'GeneralUpdate(1);' autocomplete = 'off' checked>
           <label class = 'col-3 btn btn-outline-primary' for = 'encoding1'>Base64</label>
           
@@ -38,6 +52,16 @@
           <input type = 'radio' class = 'btn-check' name = 'encodings' id = 'encoding5' value = 'uricomponent' onchange = 'GeneralUpdate(1);' autocomplete = 'off'>
           <label class = 'col-3 btn btn-outline-primary' for = 'encoding5'>URI Component</label>
         </div>
+        
+        <div class = 'col'>
+          <select class = 'form-select' id = 'encodingselect' style = 'margin-top: 17px; font-size: 23px;' oninput = 'GeneralUpdate(2);'>
+            <option value = 'base64' selected>Base64</option>
+            <option value = 'hex'>Hex</option>
+            <option value = 'htmlescape'>HTML Escaping</option>
+            <option value = 'uri'>URI</option>
+            <option value = 'uricomponent'>URI Component</option>
+          </select>
+        </div>
       </div>
       
       <hr>
@@ -46,7 +70,7 @@
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <label for = 'text_encoding' class = 'col-form-label'>Text Encoding:</label>
       
-          <select class = 'form-select' style = 'width: 7rem; margin-left: 5px; display: inline-block;' id = 'text_encoding' oninput = 'GeneralUpdate(2);'>
+          <select class = 'form-select' id = 'text_encoding' style = 'width: 7rem; margin-left: 5px; display: inline-block;' oninput = 'GeneralUpdate(3);'>
             <option value = 'utf8' selected>UTF-8</option>
             <option value = 'utf16'>UTF-16</option>
             <option value = 'latin1'>Latin1</option>
@@ -61,7 +85,7 @@
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-            <label class = 'btn btn-outline-primary' for = 'auto_convert'><input class = 'form-check-input' type = 'checkbox' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' checked>Auto Convert</label>
+          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input class = 'form-check-input' type = 'checkbox' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
@@ -74,7 +98,7 @@
       <div class = 'card'>
         <div class = 'card-body'>
           <h4 class = 'card-title' style = 'margin-top: -7px;'>Text</h4>
-          <div class = 'alert alert-danger' id = 'text_unencoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 10rem);'></div>
+          <div class = 'alert alert-danger' id = 'text_unencoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
           <textarea class = 'form-control' id = 'text_unencoded' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'UnencodedUpdate();'></textarea>
         </div>
       </div>
@@ -82,8 +106,8 @@
       <div class = 'card'>
         <div class = 'card-body'>
           <h4 class = 'card-title' id = 'encoding_header' style = 'margin-top: -7px;'>Base64</h4>
-          <div class = 'alert alert-danger' id = 'text_encoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 10rem);'></div>
-          <textarea class = 'form-control' id = 'text_encoded' placeholder = 'Encoded (or escaped) text here.' oninput = 'EncodedUpdate();'></textarea>
+          <div class = 'alert alert-danger' id = 'text_encoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'text_encoded' placeholder = 'Encoded or escaped text here.' spellcheck = 'false' oninput = 'EncodedUpdate();'></textarea>
         </div>
       </div>
     </div>
@@ -119,20 +143,45 @@
       }
       
       function EscapeHTML(str) {
-        return str.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;').replace('\'', '&#39;');
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\r/g,'&#13;');
       }
       
       function UnescapeHTML(str) {
-        return str.replace('&#39;', '\'').replace('&quot;', '"').replace('&gt;', '>').replace('&lt;', '<').replace('&amp;', '&');
+        return str.replace(/&#13;/g, '\r').replace(/&#39;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
       }
       
-      function GetEncoding() {
+      // html and textarea don't support carriage returns in textareas, they get auto converted to newlines 🙃, so null byte followed by a newline will be counted as a carriage return instead
+      function TextToTextArea(str) {
+        return str.replace(/\x00/g, '\x00\x00').replace(/\r/g, '\x00\n');
+      }
+      
+      // probably some advanced grammar reason why simple replace statements won't cut it here
+      function TextAreaToText(str) {
+        let result = '', i = 0;
+        for (; i < str.length - 1; i++) {
+          if (str.charCodeAt(i) == 0) {
+            if (str[i + 1] == '\x00') result += '\x00';
+            else if (str[i + 1] == '\n') result += '\r';
+            else result += '\x00' + str[i + 1];
+            i++;
+          } else result += str[i];
+        }
+        console.log(i);
+        return result + (i < str.length ? str[str.length - 1] : '');
+        //return str.replace(/\x00\n/g, '\r').replace(/\x00\x00/g, '\x00');
+      }
+      
+      function GetButtonEncoding() {
         return Array.prototype.filter.call(document.getElementsByName('encodings'), x => x.checked)[0].value;
+      }
+      
+      function SetButtonEncoding(encoding) {
+        Array.prototype.forEach.call(document.getElementsByName('encodings'), x => x.value == encoding ? x.checked = true : null);
       }
       
       var fancyEncodings = { base64: 'Base64', hex: 'Hex', htmlescape: 'Escaped', uri: 'Encoded', uricomponent: 'Encoded' };
       
-      var lastUpdated = 0;
+      var lastUpdated = 1;
       
       function UnencodedUpdate(mode) {
         if (text_unencoded.classList.contains('is-invalid')) {
@@ -148,16 +197,13 @@
         if (!auto_convert.checked && !mode) return;
         
         try {
-          let encoding = GetEncoding(), binaryString;
+          let encoding = encodingselect.value, binaryString = TextAreaToText(text_unencoded.value);
           
           if (encoding == 'base64' || encoding == 'hex')
             switch (text_encoding.value) {
-              case 'utf8': binaryString = Utf8ToLatin1(text_unencoded.value); break;
-              case 'utf16': binaryString = Utf16ToLatin1(text_unencoded.value); break;
-              case 'latin1': binaryString = text_unencoded.value; break;
+              case 'utf8': binaryString = Utf8ToLatin1(binaryString); break;
+              case 'utf16': binaryString = Utf16ToLatin1(binaryString); break;
             }
-          else
-            binaryString = text_unencoded.value;
           
           switch (encoding) {
             case 'base64': text_encoded.value = btoa(binaryString); break;
@@ -170,7 +216,7 @@
           EncodedUpdate(2);
         } catch (e) {
           if (!text_unencoded.classList.contains('is-invalid')) text_unencoded.classList.add('is-invalid');
-          text_unencoded_warning.innerText = e instanceof DOMException ? 'Invalid latin1 sequence' : (console.error(e), e.toString());
+          text_unencoded_warning.innerText = e instanceof DOMException ? 'Invalid Latin1 sequence' : (console.error(e), e.toString());
           text_unencoded_warning.style.display = '';
         }
       }
@@ -189,9 +235,9 @@
         if (!auto_convert.checked && !mode) return;
         
         try {
-          let encoding = GetEncoding(), binaryString;
+          let binaryString;
           
-          switch (GetEncoding()) {
+          switch (encodingselect.value) {
             case 'base64': binaryString = atob(text_encoded.value); break;
             case 'hex': binaryString = HexToBinaryString(text_encoded.value); break;
             case 'htmlescape': binaryString = UnescapeHTML(text_encoded.value); break;
@@ -199,34 +245,34 @@
             case 'uricomponent': binaryString = decodeURIComponent(text_encoded.value); break;
           }
           
-          if (encoding == 'base64' || encoding == 'hex')
+          if (encodingselect.value == 'base64' || encodingselect.value == 'hex')
             switch (text_encoding.value) {
-              case 'utf8': text_unencoded.value = Latin1ToUtf8(binaryString); break;
-              case 'utf16': text_unencoded.value = Latin1ToUtf16(binaryString); break;
-              case 'latin1': text_unencoded.value = binaryString; break;
+              case 'utf8': binaryString = Latin1ToUtf8(binaryString); break;
+              case 'utf16': binaryString = Latin1ToUtf16(binaryString); break;
             }
-          else
-            text_unencoded.value = binaryString;
+          
+          text_unencoded.value = TextToTextArea(binaryString);
           
           UnencodedUpdate(2);
         } catch (e) {
           if (!text_encoded.classList.contains('is-invalid')) text_encoded.classList.add('is-invalid');
-          text_encoded_warning.innerText = e instanceof URIError ? 'Set text encoding to latin1' : e instanceof DOMException ? 'Invalid base64 sequence' : (console.error(e), e.toString());
+          text_encoded_warning.innerText = e instanceof URIError ? 'Cannot decode as UTF8' : e instanceof DOMException ? 'Invalid Base64' : (console.error(e), e.toString());
           text_encoded_warning.style.display = '';
         }
       }
       
       function GeneralUpdate(v) {
-        let encoding = GetEncoding();
-        if (v == 1) {
+        if (v == 3 && !(encodingselect.value == 'base64' || encodingselect.value == 'hex')) return;
+        
+        if (v == 1 || v == 2) {
+          if (v == 1) encodingselect.value = GetButtonEncoding();
+          else SetButtonEncoding(encodingselect.value);
+          
           lastUpdated = 1;
-          
-          let encodingFancy = fancyEncodings[encoding];
-          
-          encoding_header.innerText = encodingFancy;
-          location.hash = encoding == 'base64' ? '' : encoding;
+          encoding_header.innerText = fancyEncodings[encodingselect.value];
+          location.hash = encodingselect.value == 'base64' ? '' : encodingselect.value;
         }
-        if (v == 2 && !(encoding == 'base64' || encoding == 'hex')) return;
+        
         if (lastUpdated == 1) UnencodedUpdate();
         else if (lastUpdated == 2) EncodedUpdate();
       }
@@ -235,12 +281,12 @@
       text_unencoded.ondrop = evt => {
         evt.preventDefault();
         if (evt.dataTransfer && evt.dataTransfer.files.length) {
-          let encoding = GetEncoding(), reader = new FileReader();
+          let encoding = encodingselect.value, reader = new FileReader();
           
           reader.onload = e => {
             if (encoding == 'base64' || encoding == 'hex') text_encoding.value = 'latin1';
             else text_encoding.value = 'utf8';
-            text_unencoded.value = e.target.result;
+            text_unencoded.value = TextToTextArea(e.target.result);
             UnencodedUpdate();
           };
           
@@ -267,12 +313,12 @@
       };
       
       file_to_load.oninput = evt => {
-        let encoding = GetEncoding(), reader = new FileReader();
+        let encoding = encodingselect.value, reader = new FileReader();
         
         reader.onload = e => {
           if (encoding == 'base64' || encoding == 'hex') text_encoding.value = 'latin1';
           else text_encoding.value = 'utf8';
-          text_unencoded.value = e.target.result;
+          text_unencoded.value = TextToTextArea(e.target.result);
           UnencodedUpdate();
         };
         
@@ -289,27 +335,24 @@
       function DownloadTextAsFile() {
         let element = document.createElement('a');
         
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text_unencoded.value));
+        switch (text_encoding.value) {
+          case 'utf8': element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text_unencoded.value))); break;
+          case 'utf16': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16ToLatin1(TextAreaToText(text_unencoded.value)))); break;
+          case 'latin1': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(TextAreaToText(text_unencoded.value))); break;
+        }
         
         element.setAttribute('download', 'file.txt');
         
         element.style.display = 'none';
-        
         document.body.appendChild(element);
-        
         element.click();
-        
         document.body.removeChild(element);
       }
       
       onload = () => {
         if (location.hash) {
-          Array.prototype.forEach.call(
-            document.getElementsByTagName('input'),
-            x => {
-              if (x.name == 'encodings' && x.value == location.hash.replace('#', '')) { x.checked = true; GeneralUpdate(1); } 
-            }
-          );
+          encodingselect.value = location.hash.replace('#', '');
+          GeneralUpdate(2);
         }
       };
     </script>
