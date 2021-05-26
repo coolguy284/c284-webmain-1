@@ -110,5 +110,5 @@ module.exports = exports = {
   
   resp: require('./resp'),
   
-  websiteData: require('./websitedataparse')(),
+  websiteData: require('./websitedata'),
 };

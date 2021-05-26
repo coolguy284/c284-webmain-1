@@ -1,7 +1,8 @@
 var fs = require('fs');
 var mime = require('mime');
+var websiteData = require('./websitedata');
 
-var logger = require('../logutils.js')('common/send');
+var logger = require('../logutils.js')('common/resp');
 
 module.exports = exports = {
   // http1.1: (WSServer, req, socket, head, requestProps)
@@ -56,7 +57,7 @@ module.exports = exports = {
   },
   
   file: async (requestProps, filename, statusCode, headOnly) => {
-    // this is supposed to throw on purpose unless filename is a file so functions like fileFull know to send a 404 instead
+    // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
     var stats = await fs.promises.stat(filename);
     if (stats.isDirectory()) {
       let error = new Error('EISDIR'); error.code = 'ENOENT';
@@ -130,6 +131,8 @@ module.exports = exports = {
         else
           encodings = new Set();
         
+        let flags = websiteData[filename.replace(/\\/g, '/').replace('websites/public/', '')];
+        
         let hasVal = 0, stat;
         if (encodings.has('br') || encodings.has('*')) {
           try {
@@ -151,6 +154,7 @@ module.exports = exports = {
           'content-length': size,
           ...(hasVal < 2 ? { 'content-encoding': hasVal == 0 ? 'br' : 'gzip' } : {}),
           'last-modified': stats.mtime.toUTCString(),
+          ...(flags & 1 ? { 'cache-control': 'public, max-age=604800, immutable' } : {}),
           'accept-ranges': 'bytes',
           'x-content-type-options': 'nosniff',
         });
@@ -164,7 +168,11 @@ module.exports = exports = {
         }
       } else {
         // not modified since
-        exports.headers(requestProps, 304);
+        let flags = websiteData[filename.replace(/\\/g, '/').replace('websites/public/', '')];
+        
+        exports.headers(requestProps, 304, {
+          ...(flags & 1 ? { 'cache-control': 'public, max-age=604800, immutable' } : {}),
+        });
         exports.end(requestProps);
       }
     }
