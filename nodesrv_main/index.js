@@ -32,6 +32,8 @@ if (process.env.NODESRVMAIN_HTTP_IP) {
       conn.on('close', hadError => logger.debug(`TCP close ${conn.remoteAddress}:${conn.remotePort} ${hadError ? 'error' : 'normal'}`));
     }
     
+    conn.setNoDelay(true);
+    
     httpServer.emit('connection', conn);
   });
   
@@ -56,6 +58,8 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
       logger.debug(`TLS open ${conn.remoteAddress}:${conn.remotePort} ${conn.servername} ${conn.alpnProtocol} ${conn.authorized}`);
       conn.on('close', hadError => logger.debug(`TLS close ${conn.remoteAddress}:${conn.remotePort} ${hadError ? 'error' : 'normal'}`));
     }
+    
+    conn.setNoDelay(true);
     
     if (conn.alpnProtocol == false || conn.alpnProtocol == 'http/1.1')
       httpsServer.emit('secureConnection', conn);

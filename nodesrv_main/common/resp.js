@@ -67,6 +67,7 @@ module.exports = exports = {
     var size = stats.size;
     
     var mimeType = mime.getType(filename);
+    mimeType = mimeType ? `${mimeType}${mimeType.split('/')[0] == 'text' ? '; charset=utf-8' : ''}` : 'application/octet-stream';
     
     // range headers
     if (requestProps.headers.range && !statusCode) {
@@ -101,7 +102,7 @@ module.exports = exports = {
           } else {
             // everything is correct
             exports.headers(requestProps, {
-              'content-type': `${mimeType}${mimeType.split('/')[0] == 'text' ? '; charset=utf-8' : ''}`,
+              'content-type': mimeType,
               'content-length': end - start + 1,
               'content-range': `bytes ${start}-${end}/${size}`,
               'last-modified': stats.mtime.toUTCString(),
@@ -150,7 +151,7 @@ module.exports = exports = {
         }
         
         exports.headers(requestProps, statusCode || 200, {
-          'content-type': `${mimeType}${mimeType.split('/')[0] == 'text' ? '; charset=utf-8' : ''}`,
+          'content-type': mimeType,
           'content-length': size,
           ...(hasVal < 2 ? { 'content-encoding': hasVal == 0 ? 'br' : 'gzip' } : {}),
           'last-modified': stats.mtime.toUTCString(),
