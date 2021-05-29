@@ -1,6 +1,7 @@
 var fs = require('fs');
 var mime = require('mime');
 var websiteData = require('./websitedata');
+var etags = require('../websites/etags.json');
 
 var logger = require('../logutils.js')('common/resp');
 
@@ -123,8 +124,14 @@ module.exports = exports = {
         exports.end(requestProps);
       }
     } else {
-      // normal request, check for modified since and no statusCode var set
-      if (statusCode || !requestProps.headers['if-modified-since'] || Math.floor(stats.mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000)) {
+      // normal request
+      let shortPath = filename.replace(/\\/g, '/').replace('websites/public/', '') || 'index.html';
+      
+      // check for etag or modified since and no statusCode var set
+      if (statusCode ||
+        requestProps.headers['if-none-match'] && shortPath in etags ?
+          (!requestProps.headers['if-none-match'].split(', ').some(x => x == etags[shortPath])) :
+          (!requestProps.headers['if-modified-since'] || Math.floor(stats.mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000))) {
         // modified since
         let encodings;
         if (requestProps.headers['accept-encoding'])
@@ -132,7 +139,7 @@ module.exports = exports = {
         else
           encodings = new Set();
         
-        let flags = websiteData[filename.replace(/\\/g, '/').replace('websites/public/', '')];
+        let flags = websiteData[shortPath];
         
         let hasVal = 0, stat;
         if (encodings.has('br') || encodings.has('*')) {
@@ -155,6 +162,7 @@ module.exports = exports = {
           'content-length': size,
           ...(hasVal < 2 ? { 'content-encoding': hasVal == 0 ? 'br' : 'gzip' } : {}),
           'last-modified': stats.mtime.toUTCString(),
+          ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
           ...(flags & 1 ? { 'cache-control': 'public, max-age=604800, immutable' } : {}),
           'accept-ranges': 'bytes',
           'x-content-type-options': 'nosniff',
@@ -172,6 +180,7 @@ module.exports = exports = {
         let flags = websiteData[filename.replace(/\\/g, '/').replace('websites/public/', '')];
         
         exports.headers(requestProps, 304, {
+          ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
           ...(flags & 1 ? { 'cache-control': 'public, max-age=604800, immutable' } : {}),
         });
         exports.end(requestProps);

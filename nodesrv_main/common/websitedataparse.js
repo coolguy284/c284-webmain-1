@@ -5,7 +5,7 @@ module.exports = function parseWebsiteData() {
   
   let filesObject = Object.fromEntries(files.map(path => [path, 0]));
   
-  let entries = fs.readFileSync('website_data.txt').toString().split('\n').filter(entry => entry && !entry.startsWith('#'));
+  let entries = fs.readFileSync('websites/website_data.txt').toString().split('\n').filter(entry => entry && !entry.startsWith('#'));
   
   entries.forEach(entry => {
     let [ path, val ] = entry.split(':').map(part => part.trim()); val = parseInt(val);

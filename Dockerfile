@@ -33,10 +33,12 @@ RUN (cd nodesrv_main; npm install)
 COPY index.js /home/webmain/index.js
 
 COPY nodesrv_main/logutils.js /home/webmain/nodesrv_main/logutils.js
+COPY nodesrv_main/helpers /home/webmain/nodesrv_main/helpers
+COPY nodesrv_main/website_data.txt /home/webmain/nodesrv_main/website_data.txt
 COPY nodesrv_main/index.js /home/webmain/nodesrv_main/index.js
 COPY nodesrv_main/common /home/webmain/nodesrv_main/common
 COPY nodesrv_main/requests /home/webmain/nodesrv_main/requests
 COPY nodesrv_main/websites /home/webmain/nodesrv_main/websites
-RUN (cd nodesrv_main; node helpers/compress_files.js)
+RUN (cd nodesrv_main; node helpers/compress_and_etags.js)
 
 CMD ["node", "index.js"]

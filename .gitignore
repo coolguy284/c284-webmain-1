@@ -4,6 +4,7 @@
 /package-lock.json
 
 /nodesrv_main/node_modules
+/nodesrv_main/websites/etags.json
 /nodesrv_main/package-lock.json
 /nodesrv_main/**/*.gz
 /nodesrv_main/**/*.br
