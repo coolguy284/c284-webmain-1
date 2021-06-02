@@ -68,9 +68,12 @@
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <label for = 'text_encoding' class = 'col-form-label'>Text Encoding:</label>
       
-          <select class = 'form-select' id = 'text_encoding' style = 'width: 7rem; margin-left: 5px; display: inline-block;' oninput = 'GeneralUpdate(3);'>
+          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;' oninput = 'GeneralUpdate(3);'>
             <option value = 'utf8' selected>UTF-8</option>
-            <option value = 'utf16'>UTF-16</option>
+            <option value = 'utf16le'>UTF-16 LE</option>
+            <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
+            <option value = 'utf16be'>UTF-16 BE</option>
+            <option value = 'utf16benb'>UTF-16 BE (No BOM)</option>
             <option value = 'latin1'>Latin1</option>
           </select>
         </div>
@@ -120,13 +123,45 @@
         return decodeURIComponent(Array.prototype.map.call(str, c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''));
       }
       
-      function Utf16ToLatin1(str) {
+      function Utf16LEToLatin1(str) {
+        return Array.prototype.map.call('\ufeff' + str, c => { c = c.charCodeAt(0); return String.fromCharCode(c % 256, Math.floor(c / 256)); }).join('');
+      }
+      
+      function Latin1ToUtf16LE(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) + str.charCodeAt(i + 1) * 256));
+        arr = arr.join('');
+        return arr[0] == '\ufeff' ? arr.slice(1) : arr;
+      }
+      
+      function Utf16LENBToLatin1(str) {
         return Array.prototype.map.call(str, c => { c = c.charCodeAt(0); return String.fromCharCode(c % 256, Math.floor(c / 256)); }).join('');
       }
       
-      function Latin1ToUtf16(str) {
+      function Latin1ToUtf16LENB(str) {
         let arr = [];
         for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) + str.charCodeAt(i + 1) * 256));
+        return arr.join('');
+      }
+      
+      function Utf16BEToLatin1(str) {
+        return Array.prototype.map.call('\ufeff' + str, c => { c = c.charCodeAt(0); return String.fromCharCode(Math.floor(c / 256), c % 256); }).join('');
+      }
+      
+      function Latin1ToUtf16BE(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i + 1) * 256 + str.charCodeAt(i)));
+        arr = arr.join('');
+        return arr[0] == '\ufeff' ? arr.slice(1) : arr;
+      }
+      
+      function Utf16BENBToLatin1(str) {
+        return Array.prototype.map.call(str, c => { c = c.charCodeAt(0); return String.fromCharCode(Math.floor(c / 256), c % 256); }).join('');
+      }
+      
+      function Latin1ToUtf16BENB(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i + 1) * 256 + str.charCodeAt(i)));
         return arr.join('');
       }
       
@@ -178,7 +213,7 @@
       
       var fancyEncodings = { base64: 'Base64', hex: 'Hex', htmlescape: 'Escaped', uri: 'Encoded', uricomponent: 'Encoded' };
       
-      var lastUpdated = 1;
+      var lastUpdated = 1, hashLock = false;
       
       function UnencodedUpdate(mode) {
         if (text_unencoded.classList.contains('is-invalid')) {
@@ -199,7 +234,10 @@
           if (encoding == 'base64' || encoding == 'hex')
             switch (text_encoding.value) {
               case 'utf8': binaryString = Utf8ToLatin1(binaryString); break;
-              case 'utf16': binaryString = Utf16ToLatin1(binaryString); break;
+              case 'utf16le': binaryString = Utf16LEToLatin1(binaryString); break;
+              case 'utf16lenb': binaryString = Utf16LENBToLatin1(binaryString); break;
+              case 'utf16be': binaryString = Utf16BEToLatin1(binaryString); break;
+              case 'utf16benb': binaryString = Utf16BENBToLatin1(binaryString); break;
             }
           
           switch (encoding) {
@@ -245,7 +283,10 @@
           if (encodingselect.value == 'base64' || encodingselect.value == 'hex')
             switch (text_encoding.value) {
               case 'utf8': binaryString = Latin1ToUtf8(binaryString); break;
-              case 'utf16': binaryString = Latin1ToUtf16(binaryString); break;
+              case 'utf16le': binaryString = Latin1ToUtf16LE(binaryString); break;
+              case 'utf16lenb': binaryString = Latin1ToUtf16LENB(binaryString); break;
+              case 'utf16be': binaryString = Latin1ToUtf16BE(binaryString); break;
+              case 'utf16benb': binaryString = Latin1ToUtf16BENB(binaryString); break;
             }
           
           text_unencoded.value = TextToTextArea(binaryString);
@@ -262,12 +303,14 @@
         if (v == 3 && !(encodingselect.value == 'base64' || encodingselect.value == 'hex')) return;
         
         if (v == 1 || v == 2) {
-          if (v == 1) encodingselect.value = GetButtonEncoding();
-          else SetButtonEncoding(encodingselect.value);
+          if (v == 1) {
+            encodingselect.value = GetButtonEncoding();
+            if (!encodingselect.value) encodingselect.value = 'base64';
+          } else SetButtonEncoding(encodingselect.value);
           
           lastUpdated = 1;
           encoding_header.innerText = fancyEncodings[encodingselect.value];
-          location.hash = encodingselect.value == 'base64' ? '' : encodingselect.value;
+          hashLock = true; history.replaceState(null, '', location.href.split('#')[0] + (encodingselect.value == 'base64' ? '' : '#' + encodingselect.value)); hashLock = false;
         }
         
         if (lastUpdated == 1) UnencodedUpdate();
@@ -334,7 +377,10 @@
         
         switch (text_encoding.value) {
           case 'utf8': element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text_unencoded.value))); break;
-          case 'utf16': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16ToLatin1(TextAreaToText(text_unencoded.value)))); break;
+          case 'utf16le': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16LEToLatin1(TextAreaToText(text_unencoded.value)))); break;
+          case 'utf16lenb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16LENBToLatin1(TextAreaToText(text_unencoded.value)))); break;
+          case 'utf16be': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BEToLatin1(TextAreaToText(text_unencoded.value)))); break;
+          case 'utf16benb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BENBToLatin1(TextAreaToText(text_unencoded.value)))); break;
           case 'latin1': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(TextAreaToText(text_unencoded.value))); break;
         }
         
@@ -346,9 +392,17 @@
         document.body.removeChild(element);
       }
       
+      window.onhashchange = evt => {
+        if (hashLock) return;
+        encodingselect.value = evt.newURL.split('#').slice(1).join('') || 'base64';
+        if (!encodingselect.value) encodingselect.value = 'base64';
+        GeneralUpdate(2);
+      };
+      
       onload = () => {
         if (location.hash) {
-          encodingselect.value = location.hash.replace('#', '');
+          encodingselect.value = location.hash.replace('#', '') || 'base64';
+          if (!encodingselect.value) encodingselect.value = 'base64';
           GeneralUpdate(2);
         }
       };

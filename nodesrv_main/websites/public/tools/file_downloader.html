@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: File Downloader</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'Creates a file to download with the given contents.'>
+    <meta name = 'keywords' content = 'file, download'> <!-- grasping at straws here -->
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: File Downloader'>
+    <meta name = 'og:description' content = 'Creates a file to download with the given contents.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/file_downloader.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/bootstrap.min.css'>
+    <style>
+      textarea {
+        font-family: monospace;
+        height: 270px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-fluid'>
+      <div class = 'row' style = 'margin-top: 0.7rem;'>
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <label for = 'filename'>Filename:</label>
+          
+          <input type = 'text' class = 'form-control' id = 'filename' style = 'width: 20rem; margin-left: 5px; display: inline-block;'>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <label for = 'text_encoding' class = 'col-form-label'>Text Encoding:</label>
+      
+          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;'>
+            <option value = 'utf8' selected>UTF-8</option>
+            <option value = 'utf16le'>UTF-16 LE</option>
+            <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
+            <option value = 'utf16be'>UTF-16 BE</option>
+            <option value = 'utf16benb'>UTF-16 BE (No BOM)</option>
+            <option value = 'latin1'>Latin1</option>
+            <option value = 'base64'>Base64</option>
+            <option value = 'hex'>Hex</option>
+          </select>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <button class = 'btn btn-outline-primary' type = 'button' onclick = 'DownloadTextAsFile()'>Download Text as File</button>
+          <input type = 'file' id = 'file_to_load' style = 'display: none;'>
+          <button class = 'btn btn-outline-primary' type = 'button' onclick = 'SetTextToFile()'>Set Text to File</button>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'>File Contents</h4>
+          <div class = 'alert alert-danger' id = 'contents_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'text_contents' placeholder = 'Text, Base64, or other encoding here. Or drag and drop a file here.'></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      // next 2 funcs taken from mozilla, modified
+      function Utf8ToLatin1(str) {
+        return encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1));
+      }
+      
+      function Latin1ToUtf8(str) {
+        return decodeURIComponent(Array.prototype.map.call(str, c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''));
+      }
+      
+      function Utf16LEToLatin1(str) {
+        return Array.prototype.map.call('\ufeff' + str, c => { c = c.charCodeAt(0); return String.fromCharCode(c % 256, Math.floor(c / 256)); }).join('');
+      }
+      
+      function Latin1ToUtf16LE(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) + str.charCodeAt(i + 1) * 256));
+        arr = arr.join('');
+        return arr[0] == '\ufeff' ? arr.slice(1) : arr;
+      }
+      
+      function Utf16LENBToLatin1(str) {
+        return Array.prototype.map.call(str, c => { c = c.charCodeAt(0); return String.fromCharCode(c % 256, Math.floor(c / 256)); }).join('');
+      }
+      
+      function Latin1ToUtf16LENB(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) + str.charCodeAt(i + 1) * 256));
+        return arr.join('');
+      }
+      
+      function Utf16BEToLatin1(str) {
+        return Array.prototype.map.call('\ufeff' + str, c => { c = c.charCodeAt(0); return String.fromCharCode(Math.floor(c / 256), c % 256); }).join('');
+      }
+      
+      function Latin1ToUtf16BE(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i + 1) * 256 + str.charCodeAt(i)));
+        arr = arr.join('');
+        return arr[0] == '\ufeff' ? arr.slice(1) : arr;
+      }
+      
+      function Utf16BENBToLatin1(str) {
+        return Array.prototype.map.call(str, c => { c = c.charCodeAt(0); return String.fromCharCode(Math.floor(c / 256), c % 256); }).join('');
+      }
+      
+      function Latin1ToUtf16BENB(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i + 1) * 256 + str.charCodeAt(i)));
+        return arr.join('');
+      }
+      
+      function BinaryStringToHex(str) {
+        return Array.prototype.map.call(str, c => c.charCodeAt(0).toString(16).padStart(2, '0')).join('');
+      }
+      
+      function HexToBinaryString(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(parseInt(str.slice(i, i + 2), 16)));
+        return arr.join('');
+      }
+      
+      // html and textarea don't support carriage returns in textareas, they get auto converted to newlines 🙃, so null byte followed by a newline will be counted as a carriage return instead
+      function TextToTextArea(str) {
+        return str.replace(/\x00/g, '\x00\x00').replace(/\r/g, '\x00\n');
+      }
+      
+      // probably some advanced grammar reason why simple replace statements won't cut it here
+      function TextAreaToText(str) {
+        let result = '', i = 0;
+        for (; i < str.length - 1; i++) {
+          if (str.charCodeAt(i) == 0) {
+            if (str[i + 1] == '\x00') result += '\x00';
+            else if (str[i + 1] == '\n') result += '\r';
+            else result += '\x00' + str[i + 1];
+            i++;
+          } else result += str[i];
+        }
+        return result + (i < str.length ? str[str.length - 1] : '');
+        //return str.replace(/\x00\n/g, '\r').replace(/\x00\x00/g, '\x00');
+      }
+      
+      text_contents.ondragover = evt => evt.preventDefault();
+      text_contents.ondrop = evt => {
+        evt.preventDefault();
+        if (evt.dataTransfer && evt.dataTransfer.files.length) {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            text_encoding.value = 'latin1';
+            text_contents.value = TextToTextArea(e.target.result);
+          };
+          
+          reader.readAsBinaryString(evt.dataTransfer.files[0]);
+        }
+      };
+      
+      file_to_load.oninput = evt => {
+        let reader = new FileReader();
+        
+        reader.onload = e => {
+          text_encoding.value = 'latin1';
+          text_contents.value = TextToTextArea(e.target.result);
+        };
+        
+        reader.readAsBinaryString(evt.target.files[0]);
+      };
+      
+      function SetTextToFile() {
+        file_to_load.click();
+      }
+      
+      function DownloadTextAsFile() {
+        let element = document.createElement('a');
+        
+        switch (text_encoding.value) {
+          case 'utf8': element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text_contents.value))); break;
+          case 'utf16le': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16LEToLatin1(TextAreaToText(text_contents.value)))); break;
+          case 'utf16lenb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16LENBToLatin1(TextAreaToText(text_contents.value)))); break;
+          case 'utf16be': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BEToLatin1(TextAreaToText(text_contents.value)))); break;
+          case 'utf16benb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BENBToLatin1(TextAreaToText(text_contents.value)))); break;
+          case 'latin1': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(TextAreaToText(text_contents.value))); break;
+          case 'base64': element.setAttribute('href', 'data:application/octet-stream;base64,' + text_contents.value); break;
+          case 'hex': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(HexToBinaryString(text_contents.value))); break;
+        }
+        
+        element.setAttribute('download', filename.value || 'file.txt');
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+    </script>
+  </body>
+</html>
