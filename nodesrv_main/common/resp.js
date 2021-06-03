@@ -1,7 +1,7 @@
 var fs = require('fs');
 var mime = require('mime');
 var websiteData = require('./websitedata');
-var etags = require('../websites/etags.json');
+try { var etags = require('../websites/etags.json'); } catch (e) { var etags = {}; }
 
 var logger = require('../logutils.js')('common/resp');
 
@@ -163,7 +163,7 @@ module.exports = exports = {
           ...(hasVal < 2 ? { 'content-encoding': hasVal == 0 ? 'br' : 'gzip' } : {}),
           'last-modified': stats.mtime.toUTCString(),
           ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
-          ...(flags & 1 ? { 'cache-control': 'public, max-age=604800, immutable' } : {}),
+          'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
           'accept-ranges': 'bytes',
           'x-content-type-options': 'nosniff',
         });
@@ -181,7 +181,7 @@ module.exports = exports = {
         
         exports.headers(requestProps, 304, {
           ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
-          ...(flags & 1 ? { 'cache-control': 'public, max-age=604800, immutable' } : {}),
+          'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
         });
         exports.end(requestProps);
       }

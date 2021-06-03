@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: HTML Escaper and Unescaper</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'Escape and unescape HTML.'>
+    <meta name = 'keywords' content = 'html, escape, unescape'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: HTML Escaper and Unescaper'>
+    <meta name = 'og:description' content = 'Escape and unescape HTML.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/htmlescape.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/bootstrap.min.css'>
+    <style>
+      textarea {
+        font-family: monospace;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-fluid'>
+      <div class = 'row' style = 'margin-top: 0.7rem;'>
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <div class = 'btn-group' role = 'group'>
+            <button class = 'btn btn-outline-primary' type = 'button' onclick = 'UnencodedUpdate(1);'>Escape Text</button>
+            <button class = 'btn btn-outline-primary' type = 'button' onclick = 'EncodedUpdate(1);'>Unescape Escape Text</button>
+          </div>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input class = 'form-check-input' type = 'checkbox' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <input type = 'file' id = 'file_to_load' style = 'display: none;' aria-hidden = 'true'>
+          <button class = 'btn btn-outline-primary' type = 'button' onclick = 'SetTextToFile()'>Set Text to File</button>
+          <button class = 'btn btn-outline-primary' type = 'button' onclick = 'DownloadTextAsFile()'>Download Text as File</button>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'>Text</h4>
+          <div class = 'alert alert-danger' id = 'text_unencoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'text_unencoded' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'UnencodedUpdate();'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' id = 'encoding_header' style = 'margin-top: -7px;'>Escaped</h4>
+          <div class = 'alert alert-danger' id = 'text_encoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'text_encoded' placeholder = 'Encoded or escaped text here.' spellcheck = 'false' oninput = 'EncodedUpdate();'></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      function EscapeHTML(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\r/g,'&#13;');
+      }
+      
+      function UnescapeHTML(str) {
+        return str.replace(/&#13;/g, '\r').replace(/&#39;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+      }
+      
+      // html and textarea don't support carriage returns in textareas, they get auto converted to newlines 🙃, so null byte followed by a newline will be counted as a carriage return instead
+      function TextToTextArea(str) {
+        return str.replace(/\x00/g, '\x00\x00').replace(/\r/g, '\x00\n');
+      }
+      
+      // probably some advanced grammar reason why simple replace statements won't cut it here
+      function TextAreaToText(str) {
+        let result = '', i = 0;
+        for (; i < str.length - 1; i++) {
+          if (str.charCodeAt(i) == 0) {
+            if (str[i + 1] == '\x00') result += '\x00';
+            else if (str[i + 1] == '\n') result += '\r';
+            else result += '\x00' + str[i + 1];
+            i++;
+          } else result += str[i];
+        }
+        return result + (i < str.length ? str[str.length - 1] : '');
+        //return str.replace(/\x00\n/g, '\r').replace(/\x00\x00/g, '\x00');
+      }
+      
+      var lastUpdated = 1;
+      
+      function UnencodedUpdate(mode) {
+        if (text_unencoded.classList.contains('is-invalid')) {
+          text_unencoded.classList.remove('is-invalid');
+          text_unencoded_warning.style.display = 'none';
+          text_unencoded_warning.innerText = '';
+        }
+        
+        if (mode == 2) return;
+        
+        lastUpdated = 1;
+        
+        if (!auto_convert.checked && !mode) return;
+        
+        try {
+          let binaryString = TextAreaToText(text_unencoded.value);
+          
+          text_encoded.value = EscapeHTML(binaryString);
+          
+          EncodedUpdate(2);
+        } catch (e) {
+          if (!text_unencoded.classList.contains('is-invalid')) text_unencoded.classList.add('is-invalid');
+          text_unencoded_warning.innerText = e instanceof DOMException ? 'Invalid Latin1 sequence' : (console.error(e), e.toString());
+          text_unencoded_warning.style.display = '';
+        }
+      }
+      
+      function EncodedUpdate(mode) {
+        if (text_encoded.classList.contains('is-invalid')) {
+          text_encoded.classList.remove('is-invalid');
+          text_encoded_warning.style.display = 'none';
+          text_encoded_warning.innerText = '';
+        }
+        
+        if (mode == 2) return;
+        
+        lastUpdated = 2;
+        
+        if (!auto_convert.checked && !mode) return;
+        
+        try {
+          let binaryString = UnescapeHTML(text_encoded.value);
+          
+          text_unencoded.value = TextToTextArea(binaryString);
+          
+          UnencodedUpdate(2);
+        } catch (e) {
+          if (!text_encoded.classList.contains('is-invalid')) text_encoded.classList.add('is-invalid');
+          text_encoded_warning.innerText = e instanceof URIError ? 'Cannot decode as UTF8' : e instanceof DOMException ? 'Invalid Base64' : (console.error(e), e.toString());
+          text_encoded_warning.style.display = '';
+        }
+      }
+      
+      function GeneralUpdate(v) {
+        if (lastUpdated == 1) UnencodedUpdate();
+        else if (lastUpdated == 2) EncodedUpdate();
+      }
+      
+      text_unencoded.ondragover = evt => evt.preventDefault();
+      text_unencoded.ondrop = evt => {
+        evt.preventDefault();
+        if (evt.dataTransfer && evt.dataTransfer.files.length) {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            text_encoding.value = 'utf8';
+            text_unencoded.value = TextToTextArea(e.target.result);
+            UnencodedUpdate();
+          };
+          
+          reader.readAsText(evt.dataTransfer.files[0]);
+        }
+      };
+      
+      text_encoded.ondragover = evt => evt.preventDefault();
+      text_encoded.ondrop = evt => {
+        evt.preventDefault();
+        if (evt.dataTransfer && evt.dataTransfer.files.length) {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            text_encoded.value = e.target.result;
+            EncodedUpdate();
+          };
+          
+          reader.readAsText(evt.dataTransfer.files[0]);
+        }
+      };
+      
+      file_to_load.oninput = evt => {
+        let reader = new FileReader();
+        
+        reader.onload = e => {
+          text_encoding.value = 'utf8';
+          text_unencoded.value = TextToTextArea(e.target.result);
+          UnencodedUpdate();
+        };
+        
+        reader.readAsText(evt.target.files[0]);
+      };
+      
+      function SetTextToFile() {
+        file_to_load.click();
+      }
+      
+      function DownloadTextAsFile() {
+        let element = document.createElement('a');
+        
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text_unencoded.value)));
+        
+        element.setAttribute('download', 'file.txt');
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+    </script>
+  </body>
+</html>
