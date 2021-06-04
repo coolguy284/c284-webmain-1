@@ -28,19 +28,39 @@
       <div class = 'row' style = 'margin-top: 0.7rem;'>
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <div class = 'btn-group' role = 'group'>
-            <button class = 'btn btn-outline-primary' type = 'button' onclick = 'UnencodedUpdate(1);'>Escape Text</button>
-            <button class = 'btn btn-outline-primary' type = 'button' onclick = 'EncodedUpdate(1);'>Unescape Escape Text</button>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'UnencodedUpdate(1);'>Escape Text</button>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'EncodedUpdate(1);'>Unescape Escape Text</button>
           </div>
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input class = 'form-check-input' type = 'checkbox' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
+          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <input type = 'file' id = 'file_to_load' style = 'display: none;' aria-hidden = 'true'>
-          <button class = 'btn btn-outline-primary' type = 'button' onclick = 'SetTextToFile()'>Set Text to File</button>
-          <button class = 'btn btn-outline-primary' type = 'button' onclick = 'DownloadTextAsFile()'>Download Text as File</button>
+          
+          <div class = 'btn-group'>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'SetTextToFile()'>Set Text to File</button>
+            <button type = 'button' class = 'btn btn-outline-primary dropdown-toggle dropdown-toggle-split' data-bs-toggle = 'dropdown' aria-expanded = 'false'>
+              <span class = 'visually-hidden'>Toggle Set Text to File Extended Options</span>
+            </button>
+            <ul class = 'dropdown-menu'>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'SetTextToFile()'>Set Text to File</button></li>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'SetEncodedTextToFile()'>Set Encoded Text to File</button></li>
+            </ul>
+          </div>
+          
+          <div class = 'btn-group'>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'DownloadTextAsFile()'>Download Text as File</button>
+            <button type = 'button' class = 'btn btn-outline-primary dropdown-toggle dropdown-toggle-split' data-bs-toggle = 'dropdown' aria-expanded = 'false'>
+              <span class = 'visually-hidden'>Toggle Download Text as File Extended Options</span>
+            </button>
+            <ul class = 'dropdown-menu'>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'DownloadTextAsFile()'>Download Text as File</button></li>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'DownloadEncodedTextAsFile()'>Download Encoded Text as File</button></li>
+            </ul>
+          </div>
         </div>
       </div>
       
@@ -61,6 +81,7 @@
       </div>
     </div>
     
+    <script src = '/libs/bootstrap.bundle.min.js' async></script>
     <script>
       function EscapeHTML(str) {
         return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\r/g,'&#13;');
@@ -156,7 +177,6 @@
           let reader = new FileReader();
           
           reader.onload = e => {
-            text_encoding.value = 'utf8';
             text_unencoded.value = TextToTextArea(e.target.result);
             UnencodedUpdate();
           };
@@ -180,19 +200,37 @@
         }
       };
       
+      var setTextIsEncoded;
+      
       file_to_load.oninput = evt => {
-        let reader = new FileReader();
-        
-        reader.onload = e => {
-          text_encoding.value = 'utf8';
-          text_unencoded.value = TextToTextArea(e.target.result);
-          UnencodedUpdate();
-        };
-        
-        reader.readAsText(evt.target.files[0]);
+        if (setTextIsEncoded) {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            text_encoded.value = e.target.result;
+            EncodedUpdate();
+          };
+          
+          reader.readAsText(evt.target.files[0]);
+        } else {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            text_unencoded.value = TextToTextArea(e.target.result);
+            UnencodedUpdate();
+          };
+          
+          reader.readAsText(evt.target.files[0]);
+        }
       };
       
       function SetTextToFile() {
+        setTextIsEncoded = false;
+        file_to_load.click();
+      }
+      
+      function SetEncodedTextToFile() {
+        setTextIsEncoded = true;
         file_to_load.click();
       }
       
@@ -200,6 +238,19 @@
         let element = document.createElement('a');
         
         element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text_unencoded.value)));
+        
+        element.setAttribute('download', 'file.txt');
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+      
+      function DownloadEncodedTextAsFile() {
+        let element = document.createElement('a');
+        
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text_encoded.value));
         
         element.setAttribute('download', 'file.txt');
         
