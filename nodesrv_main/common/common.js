@@ -16,7 +16,7 @@ module.exports = exports = {
   
   isSubDir: (parent, dir) => {
     var relativePath = path.relative(parent, dir);
-    return relativePath && relativePath != '..' && !relativePath.startsWith('../');
+    return relativePath && relativePath != '..' && !relativePath.startsWith('..' + path.sep);
   },
   
   getRequestProps: (...args) => {
