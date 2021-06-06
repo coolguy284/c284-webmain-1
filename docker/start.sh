@@ -1,5 +1,7 @@
 cd /home/webmain/c284-webmain-1
 
+./docker/stop.sh
+
 mkdir -p ../c284-webmain-1_s/cert
 mkdir -p ../c284-webmain-1_s/logs_mongodb
 mkdir -p ../c284-webmain-1_s/mongodb

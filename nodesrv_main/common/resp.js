@@ -108,6 +108,7 @@ module.exports = exports = {
               'content-range': `bytes ${start}-${end}/${size}`,
               'last-modified': stats.mtime.toUTCString(),
               'x-content-type-options': 'nosniff',
+              'strict-transport-security': 'max-age=31536000; preload',
             });
             
             if (headOnly) {
@@ -120,7 +121,10 @@ module.exports = exports = {
           }
         }
       } else {
-        exports.headers(requestProps, 416, { 'content-range': `*/${size}` });
+        exports.headers(requestProps, 416, {
+          'content-range': `*/${size}`,
+          'strict-transport-security': 'max-age=31536000; preload',
+        });
         exports.end(requestProps);
       }
     } else {
@@ -166,6 +170,7 @@ module.exports = exports = {
           'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
           'accept-ranges': 'bytes',
           'x-content-type-options': 'nosniff',
+          'strict-transport-security': 'max-age=31536000; preload',
         });
         
         if (headOnly) {
@@ -182,6 +187,7 @@ module.exports = exports = {
         exports.headers(requestProps, 304, {
           ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
           'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
+          'strict-transport-security': 'max-age=31536000; preload',
         });
         exports.end(requestProps);
       }

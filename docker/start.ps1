@@ -1,5 +1,7 @@
 cd D:/Data/c284-webmain-1
 
+powershell -ExecutionPolicy Bypass -File ./docker/stop.ps1
+
 New-Item -ItemType Directory -Force -Path D:/Data/c284-webmain-1_s/cert | Out-Null
 New-Item -ItemType Directory -Force -Path D:/Data/c284-webmain-1_s/logs | Out-Null
 New-Item -ItemType Directory -Force -Path D:/Data/c284-webmain-1_s/logs_mongodb | Out-Null

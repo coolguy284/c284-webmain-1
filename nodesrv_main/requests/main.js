@@ -25,6 +25,14 @@ module.exports = async function main(...args) {
     
     logger.info(common.getReqLogStr(requestProps));
     
+    if (requestProps.proto == 'http') {
+      let newURL = new URL(requestProps.url);
+      newURL.protocol = 'https:';
+      common.resp.headers(requestProps, 307, { 'location': newURL.href });
+      common.resp.end(requestProps);
+      return;
+    }
+    
     if (!(requestProps.method in methods && methods[requestProps.method](requestProps) != 1)) {
       common.resp.headers(requestProps, 501);
       common.resp.end(requestProps);

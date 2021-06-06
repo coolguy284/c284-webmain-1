@@ -27,7 +27,7 @@
     <div class = 'container-fluid'>
       <div class = 'row' style = 'margin-top: 0.7rem;'>
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label for = 'filename'>Filename:</label>
+          <label for = 'filename' class = 'col-form-label'>Filename:</label>
           
           <input type = 'text' class = 'form-control' id = 'filename' style = 'width: 20rem; margin-left: 5px; display: inline-block;'>
         </div>
@@ -100,7 +100,7 @@
       
       function Latin1ToUtf16BE(str) {
         let arr = [];
-        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i + 1) * 256 + str.charCodeAt(i)));
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) * 256 + str.charCodeAt(i + 1)));
         arr = arr.join('');
         return arr[0] == '\ufeff' ? arr.slice(1) : arr;
       }
@@ -111,7 +111,7 @@
       
       function Latin1ToUtf16BENB(str) {
         let arr = [];
-        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i + 1) * 256 + str.charCodeAt(i)));
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) * 256 + str.charCodeAt(i + 1)));
         return arr.join('');
       }
       
