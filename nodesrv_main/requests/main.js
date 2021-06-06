@@ -1,6 +1,7 @@
 var logger = require('../logutils.js')('requests/main');
 
 var common = require('../common');
+var redirects = require('../common/redirects');
 
 var methods = {
   //options: require('./options'),
@@ -29,6 +30,15 @@ module.exports = async function main(...args) {
       let newURL = new URL(requestProps.url);
       newURL.protocol = 'https:';
       common.resp.headers(requestProps, 307, { 'location': newURL.href });
+      common.resp.end(requestProps);
+      return;
+    }
+    
+    if (requestProps.url.pathname in redirects.redirects) {
+      let redirectInfo = redirects.redirects[requestProps.url.pathname];
+      let newURL = new URL(requestProps.url);
+      newURL.pathname = redirectInfo[0];
+      common.resp.headers(requestProps, redirects.mapping[redirectInfo[1]], { 'location': newURL.href });
       common.resp.end(requestProps);
       return;
     }

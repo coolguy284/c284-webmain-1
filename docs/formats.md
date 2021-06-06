@@ -8,3 +8,18 @@ format for nodesrv_main/websites/website_data.txt:
     ),
   "#" : comment,
 ```
+
+```
+format for nodesrv_main/websites/redirects.txt:
+  # put <from> and/or <to> in quotes to escape special characters in pathnames
+  <type> <from> <to> : string (
+    type : 2 char string (
+      type[0]: T - temporary, P - permanent
+      type[1]: S - same method, G - get request, "-" - doesn't matter
+      Note: all 6 combinations exist except PG.
+    ),
+    from : string (path to trigger redirect),
+    to : string (path to redirect to),
+  ),
+  "#" : comment,
+```

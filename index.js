@@ -102,7 +102,9 @@ nodesrv_main.on('message', msg => {
 // if main server exits mongodb server has soft and then hard shutdown
 nodesrv_main.on('exit', () => {
   clearInterval(tickInt);
-  if (mongod.exitCode) {
+  if (!mongod) {
+    console.log('Mongod not run');
+  } else if (mongod.exitCode) {
     console.log('Mongod already shutdown');
   } else {
     console.log('Killing mongod');

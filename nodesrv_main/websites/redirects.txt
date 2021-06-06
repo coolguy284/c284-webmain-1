@@ -1,0 +1,7 @@
+PS /tools/downloader.html /tools/file_downloader.html
+PS /tools/dataurl.html /tools/data_url.html
+PS /tools/html.html /tools/htmlescape.html
+PS /encodedecode.html /tools/encode_decode.html
+PS /encodingdecoding.html /tools/encode_decode.html
+PS /tools/encodingdecoding.html /tools/encode_decode.html
+PS /tools/encodedecode.html /tools/encode_decode.html
