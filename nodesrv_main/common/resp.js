@@ -6,6 +6,18 @@ try { var etags = require('../websites/etags.json'); } catch (e) { var etags = {
 var logger = require('../logutils.js')('common/resp');
 
 module.exports = exports = {
+  getBasicFileHeaders: (file, mimeType) => {
+    return {
+      'content-type': mimeType || 'text/plain; charset=utf-8',
+      'content-length': file.length,
+      'last-modified': new Date().toUTCString(),
+      'cache-control': 'no-cache',
+      'accept-ranges': 'none',
+      'x-content-type-options': 'nosniff',
+      'strict-transport-security': 'max-age=31536000; preload',
+    };
+  },
+  
   // http1.1: (WSServer, req, socket, head, requestProps)
   // http2: (WSServer, requestProps)
   ws: (WSServer, ...args) => {
@@ -57,7 +69,7 @@ module.exports = exports = {
       stream.pipe(requestProps.stream);
   },
   
-  file: async (requestProps, filename, statusCode, headOnly) => {
+  file: async (requestProps, filename, statusCode, headOnly, headers) => {
     // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
     var stats = await fs.promises.stat(filename);
     if (stats.isDirectory()) {
@@ -71,15 +83,15 @@ module.exports = exports = {
     mimeType = mimeType ? `${mimeType}${mimeType.split('/')[0] == 'text' ? '; charset=utf-8' : ''}` : 'application/octet-stream';
     
     // range headers
-    if (requestProps.headers.range && !statusCode) {
+    if (requestProps.headers.range && !statusCode && !headers) {
       // check if it matches bytes=xxxx-xxxx form (multipart not supported yet)
       if (/^bytes=[0-9]*-[0-9]*$/.test(requestProps.headers.range)) {
         var [ start, end ] = requestProps.headers.range.slice(6).split('-');
         
         if (!start && !end) {
           // bytes=- is invalid
-          exports.headers(requestProps, 416, { 'content-range': `*/${size}` });
-          exports.end(requestProps);
+          await exports.headers(requestProps, 416, { 'content-range': `*/${size}` });
+          await exports.end(requestProps);
         } else {
           if (!start && end) {
             // bytes=-xxxx is not from beginning to point, it is a certain number of bytes from the end
@@ -98,11 +110,11 @@ module.exports = exports = {
           // check for range parts not being an int, start or end being out of bounds, or end being less than start
           if (!Number.isSafeInteger(start) || start < 0 || start > size ||
             !Number.isSafeInteger(end) || end < 0 || end > size || end < start) {
-            exports.headers(requestProps, 416, { 'content-range': `*/${size}` });
-            exports.end(requestProps);
+            await exports.headers(requestProps, 416, { 'content-range': `*/${size}` });
+            await exports.end(requestProps);
           } else {
             // everything is correct
-            exports.headers(requestProps, {
+            await exports.headers(requestProps, 206, {
               'content-type': mimeType,
               'content-length': end - start + 1,
               'content-range': `bytes ${start}-${end}/${size}`,
@@ -112,20 +124,20 @@ module.exports = exports = {
             });
             
             if (headOnly) {
-              exports.end(requestProps);
+              await exports.end(requestProps);
             } else {
               var readStream = fs.createReadStream(filename, { start, end });
-              exports.stream(requestProps, readStream);
+              await exports.stream(requestProps, readStream);
               readStream.on('error', logger.error);
             }
           }
         }
       } else {
-        exports.headers(requestProps, 416, {
+        await exports.headers(requestProps, 416, {
           'content-range': `*/${size}`,
           'strict-transport-security': 'max-age=31536000; preload',
         });
-        exports.end(requestProps);
+        await exports.end(requestProps);
       }
     } else {
       // normal request
@@ -161,7 +173,7 @@ module.exports = exports = {
           } else hasVal++;
         }
         
-        exports.headers(requestProps, statusCode || 200, {
+        await exports.headers(requestProps, statusCode || 200, {
           'content-type': mimeType,
           'content-length': size,
           ...(hasVal < 2 ? { 'content-encoding': hasVal == 0 ? 'br' : 'gzip' } : {}),
@@ -171,25 +183,27 @@ module.exports = exports = {
           'accept-ranges': 'bytes',
           'x-content-type-options': 'nosniff',
           'strict-transport-security': 'max-age=31536000; preload',
+          ...headers,
         });
         
         if (headOnly) {
-          exports.end(requestProps);
+          await exports.end(requestProps);
         } else {
           var readStream = fs.createReadStream(filename);
-          exports.stream(requestProps, readStream);
+          await exports.stream(requestProps, readStream);
           readStream.on('error', logger.error);
         }
       } else {
         // not modified since
         let flags = websiteData[filename.replace(/\\/g, '/').replace('websites/public/', '')];
         
-        exports.headers(requestProps, 304, {
+        await exports.headers(requestProps, 304, {
           ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
           'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
           'strict-transport-security': 'max-age=31536000; preload',
+          ...headers,
         });
-        exports.end(requestProps);
+        await exports.end(requestProps);
       }
     }
   },
@@ -198,11 +212,11 @@ module.exports = exports = {
     try {
       await exports.file(requestProps, 'websites/public/errors/404.html', 404, headOnly);
     } catch (err) {
-      exports.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
+      await exports.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
       if (headOnly)
-        exports.end(requestProps);
+        await exports.end(requestProps);
       else
-        exports.end(requestProps, '404 Not Found');
+        await exports.end(requestProps, '404 Not Found');
     }
   },
   
@@ -210,24 +224,24 @@ module.exports = exports = {
     try {
       await exports.file(requestProps, 'websites/public/errors/500.html', 500, headOnly);
     } catch (err) {
-      exports.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
+      await exports.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
       if (headOnly)
-        exports.end(requestProps);
+        await exports.end(requestProps);
       else
-        exports.end(requestProps, '500 Internal Server Error');
+        await exports.end(requestProps, '500 Internal Server Error');
     }
   },
   
-  fileFull: async (requestProps, filename, headOnly) => {
+  fileFull: async (requestProps, filename, headOnly, headers) => {
     try {
-      await exports.file(requestProps, filename, null, headOnly);
+      await exports.file(requestProps, filename, null, headOnly, headers);
     } catch (err) {
       if (err.code == 'ENOENT') {
         await exports.s404(requestProps, headOnly);
-      } else {
+      } else if (err.code != 'ERR_HTTP2_INVALID_STREAM') {
         logger.error(err);
         await exports.s500(requestProps, headOnly);
-      }
+      } else logger.warn('http2 stream unexpectedly closed');
     }
   },
 };

@@ -1,0 +1,3 @@
+body::after {
+  content: "This website has no source code. Feel free to check with Ctrl+U and see for yourself. How? A HTTP \"Link\" header is sent with the empty file, telling the browser to include a stylesheet. This stylesheet (no_source.css btw) uses an ::after directive to place content in the body. It is obviously limited as all content has to be hacked together in the stylesheet but it is still cool nontheless.";
+}

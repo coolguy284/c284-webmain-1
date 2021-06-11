@@ -24,7 +24,7 @@ module.exports = async function main(...args) {
     
     var requestProps = common.getRequestProps(...args, 'main');
     
-    logger.info(common.getReqLogStr(requestProps));
+    if (!requestProps.url.pathname.startsWith('/api/')) logger.info(common.getReqLogStr(requestProps));
     
     if (requestProps.proto == 'http') {
       let newURL = new URL(requestProps.url);

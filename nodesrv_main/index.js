@@ -110,7 +110,20 @@ process.on('unhandledRejection', err => {
 });
 
 
-// simple repl for executing
+// server tick function
+global.ticks = 0;
+global.tickFunc = () => {
+  let limitTime = Date.now() - 5000;
+  for (var i of common.vars.ownEyesCodes.keys()) {
+    if (common.vars.ownEyesCodes.get(i) < limitTime)
+      common.vars.ownEyesCodes.delete(i);
+  }
+  global.ticks++;
+};
+global.tickInt = setInterval(tickFunc, 1000);
+
+
+// simple repl for executing commands
 require('repl').start({
   prompt: '',
   terminal: true,

@@ -109,4 +109,8 @@ module.exports = exports = {
   },
   
   resp: require('./resp'),
+  
+  vars: {
+    ownEyesCodes: new Map(),
+  },
 };
