@@ -71,22 +71,31 @@ module.exports = exports = {
   
   file: async (requestProps, filename, statusCode, headOnly, headers) => {
     // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
-    var stats = await fs.promises.stat(filename);
-    if (stats.isDirectory()) {
-      let error = new Error('EISDIR'); error.code = 'ENOENT';
-      throw error;
+    if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+      if (!(filename in global.filesCache)) {
+        let error = new Error('ENOENT'); error.code = 'ENOENT';
+        throw error;
+      }
+      var fileEntry = global.filesCache[filename];
+      var stats = fileEntry.stats, size = fileEntry.file.length;
+    } else {
+      var stats = await fs.promises.stat(filename);
+      if (stats.isDirectory()) {
+        let error = new Error('EISDIR'); error.code = 'ENOENT';
+        throw error;
+      }
+      
+      var size = stats.size;
     }
     
-    var size = stats.size;
-    
     var mimeType = mime.getType(filename);
-    mimeType = mimeType ? `${mimeType}${mimeType.split('/')[0] == 'text' ? '; charset=utf-8' : ''}` : 'application/octet-stream';
+    mimeType = mimeType ? `${mimeType}${mimeType.split('/')[0] == 'text' || mimeType == 'application/javascript' ? '; charset=utf-8' : ''}` : 'application/octet-stream';
     
     // range headers
     if (requestProps.headers.range && !statusCode && !headers) {
       // check if it matches bytes=xxxx-xxxx form (multipart not supported yet)
       if (/^bytes=[0-9]*-[0-9]*$/.test(requestProps.headers.range)) {
-        var [ start, end ] = requestProps.headers.range.slice(6).split('-');
+        let [ start, end ] = requestProps.headers.range.slice(6).split('-');
         
         if (!start && !end) {
           // bytes=- is invalid
@@ -126,9 +135,13 @@ module.exports = exports = {
             if (headOnly) {
               await exports.end(requestProps);
             } else {
-              var readStream = fs.createReadStream(filename, { start, end });
-              await exports.stream(requestProps, readStream);
-              readStream.on('error', logger.error);
+              if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+                await exports.end(requestProps, fileEntry.file.slice(start, end));
+              } else {
+                let readStream = fs.createReadStream(filename, { start, end });
+                await exports.stream(requestProps, readStream);
+                readStream.on('error', logger.error);
+              }
             }
           }
         }
@@ -145,9 +158,9 @@ module.exports = exports = {
       
       // check for etag or modified since and no statusCode var set
       if (statusCode ||
-        requestProps.headers['if-none-match'] && shortPath in etags ?
+        (requestProps.headers['if-none-match'] && shortPath in etags ?
           (!requestProps.headers['if-none-match'].split(', ').some(x => x == etags[shortPath])) :
-          (!requestProps.headers['if-modified-since'] || Math.floor(stats.mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000))) {
+          (!requestProps.headers['if-modified-since'] || Math.floor(stats.mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000)))) {
         // modified since
         let encodings;
         if (requestProps.headers['accept-encoding'])
@@ -159,17 +172,27 @@ module.exports = exports = {
         
         let hasVal = 0, stat;
         if (encodings.has('br') || encodings.has('*')) {
-          try {
-            stat = await fs.promises.stat(filename + '.br');
-            stat.isDirectory() ? hasVal++ : (size = stat.size, filename += '.br');
-          } catch (e) { hasVal++; }
+          if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+            stat = global.filesCache[filename + '.br'];
+            stat ? (size = stat.file.length, filename += '.br') : hasVal++;
+          } else {
+            try {
+              stat = await fs.promises.stat(filename + '.br');
+              stat.isDirectory() ? hasVal++ : (size = stat.size, filename += '.br');
+            } catch (e) { hasVal++; }
+          }
         } else hasVal++;
         if (hasVal == 1) {
           if (encodings.has('gzip')) {
-            try {
-              stat = await fs.promises.stat(filename + '.gz');
-              stat.isDirectory() ? hasVal++ : (size = stat.size, filename += '.gz');
-            } catch (e) { hasVal++; }
+            if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+            stat = global.filesCache[filename + '.gz'];
+            stat ? (size = stat.file.length, filename += '.gz') : hasVal++;
+            } else {
+              try {
+                stat = await fs.promises.stat(filename + '.gz');
+                stat.isDirectory() ? hasVal++ : (size = stat.size, filename += '.gz');
+              } catch (e) { hasVal++; }
+            }
           } else hasVal++;
         }
         
@@ -189,9 +212,13 @@ module.exports = exports = {
         if (headOnly) {
           await exports.end(requestProps);
         } else {
-          var readStream = fs.createReadStream(filename);
-          await exports.stream(requestProps, readStream);
-          readStream.on('error', logger.error);
+          if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+            await exports.end(requestProps, fileEntry.file);
+          } else {
+            let readStream = fs.createReadStream(filename);
+            await exports.stream(requestProps, readStream);
+            readStream.on('error', logger.error);
+          }
         }
       } else {
         // not modified since
@@ -234,14 +261,16 @@ module.exports = exports = {
   
   fileFull: async (requestProps, filename, headOnly, headers) => {
     try {
-      await exports.file(requestProps, filename, null, headOnly, headers);
+      await exports.file(requestProps, process.platform.startsWith('win') ? filename.replaceAll('\\', '/') : filename, null, headOnly, headers);
     } catch (err) {
       if (err.code == 'ENOENT') {
         await exports.s404(requestProps, headOnly);
-      } else if (err.code != 'ERR_HTTP2_INVALID_STREAM') {
+      } else if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
+        logger.warn('http2 stream unexpectedly closed');
+      } else {
         logger.error(err);
         await exports.s500(requestProps, headOnly);
-      } else logger.warn('http2 stream unexpectedly closed');
+      }
     }
   },
 };

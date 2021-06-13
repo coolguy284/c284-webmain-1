@@ -59,7 +59,7 @@ if (!process.env.DISABLE_MONGODB) {
         }
         console.log(logString);
       } catch (e) {
-        console.log(c);
+        console.log(logElem.c);
       }
     }
 

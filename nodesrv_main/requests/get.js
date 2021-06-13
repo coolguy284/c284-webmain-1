@@ -20,12 +20,9 @@ module.exports = async function getMethod(requestProps) {
     }
   }
   
-  else if (requestProps.url.pathname == '/own_eyes.html') {
-    let code = crypto.randomBytes(16).toString('base64').replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
-    let file = Buffer.from((await fs.promises.readFile('websites/public/own_eyes.html')).toString().replace('{code}', code));
-    await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
-    await common.resp.end(requestProps, file);
-    common.vars.ownEyesCodes.set(code, Date.now());
+  else if (requestProps.url.pathname == '/api/null') {
+    await common.resp.headers(requestProps, 204);
+    await common.resp.end(requestProps);
   }
   
   else if (requestProps.url.pathname == '/no_source.html') {
@@ -33,6 +30,14 @@ module.exports = async function getMethod(requestProps) {
       requestProps, 'websites/public/no_source.html', null,
       { 'link': '<no_source.css>; rel="stylesheet"' }
     );
+  }
+  
+  else if (requestProps.url.pathname == '/own_eyes.html') {
+    let code = crypto.randomBytes(16).toString('base64').replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+    let file = Buffer.from((await fs.promises.readFile('websites/public/own_eyes.html')).toString().replace('{code}', code));
+    await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+    await common.resp.end(requestProps, file);
+    common.vars.ownEyesCodes.set(code, Date.now());
   }
   
   else {

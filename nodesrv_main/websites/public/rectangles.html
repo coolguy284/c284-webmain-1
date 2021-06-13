@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: RECTANGLES</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'Rectangles.'>
+    <meta name = 'keywords' content = 'rectangles'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: RECTANGLES'>
+    <meta name = 'og:description' content = 'Rectangles.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/rectangles.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/bootstrap.min.css'>
+  </head>
+  <body>
+    <div class = 'container-fluid' style = 'padding: 1rem;'>
+      <noscript>
+        <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+          Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
+        </div>
+      </noscript>
+      
+      <canvas id = 'canvas' width = 800 height = 500><!-- henlo you smelly egg - sting beans --></canvas><br>
+      
+      <input type = 'range' class = 'form-range' id = 'num_shapes' min = -256 max = 256 value = 0 style = 'width: 750px;' oninput = 'UpdateCanvas();'>
+      
+      <span id = 'num_shapes_text'>0</span><br>
+      
+      <div class = 'row'>
+        <div class = 'col-auto'>
+          <label for = 'shape_type' class = 'col-form-label'>Shape:</label>
+          
+          <select class = 'form-select' id = 'shape_type' style = 'width: 10rem; margin-left: 5px; display: inline-block;' oninput = 'UpdateCanvas();'>
+            <option value = 'rectangles' selected>Rectangles</option>
+            <option value = 'triangles'>Triangles</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      function SliderToNumber(val) {
+        let posVal = Math.abs(val);
+        let power = Math.floor(posVal / 16) - 1, mantissa = posVal % 16;
+        return [Math.floor(2 ** power * (1 + mantissa / 16)), val >= 0];
+      }
+      
+      function NumberToSlider(amount, positive) {
+        let power = Math.floor(Math.log2(amount)); if (power == -Infinity) power = -1;
+        let mantissa = Math.max((amount / 2 ** power - 1) * 16, 0);
+        return (power * 16 + mantissa + 16) * (positive * 2 - 1);
+      }
+    
+      var rectangles = [], triangles = [];
+      
+      function UpdateCanvas() {
+        let [ amount, positive ] = SliderToNumber(Number(num_shapes.value));
+        num_shapes_text.innerText = positive ? amount : '-' + amount;
+        
+        /*canvas.innerHTML = '';
+        if (positive) canvas.style = '';
+        else canvas.style = 'background: black;';
+        
+        switch (shape_type.value) {
+          case 'rectangles':
+            while (rectangles.length < amount) {
+              let w = Math.floor(Math.random() * 50 + 100), h = Math.floor(Math.random() * 50 + 100);
+              rectangles.push([Math.floor(Math.random() * (800 - w)), Math.floor(Math.random() * (500 - h)), w, h]);
+            }
+            
+            var innerHTML = '';
+            
+            for (var i = 0; i < amount; i++)
+              innerHTML += `<rect x = "${rectangles[i][0]}" y = "${rectangles[i][1]}" width = "${rectangles[i][2]}" height = "${rectangles[i][3]}" style = 'fill: transparent; stroke: ${positive ? 'black' : 'white'}'></rect>`;
+            
+            canvas.innerHTML = innerHTML;
+            break;
+          
+          case 'triangles':
+            while (triangles.length < amount)
+              triangles.push([Math.floor(Math.random() * 800), Math.floor(Math.random() * 500), Math.floor(Math.random() * 800), Math.floor(Math.random() * 500), Math.floor(Math.random() * 800), Math.floor(Math.random() * 500)]);
+            
+            var innerHTML = '';
+            
+            for (var i = 0; i < amount; i++)
+              innerHTML += `<polygon points = '${triangles[i][0]},${triangles[i][1]} ${triangles[i][2]},${triangles[i][3]} ${triangles[i][4]},${triangles[i][5]}' style = 'fill: transparent; stroke: ${positive ? 'black' : 'white'}'></polygon>`;
+            
+            canvas.innerHTML = innerHTML;
+            break;
+        }*/
+        
+        let ctx = canvas.getContext('2d');
+        
+        if (positive) {
+          ctx.fillStyle = 'white'; ctx.strokeStyle = 'black';
+        } else {
+          ctx.fillStyle = 'black'; ctx.strokeStyle = 'white';
+        }
+        
+        ctx.fillRect(0, 0, 800, 500);
+        
+        switch (shape_type.value) {
+          case 'rectangles':
+            while (rectangles.length < amount) {
+              let w = Math.floor(Math.random() * 50 + 100), h = Math.floor(Math.random() * 50 + 100);
+              rectangles.push([Math.floor(Math.random() * (800 - w)), Math.floor(Math.random() * (500 - h)), w, h]);
+            }
+            
+            for (var i = 0; i < amount; i++)
+              ctx.strokeRect(...rectangles[i]);
+            break;
+          
+          case 'triangles':
+            while (triangles.length < amount)
+              triangles.push([Math.floor(Math.random() * 800), Math.floor(Math.random() * 500), Math.floor(Math.random() * 800), Math.floor(Math.random() * 500), Math.floor(Math.random() * 800), Math.floor(Math.random() * 500)]);
+            
+            for (var i = 0; i < amount; i++) {
+              ctx.beginPath();
+              ctx.moveTo(triangles[i][0], triangles[i][1]);
+              ctx.lineTo(triangles[i][2], triangles[i][3]);
+              ctx.lineTo(triangles[i][4], triangles[i][5]);
+              ctx.closePath();
+              ctx.stroke();
+            }
+            break;
+        }
+      }
+      
+      onload = UpdateCanvas;
+    </script>
+  </body>
+</html>

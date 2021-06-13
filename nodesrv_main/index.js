@@ -123,6 +123,19 @@ global.tickFunc = () => {
 global.tickInt = setInterval(tickFunc, 1000);
 
 
+// website cache
+if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+  global.filesCache = {};
+  require('./common/recursivereaddir')('websites/public').forEach(filename => {
+    filename = 'websites/public/' + filename;
+    global.filesCache[filename] = {
+      stats: { mtime: fs.statSync(filename).mtime },
+      file: fs.readFileSync(filename),
+    };
+  });
+}
+
+
 // simple repl for executing commands
 require('repl').start({
   prompt: '',

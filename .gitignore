@@ -5,6 +5,7 @@
 
 /nodesrv_main/node_modules
 /nodesrv_main/websites/etags.json
+/nodesrv_main/websites/public/sitemap.xml
 /nodesrv_main/package-lock.json
 /nodesrv_main/**/*.gz
 /nodesrv_main/**/*.br
