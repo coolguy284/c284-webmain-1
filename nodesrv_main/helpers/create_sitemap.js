@@ -11,7 +11,7 @@ crawler.crawl('/index.html', crawler.fsGetterFuncGen('websites/public')).then(si
   Array.from(sites.entries()).map(site =>
     '  <url>\n' +
     `    <loc>https://coolguy284.com${site[0].endsWith('index.html') ? site[0].slice(0, -10) : site[0]}</loc>\n` +
-    `    <lastmod>${fs.statSync('websites/public' + site[0]).mtime.toISOString()}+00:00</lastmod>\n` +
+    `    <lastmod>${fs.statSync('websites/public' + site[0]).mtime.toISOString().slice(0, -1)}+00:00</lastmod>\n` +
     `    <changefreq>${websiteData[site[0].slice(1)] & 1 ? 'yearly' : 'daily'}</changefreq>\n` +
     `    <priority>${(site[0].startsWith('/debug') || site[0].startsWith('/errors') ? 0.0 : 1.0 - site[1] / 10).toFixed(1)}</priority>\n` +
     '  </url>'

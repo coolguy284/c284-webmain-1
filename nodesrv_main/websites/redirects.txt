@@ -1,6 +1,7 @@
 PS /debug/char.html /debug/useful_characters.html
 #PS /debug/latency.html /debug/latency_test.html
 #PS /debug/localstorage.html /debug/localstorage_editor.html
+PS /debug/owneyes.html /own_eyes.html
 PS /tools/dataurl.html /tools/data_url.html
 PS /tools/downloader.html /tools/file_downloader.html
 PS /tools/encodingdecoding.html /tools/encode_decode.html
@@ -8,4 +9,3 @@ PS /tools/encodedecode.html /tools/encode_decode.html
 PS /tools/html.html /tools/htmlescape.html
 PS /encodedecode.html /tools/encode_decode.html
 PS /encodingdecoding.html /tools/encode_decode.html
-PS /owneyes.html /own_eyes.html
