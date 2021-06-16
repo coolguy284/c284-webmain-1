@@ -9,20 +9,64 @@ module.exports = async function getMethod(requestProps) {
     return;
   }
   
-  if (requestProps.url.pathname == '/api/own_eyes/v1') {
-    if (common.vars.ownEyesCodes.has(requestProps.url.searchParams.get('code'))) {
+  if (requestProps.url.pathname.startsWith('/api/')) {
+    if (requestProps.url.pathname == '/api/echo/ip') {
+      let sendPort = requestProps.url.searchParams.get('port');
+      sendPort = sendPort && sendPort != 'false' && sendPort != '0';
       await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
-      await common.resp.end(requestProps, '<span><span><span>ｈ</span><span>ｅ</span>ｌ</span>ｏ</span>');
-      common.vars.ownEyesCodes.delete(decodeURIComponent(requestProps.url.searchParams.get('code')));
-    } else {
-      await common.resp.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
-      await common.resp.end(requestProps, '');
+      await common.resp.end(requestProps, sendPort ? common.mergeIPPort(requestProps.ip, requestProps.port) : requestProps.ip);
     }
-  }
-  
-  else if (requestProps.url.pathname == '/api/null') {
-    await common.resp.headers(requestProps, 204);
-    await common.resp.end(requestProps);
+    
+    else if (requestProps.url.pathname == '/api/echo/ipv4') {
+      let sendPort = requestProps.url.searchParams.get('port');
+      sendPort = sendPort && sendPort != 'false' && sendPort != '0';
+      if (/^(?:::ffff:)?(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
+        let ip = requestProps.ip.replace('::ffff:', '');
+        await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
+        await common.resp.end(requestProps, sendPort ? common.mergeIPPort(ip, requestProps.port) : ip);
+      } else {
+        await common.resp.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
+        await common.resp.end(requestProps, 'Error: client address not IPv4');
+      }
+    }
+    
+    else if (requestProps.url.pathname == '/api/echo/ipv6') {
+      let sendPort = requestProps.url.searchParams.get('port');
+      sendPort = sendPort && sendPort != 'false' && sendPort != '0';
+      if (/^::ffff:?(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
+        let ip = requestProps.ip.slice(7).split('.').map((x, i, a) => i % 2 && a[i - 1] != '0' ? parseInt(x).toString(16).padStart(2, '0') : parseInt(x).toString(16));
+        ip = '::ffff:' + ip[0] + ip[1] + ':' + ip[2] + ip[3];
+        await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
+        await common.resp.end(requestProps, sendPort ? common.mergeIPPort(ip, requestProps.port) : ip);
+      } else if (/^(?:[0-9a-f]{0,4}:){1,8}[0-9a-f]{0,4}$/.test(requestProps.ip)) {
+        await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
+        await common.resp.end(requestProps, sendPort ? common.mergeIPPort(ip, requestProps.port) : ip);
+      } else {
+        await common.resp.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
+        await common.resp.end(requestProps, 'Error: client address not IPv6');
+      }
+    }
+    
+    else if (requestProps.url.pathname == '/api/own_eyes/v1') {
+      if (common.vars.ownEyesCodes.has(requestProps.url.searchParams.get('code'))) {
+        await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
+        await common.resp.end(requestProps, '<span><span><span>ｈ</span><span>ｅ</span>ｌ</span>ｏ</span>');
+        common.vars.ownEyesCodes.delete(decodeURIComponent(requestProps.url.searchParams.get('code')));
+      } else {
+        await common.resp.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
+        await common.resp.end(requestProps, '');
+      }
+    }
+    
+    else if (requestProps.url.pathname == '/api/null') {
+      await common.resp.headers(requestProps, 204);
+      await common.resp.end(requestProps);
+    }
+    
+    else {
+      await common.resp.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
+      await common.resp.end(requestProps, 'Error: invalid API endpoint');
+    }
   }
   
   else if (requestProps.url.pathname == '/no_source.html') {

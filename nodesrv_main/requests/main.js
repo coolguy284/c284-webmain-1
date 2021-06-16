@@ -26,19 +26,25 @@ module.exports = async function main(...args) {
     
     if (!requestProps.url.pathname.startsWith('/api/')) logger.info(common.getReqLogStr(requestProps));
     
-    if (requestProps.proto == 'http') {
+    if (requestProps.proto == 'http' || requestProps.host == 'www.coolguy284.com') {
       let newURL = new URL(requestProps.url);
-      newURL.protocol = 'https:';
+      if (requestProps.proto == 'http') newURL.protocol = 'https:';
+      if (requestProps.host == 'www.coolguy284.com') newURL.host = 'coolguy284.com';
       common.resp.headers(requestProps, 307, { 'location': newURL.href });
       common.resp.end(requestProps);
       return;
     }
     
     if (requestProps.url.pathname in redirects.redirects) {
-      let redirectInfo = redirects.redirects[requestProps.url.pathname];
-      let newURL = new URL(requestProps.url);
-      newURL.pathname = redirectInfo[0];
-      common.resp.headers(requestProps, redirects.mapping[redirectInfo[1]], { 'location': newURL.href });
+      let redirectInfo = redirects.redirects[requestProps.url.pathname], newURL;
+      if (redirectInfo[0].startsWith('http://') || redirectInfo[0].startsWith('https://')) {
+        newURL = redirectInfo[0];
+      } else {
+        newURL = new URL(requestProps.url);
+        newURL.pathname = redirectInfo[0];
+        newURL = newURL.href;
+      }
+      common.resp.headers(requestProps, redirects.mapping[redirectInfo[1]], { 'location': newURL });
       common.resp.end(requestProps);
       return;
     }

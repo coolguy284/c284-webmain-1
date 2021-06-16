@@ -237,7 +237,7 @@ module.exports = exports = {
   
   s404: async (requestProps, headOnly) => {
     try {
-      await exports.file(requestProps, 'websites/public/errors/404.html', 404, headOnly);
+      await exports.file(requestProps, 'websites/public/debug/templates/404.html', 404, headOnly);
     } catch (err) {
       await exports.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
       if (headOnly)
@@ -249,7 +249,7 @@ module.exports = exports = {
   
   s500: async (requestProps, headOnly) => {
     try {
-      await exports.file(requestProps, 'websites/public/errors/500.html', 500, headOnly);
+      await exports.file(requestProps, 'websites/public/debug/templates/500.html', 500, headOnly);
     } catch (err) {
       await exports.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
       if (headOnly)
