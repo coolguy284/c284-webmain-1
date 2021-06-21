@@ -33,7 +33,7 @@
       
       <div class = 'row' style = 'margin-top: 0.7rem;'>
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <select class = 'form-select' id = 'hash_algorythm' style = 'width: 7.5rem; display: inline-block;' oninput = 'Update(3);'>
+          <select class = 'form-select' id = 'hash_algorythm' style = 'width: 7.5rem; display: inline-block;' oninput = 'Update(1);'>
             <option value = 'SHA-1'>SHA-1</option>
             <option value = 'SHA-256' selected>SHA-256</option>
             <option value = 'SHA-384'>SHA-384</option>
@@ -44,20 +44,22 @@
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <label for = 'text_encoding' class = 'col-form-label'>Text Encoding:</label>
           
-          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;' oninput = 'Update(3);'>
+          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;' oninput = 'Update(1);'>
             <option value = 'utf8' selected>UTF-8</option>
             <option value = 'utf16le'>UTF-16 LE</option>
             <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
             <option value = 'utf16be'>UTF-16 BE</option>
             <option value = 'utf16benb'>UTF-16 BE (No BOM)</option>
             <option value = 'latin1'>Latin1</option>
+            <option value = 'base64'>Base64</option>
+            <option value = 'hex'>Hex</option>
           </select>
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <label for = 'text_encoding' class = 'col-form-label'>Output Encoding:</label>
           
-          <select class = 'form-select' id = 'hash_encoding' style = 'width: 6.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update(3);'>
+          <select class = 'form-select' id = 'hash_encoding' style = 'width: 6.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update(1);'>
             <option value = 'latin1'>Latin1</option>
             <option value = 'base64'>Base64</option>
             <option value = 'hex' selected>Hex</option>
@@ -95,7 +97,7 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' id = 'encoding_header' style = 'margin-top: -7px;'>SHA</h4>
+          <h4 class = 'card-title' id = 'encoding_header' style = 'margin-top: -7px;'>SHA Hashed Text</h4>
           <textarea class = 'form-control' id = 'text_hashed' placeholder = 'SHA hashed text here.'></textarea>
         </div>
       </div>
@@ -217,6 +219,8 @@
             case 'utf16lenb': binaryString = Utf16LENBToLatin1(binaryString); break;
             case 'utf16be': binaryString = Utf16BEToLatin1(binaryString); break;
             case 'utf16benb': binaryString = Utf16BENBToLatin1(binaryString); break;
+            case 'base64': binaryString = atob(binaryString); break;
+            case 'hex': binaryString = HexToBinaryString(binaryString); break;
           }
           
           let repeatCount = Number(repeats.value);
@@ -284,6 +288,8 @@
           case 'utf16be': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BEToLatin1(TextAreaToText(text_unhashed.value)))); break;
           case 'utf16benb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BENBToLatin1(TextAreaToText(text_unhashed.value)))); break;
           case 'latin1': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(TextAreaToText(text_unhashed.value))); break;
+          case 'base64': element.setAttribute('href', 'data:application/octet-stream;base64,' + text_unhashed.value); break;
+          case 'hex': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(HexToBinaryString(text_unhashed.value))); break;
         }
         
         element.setAttribute('download', 'file.txt');

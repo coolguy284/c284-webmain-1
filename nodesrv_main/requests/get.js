@@ -69,6 +69,24 @@ module.exports = async function getMethod(requestProps) {
     }
   }
   
+  else if (requestProps.url.pathname == '/r') {
+    if (requestProps.url.search.startsWith('?u=')) {
+      let file = Buffer.from((await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html')).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
+      await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await common.resp.end(requestProps, file);
+    } else if (requestProps.url.search.startsWith('?uh=')) {
+      await common.resp.headers(requestProps, 303, { 'location': decodeURIComponent(requestProps.url.search.slice(4)) });
+      await common.resp.end(requestProps);
+    } else if (requestProps.url.search.startsWith('?e=')) {
+      let file = Buffer.from((await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html')).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
+      await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await common.resp.end(requestProps, file);
+    } else if (requestProps.url.search.startsWith('?eh=')) {
+      await common.resp.headers(requestProps, 303, { 'location': Buffer.from(requestProps.url.search.slice(3), 'base64').toString() });
+      await common.resp.end(requestProps);
+    }
+  }
+  
   else if (requestProps.url.pathname == '/no_source.html') {
     await common.resp.fileFull(
       requestProps, 'websites/public/no_source.html', null,
