@@ -37,13 +37,15 @@
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <label for = 'text_encoding' class = 'col-form-label'>Text Encoding:</label>
           
-          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;'  oninput = 'Update();'>
+          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;'  oninput = 'GeneralUpdate();'>
             <option value = 'utf8' selected>UTF-8</option>
             <option value = 'utf16le'>UTF-16 LE</option>
             <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
             <option value = 'utf16be'>UTF-16 BE</option>
             <option value = 'utf16benb'>UTF-16 BE (No BOM)</option>
             <option value = 'latin1'>Latin1</option>
+            <option value = 'base64'>Base64</option>
+            <option value = 'hex'>Hex</option>
           </select>
         </div>
         
@@ -207,6 +209,8 @@
         
         if (mode == 2 || !auto_convert.checked && !mode) return;
         
+        lastUpdated = 1;
+        
         try {
           let binaryString = TextAreaToText(text.value);
 
@@ -216,6 +220,8 @@
             case 'utf16lenb': binaryString = Utf16LENBToLatin1(binaryString); break;
             case 'utf16be': binaryString = Utf16BEToLatin1(binaryString); break;
             case 'utf16benb': binaryString = Utf16BENBToLatin1(binaryString); break;
+            case 'base64': binaryString = atob(binaryString); break;
+            case 'hex': binaryString = HexToBinaryString(binaryString); break;
           }
           
           if (base64_encoded.checked) {
@@ -241,17 +247,19 @@
         
         if (mode == 2 || !auto_convert.checked && !mode) return;
         
+        lastUpdated = 2;
+        
         try {
           let match = /^data:([a-z.\/]*[a-z0-9;=-]*?;base64|[a-z.\/]*[a-z0-9;=-]*?)?,(.*)$/.exec(data_url.value);
           
           if (!match) throw new Error('invalid data url');
           
-          if (match[1].endsWith(';base64')) {
+          if (match[1] && match[1].endsWith(';base64')) {
             base64_encoded.checked = true;
             mimetype.value = match[1].slice(0, -7);
           } else {
             base64_encoded.checked = false;
-            mimetype.value = match[1];
+            mimetype.value = match[1] || '';
           }
           
           if (base64_encoded.checked) {
@@ -263,11 +271,20 @@
               case 'utf16lenb': binaryString = Latin1ToUtf16LENB(binaryString); break;
               case 'utf16be': binaryString = Latin1ToUtf16BE(binaryString); break;
               case 'utf16benb': binaryString = Latin1ToUtf16BENB(binaryString); break;
+              case 'base64': binaryString = btoa(binaryString); break;
+              case 'hex': binaryString = BinaryStringToHex(binaryString); break;
             }
             
             text.value = TextToTextArea(binaryString);
           } else {
-            text.value = TextToTextArea(decodeURIComponent(match[2]));
+            let binaryString = decodeURIComponent(match[2]);
+            
+            switch (text_encoding.value) {
+              case 'base64': binaryString = btoa(binaryString); break;
+              case 'hex': binaryString = BinaryStringToHex(binaryString); break;
+            }
+            
+            text.value = TextToTextArea(binaryString);
           }
           
           Update(2);
@@ -276,6 +293,11 @@
           data_url_warning.innerText = e.message == 'invalid data url' ? 'Invalid data URL' : e instanceof URIError ? 'Cannot decode as UTF8' : e instanceof DOMException ? 'Invalid Base64' : (console.error(e), e.toString());
           data_url_warning.style.display = '';
         }
+      }
+      
+      function GeneralUpdate(v) {
+        if (lastUpdated == 1) Update();
+        else if (lastUpdated == 2) DataUpdate();
       }
       
       text.ondragover = evt => evt.preventDefault();
@@ -354,6 +376,8 @@
           case 'utf16be': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BEToLatin1(TextAreaToText(text.value)))); break;
           case 'utf16benb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BENBToLatin1(TextAreaToText(text.value)))); break;
           case 'latin1': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(TextAreaToText(text.value))); break;
+          case 'base64': element.setAttribute('href', 'data:application/octet-stream;base64,' + text.value); break;
+          case 'hex': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(HexToBinaryString(text.value))); break;
         }
         
         element.setAttribute('download', 'file.txt');
