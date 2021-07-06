@@ -59,9 +59,9 @@
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label for = 'hash_encoding' class = 'col-form-label'>Output Encoding:</label>
+          <label for = 'output_encoding' class = 'col-form-label'>Output Encoding:</label>
           
-          <select class = 'form-select' id = 'hash_encoding' style = 'width: 6.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update(1);'>
+          <select class = 'form-select' id = 'output_encoding' style = 'width: 6.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update(1);'>
             <option value = 'latin1'>Latin1</option>
             <option value = 'base64'>Base64</option>
             <option value = 'hex' selected>Hex</option>
@@ -119,7 +119,7 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' id = 'encoding_header' style = 'margin-top: -7px;'>SHA Hashed Text</h4>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'>SHA Hashed Text</h4>
           <textarea class = 'form-control' id = 'text_hashed' placeholder = 'SHA hashed text here.'></textarea>
         </div>
       </div>
@@ -257,7 +257,7 @@
           
           binaryString = U8ArrToBinaryString(binaryString);
           
-          switch (hash_encoding.value) {
+          switch (output_encoding.value) {
             case 'latin1': text_hashed.value = TextToTextArea(binaryString); break;
             case 'base64': text_hashed.value = btoa(binaryString); break;
             case 'hex': text_hashed.value = BinaryStringToHex(binaryString); break;
