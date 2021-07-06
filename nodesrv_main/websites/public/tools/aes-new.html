@@ -502,9 +502,9 @@
       function GeneralUpdate(v) {
         if (v == 1) {
           switch (aes_algo.value) {
-            case 'AES-CTR': ctr_label.innerText = 'Counter:'; ctr_length_div.style.display = ''; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
-            case 'AES-CBC': ctr_label.innerText = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
-            case 'AES-GCM': ctr_label.innerText = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = ''; tag_length_div.style.display = ''; break;
+            case 'AES-CTR': ctr_label.textContent = 'Counter:'; ctr_length_div.style.display = ''; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
+            case 'AES-CBC': ctr_label.textContent = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
+            case 'AES-GCM': ctr_label.textContent = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = ''; tag_length_div.style.display = ''; break;
           }
         }
         

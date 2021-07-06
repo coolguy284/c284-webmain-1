@@ -603,6 +603,12 @@
       }
       
       async function RSAUpdate(mode) {
+        if (rsa.classList.contains('is-invalid')) {
+          rsa.classList.remove('is-invalid');
+          rsa_warning.style.display = 'none';
+          rsa_warning.innerText = '';
+        }
+        
         if (!auto_convert.checked && !mode) return;
         
         try {

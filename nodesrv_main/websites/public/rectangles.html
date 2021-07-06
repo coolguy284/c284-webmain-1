@@ -62,7 +62,7 @@
       
       function UpdateCanvas() {
         let [ amount, positive ] = SliderToNumber(Number(num_shapes.value));
-        num_shapes_text.innerText = positive ? amount : '-' + amount;
+        num_shapes_text.textContent = positive ? amount : '-' + amount;
         
         /*canvas.innerHTML = '';
         if (positive) canvas.style = '';
