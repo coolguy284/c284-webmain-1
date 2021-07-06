@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: [Old] RSA Encrypter / Decrypter / Key Generator</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'This website is used to encrypt, decrypt, and generate keys for RSA.'>
+    <meta name = 'keywords' content = 'RSA'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/tools/rsa.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: [Old] RSA Encrypter / Decrypter / Key Generator'>
+    <meta name = 'og:description' content = 'This website is used to encrypt, decrypt, and generate keys for RSA.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/rsa.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/bootstrap.min.css'>
+    <style>
+      textarea {
+        font-family: monospace;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-fluid'>
+      <noscript>
+        <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+          Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
+        </div>
+      </noscript>
+      
+      <div class = 'row' style = 'margin-top: 0.7rem;'>
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'gkey();'>Generate Keys</button>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <label for = 'key_size' class = 'col-form-label'>Key Size:</label>
+          
+          <select class = 'form-select' id = 'keyll' style = 'width: 7rem; margin-left: 5px; display: inline-block;' onchange = 'updsct();'>
+            <option value = '512'>512 bit</option>
+            <option value = '1024' selected>1024 bit</option>
+            <option value = '2048'>2048 bit</option>
+            <option value = '4096'>4096 bit</option>
+            <option value = '0'>Other</option>
+          </select>
+          
+          <input type = 'number' class = 'form-control' id = 'keyl' min = 1 step = 1 style = 'width: 7rem; margin-left: 5px; display: none;'>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <label for = 'prita'><h4 class = 'card-title' style = 'margin-top: -7px;'>Private Key</h4></label>
+          <textarea class = 'form-control' id = 'prita'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <label for = 'pubta'><h4 class = 'card-title' style = 'margin-top: -7px;'>Public Key</h4></label>
+          <textarea class = 'form-control' id = 'pubta'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'row' style = 'margin-top: 0.7rem;'>
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <input type = 'file' id = 'rsaf' style = 'display:none;' onchange = 'tfrsa(this.files[0]);'>
+          <input type = 'file' id = 'texf' style = 'display:none;' onchange = 'tftex(this.files[0]);'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'trsa();'>Text > RSA</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'ttex();'>RSA > Text</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'rsaf.click();'>File > RSA</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'texf.click();'>RSA File > Text</button>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <label for = 'texta'><h4 class = 'card-title' style = 'margin-top: -7px;'>Plaintext</h4></label>
+          <textarea class = 'form-control' id = 'texta'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <label for = 'rsata'><h4 class = 'card-title' style = 'margin-top: -7px;'>RSA</h4></label>
+          <textarea class = 'form-control' id = 'rsata'></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <script src = '/libs/jsencrypt-rsa.js'></script>
+    <script>
+      function download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+      function gkey() {
+        var crypt = new JSEncrypt({default_key_size : parseInt(keyl.value)});
+        crypt.getKey();
+        prita.value = crypt.getPrivateKey();
+        pubta.value = crypt.getPublicKey();
+      }
+      function trsa() {
+        var crypt = new JSEncrypt();
+        crypt.setPublicKey(pubta.value);
+        rsata.value = crypt.encrypt(texta.value);
+      }
+      function ttex() {
+        var crypt = new JSEncrypt();
+        crypt.setPrivateKey(prita.value);
+        texta.value = crypt.decrypt(rsata.value);
+      }
+      function tfrsa(file) {
+        var fro = new FileReader();
+        fro.onload = function () {
+          var crypt = new JSEncrypt();
+          crypt.setPublicKey(pubta.value);
+          download('rsa.txt', crypt.encrypt(fro.result));
+        }
+        fro.readAsText(file);
+      }
+      function tftex(file) {
+        var fro = new FileReader();
+        fro.onload = function () {
+          var crypt = new JSEncrypt();
+          crypt.setPrivateKey(prita.value);
+          download('file.txt', crypt.decrypt(fro.result));
+        }
+        fro.readAsText(file);
+      }
+      function updsct() {
+        if (keyll.value == '0') {
+          keyl.style.display = 'inline-block';
+        } else {
+          keyl.style.display = 'none';
+          keyl.value = keyll.value;
+        }
+      }
+    </script>
+  </body>
+</html>

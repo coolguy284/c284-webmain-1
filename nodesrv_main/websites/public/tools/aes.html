@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: [Old] AES Encrypter / Decrypter</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'This website is used to encrypt and decrypt AES.'>
+    <meta name = 'keywords' content = 'AES'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/tools/aes.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: [Old] AES Encrypter / Decrypter'>
+    <meta name = 'og:description' content = 'This website is used to encrypt and decrypt AES.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/aes.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/bootstrap.min.css'>
+    <style>
+      textarea {
+        font-family: monospace;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-fluid'>
+      <noscript>
+        <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+          Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
+        </div>
+      </noscript>
+      
+      <div class = 'row' style = 'margin-top: 0.7rem;'>
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <input type = 'file' id = 'aesf' style = 'display:none;' onchange = 'tfaes(this.files[0]);'>
+          <input type = 'file' id = 'texf' style = 'display:none;' onchange = 'tftex(this.files[0]);'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'taes();'>Text > AES</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'ttex();'>AES > Text</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'aesf.click();'>File > AES</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'texf.click();'>AES File > Text</button>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <label for = 'mapp' class = 'col-form-label'>Password:</label>
+          
+          <input type = 'text' class = 'form-control' id = 'mapp' style = 'width: 20rem; margin-left: 5px; display: inline;' oninput = 'TextUpdate();'>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <label for = 'texta'><h4 class = 'card-title' style = 'margin-top: -7px;'>Plaintext</h4></label>
+          <textarea class = 'form-control' id = 'texta'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <label for = 'aesta'><h4 class = 'card-title' style = 'margin-top: -7px;'>Encrypted AES</h4></label>
+          <textarea class = 'form-control' id = 'aesta'></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <script src = '/libs/crypto-js_3.1.2_rollups_aes.js'></script>
+    <script>
+      function download(filename, text) {
+        var element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+      function taes() {
+        try {
+          aesta.value = CryptoJS.AES.encrypt(texta.value, mapp.value);
+        } catch (e) { alert(e); }
+      }
+      function ttex() {
+        try {
+          texta.value = CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(aesta.value, mapp.value));
+        } catch (e) { alert(e); }
+      }
+      function tfaes(file) {
+        var fro = new FileReader();
+        fro.onload = function () {
+          try {
+            download('aes.txt', CryptoJS.AES.encrypt(fro.result, mapp.value));
+          } catch (e) { alert(e); }
+        }
+        fro.readAsText(file);
+      }
+      function tftex(file) {
+        var fro = new FileReader();
+        fro.onload = function () {
+          try {
+            download('file.txt', CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(fro.result, mapp.value)));
+          } catch (e) { alert(e); }
+        }
+        fro.readAsText(file);
+      }
+    </script>
+  </body>
+</html>
