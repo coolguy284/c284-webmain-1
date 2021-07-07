@@ -99,7 +99,7 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'>Text</h4>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text'>Text</label></h4>
           <div class = 'alert alert-danger' id = 'text_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 9rem);'></div>
           <textarea class = 'form-control' id = 'text' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'Update();'></textarea>
         </div>
@@ -107,11 +107,13 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'>Data URL</h4>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'data_url'>Data URL</label></h4>
           <div class = 'alert alert-danger' id = 'data_url_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 9rem);'></div>
           <textarea class = 'form-control' id = 'data_url' placeholder = 'Data URL appears here.' oninput = 'DataUpdate();'></textarea>
         </div>
       </div>
+      
+      <br>
     </div>
     
     <script src = '/libs/bootstrap.bundle.min.js' async></script>

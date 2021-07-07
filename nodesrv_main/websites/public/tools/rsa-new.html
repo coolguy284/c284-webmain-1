@@ -116,7 +116,7 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'>Private Key</h4>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'private_key'>Private Key</label></h4>
           <div class = 'alert alert-danger' id = 'private_key_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 10rem);'></div>
           <textarea class = 'form-control' id = 'private_key' placeholder = 'PEM encoded private key here, can be copy-pasted in manually or dragged in from file.' spellcheck = 'false' style = 'word-break: break-all;'></textarea>
         </div>
@@ -124,7 +124,7 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'>Public Key</h4>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'public_key'>Public Key</label></h4>
           <div class = 'alert alert-danger' id = 'public_key_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 10rem);'></div>
           <textarea class = 'form-control' id = 'public_key' placeholder = 'PEM encoded public key here, can be copy-pasted in manually, dragged in from file, or calculated from private key.' spellcheck = 'false' style = 'word-break: break-all;'></textarea>
         </div>
@@ -197,7 +197,7 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'>Text</h4>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text'>Text</label></h4>
           <div class = 'alert alert-danger' id = 'text_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 10rem);'></div>
           <textarea class = 'form-control' id = 'text' placeholder = 'Unencrypted text here. Or drag and drop a file here.' oninput = 'TextUpdate();'></textarea>
         </div>
@@ -205,13 +205,13 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'>RSA</h4>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'rsa'>RSA</label></h4>
           <div class = 'alert alert-danger' id = 'rsa_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 10rem);'></div>
           <textarea class = 'form-control' id = 'rsa' placeholder = 'Encrypted text here. Or drag and drop a file here.' spellcheck = 'false' style = 'word-break: break-all;' oninput = 'RSAUpdate();'></textarea>
         </div>
       </div>
       
-      <br><br>
+      <br>
     </div>
     
     <script src = '/libs/bootstrap.bundle.min.js' async></script>
