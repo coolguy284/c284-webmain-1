@@ -19,8 +19,18 @@
     
     <link rel = 'stylesheet' href = '/libs/bootstrap.min.css'>
     <style>
-      body { background:#e8e8ff; }
+      html {
+        position: relative;
+        min-height: 100%;
+      }
+      
+      body {
+        margin-bottom: 60px;
+        background: #e8e8ff;
+      }
+      
       td { padding-right: 1rem; }
+      
       a:visited { color: #551a8b; }
       
       .nav-link:hover {
@@ -28,6 +38,15 @@
       }
       
       #indexTop { padding: 4rem; }
+      
+      .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        line-height: 60px;
+        background: #f0f0ff;
+      }
       
       @media (max-width: 767.98px) {
         #indexTop { padding: 2rem 1rem 2rem; }
@@ -89,10 +108,17 @@
           </tr>
         </table><br>
         <h2>Some Info About Me</h2>
-        <p>I am a coder who likes to program websites and webservers, and I also like to program in Python. I like to put two spaces after each sentence, but I am too lazy to put an &amp;nbsp; in addition to a space after a period.</p>
-        <br>
+        <p class = 'pb-3'>I am a coder who likes to program websites and webservers, and I also like to program in Python. I like to put two spaces after each sentence, but I am too lazy to put an &amp;nbsp; in addition to a space after a period.</p>
       </div>
     </div>
+    
+    <footer class = 'footer'>
+      <div class = 'container-fluid'>
+        This website is <a href = 'https://github.com/coolguy284/c284-webmain-1'>open source</a>.
+        <span class = 'float-end'>Version {version}</span>
+      </div>
+    </div>
+    
     <script src = '/libs/bootstrap.bundle.min.js' async></script>
     <script>navbarNav.classList.remove('show');</script>
   </body>
