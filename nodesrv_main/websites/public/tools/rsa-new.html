@@ -646,6 +646,23 @@
           
           keyPrivate = await crypto.subtle.exportKey('jwk', keyPrivate);
           
+          Object.keys(keyPrivate).forEach(x => {
+            let elem = document.getElementById('debug_private_' + x);
+            if (elem)
+              elem.innerHTML = x.length < 3 ?
+                `${ArrToBigInt(BinaryStringToU8Arr(atob(keyPrivate[x].replaceAll('-', '+').replaceAll('_', '/'))))}<hr style = 'margin: 0.5rem 0 0.3rem;'>${keyPrivate[x]}` :
+                keyPrivate[x];
+            else
+              elem.innerHTML = 'Could not retrieve';
+          });
+        } catch (e) {
+          debug_private_kty.textContent = debug_private_alg.textContent =
+          debug_private_p.textContent = debug_private_q.textContent = debug_private_n.textContent =
+          debug_private_e.textContent = debug_private_d.textContent =
+          debug_private_dp.textContent = debug_private_dq.textContent = debug_private_qi.textContent = 'N/A due to invalid private key';
+        }
+        
+        try {
           let keyPublic = await crypto.subtle.importKey(
             'spki',
             BinaryStringToU8Arr(atob(public_key.value.replaceAll('\n', '').replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', ''))),
@@ -659,22 +676,18 @@
           
           keyPublic = await crypto.subtle.exportKey('jwk', keyPublic);
           
-          Object.keys(keyPrivate).forEach(x => {
-            let elem = document.getElementById('debug_private_' + x);
-            if (elem) elem.innerHTML = x.length < 3 ?
-              `${ArrToBigInt(BinaryStringToU8Arr(atob(keyPrivate[x].replaceAll('-', '+').replaceAll('_', '/'))))}<hr style = 'margin: 0.5rem 0 0.3rem;'>${keyPrivate[x]}` :
-              keyPrivate[x];
-          });
-          
           Object.keys(keyPublic).forEach(x => {
             let elem = document.getElementById('debug_public_' + x);
-            if (elem) elem.innerHTML = x.length < 3 ?
-              `${ArrToBigInt(BinaryStringToU8Arr(atob(keyPublic[x].replaceAll('-', '+').replaceAll('_', '/'))))}<hr style = 'margin: 0.5rem 0 0.3rem;'>${keyPublic[x]}` :
-              keyPublic[x];
+            if (elem)
+              elem.innerHTML = x.length < 3 ?
+                `${ArrToBigInt(BinaryStringToU8Arr(atob(keyPublic[x].replaceAll('-', '+').replaceAll('_', '/'))))}<hr style = 'margin: 0.5rem 0 0.3rem;'>${keyPublic[x]}` :
+                keyPublic[x];
+            else
+              elem.innerHTML = 'Could not retrieve';
           });
-        } catch (e) {throw e;
-          debug_public_kty.textContent = 'N/A';
-          debug_public_alg.textContent = 'N/A';
+        } catch (e) {
+          debug_public_kty.textContent = debug_public_alg.textContent =
+          debug_public_n.textContent = debug_public_e.textContent = 'N/A due to invalid public key';
         }
       }
       
