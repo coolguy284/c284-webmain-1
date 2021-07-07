@@ -19,6 +19,8 @@
     
     <link rel = 'stylesheet' href = '/libs/bootstrap.min.css'>
     <style>
+      th, td { padding: 0.5rem; word-break: break-word; white-space: pre-wrap; max-width: calc(100vw - 25rem); border: 1px solid gray; }
+      
       textarea {
         font-family: monospace;
         height: 200px;
@@ -118,7 +120,7 @@
         <div class = 'card-body'>
           <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'private_key'>Private Key</label></h4>
           <div class = 'alert alert-danger' id = 'private_key_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 10rem);'></div>
-          <textarea class = 'form-control' id = 'private_key' placeholder = 'PEM encoded private key here, can be copy-pasted in manually or dragged in from file.' spellcheck = 'false' style = 'word-break: break-all;'></textarea>
+          <textarea class = 'form-control' id = 'private_key' placeholder = 'PEM encoded private key here, can be copy-pasted in manually or dragged in from file.' spellcheck = 'false' style = 'word-break: break-all;' oninput = 'UpdateDebugInfo();'></textarea>
         </div>
       </div>
       
@@ -126,7 +128,43 @@
         <div class = 'card-body'>
           <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'public_key'>Public Key</label></h4>
           <div class = 'alert alert-danger' id = 'public_key_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 10rem);'></div>
-          <textarea class = 'form-control' id = 'public_key' placeholder = 'PEM encoded public key here, can be copy-pasted in manually, dragged in from file, or calculated from private key.' spellcheck = 'false' style = 'word-break: break-all;'></textarea>
+          <textarea class = 'form-control' id = 'public_key' placeholder = 'PEM encoded public key here, can be copy-pasted in manually, dragged in from file, or calculated from private key.' spellcheck = 'false' style = 'word-break: break-all;' oninput = 'UpdateDebugInfo();'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'accordion mt-3' id = 'debug_accordion'>
+        <div class = 'accordion-item'>
+          <h2 class = 'accordion-header' id = 'debug_heading'>
+            <button type = 'button' class = 'accordion-button collapsed' id = 'debug_button' data-bs-toggle = 'collapse' data-bs-target = '#debug_collapse' aria-expanded = 'false' aria-controls = 'debug_collapse' onclick = 'UpdateDebugInfo();'>
+              <span style = 'font-size: 1.3rem;'>Key Debug Information</span>
+            </button>
+          </h2>
+          <div id = 'debug_collapse' class = 'accordion-collapse collapse' aria-labelledby = 'heading' data-bs-parent = '#debug_accordion'>
+            <div class = 'accordion-body'>
+              <h4 class = 'mb-3'>Private Key</h4>
+              <table>
+                <tr><th>Property</th>         <th>Name</th>                       <th>Value</th>
+                <tr><td>Key Type</td>         <td>kty</td>                        <td id = 'debug_private_kty'></td></tr>
+                <tr><td>Algorythm</td>        <td>alg</td>                        <td id = 'debug_private_alg'></td></tr>
+                <tr><td>Prime 1</td>          <td><var>p</var></td>               <td id = 'debug_private_p'></td></tr>
+                <tr><td>Prime 2</td>          <td><var>q</var></td>               <td id = 'debug_private_q'></td></tr>
+                <tr><td>Product</td>          <td><var>n</var></td>               <td id = 'debug_private_n'></td></tr>
+                <tr><td>Public Exponent</td>  <td><var>e</var></td>               <td id = 'debug_private_e'></td></tr>
+                <tr><td>Private Exponent</td> <td><var>d</var></td>               <td id = 'debug_private_d'></td></tr>
+                <tr><td>DP</td>               <td><var>d<sub>p</sub></var></td>   <td id = 'debug_private_dp'></td></tr>
+                <tr><td>DQ</td>               <td><var>d<sub>q</sub></var></td>   <td id = 'debug_private_dq'></td></tr>
+                <tr><td>QINV</td>             <td><var>q<sub>inv</sub></var></td> <td id = 'debug_private_qi'></td></tr>
+              </table>
+              <h4 class = 'mt-4 mb-3'>Public Key</h4>
+              <table>
+                <tr><th>Property</th>         <th>Name</th>                       <th>Value</th>
+                <tr><td>Key Type</td>         <td>kty</td>                        <td id = 'debug_public_kty'></td></tr>
+                <tr><td>Algorythm</td>        <td>alg</td>                        <td id = 'debug_public_alg'></td></tr>
+                <tr><td>Product</td>          <td><var>n</var></td>               <td id = 'debug_public_n'></td></tr>
+                <tr><td>Public Exponent</td>  <td><var>e</var></td>               <td id = 'debug_public_e'></td></tr>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
       
@@ -311,8 +349,29 @@
         return str;
       }
       
+      function BigIntToArr(num) {
+        var numArray = [];
+        
+        while (num > 0) {
+          numArray.splice(0, 0, Number(num % 256n));
+          num /= 256n;
+        }
+        
+        return numArray;
+      }
+      
+      function ArrToBigInt(numArray) {
+        var num = 0n;
+        
+        for (var i = 0; i < numArray.length; i++) {
+          num *= 256n;
+          num += BigInt(numArray[i]);
+        }
+        
+        return num;
+      }
+      
       async function ExportRSAKey(key, isPrivate) {
-        //return JSON.stringify(await crypto.subtle.exportKey('jwk', isPrivate ? key.privateKey : key.publicKey));
         let keyBase64 = btoa(U8ArrToBinaryString(await crypto.subtle.exportKey(isPrivate ? 'pkcs8' : 'spki', isPrivate ? key.privateKey : key.publicKey)));
         
         let keyBase64Array = [];
@@ -360,6 +419,10 @@
           private_key_warning.innerText = '';
         }
         
+        if (private_key.classList.contains('is-invalid')) {
+          private_key.classList.remove('is-invalid');
+        }
+        
         try {
           if (key_exponent.value == 'custom') {
             try {
@@ -373,12 +436,7 @@
           
           if (keyExponent < 0) keyExponent = -keyExponent;
           
-          var keyExponentArray = [];
-          
-          while (keyExponent > 0) {
-            keyExponentArray.splice(0, 0, Number(keyExponent % 256n));
-            keyExponent /= 256n;
-          }
+          keyExponentArray = BigIntToArr(keyExponent);
           
           let keyPair = await crypto.subtle.generateKey(
             {
@@ -394,6 +452,8 @@
           private_key.value = '-----BEGIN PRIVATE KEY-----\n' + await ExportRSAKey(keyPair, true) + '\n-----END PRIVATE KEY-----';
           
           public_key.value = '-----BEGIN PUBLIC KEY-----\n' + await ExportRSAKey(keyPair, false) + '\n-----END PUBLIC KEY-----';
+          
+          UpdateDebugInfo();
         } catch (e) {
           if (!key_size.classList.contains('is-invalid')) {
             key_size.classList.add('is-invalid');
@@ -407,38 +467,61 @@
       }
       
       async function CompleteKeyPair() {
-        let keyPrivate = await crypto.subtle.importKey(
-          'pkcs8',
-          BinaryStringToU8Arr(atob(private_key.value.replaceAll('\n', '').replace('-----BEGIN PRIVATE KEY-----', '').replace('-----END PRIVATE KEY-----', ''))),
-          {
-            name: rsa_algorythm.value,
-            hash: key_digest.value,
-          },
-          true,
-          ['decrypt']
-        );
+        if (private_key.classList.contains('is-invalid')) {
+          private_key.classList.remove('is-invalid');
+          private_key_warning.style.display = 'none';
+          private_key_warning.innerText = '';
+        }
         
-        keyPrivate = await crypto.subtle.exportKey('jwk', keyPrivate);
+        if (key_size.classList.contains('is-invalid')) {
+          key_size.classList.remove('is-invalid');
+          key_size_number.classList.remove('is-invalid');
+          key_exponent.classList.remove('is-invalid');
+          key_exponent_number.classList.remove('is-invalid');
+        }
         
-        let keyPublic = await crypto.subtle.importKey(
-          'jwk',
-          {
-            alg: keyPrivate.alg,
-            e: keyPrivate.e,
-            ext: true,
-            key_ops: ['encrypt'],
-            kty: keyPrivate.kty,
-            n: keyPrivate.n,
-          },
-          {
-            name: rsa_algorythm.value,
-            hash: key_digest.value,
-          },
-          true,
-          ['encrypt']
-        );
-        
-        public_key.value = '-----BEGIN PUBLIC KEY-----\n' + await ExportRSAKey({ publicKey: keyPublic }, false) + '\n-----END PUBLIC KEY-----';
+        try {
+          let keyPrivate = await crypto.subtle.importKey(
+            'pkcs8',
+            BinaryStringToU8Arr(atob(private_key.value.replaceAll('\n', '').replace('-----BEGIN PRIVATE KEY-----', '').replace('-----END PRIVATE KEY-----', ''))),
+            {
+              name: rsa_algorythm.value,
+              hash: key_digest.value,
+            },
+            true,
+            ['decrypt']
+          );
+          
+          keyPrivate = await crypto.subtle.exportKey('jwk', keyPrivate);
+          
+          let keyPublic = await crypto.subtle.importKey(
+            'jwk',
+            {
+              alg: keyPrivate.alg,
+              e: keyPrivate.e,
+              ext: true,
+              key_ops: ['encrypt'],
+              kty: keyPrivate.kty,
+              n: keyPrivate.n,
+            },
+            {
+              name: rsa_algorythm.value,
+              hash: key_digest.value,
+            },
+            true,
+            ['encrypt']
+          );
+          
+          public_key.value = '-----BEGIN PUBLIC KEY-----\n' + await ExportRSAKey({ publicKey: keyPublic }, false) + '\n-----END PUBLIC KEY-----';
+          
+          UpdateDebugInfo();
+        } catch (e) {
+          if (!private_key.classList.contains('is-invalid')) {
+            private_key.classList.add('is-invalid');
+            private_key_warning.style.display = '';
+          }
+          private_key_warning.innerText = (console.error(e), e.toString());
+        }
       }
       
       private_key.ondragover = evt => evt.preventDefault();
@@ -544,6 +627,55 @@
         document.body.appendChild(element);
         element.click();
         document.body.removeChild(element);
+      }
+      
+      async function UpdateDebugInfo() {
+        if (debug_button.classList.contains('collapsed')) return;
+        
+        try {
+          let keyPrivate = await crypto.subtle.importKey(
+            'pkcs8',
+            BinaryStringToU8Arr(atob(private_key.value.replaceAll('\n', '').replace('-----BEGIN PRIVATE KEY-----', '').replace('-----END PRIVATE KEY-----', ''))),
+            {
+              name: rsa_algorythm.value,
+              hash: key_digest.value,
+            },
+            true,
+            ['decrypt']
+          );
+          
+          keyPrivate = await crypto.subtle.exportKey('jwk', keyPrivate);
+          
+          let keyPublic = await crypto.subtle.importKey(
+            'spki',
+            BinaryStringToU8Arr(atob(public_key.value.replaceAll('\n', '').replace('-----BEGIN PUBLIC KEY-----', '').replace('-----END PUBLIC KEY-----', ''))),
+            {
+              name: rsa_algorythm.value,
+              hash: key_digest.value,
+            },
+            true,
+            ['encrypt']
+          );
+          
+          keyPublic = await crypto.subtle.exportKey('jwk', keyPublic);
+          
+          Object.keys(keyPrivate).forEach(x => {
+            let elem = document.getElementById('debug_private_' + x);
+            if (elem) elem.innerHTML = x.length < 3 ?
+              `${ArrToBigInt(BinaryStringToU8Arr(atob(keyPrivate[x].replaceAll('-', '+').replaceAll('_', '/'))))}<hr style = 'margin: 0.5rem 0 0.3rem;'>${keyPrivate[x]}` :
+              keyPrivate[x];
+          });
+          
+          Object.keys(keyPublic).forEach(x => {
+            let elem = document.getElementById('debug_public_' + x);
+            if (elem) elem.innerHTML = x.length < 3 ?
+              `${ArrToBigInt(BinaryStringToU8Arr(atob(keyPublic[x].replaceAll('-', '+').replaceAll('_', '/'))))}<hr style = 'margin: 0.5rem 0 0.3rem;'>${keyPublic[x]}` :
+              keyPublic[x];
+          });
+        } catch (e) {throw e;
+          debug_public_kty.textContent = 'N/A';
+          debug_public_alg.textContent = 'N/A';
+        }
       }
       
       var lastUpdated = 1;
