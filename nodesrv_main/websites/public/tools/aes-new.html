@@ -71,7 +71,7 @@
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem; display: none;' id = 'ctr_length_div'>
           <label for = 'ctr_length' class = 'col-form-label'>Length:</label>
           
-          <input type = 'number' class = 'form-control' id = 'ctr_length' value = 64 style = 'width: 5rem; margin-left: 5px; display: inline-block;' oninput = 'TextUpdate();'>
+          <input type = 'number' class = 'form-control' id = 'ctr_length' min = 2 max = 128 step = 1 value = 64 style = 'width: 5rem; margin-left: 5px; display: inline-block;' oninput = 'TextUpdate();'>
         </div>
         
         <div class = 'col-auto' style = 'margin: -0.5rem 0 0.7rem; display: none;' id = 'addl_data_div'>
@@ -298,7 +298,7 @@
         if (aes_algo.value == 'AES-CTR') {
           var lengthNum = Number(ctr_length.value);
           if (lengthNum > 128) { lengthNum = 128; ctr_length.value = 128; }
-          else if (lengthNum < 2) { lengthNum = 2; ctr_length.value = 2; }
+          else if (lengthNum < 2) { lengthNum = 2; if (ctr_length.value.length) ctr_length.value = 2; }
           else if (!Number.isSafeInteger(lengthNum)) {
             if (Number.isNaN(lengthNum)) lengthNum = 2;
             else { lengthNum = Math.round(lengthNum); ctr_length.value = lengthNum; }
@@ -405,7 +405,7 @@
         if (aes_algo.value == 'AES-CTR') {
           var lengthNum = Number(ctr_length.value);
           if (lengthNum > 128) { lengthNum = 128; ctr_length.value = 128; }
-          else if (lengthNum < 2) { lengthNum = 2; ctr_length.value = 2; }
+          else if (lengthNum < 2) { lengthNum = 2; if (ctr_length.value.length) ctr_length.value = 2; }
           else if (!Number.isSafeInteger(lengthNum)) {
             if (Number.isNaN(lengthNum)) lengthNum = 2;
             else { lengthNum = Math.round(lengthNum); ctr_length.value = lengthNum; }
