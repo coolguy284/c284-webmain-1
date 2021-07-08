@@ -21,7 +21,7 @@
     <noscript>This requires JavaScript to work.</noscript>
     <script>
       (async () => {
-        document.body.innerHTML = await (await fetch('/api/own_eyes/v1?code={code}')).text();
+        document.body.innerHTML = await (await fetch('/api/own_eyes/v1', { method: 'post', body: 'code={code}' })).text();
       })();
     </script>
   </body>

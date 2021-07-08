@@ -69,6 +69,26 @@ module.exports = exports = {
       stream.pipe(requestProps.stream);
   },
   
+  getStream: (requestProps) => {
+    if (requestProps.httpVersion == 1)
+      return requestProps.res;
+    else if (requestProps.httpVersion == 2)
+      return requestProps.stream;
+  },
+  
+  getStreamBuffer: async (requestProps) => {
+    let stream = exports.getStream(requestProps);
+    
+    let chunks = [];
+    
+    stream.on('data', chunk => chunks.push(chunk));
+    
+    return await (new Promise((r, j) => {
+      stream.on('end', () => r(Buffer.concat(chunks)));
+      stream.on('error', err => j(err));
+    }));
+  },
+  
   file: async (requestProps, filename, statusCode, headOnly, headers) => {
     // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
     if (process.env.NODESRVMAIN_CACHE_MODE == '1') {

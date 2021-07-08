@@ -4,10 +4,10 @@ var common = require('../common');
 var redirects = require('../common/redirects');
 
 var methods = {
-  //options: require('./options'),
+  options: require('./options'),
   get: require('./get'),
   head: require('./head'),
-  //post: require('./post'),
+  post: require('./post'),
   //put: require('./put'),
   //patch: require('./patch'),
   //delete: require('./delete'),
@@ -30,8 +30,8 @@ module.exports = async function main(...args) {
       let newURL = new URL(requestProps.url);
       if (requestProps.proto == 'http') newURL.protocol = 'https:';
       if (requestProps.host == 'www.coolguy284.com') newURL.host = 'coolguy284.com';
-      common.resp.headers(requestProps, 307, { 'location': newURL.href });
-      common.resp.end(requestProps);
+      await common.resp.headers(requestProps, 307, { 'location': newURL.href });
+      await common.resp.end(requestProps);
       return;
     }
     
@@ -44,14 +44,14 @@ module.exports = async function main(...args) {
         newURL.pathname = redirectInfo[0];
         newURL = newURL.href;
       }
-      common.resp.headers(requestProps, redirects.mapping[redirectInfo[1]], { 'location': newURL });
-      common.resp.end(requestProps);
+      await common.resp.headers(requestProps, redirects.mapping[redirectInfo[1]], { 'location': newURL });
+      await common.resp.end(requestProps);
       return;
     }
     
     if (!(requestProps.method in methods && methods[requestProps.method](requestProps) != 1)) {
-      common.resp.headers(requestProps, 501);
-      common.resp.end(requestProps);
+      await common.resp.headers(requestProps, 501);
+      await common.resp.end(requestProps);
     }
   } catch (err) {
     logger.error(err);
