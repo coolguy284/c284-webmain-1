@@ -3,17 +3,17 @@
   <head>
     <meta charset = 'utf-8'>
     
-    <title>coolguy284.com: SHA Hasher</title>
+    <title>coolguy284.com: SHA / Kekkak Hasher</title>
     
     <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
-    <meta name = 'description' content = 'This website is used to calculate the SHA hash of text.'>
-    <meta name = 'keywords' content = 'SHA, SHA-1, SHA-256, SHA-384, SHA-512'>
+    <meta name = 'description' content = 'This website is used to calculate the SHA or Kekkak hash of text.'>
+    <meta name = 'keywords' content = 'SHA, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512, SHA-512/224, SHA-512/256, SHA3-224, SHA3-256, SHA3-384, SHA3-512, Keccak-224, Keccak-256, Keccak-384, Keccak-512, SHAKE-128, SHAKE-256, CSHAKE-128, CSHAKE-256'>
     <meta name = 'author' content = 'coolguy284'>
     
     <link rel = 'canonical' href = 'https://coolguy284.com/tools/sha.html'>
     
-    <meta name = 'og:title' content = 'coolguy284.com: SHA Hasher'>
-    <meta name = 'og:description' content = 'This website is used to calculate the SHA hash of text.'>
+    <meta name = 'og:title' content = 'coolguy284.com: SHA / Kekkak Hasher'>
+    <meta name = 'og:description' content = 'This website is used to calculate the SHA or Kekkak hash of text.'>
     <meta name = 'og:type' content = 'website'>
     <meta name = 'og:url' content = 'https://coolguy284.com/tools/sha.html'>
     
@@ -35,12 +35,81 @@
       
       <div class = 'row' style = 'margin-top: 0.7rem;'>
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <select class = 'form-select' id = 'hash_algorythm' style = 'width: 7.5rem; display: inline-block;' oninput = 'Update(1);'>
-            <option value = 'SHA-1'>SHA-1</option>
-            <option value = 'SHA-256' selected>SHA-256</option>
-            <option value = 'SHA-384'>SHA-384</option>
-            <option value = 'SHA-512'>SHA-512</option>
+          <select class = 'form-select' id = 'hash_algorythm' style = 'width: 15rem; display: inline-block;' oninput = 'Update(1);'>
+            <optgroup label = 'SHA1'>
+              <option value = 'SHA-1'>SHA-1</option>
+            </optgroup>
+            <optgroup label = 'SHA2'>
+              <option value = 'SHA-224'>SHA-224 (Non-Native)</option>
+              <option value = 'SHA-256' selected>SHA-256</option>
+              <option value = 'SHA-384'>SHA-384</option>
+              <option value = 'SHA-512'>SHA-512</option>
+              <option value = 'SHA-512_224'>SHA-512/224 (Non-Native)</option>
+              <option value = 'SHA-512_256'>SHA-512/256 (Non-Native)</option>
+            </optgroup>
+            <optgroup label = 'SHA3'>
+              <option value = 'SHA3-224'>SHA3-224 (Non-Native)</option>
+              <option value = 'SHA3-256'>SHA3-256 (Non-Native)</option>
+              <option value = 'SHA3-384'>SHA3-384 (Non-Native)</option>
+              <option value = 'SHA3-512'>SHA3-512 (Non-Native)</option>
+            </optgroup>
+            <optgroup label = 'Keccak'>
+              <option value = 'Keccak-224'>Keccak-224 (Non-Native)</option>
+              <option value = 'Keccak-256'>Keccak-256 (Non-Native)</option>
+              <option value = 'Keccak-384'>Keccak-384 (Non-Native)</option>
+              <option value = 'Keccak-512'>Keccak-512 (Non-Native)</option>
+            </optgroup>
+            <optgroup label = 'SHA3-SHAKE'>
+              <option value = 'SHAKE-128'>SHAKE-128 (Non-Native)</option>
+              <option value = 'SHAKE-256'>SHAKE-256 (Non-Native)</option>
+            </optgroup>
+            <optgroup label = 'SHA3-CSHAKE'>
+              <option value = 'CSHAKE-128'>CSHAKE-128 (Non-Native)</option>
+              <option value = 'CSHAKE-256'>CSHAKE-256 (Non-Native)</option>
+            </optgroup>
           </select>
+        </div>
+        
+        <div class = 'col-auto' style = 'display: none; margin-bottom: 0.7rem;' id = 'output_length_div'>
+          <label for = 'output_length' class = 'col-form-label'>Output Length:</label>
+          
+          <input type = 'number' class = 'form-control' id = 'output_length' min = 0 step = 1 value = 0 style = 'width: 7.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update();' onkeydown = 'OutputLengthUpdate();'>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin: -0.5rem 0 0.7rem; display: none;' id = 'function_name_div'>
+          <label for = 'function_name' class = 'col-form-label'>Function Name:</label>
+          
+          <div class = 'input-group' style = 'margin-left: 5px; display: inline;'>
+            <textarea class = 'form-control' id = 'function_name' placeholder = 'Function name here.' style = 'display: inline; position: relative; top: 0.53rem; width: 20rem; height: 2rem; resize: both;' oninput = 'Update();'></textarea>
+            <select class = 'form-select' id = 'function_name_format' style = 'width: 6.5rem; margin-left: -5px; display: inline;' oninput = 'TextUpdate();'>
+              <option value = 'utf8' selected>UTF-8</option>
+              <option value = 'utf16le'>UTF-16 LE</option>
+              <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
+              <option value = 'utf16be'>UTF-16 BE</option>
+              <option value = 'utf16benb'>UTF-16 BE (No BOM)</option>
+              <option value = 'latin1'>Latin1</option>
+              <option value = 'base64'>Base64</option>
+              <option value = 'hex'>Hex</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin: -0.5rem 0 0.7rem; display: none;' id = 'customization_div'>
+          <label for = 'customization' class = 'col-form-label'>Customization:</label>
+          
+          <div class = 'input-group' style = 'margin-left: 5px; display: inline;'>
+            <textarea class = 'form-control' id = 'customization' placeholder = 'Function name here.' style = 'display: inline; position: relative; top: 0.53rem; width: 20rem; height: 2rem; resize: both;' oninput = 'Update();'></textarea>
+            <select class = 'form-select' id = 'customization_format' style = 'width: 6.5rem; margin-left: -5px; display: inline;' oninput = 'TextUpdate();'>
+              <option value = 'utf8' selected>UTF-8</option>
+              <option value = 'utf16le'>UTF-16 LE</option>
+              <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
+              <option value = 'utf16be'>UTF-16 BE</option>
+              <option value = 'utf16benb'>UTF-16 BE (No BOM)</option>
+              <option value = 'latin1'>Latin1</option>
+              <option value = 'base64'>Base64</option>
+              <option value = 'hex'>Hex</option>
+            </select>
+          </div>
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
@@ -119,7 +188,7 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text_hashed'>SHA Hashed Text</label></h4>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text_hashed' id = 'hash_header'>SHA</label></h4>
           <textarea class = 'form-control' id = 'text_hashed' placeholder = 'SHA hashed text here.'></textarea>
         </div>
       </div>
@@ -127,6 +196,9 @@
       <br>
     </div>
     
+    <script src = '/libs/sha256_0.9.0.min.js' async></script>
+    <script src = '/libs/sha512_0.8.0.min.js' async></script>
+    <script src = '/libs/sha3_0.8.0.min.js' async></script>
     <script src = '/libs/bootstrap.bundle.min.js' async></script>
     <script>
       // next 2 funcs taken from mozilla, modified
@@ -236,6 +308,38 @@
         else if (repeatCount < 1) { if (repeats.value != '') { repeatCount = 1; repeats.value = 1; } else { repeatCount = 1; } }
         else if (!Number.isSafeInteger(repeatCount)) { repeatCount = Math.round(repeatCount); repeats.value = repeatCount; }
         
+        switch (hash_algorythm.value) {
+          case 'SHA-1': case 'SHA-256': case 'SHA-384': case 'SHA-512':
+          case 'SHA-224': case 'SHA-512_224': case 'SHA-512_256':
+          case 'SHA3-224': case 'SHA3-256': case 'SHA3-384': case 'SHA3-512':
+            output_length_div.style.display = 'none';
+            function_name_div.style.display = 'none';
+            customization_div.style.display = 'none';
+            hash_header.innerText = 'SHA';
+            break;
+          
+          case 'Keccak-224': case 'Keccak-256': case 'Keccak-384': case 'Keccak-512':
+            output_length_div.style.display = 'none';
+            function_name_div.style.display = 'none';
+            customization_div.style.display = 'none';
+            hash_header.innerText = 'Kekkak';
+            break;
+          
+          case 'SHAKE-128': case 'SHAKE-256':
+            output_length_div.style.display = '';
+            function_name_div.style.display = 'none';
+            customization_div.style.display = 'none';
+            hash_header.innerText = 'SHAKE';
+            break;
+          
+          case 'CSHAKE-128': case 'CSHAKE-256':
+            output_length_div.style.display = '';
+            function_name_div.style.display = '';
+            customization_div.style.display = '';
+            hash_header.innerText = 'CSHAKE';
+            break;
+        }
+        
         if (mode == 2) return;
         
         if (!auto_convert.checked && !mode) return;
@@ -255,7 +359,62 @@
           
           binaryString = BinaryStringToU8Arr(binaryString);
           
-          for (var i = 0; i < repeatCount; i++) binaryString = await crypto.subtle.digest(hash_algorythm.value, binaryString);
+          switch (hash_algorythm.value) {
+            case 'SHA-1': case 'SHA-256': case 'SHA-384': case 'SHA-512':
+              for (var i = 0; i < repeatCount; i++) binaryString = await crypto.subtle.digest(hash_algorythm.value, binaryString);
+              break;
+            
+            case 'SHA-224': case 'SHA-512_224': case 'SHA-512_256':
+              let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
+              for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString)));
+              break;
+            
+            case 'SHA3-224': case 'SHA3-256': case 'SHA3-384': case 'SHA3-512':
+            case 'Keccak-224': case 'Keccak-256': case 'Keccak-384': case 'Keccak-512': {
+              let alg = window[hash_algorythm.value.replace('-', '_').toLowerCase()];
+              for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString)));
+              } break;
+            
+            case 'SHAKE-128': case 'SHAKE-256': {
+              let outputLength = Number(output_length.value);
+              if (Number.isNaN(outputLength)) { outputLength = 0; output_length.value = 0; }
+              else if (outputLength < 0) { if (output_length.value != '') { outputLength = 0; output_length.value = 0; } else { outputLength = 0; } }
+              else if (!Number.isSafeInteger(outputLength)) { outputLength = Math.round(outputLength); output_length.value = outputLength; }
+              
+              let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
+              for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString, output_length.value)));
+              } break;
+            
+            case 'CSHAKE-128': case 'CSHAKE-256': {
+              let outputLength = Number(output_length.value), functionName = TextAreaToText(function_name.value), customizationStr = TextAreaToText(customization.value);
+              if (Number.isNaN(outputLength)) { outputLength = 0; output_length.value = 0; }
+              else if (outputLength < 0) { if (output_length.value != '') { outputLength = 0; output_length.value = 0; } else { outputLength = 0; } }
+              else if (!Number.isSafeInteger(outputLength)) { outputLength = Math.round(outputLength); output_length.value = outputLength; }
+              switch (function_name_format.value) {
+                case 'utf8': functionName = Utf8ToLatin1(functionName); break;
+                case 'utf16be': functionName = Utf16BEToLatin1(functionName); break;
+                case 'utf16benb': functionName = Utf16BENBToLatin1(functionName); break;
+                case 'utf16le': functionName = Utf16LEToLatin1(functionName); break;
+                case 'utf16lenb': functionName = Utf16LENBToLatin1(functionName); break;
+                case 'base64': functionName = atob(functionName); break;
+                case 'hex': functionName = HexToBinaryString(functionName); break;
+              }
+              switch (customization_format.value) {
+                case 'utf8': customizationStr = Utf8ToLatin1(customizationStr); break;
+                case 'utf16be': customizationStr = Utf16BEToLatin1(customizationStr); break;
+                case 'utf16benb': customizationStr = Utf16BENBToLatin1(customizationStr); break;
+                case 'utf16le': customizationStr = Utf16LEToLatin1(customizationStr); break;
+                case 'utf16lenb': customizationStr = Utf16LENBToLatin1(customizationStr); break;
+                case 'base64': customizationStr = atob(customizationStr); break;
+                case 'hex': customizationStr = HexToBinaryString(customizationStr); break;
+              }
+              functionName = BinaryStringToU8Arr(functionName);
+              customizationStr = BinaryStringToU8Arr(customizationStr);
+              
+              let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
+              for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString, output_length.value, functionName, customizationStr)));
+              } break;
+          }
           
           binaryString = U8ArrToBinaryString(binaryString);
           
@@ -270,6 +429,15 @@
           text_unhashed_warning.style.display = '';
         }
       }
+      
+      function OutputLengthUpdate(evt) {
+        if (evt.key != 'ArrowUp' && evt.key != 'ArrowDown' && evt.type != 'wheel') return;
+        let outputLength = Number(output_length.value) + (evt.key == 'ArrowUp' || evt.deltaY < 0 ? 1 : -1);
+        if (outputLength % 8 == 1) { outputLength += 6; output_length.value = outputLength; }
+        else if (outputLength % 8 == 7) { outputLength -= 6; output_length.value = outputLength; }
+      }
+      
+      output_length.onkeydown = output_length.onwheel = OutputLengthUpdate;
       
       text_unhashed.ondragover = evt => evt.preventDefault();
       text_unhashed.ondrop = evt => {
