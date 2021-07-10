@@ -19,11 +19,18 @@
     
     <link rel = 'stylesheet' href = '/libs/extern/bootstrap.min.css'>
     <style>
-      th, td { padding: 0.5rem; word-break: break-word; white-space: pre-wrap; max-width: calc(100vw - 25rem); border: 1px solid gray; }
-      
       textarea {
         font-family: monospace;
         height: 200px;
+      }
+      
+      th, td {
+        padding: 0.5rem;
+        border: 1px solid gray;
+      }
+      
+      .debug_data {
+        word-break: break-word;
       }
     </style>
   </head>
@@ -144,24 +151,24 @@
               <h4 class = 'mb-3'>Private Key</h4>
               <table>
                 <tr><th>Property</th>         <th>Name</th>                       <th>Value</th>
-                <tr><td>Key Type</td>         <td>kty</td>                        <td id = 'debug_private_kty'></td></tr>
-                <tr><td>Algorythm</td>        <td>alg</td>                        <td id = 'debug_private_alg'></td></tr>
-                <tr><td>Prime 1</td>          <td><var>p</var></td>               <td id = 'debug_private_p'></td></tr>
-                <tr><td>Prime 2</td>          <td><var>q</var></td>               <td id = 'debug_private_q'></td></tr>
-                <tr><td>Product</td>          <td><var>n</var></td>               <td id = 'debug_private_n'></td></tr>
-                <tr><td>Public Exponent</td>  <td><var>e</var></td>               <td id = 'debug_private_e'></td></tr>
-                <tr><td>Private Exponent</td> <td><var>d</var></td>               <td id = 'debug_private_d'></td></tr>
-                <tr><td>DP</td>               <td><var>d<sub>p</sub></var></td>   <td id = 'debug_private_dp'></td></tr>
-                <tr><td>DQ</td>               <td><var>d<sub>q</sub></var></td>   <td id = 'debug_private_dq'></td></tr>
-                <tr><td>QINV</td>             <td><var>q<sub>inv</sub></var></td> <td id = 'debug_private_qi'></td></tr>
+                <tr><td>Key Type</td>         <td>kty</td>                        <td class = 'debug_data' id = 'debug_private_kty'></td></tr>
+                <tr><td>Algorythm</td>        <td>alg</td>                        <td class = 'debug_data' id = 'debug_private_alg'></td></tr>
+                <tr><td>Prime 1</td>          <td><var>p</var></td>               <td class = 'debug_data' id = 'debug_private_p'></td></tr>
+                <tr><td>Prime 2</td>          <td><var>q</var></td>               <td class = 'debug_data' id = 'debug_private_q'></td></tr>
+                <tr><td>Product</td>          <td><var>n</var></td>               <td class = 'debug_data' id = 'debug_private_n'></td></tr>
+                <tr><td>Public Exponent</td>  <td><var>e</var></td>               <td class = 'debug_data' id = 'debug_private_e'></td></tr>
+                <tr><td>Private Exponent</td> <td><var>d</var></td>               <td class = 'debug_data' id = 'debug_private_d'></td></tr>
+                <tr><td>DP</td>               <td><var>d<sub>p</sub></var></td>   <td class = 'debug_data' id = 'debug_private_dp'></td></tr>
+                <tr><td>DQ</td>               <td><var>d<sub>q</sub></var></td>   <td class = 'debug_data' id = 'debug_private_dq'></td></tr>
+                <tr><td>QINV</td>             <td><var>q<sub>inv</sub></var></td> <td class = 'debug_data' id = 'debug_private_qi'></td></tr>
               </table>
               <h4 class = 'mt-4 mb-3'>Public Key</h4>
               <table>
                 <tr><th>Property</th>         <th>Name</th>                       <th>Value</th>
-                <tr><td>Key Type</td>         <td>kty</td>                        <td id = 'debug_public_kty'></td></tr>
-                <tr><td>Algorythm</td>        <td>alg</td>                        <td id = 'debug_public_alg'></td></tr>
-                <tr><td>Product</td>          <td><var>n</var></td>               <td id = 'debug_public_n'></td></tr>
-                <tr><td>Public Exponent</td>  <td><var>e</var></td>               <td id = 'debug_public_e'></td></tr>
+                <tr><td>Key Type</td>         <td>kty</td>                        <td class = 'debug_data' id = 'debug_public_kty'></td></tr>
+                <tr><td>Algorythm</td>        <td>alg</td>                        <td class = 'debug_data' id = 'debug_public_alg'></td></tr>
+                <tr><td>Product</td>          <td><var>n</var></td>               <td class = 'debug_data' id = 'debug_public_n'></td></tr>
+                <tr><td>Public Exponent</td>  <td><var>e</var></td>               <td class = 'debug_data' id = 'debug_public_e'></td></tr>
               </table>
             </div>
           </div>
@@ -652,8 +659,6 @@
               elem.innerHTML = x.length < 3 ?
                 `${ArrToBigInt(BinaryStringToU8Arr(atob(keyPrivate[x].replaceAll('-', '+').replaceAll('_', '/'))))}<hr style = 'margin: 0.5rem 0 0.3rem;'>${keyPrivate[x]}` :
                 keyPrivate[x];
-            else
-              elem.innerHTML = 'Could not retrieve';
           });
         } catch (e) {
           debug_private_kty.textContent = debug_private_alg.textContent =
@@ -682,8 +687,6 @@
               elem.innerHTML = x.length < 3 ?
                 `${ArrToBigInt(BinaryStringToU8Arr(atob(keyPublic[x].replaceAll('-', '+').replaceAll('_', '/'))))}<hr style = 'margin: 0.5rem 0 0.3rem;'>${keyPublic[x]}` :
                 keyPublic[x];
-            else
-              elem.innerHTML = 'Could not retrieve';
           });
         } catch (e) {
           debug_public_kty.textContent = debug_public_alg.textContent =
