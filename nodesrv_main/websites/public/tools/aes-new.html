@@ -42,12 +42,12 @@
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label for = 'key' class = 'col-form-label'>Key:</label>
+        <div class = 'col-auto d-inline-flex flex-sm-nowrap flex-wrap' style = 'margin-bottom: 0.7rem;'>
+          <label for = 'key' class = 'col-form-label flex-shrink-0'>Key:</label>
           
-          <div class = 'input-group' style = 'display: inline;'>
-            <input type = 'text' class = 'form-control' id = 'key' style = 'width: 20rem; margin-left: 5px; display: inline;' oninput = 'TextUpdate();'>
-            <select class = 'form-select' id = 'key_format' style = 'width: 6.5rem; margin-left: -5px; display: inline;' oninput = 'TextUpdate();'>
+          <div class = 'input-group' style = 'margin-left: 10px;'>
+            <input type = 'text' class = 'form-control' id = 'key' style = 'width: 20rem;' oninput = 'TextUpdate();'>
+            <select class = 'form-select' id = 'key_format' style = 'width: 6.5rem;' oninput = 'TextUpdate();'>
               <option value = 'latin1'>Latin1</option>
               <option value = 'base64'>Base64</option>
               <option value = 'hex' selected>Hex</option>
@@ -55,12 +55,12 @@
           </div>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label for = 'iv' class = 'col-form-label' id = 'ctr_label'>IV:</label>
+        <div class = 'col-auto d-inline-flex flex-sm-nowrap flex-wrap' style = 'margin-bottom: 0.7rem;'>
+          <label for = 'iv' class = 'col-form-label flex-shrink-0' id = 'ctr_label'>IV:</label>
           
-          <div class = 'input-group' style = 'display: inline;'>
-            <input type = 'text' class = 'form-control' id = 'iv' style = 'width: 20rem; margin-left: 5px; display: inline;' oninput = 'TextUpdate();'>
-            <select class = 'form-select' id = 'iv_format' style = 'width: 6.5rem; margin-left: -5px; display: inline;' oninput = 'TextUpdate();'>
+          <div class = 'input-group' style = 'margin-left: 10px;'>
+            <input type = 'text' class = 'form-control' id = 'iv' style = 'width: 20rem;' oninput = 'TextUpdate();'>
+            <select class = 'form-select' id = 'iv_format' style = 'width: 6.5rem;' oninput = 'TextUpdate();'>
               <option value = 'latin1'>Latin1</option>
               <option value = 'base64'>Base64</option>
               <option value = 'hex' selected>Hex</option>
@@ -74,13 +74,13 @@
           <input type = 'number' class = 'form-control' id = 'ctr_length' min = 2 max = 128 step = 1 value = 64 style = 'width: 5rem; margin-left: 5px; display: inline-block;' oninput = 'TextUpdate();'>
         </div>
         
-        <div class = 'col-auto' style = 'margin: -0.5rem 0 0.7rem; display: none;' id = 'addl_data_div'>
-          <label for = 'addl_data' class = 'col-form-label'>Additional Data:</label>
+        <div class = 'col-auto flex-sm-nowrap flex-wrap' style = 'display: none; margin-bottom: 0.7rem;' id = 'addl_data_div'>
+          <label for = 'addl_data' class = 'col-form-label flex-shrink-0'>Additional Data:</label>
           
-          <div class = 'input-group' style = 'margin-left: 5px; display: inline;'>
-            <textarea class = 'form-control' id = 'addl_data' placeholder = 'Additional data here.' style = 'display: inline; position: relative; top: 0.53rem; width: 20rem; height: 2rem; resize: both;' oninput = 'TextUpdate();'></textarea>
+          <div class = 'input-group' style = 'margin-left: 10px;'>
+            <textarea class = 'form-control' id = 'addl_data' placeholder = 'Additional data here.' style = 'width: 20rem; height: 2rem; resize: both;' oninput = 'TextUpdate();'></textarea>
             <!--<input type = 'text' class = 'form-control' id = 'addl_data' style = 'width: 20rem; margin-left: 5px; display: inline;' oninput = 'TextUpdate();'>-->
-            <select class = 'form-select' id = 'addl_data_format' style = 'width: 6.5rem; margin-left: -5px; display: inline;' oninput = 'TextUpdate();'>
+            <select class = 'form-select' id = 'addl_data_format' style = 'width: 12.5rem;' oninput = 'TextUpdate();'>
               <option value = 'utf8'>UTF-8</option>
               <option value = 'utf16le'>UTF-16 LE</option>
               <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
@@ -506,7 +506,7 @@
           switch (aes_algo.value) {
             case 'AES-CTR': ctr_label.textContent = 'Counter:'; ctr_length_div.style.display = ''; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
             case 'AES-CBC': ctr_label.textContent = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
-            case 'AES-GCM': ctr_label.textContent = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = ''; tag_length_div.style.display = ''; break;
+            case 'AES-GCM': ctr_label.textContent = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = 'inline-flex'; tag_length_div.style.display = ''; break;
           }
         }
         
