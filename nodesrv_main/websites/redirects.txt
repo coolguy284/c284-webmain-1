@@ -4,6 +4,15 @@ PS /debug/latency.html /debug/latency_test.html
 PS /debug/owneyes.html /own_eyes.html
 PS /errors/404.html /debug/templates/404.html
 PS /errors/500.html /debug/templates/500.html
+PS /libs/bootstrap.bundle.min.js /libs/extern/bootstrap.bundle.min.js
+PS /libs/bootstrap.bundle.min.js.map /libs/extern/bootstrap.bundle.min.js.map
+PS /libs/bootstrap.min.css /libs/extern/bootstrap.min.css
+PS /libs/bootstrap.min.css.map /libs/extern/bootstrap.min.css.map
+PS /libs/crypto-js_3.1.2_rollups_aes.js /libs/extern/crypto-js_3.1.2_rollups_aes.js
+PS /libs/jsencrypt-rsa.js /libs/extern/jsencrypt-rsa.js
+PS /libs/sha3_0.8.0.min.js /libs/extern/sha3_0.8.0.min.js
+PS /libs/sha256_0.9.0.min.js /libs/extern/sha256_0.9.0.min.js
+PS /libs/sha512_0.8.0.min.js /libs/extern/sha512_0.8.0.min.js
 PS /tools/dataurl.html /tools/data_url.html
 PS /tools/downloader.html /tools/file_downloader.html
 PS /tools/encodingdecoding.html /tools/encode_decode.html

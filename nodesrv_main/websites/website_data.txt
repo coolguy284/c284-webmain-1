@@ -1,5 +1,5 @@
 # immutable files
-libs/*: 1
+libs/extern/*: 1
 favicon.ico: 1
 
 # files to compress:
