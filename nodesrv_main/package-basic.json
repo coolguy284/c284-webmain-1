@@ -1,0 +1,11 @@
+{
+  "name": "c284-webmain-1-nodesrv_main",
+  "dependencies": {
+    "bufferutil": "^4.0.3",
+    "mime": "^2.5.2",
+    "mongodb": "^3.6.9",
+    "utf-8-validate": "^5.0.5",
+    "winston": "^3.3.3",
+    "ws": "^7.4.6"
+  }
+}
