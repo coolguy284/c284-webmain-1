@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Unicode Information</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'This website shows information about any unicode character.'>
+    <meta name = 'keywords' content = 'unicode'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/unicode/'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Unicode Information'>
+    <meta name = 'og:description' content = 'This website shows information about any unicode character.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/unicode/'>
+    
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap.min.css'>
+  </head>
+  <body>
+    <div class = 'container-fluid' style = 'width: auto; max-width: 800px;'>
+      <noscript>
+        <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+          Note: This has active components and thus requires JavaScript to function (JavaScript is disabled).
+        </div>
+      </noscript>
+      
+      <h2 class = 'mt-2'>Unicode Explorer</h2>
+      
+      <div class = 'row'>
+        <label for = 'search' class = 'col-form-label'>Filter Query:</label>
+        
+        <input type = 'search' class = 'form-control' id = 'search' style = 'margin-left: 5px; display: inline;' oninput = 'Update();'>
+      </div>
+      
+      <pre id = 'search_pre'></pre>
+    </div>
+    
+    <script>
+      function EscapeHTML(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\r/g,'&#13;');
+      }
+      
+      function UnescapeHTML(str) {
+        return str.replace(/&#13;/g, '\r').replace(/&#39;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+      }
+      
+      /*var unicodeArr = [], searchedArr;
+      
+      (async () => {
+        var fetchedUnicodeArr = (await (await fetch('/data/UnicodeData.txt')).text())
+          .trim().split('\n').map(x => x.split(';'));
+        
+        for (var i = 0; i < fetchedUnicodeArr.length; i++) {
+          if (fetchedUnicodeArr[i][1].endsWith('First>')) {
+            let start = parseInt(fetchedUnicodeArr[i][0], 16), end = parseInt(fetchedUnicodeArr[i + 1][0], 16),
+              groupName = fetchedUnicodeArr[i][1].split(',')[0].slice(1), groupArrPart = fetchedUnicodeArr[i].slice(2);
+            for (var j = start, c; j <= end; j++) {
+              c = j.toString(16).toUpperCase().padStart(4, '0');
+              unicodeArr.push([c, groupName + '-' + c, ...groupArrPart]);
+            }
+            i++;
+          } else {
+            unicodeArr.push(fetchedUnicodeArr[i]);
+          }
+        }
+        
+        Update();
+      })();*/
+      
+      function Update() {
+        /*searchedArr = unicodeArr.filter(x => {
+          if (x[1].startsWith(search.value) || x[10].startsWith(search.value)) return true;
+        }).concat(
+          unicodeArr.filter(x => {
+            if ((x[1].includes(search.value) || x[10].includes(search.value)) && !(x[1].startsWith(search.value) || x[10].startsWith(search.value))) return true;
+          })
+        );*/
+        //search_pre.innerHTML = searchedArr.map(x => EscapeHTML(`U+${x[0]} ${x[1]}${x[10] ? ` (${x[10]})` : ''}`)).slice(0, 1000).join('<br>');
+      }
+    </script>
+  </body>
+</html>

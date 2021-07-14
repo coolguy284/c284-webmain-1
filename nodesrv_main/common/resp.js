@@ -18,6 +18,18 @@ module.exports = exports = {
     };
   },
   
+  getBasicFileHeadersHead: (fileLength, mimeType) => {
+    return {
+      'content-type': mimeType || 'text/plain; charset=utf-8',
+      'content-length': fileLength,
+      'last-modified': new Date().toUTCString(),
+      'cache-control': 'no-cache',
+      'accept-ranges': 'none',
+      'x-content-type-options': 'nosniff',
+      'strict-transport-security': 'max-age=31536000; preload',
+    };
+  },
+  
   // http1.1: (WSServer, req, socket, head, requestProps)
   // http2: (WSServer, requestProps)
   ws: (WSServer, ...args) => {
@@ -83,10 +95,10 @@ module.exports = exports = {
     
     stream.on('data', chunk => chunks.push(chunk));
     
-    return await (new Promise((r, j) => {
-      stream.on('end', () => r(Buffer.concat(chunks)));
-      stream.on('error', err => j(err));
-    }));
+    return await new Promise((resolve, reject) => {
+      stream.on('end', () => resolve(Buffer.concat(chunks)));
+      stream.on('error', err => reject(err));
+    });
   },
   
   file: async (requestProps, filename, statusCode, headOnly, headers) => {

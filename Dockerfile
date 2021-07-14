@@ -27,6 +27,8 @@ RUN npm install
 
 RUN mkdir nodesrv_main
 
+ADD --chown=webmain:webmain https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt /home/webmain/nodesrv_main/websites/public/data/
+
 COPY --chown=webmain:webmain nodesrv_main/package-basic.json /home/webmain/nodesrv_main/package.json
 RUN (cd nodesrv_main; npm install)
 
