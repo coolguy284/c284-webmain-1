@@ -271,11 +271,15 @@ module.exports = exports = {
     try {
       await exports.file(requestProps, 'websites/public/debug/templates/404.html', 404, headOnly);
     } catch (err) {
-      await exports.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
-      if (headOnly)
-        await exports.end(requestProps);
-      else
-        await exports.end(requestProps, '404 Not Found');
+      if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
+        logger.warn('http2 stream unexpectedly closed');
+      } else {
+        await exports.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
+        if (headOnly)
+          await exports.end(requestProps);
+        else
+          await exports.end(requestProps, '404 Not Found');
+      }
     }
   },
   
@@ -283,11 +287,15 @@ module.exports = exports = {
     try {
       await exports.file(requestProps, 'websites/public/debug/templates/500.html', 500, headOnly);
     } catch (err) {
-      await exports.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
-      if (headOnly)
-        await exports.end(requestProps);
-      else
-        await exports.end(requestProps, '500 Internal Server Error');
+      if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
+        logger.warn('http2 stream unexpectedly closed');
+      } else {
+        await exports.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
+        if (headOnly)
+          await exports.end(requestProps);
+        else
+          await exports.end(requestProps, '500 Internal Server Error');
+      }
     }
   },
   
