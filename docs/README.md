@@ -1,6 +1,6 @@
 # Introduction
 
-This is the code for the c284-webmain-1 website.
+This is the code for the c284-webmain-1 website, accessible at https://coolguy284.com.
 
 # File Layout
 
