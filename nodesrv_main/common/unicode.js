@@ -32,10 +32,10 @@ function getEntry(codePoint) {
   if (entry) return entry;
   
   let index = unicodeRanges.findIndex(x => codePoint >= x[0] && codePoint <= x[1]);
-  if (index) {
+  if (index > -1) {
     let range = unicodeRanges[index];
-    let fancyCharCode = codePoint.toString(16).toUpperCase().padStart(4, '0');
-    return [range[2] + '-' + fancyCharCode, ...range[3]];
+    let fancyCodePoint = codePoint.toString(16).toUpperCase().padStart(4, '0');
+    return [range[2] + '-' + fancyCodePoint, ...range[3]];
   }
   
   return ['UNASSIGNED', '', '', '', '', '', '', '', '', '', '', '', '', ''];
@@ -75,5 +75,7 @@ module.exports = {
     'Sk' :	'Symbol, Modifier',
     'So' :	'Symbol, Other',
   },
+  unicodeMap,
+  unicodeRanges,
   getEntry,
 };

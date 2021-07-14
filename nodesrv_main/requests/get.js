@@ -105,19 +105,29 @@ module.exports = async function getMethod(requestProps) {
     common.vars.ownEyesCodes.set(code, Date.now());
   }
   
-  else if (requestProps.url.pathname.startsWith('/unicode/') && (match = /^\/unicode\/[Uu]\+((?:0?[0-9A-Fa-f]|10|)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
-    let code_point = match[1].toUpperCase();
-    let unicodeChar = unicode.getEntry(code_point);
-    let file = Buffer.from(
-      (await fs.promises.readFile('websites/public/debug/templates/unicode.html')).toString()
-        .replaceAll('{code_point}', code_point)
-        .replaceAll('{category}', unicodeChar[1] ? unicode.categoryAbbr[unicodeChar[1]] : 'N/A')
-        .replaceAll('{name}', unicodeChar[0] || 'N/A')
-        .replaceAll('{alias}', unicodeChar[9] || 'N/A')
-        .replaceAll('{name_alias}', unicodeChar[9] || unicodeChar[0] || 'N/A')
-    );
-    await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
-    await common.resp.end(requestProps, file);
+  else if (requestProps.url.pathname.startsWith('/unicode/') && (match = /^\/unicode\/([Uu])\+((?:0?[0-9A-Fa-f]|10|)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
+    let fancyCodePoint = parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0');
+    if (match[1] == 'u' || fancyCodePoint != match[2]) {
+      let newURL = new URL(requestProps.url);
+      newURL.pathname = '/unicode/U+' + fancyCodePoint;
+      newURL = newURL.href;
+      
+      await common.resp.headers(requestProps, 308, { 'location': newURL });
+      await common.resp.end(requestProps);
+    } else {
+      let codePoint = match[2].toUpperCase();
+      let unicodeChar = unicode.getEntry(codePoint);
+      let file = Buffer.from(
+        (await fs.promises.readFile('websites/public/debug/templates/unicode.html')).toString()
+          .replaceAll('{code_point}', codePoint)
+          .replaceAll('{category}', unicodeChar[1] ? unicode.categoryAbbr[unicodeChar[1]] : 'N/A')
+          .replaceAll('{name}', unicodeChar[0] || 'N/A')
+          .replaceAll('{alias}', unicodeChar[9] || 'N/A')
+          .replaceAll('{name_alias}', unicodeChar[9] || unicodeChar[0] || 'N/A')
+      );
+      await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await common.resp.end(requestProps, file);
+    }
   }
   
   else {
