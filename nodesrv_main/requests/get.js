@@ -50,17 +50,6 @@ module.exports = async function getMethod(requestProps) {
       }
     }
     
-    else if (requestProps.url.pathname == '/api/own_eyes/v1') {
-      if (common.vars.ownEyesCodes.has(requestProps.url.searchParams.get('code'))) {
-        await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
-        await common.resp.end(requestProps, '<span><span><span>ｈ</span><span>ｅ</span>ｌ</span>ｏ</span>');
-        common.vars.ownEyesCodes.delete(decodeURIComponent(requestProps.url.searchParams.get('code')));
-      } else {
-        await common.resp.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
-        await common.resp.end(requestProps, '');
-      }
-    }
-    
     else if (requestProps.url.pathname == '/api/null') {
       await common.resp.headers(requestProps, 204);
       await common.resp.end(requestProps);
@@ -74,14 +63,14 @@ module.exports = async function getMethod(requestProps) {
   
   else if (requestProps.url.pathname == '/r') {
     if (requestProps.url.search.startsWith('?u=')) {
-      let file = Buffer.from((await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html')).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
+      let file = Buffer.from((process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
       await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
       await common.resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?uh=')) {
       await common.resp.headers(requestProps, 303, { 'location': decodeURIComponent(requestProps.url.search.slice(4)) });
       await common.resp.end(requestProps);
     } else if (requestProps.url.search.startsWith('?e=')) {
-      let file = Buffer.from((await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html')).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
+      let file = Buffer.from((process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
       await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
       await common.resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?eh=')) {
@@ -99,7 +88,7 @@ module.exports = async function getMethod(requestProps) {
   
   else if (requestProps.url.pathname == '/own_eyes.html') {
     let code = crypto.randomBytes(16).toString('base64').replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
-    let file = Buffer.from((await fs.promises.readFile('websites/public/own_eyes.html')).toString().replace('{code}', code));
+    let file = (process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/own_eyes.html'] : Buffer.from((await fs.promises.readFile('websites/public/own_eyes.html'))).toString().replace('{code}', code));
     await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
     await common.resp.end(requestProps, file);
     common.vars.ownEyesCodes.set(code, Date.now());
@@ -118,7 +107,7 @@ module.exports = async function getMethod(requestProps) {
       let codePoint = match[2].toUpperCase();
       let unicodeChar = unicode.getEntry(codePoint);
       let file = Buffer.from(
-        (await fs.promises.readFile('websites/public/debug/templates/unicode.html')).toString()
+        (process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/debug/templates/unicode.html'] : (await fs.promises.readFile('websites/public/debug/templates/unicode.html'))).toString()
           .replaceAll('{code_point}', codePoint)
           .replaceAll('{category}', unicodeChar[1] ? unicode.categoryAbbr[unicodeChar[1]] : 'N/A')
           .replaceAll('{name}', unicodeChar[0] || 'N/A')

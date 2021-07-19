@@ -464,19 +464,15 @@
         document.body.removeChild(element);
       }
       
-      window.onhashchange = evt => {
+      onhashchange = () => {
         if (hashLock) return;
-        encodingselect.value = evt.newURL.split('#').slice(1).join('') || 'base64';
+        encodingselect.value = location.hash.replace('#', '') || 'base64';
         if (!encodingselect.value) encodingselect.value = 'base64';
         GeneralUpdate(2);
       };
       
       onload = () => {
-        if (location.hash) {
-          encodingselect.value = location.hash.replace('#', '') || 'base64';
-          if (!encodingselect.value) encodingselect.value = 'base64';
-          GeneralUpdate(2);
-        }
+        if (location.hash) onhashchange();
       };
     </script>
   </body>

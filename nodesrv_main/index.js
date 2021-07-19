@@ -14,11 +14,26 @@ var ws = require('ws');
 var common = require('./common');
 
 
-if (!process.env.DISABLE_MONGODB) {
-  // initalize mongo client
-  var mongodb = require('mongodb');
+if (!process.env.DISABLE_MONGODB || process.env.DISABLE_MONGODB == 'false') {
+  (async () => {
+    // initalize mongo client
+    var mongodb = require('mongodb');
 
-  global.mongoServer = mongodb.MongoClient('mongodb://localhost', { useUnifiedTopology: true });
+    global.mongoClient = mongodb.MongoClient('mongodb://127.0.0.1', { useUnifiedTopology: true });
+    
+    await mongoClient.connect();
+    logger.info('Connected to mongodb server');
+    
+    try {
+      await mongoClient.db().admin().command({ replSetGetStatus: {} });
+      logger.info('Replica set already created');
+    } catch (e) {
+      await mongoClient.db().admin().command({ replSetInitiate: {} });
+      logger.info('Initialized replica set');
+    }
+    
+    require('./requests/chatws').mongoClientOnConnect();
+  })();
 }
 
 
@@ -85,6 +100,10 @@ if (process.env.NODESRVMAIN_HTTP_IP || process.env.NODESRVMAIN_HTTPS_IP) {
   echoWSServer.on('connection', function echoWSFunc(ws, req, requestProps) {
     ws.on('message', msg => ws.send(msg));
   });
+  
+  global.chatWSServer = new ws.Server({ noServer: true, maxPayload: 8 * 2 ** 20 });
+  chatWSServer.on('connection', require('./requests/chatws').chatWSFunc);
+  global.chatWSServerMap = new WeakMap();
 }
 
 

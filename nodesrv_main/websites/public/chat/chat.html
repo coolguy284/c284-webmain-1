@@ -1,0 +1,225 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Chat</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'A maybe simple maybe complicated chat app.'>
+    <meta name = 'keywords' content = 'chat'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/chat/chat.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Chat'>
+    <meta name = 'og:description' content = 'A maybe simple maybe complicated chat app.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/chat/chat.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap.min.css'>
+    <style>
+      .chat-item-helper {
+        display: none;
+      }
+      
+      .chat-item:hover span {
+        display: inline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-fluid'>
+      <nav class = 'navbar border-bottom' aria-label = 'breadcrumb'>
+        <ol class = 'breadcrumb mb-0'>
+          <li class = 'breadcrumb-item'><a class = 'navbar-brand' href = 'javascript:SetScene("");'>C284's Chat System (Beta)</a></li>
+        </ol>
+      </nav>
+      
+      <div class = 'container-md pt-3' id = 'mainDiv' style = 'max-width: 550px;'>
+        <div class = 'mb-3'>
+          <label for = 'username' class = 'form-label'>Enter your username (max 128 characters):</label>
+          <input type = 'text' class = 'form-control' id = 'username' maxlength = 128>
+        </div>
+        <div class = 'd-flex justify-content-center'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'SetScene("room");'>Join Room</button>
+        </div>
+      </div>
+      
+      <div class = 'pt-3' id = 'roomDiv' style = 'display: none;'>
+        <p>Note: this chat is just a test toy and is not secure, for example you can delete any message with your username (or rather will be able to soon).</p>
+        <div class = 'border border-secondary border-3 rounded' style = 'height: calc(100vh - 10.5rem);'>
+          <div class = 'd-flex flex-column-reverse align-items-beginning p-2 overflow-auto' style = 'height: 100%;'>
+            <div id = 'chat_contents'>
+              <chat-item
+                v-for = 'item in chatItems'
+                v-bind:msg = 'item'
+                v-bind:key = 'item.id'
+                ref = 'vue'
+              ></chat-item>
+            </div>
+          </div>
+          <!--<div class = 'p-2' id = 'chat_users' style = 'width: 10rem; height: 100%;'></div>-->
+        </div>
+        <div class = 'input-group'>
+          <input type = 'text' class = 'form-control' id = 'message' placeholder = 'Message here. Press enter or the send button to send.'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'SendMessage();'>Send</button>
+        </div>
+        <br>
+      </div>
+    </div>
+    
+    <script src = '/libs/extern/bson.browser.umd.js'></script>
+    <script src = '/libs/extern/vue_3.1.5.global.prod.js'></script>
+    <script>
+      function Uint8ArrayToHex(arr) {
+        let str = '';
+        for (var i = 0; i < arr.length; i++) str += arr[i].toString(16).padStart(2, '0');
+        return str;
+      }
+      
+      var ChatItems = {
+        data() {
+          return { chatItems: [] };
+        },
+      };
+      
+      var app = Vue.createApp(ChatItems);
+      
+      app.component('chat-item', {
+        props: ['msg'],
+        template: '<div class = \'chat-item\'>[{{ msg.timestamp }}] &lt;{{ msg.author }}&gt; {{ msg.content }}</div>', // <span class = \'chat-item-helper float-end\'>[]</span>
+      });
+      
+      var vm = app.mount('#chat_contents');
+      
+      var hashLock = false, chatID = 1, chatWS;
+      
+      function StateToHash(scene) {
+        if (scene == '') return '';
+        else {
+          let hashParams = new URLSearchParams();
+          hashParams.set('scene', scene);
+          return '#?' + hashParams.toString();
+        }
+      }
+      
+      function SetScene(scene) {
+        switch (scene) {
+          case '': mainDiv.style.display = ''; roomDiv.style.display = 'none'; break;
+          case 'room':
+            mainDiv.style.display = 'none'; roomDiv.style.display = '';
+            
+            if (chatWS.readyState == 1) {
+              chatWS.send(BSON.serialize({
+                id: chatID++,
+                type: 'auth',
+                username: username.value,
+              }));
+              
+              chatWS.send(BSON.serialize({
+                id: chatID++,
+                type: 'read_messages',
+              }));
+            }
+            break;
+        }
+        
+        hashLock = true; history.replaceState(null, '', location.href.split('#')[0] + StateToHash(scene)); hashLock = false;
+      }
+      
+      username.onkeydown = evt => {
+        if (evt.code == 'Enter') SetScene('room');
+      };
+      
+      message.onkeydown = evt => {
+        if (evt.code == 'Enter') SendMessage();
+      };
+      
+      function SendMessage() {
+        chatWS.send(BSON.serialize({
+          id: chatID++,
+          type: 'send_message',
+          content: message.value,
+        }));
+        message.value = '';
+      }
+      
+      function ConnectToChatWS() {
+        chatWS = new WebSocket(`wss://${location.host}/chat/ws?version=1`);
+        chatWS.onclose = () => setTimeout(ConnectToChatWS, 5000);
+        chatWS.onopen = onhashchange;
+        chatWS.onmessage = async msg => {
+          try { msg = BSON.deserialize(await msg.data.arrayBuffer()); } catch (e) { return console.error(e, msg); }
+          
+          switch (msg.type) {
+            case 'error':
+              console.error(msg);
+              break;
+            
+            case 'read_messages_resp':
+              let msgs = msg.messages.map(x => {
+                return {
+                  id: Uint8ArrayToHex(x.id.buffer),
+                  timestamp: new Date(Number(new DataView(x.id.buffer.buffer).getBigUint64(x.id.buffer.byteOffset + 1))).toISOString(),
+                  author: x.author,
+                  content: x.content,
+                };
+              });
+              
+              let latestID = msgs.slice(-1)[0];
+              
+              if (latestID) {
+                for (var i = vm.chatItems.length - 1; i >= 0; i--) {
+                  if (vm.chatItems[i].id <= latestID) vm.chatItems.splice(i, 1);
+                }
+                
+                vm.chatItems.splice(0, 0, ...msgs);
+              } else {
+                vm.chatItems.length = 0;
+              }
+              break;
+            
+            case 'message':
+              let msgObj = {
+                id: Uint8ArrayToHex(msg.message.id.buffer),
+                timestamp: new Date(Number(new DataView(msg.message.id.buffer.buffer).getBigUint64(msg.message.id.buffer.byteOffset + 1))).toISOString(),
+                author: msg.message.author,
+                content: msg.message.content,
+              };
+              
+              vm.chatItems.push(msgObj);
+              break;
+          }
+        };
+      }
+      
+      onhashchange = () => {
+        if (hashLock) return;
+        let hashParams = new URLSearchParams(location.hash.split('?')[1]);
+        let scene = hashParams.get('scene');
+        if (scene == 'room') SetScene('room');
+        else SetScene('');
+      };
+      
+      onbeforeunload = () => {
+        if (username.value)
+          localStorage.chat_data = JSON.stringify({ version: 1, username: username.value });
+        else
+          delete localStorage.chat_data;
+      };
+      
+      if (localStorage.chat_data) {
+        try {
+          let chatData = JSON.parse(localStorage.chat_data);
+          if (chatData.version == 1 && typeof chatData.username == 'string') {
+            username.value = chatData.username;
+          }
+        } catch (e) {}
+      }
+      
+      ConnectToChatWS();
+      onhashchange();
+    </script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 {
   "name": "c284-webmain-1-nodesrv_main",
   "dependencies": {
+    "bson": "4.4.1",
     "bufferutil": "^4.0.3",
     "mime": "^2.5.2",
     "mongodb": "^3.6.9",

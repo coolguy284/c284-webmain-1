@@ -25,27 +25,27 @@ function toBool(str) {
 }
 
 
-if (!process.env.DISABLE_MONGODB) {
+if (!toBool(process.env.DISABLE_MONGODB)) {
   // complicated mongodb log file naming process
   var date = new Date();
   var datePart = date.toUTCString().replace(',', '').split(' ').slice(0, 3);
-  var mongoLogFile = `logs-mongodb/` +
+  var mongoLogFile = `logs_mongodb/` +
     `${date.getUTCFullYear()}_${(date.getUTCMonth() + 1 + '').padStart(2, '0')}_${(date.getUTCDate() + '').padStart(2, '0')} ` +
     `${(date.getUTCHours() + '').padStart(2, '0')}_${(date.getUTCMinutes() + '').padStart(2, '0')}_${(date.getUTCSeconds() + '').padStart(2, '0')} ` +
     `${[datePart[0], datePart[2], datePart[1]].join(' ')} ` +
     `${((date.getUTCHours() % 12 + 11) % 12 + 1 + '').padStart(2, '0')}_${(date.getUTCMinutes() + '').padStart(2, '0')}_${(date.getUTCSeconds() + '').padStart(2, '0')} ` +
     `${date.getUTCHours() < 12 ? 'AM' : 'PM'} ` +
     `UTC.log`;
-
+  
   // mongodb server for database of server
   var logMongodb = toBool(process.env.MONGODB_LOG_CONS);
-
-  var mongod = cp.spawn('mongod', ['--dbpath', 'mongodb' , '--bind_ip', '127.0.0.1'], { stdio: ['ignore', logMongodb ? 'pipe' : 'ignore', logMongodb ? 'pipe' : 'ignore'] });
-
-  if (logMongodb) {
-    // takes mongodb's fancy JSON logging and makes it pretty for printing to console
-    var logMongodJSON = function logMongodJSON(logElem) {
-      fs.appendFile(mongoLogFile, logElem.endsWith('\n') ? logElem : logElem + '\n', err => { if (err) console.error(err); });
+  
+  var mongod = cp.spawn('mongod', ['--dbpath', 'mongodb' , '--bind_ip', '127.0.0.1', '--replSet', 'c284wm1_1'], { stdio: ['ignore', 'pipe', 'pipe'] });
+  
+  // takes mongodb's fancy JSON logging and makes it pretty for printing to console
+  var logMongodJSON = function logMongodJSON(logElem) {
+    fs.appendFile(mongoLogFile, logElem.endsWith('\n') ? logElem : logElem + '\n', err => { if (err) console.error(err); });
+    if (logMongodb) {
       try {
         let logElemJSON = JSON.parse(logElem);
         let logString = `[${logElemJSON.t['$date'].split('+')[0]}Z] [MONGODB:${logElemJSON.ctx}] ${logElemJSON.c}: ${logElemJSON.msg}`;
@@ -62,16 +62,16 @@ if (!process.env.DISABLE_MONGODB) {
         console.log(logElem.c);
       }
     }
-
-    // stdout and stderr of mongodb piped thru readlinestream so it can be parsed with logMongodJSON for pretty printing
-    var mongod_stdout = new ReadlineStream({});
-    mongod.stdout.pipe(mongod_stdout);
-    mongod_stdout.on('data', logMongodJSON);
-
-    var mongod_stderr = new ReadlineStream({});
-    mongod.stderr.pipe(mongod_stderr);
-    mongod_stderr.on('data', logMongodJSON);
   }
+  
+  // stdout and stderr of mongodb piped thru readlinestream so it can be parsed with logMongodJSON for pretty printing
+  var mongod_stdout = new ReadlineStream({});
+  mongod.stdout.pipe(mongod_stdout);
+  mongod_stdout.on('data', logMongodJSON);
+  
+  var mongod_stderr = new ReadlineStream({});
+  mongod.stderr.pipe(mongod_stderr);
+  mongod_stderr.on('data', logMongodJSON);
 }
 
 

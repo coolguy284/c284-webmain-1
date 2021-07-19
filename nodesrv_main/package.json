@@ -1,6 +1,6 @@
 {
   "name": "c284-webmain-1-nodesrv_main",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "description": "Main node.js server for c284-webmain-1.",
   "main": "index.js",
   "scripts": {
@@ -15,6 +15,7 @@
   "author": "coolguy284",
   "license": "MIT",
   "dependencies": {
+    "bson": "4.4.1",
     "bufferutil": "^4.0.3",
     "mime": "^2.5.2",
     "mongodb": "^3.6.9",
