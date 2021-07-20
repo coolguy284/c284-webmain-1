@@ -56,7 +56,7 @@ module.exports = exports = {
     
     return {
       version: 1,
-      id: msgIsObject && Buffer.isBuffer(msg.id) ? msg.id : exports.generateID(),
+      id: msgIsObject && typeof msg.id == 'object' ? (Buffer.isBuffer(msg.id) ? msg.id : Buffer.isBuffer(msg.id.buffer) ? msg.id.buffer : exports.generateID()) : exports.generateID(),
       author: msgIsObject && typeof msg.author == 'string' ? msg.author : null,
       content: msgIsObject && typeof msg.content == 'string' ? msg.content : '',
     };
@@ -105,13 +105,59 @@ module.exports = exports = {
           username: msg.username,
         };
       
-      case 'auth_ack':
+      case 'get_users':
         return {
           id: msg.id,
           type: msg.type,
         };
       
-      case 'typing':
+      case 'get_users_resp':
+        return {
+          id: msg.id,
+          type: msg.type,
+          users: Array.isArray(msg.users) ? msg.users.filter(x => typeof x == 'string') : [],
+        };
+      
+      case 'user_join':
+        if (typeof msg.username != 'string') throw new exports.ValidationError('wsmsg.username not string');
+        return {
+          id: msg.id,
+          type: msg.type,
+          username: msg.username,
+        };
+      
+      case 'user_leave':
+        if (typeof msg.username != 'string') throw new exports.ValidationError('wsmsg.username not string');
+        return {
+          id: msg.id,
+          type: msg.type,
+          username: msg.username,
+        };
+      
+      case 'get_typings':
+        return {
+          id: msg.id,
+          type: msg.type,
+        };
+      
+      case 'get_typings_resp':
+        return {
+          id: msg.id,
+          type: msg.type,
+          users: Array.isArray(msg.users) ? msg.users.filter(x => typeof x == 'string') : [],
+        };
+      
+      case 'typing_update':
+        if (typeof msg.username != 'string') throw new exports.ValidationError('wsmsg.username not string');
+        if (typeof msg.typing != 'boolean') throw new exports.ValidationError('wsmsg.typing not boolean');
+        return {
+          id: msg.id,
+          type: msg.type,
+          username: msg.username,
+          typing: msg.typing,
+        };
+      
+      case 'set_typing':
         return {
           id: msg.id,
           type: msg.type,
@@ -133,11 +179,28 @@ module.exports = exports = {
       
       case 'message':
         let msgObj = exports.validateVer1Msg(msg.message);
-        if (msgObj.author == null) throw new exports.ValidationError('message.author is null');
+        if (msgObj.author == null) throw new exports.ValidationError('wsmsg.message.author is null');
         return {
           id: msg.id,
           type: msg.type,
           message: msgObj,
+        };
+      
+      case 'message_edit':
+        let msgObj2 = exports.validateVer1Msg(msg.message);
+        if (msgObj2.author == null) throw new exports.ValidationError('wsmsg.message.author is null');
+        return {
+          id: msg.id,
+          type: msg.type,
+          message: msgObj2,
+        };
+      
+      case 'message_delete':
+        if (!Buffer.isBuffer(msg.message_id)) throw new exports.ValidationError('wsmsg.message_id is invalid');
+        return {
+          id: msg.id,
+          type: msg.type,
+          message_id: msg.message_id,
         };
       
       case 'send_message':
@@ -148,10 +211,21 @@ module.exports = exports = {
           content: msg.content,
         };
       
-      case 'send_message_ack':
+      case 'send_message_edit':
+        let msgObj3 = exports.validateVer1Msg(msg.message);
         return {
           id: msg.id,
           type: msg.type,
+          message: msgObj3,
+        };
+      
+      case 'send_message_delete':
+        let messageID = typeof msg.message_id == 'object' ? (Buffer.isBuffer(msg.message_id) ? msg.message_id : Buffer.isBuffer(msg.message_id.buffer) ? msg.message_id.buffer : null) : null;
+        if (!messageID) throw new exports.ValidationError('wsmsg.message_id is invalid');
+        return {
+          id: msg.id,
+          type: msg.type,
+          message_id: messageID,
         };
       
       default:

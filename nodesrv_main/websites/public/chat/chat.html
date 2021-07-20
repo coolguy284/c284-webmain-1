@@ -23,8 +23,18 @@
         display: none;
       }
       
+      .chat-item:hover {
+        background: #eee;
+      }
+      
       .chat-item:hover span {
         display: inline;
+      }
+      
+      .bi {
+        margin-top: -5px;
+        width: 1.5rem;
+        height: 1rem;
       }
     </style>
   </head>
@@ -47,30 +57,81 @@
       </div>
       
       <div class = 'pt-3' id = 'roomDiv' style = 'display: none;'>
-        <p>Note: this chat is just a test toy and is not secure, for example you can delete any message with your username (or rather will be able to soon).</p>
-        <div class = 'border border-secondary border-3 rounded' style = 'height: calc(100vh - 10.5rem);'>
-          <div class = 'd-flex flex-column-reverse align-items-beginning p-2 overflow-auto' style = 'height: 100%;'>
-            <div id = 'chat_contents'>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="display: none;"><symbol id="bi-pencil"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></symbol></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" style="display: none;"><symbol id="bi-trash"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></symbol></svg>
+        
+        <p>Note: this chat is just a test toy and is not secure, for example you can edit and delete any message with your username.</p>
+        <div class = 'd-flex flex-row border border-secondary border-3 rounded' id = 'chat' style = 'height: calc(100vh - 10.5rem);'>
+          <div class = 'd-flex flex-column-reverse align-items-beginning border-end border-secondary border-3 p-2 overflow-auto' style = 'width: calc(100% - 10rem); height: 100%; scrollbar-width: thin;'>
+            <div>
               <chat-item
                 v-for = 'item in chatItems'
                 v-bind:msg = 'item'
+                v-bind:username = 'username'
                 v-bind:key = 'item.id'
-                ref = 'vue'
               ></chat-item>
+              <chat-typings
+                v-bind:typings = 'chatTypings'
+              ></chat-typings>
             </div>
           </div>
-          <!--<div class = 'p-2' id = 'chat_users' style = 'width: 10rem; height: 100%;'></div>-->
+          <div class = 'd-flex flex-column' style = 'width: 10rem; height: 100%;'>
+            <div class = 'border-bottom border-secondary border-3 p-2'>Users:</div>
+            <div class = 'd-flex flex-column p-2 overflow-auto' style = 'scrollbar-width: thin;'>
+              <chat-user
+                v-for = 'user in chatUsers'
+                v-bind:user = 'user'
+              ></chat-user>
+            </div>
+          </div>
         </div>
         <div class = 'input-group'>
           <input type = 'text' class = 'form-control' id = 'message' placeholder = 'Message here. Press enter or the send button to send.'>
-          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'SendMessage();'>Send</button>
+          <button type = 'button' class = 'btn btn-outline-primary' maxlength = 65536 onclick = 'SendMessage();'>Send</button>
         </div>
-        <br>
+        
+        <div class = 'modal fade' id = 'editModal' aria-labelledby = 'editModalLabel' aria-hidden = 'true'>
+          <div class = 'modal-dialog'>
+            <div class = 'modal-content'>
+              <div class = 'modal-header'>
+                <h5 class = 'modal-title' id = 'editModalLabel'>Edit Message</h5>
+                <button type = 'button' class = 'btn-close' data-bs-dismiss = 'modal' aria-label = 'Close'></button>
+              </div>
+              <div class = 'modal-body'>
+                <input type = 'text' class = 'form-control' id = 'editModalText'>
+              </div>
+              <div class = 'modal-footer'>
+                <button type = 'button' class = 'btn btn-outline-secondary' data-bs-dismiss = 'modal'>Nevermind</button>
+                <button type = 'button' class = 'btn btn-primary' onclick = 'EditMsg();' data-bs-dismiss = 'modal'>Confirm</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class = 'modal fade' id = 'deleteConfirmModal' aria-labelledby = 'deleteConfirmModalLabel' aria-hidden = 'true'>
+          <div class = 'modal-dialog'>
+            <div class = 'modal-content'>
+              <div class = 'modal-header'>
+                <h5 class = 'modal-title' id = 'deleteConfirmModalLabel'>Delete Message</h5>
+                <button type = 'button' class = 'btn-close' data-bs-dismiss = 'modal' aria-label = 'Close'></button>
+              </div>
+              <div class = 'modal-body'>
+                <p>Are you sure you want to delete this message?</p>
+                <div class = 'chat-item' id = 'deleteConfirmModalText'></div>
+              </div>
+              <div class = 'modal-footer'>
+                <button type = 'button' class = 'btn btn-outline-secondary' data-bs-dismiss = 'modal'>Nevermind</button>
+                <button type = 'button' class = 'btn btn-danger' onclick = 'DeleteMsg();' data-bs-dismiss = 'modal'>Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     
     <script src = '/libs/extern/bson.browser.umd.js'></script>
     <script src = '/libs/extern/vue_3.1.5.global.prod.js'></script>
+    <script src = '/libs/extern/bootstrap.bundle.min.js' async></script>
     <script>
       function Uint8ArrayToHex(arr) {
         let str = '';
@@ -78,22 +139,68 @@
         return str;
       }
       
-      var ChatItems = {
+      function HexToUint8Array(str) {
+        let arr = new Uint8Array(str.length / 2);
+        for (var i = 0; i < arr.length; i++) arr[i] = parseInt(str.slice(i * 2, i * 2 + 2), 16);
+        return arr;
+      }
+      
+      var app = Vue.createApp({
         data() {
-          return { chatItems: [] };
+          return {
+            get username() { return username.value },
+            chatItems: [],
+            chatTypings: [],
+            chatUsers: [],
+          };
         },
-      };
-      
-      var app = Vue.createApp(ChatItems);
-      
-      app.component('chat-item', {
-        props: ['msg'],
-        template: '<div class = \'chat-item\'>[{{ msg.timestamp }}] &lt;{{ msg.author }}&gt; {{ msg.content }}</div>', // <span class = \'chat-item-helper float-end\'>[]</span>
       });
       
-      var vm = app.mount('#chat_contents');
+      app.component('chat-item', {
+        props: ['msg', 'username'],
+        template: '<div class = \'chat-item\'><b>[{{ msg.timestamp }}] &lt;{{ msg.author }}&gt;</b> {{ msg.content }}<span class = \'chat-item-helper float-end\' v-if = \'msg.author == username\'><svg class="bi" @click="editMsg(msg.id, msg.content)"><use xlink:href="#bi-pencil"></svg> <svg class="bi" @click="deleteMsg(msg.id, $event)"><use xlink:href="#bi-trash"></svg></span></div>',
+        methods: {
+          editMsg(id, content) {
+            if (editModalObj) editModalObj.dispose();
+            editModalObj = new bootstrap.Modal(editModal);
+            editModalObj.show();
+            modalID = id;
+            editModalText.value = content;
+          },
+          deleteMsg(id, event) {
+            if (event.shiftKey && !event.ctrlKey && !event.altKey && !event.metaKey) {
+              DeleteMsg(id);
+            } else {
+              if (deleteConfirmModalObj) deleteConfirmModalObj.dispose();
+              deleteConfirmModalObj = new bootstrap.Modal(deleteConfirmModal);
+              deleteConfirmModalObj.show();
+              modalID = id;
+              
+              let element = event.target;
+              for (var i = 0; i < 5; i++) {
+                if (element.tagName == 'DIV') break;
+                element = element.parentElement;
+              }
+              
+              deleteConfirmModalText.innerHTML = element.innerHTML.replace(/<svg.*?<\/svg>(?=<\/span>$)/, '');
+            }
+          }
+        },
+      });
       
-      var hashLock = false, chatID = 1, chatWS;
+      app.component('chat-typings', {
+        props: ['typings'],
+        template: '<div>{{ typings.length == 0 ? \'\xa0\' : typings.length == 1 ? typings[0] + \' is typing...\' : typings.length == 2 ? typings.join(\' and \') + \' are typing...\' : typings.slice(0, -1).join(\', \') + \', and \' + typings.slice(-1)[0] + \' are typing...\' }}</div>',
+      });
+      
+      app.component('chat-user', {
+        props: ['user'],
+        template: '<div>{{ user }}</div>',
+      });
+      
+      var vm = app.mount('#chat');
+      
+      var hashLock = false, chatID = 1, chatWS, typing = false, typingTimeout, editModalObj, deleteConfirmModalObj, modalID;
       
       function StateToHash(scene) {
         if (scene == '') return '';
@@ -106,7 +213,18 @@
       
       function SetScene(scene) {
         switch (scene) {
-          case '': mainDiv.style.display = ''; roomDiv.style.display = 'none'; break;
+          case '':
+            mainDiv.style.display = ''; roomDiv.style.display = 'none';
+            
+            if (chatWS.readyState == 1) {
+              chatWS.send(BSON.serialize({
+                id: chatID++,
+                type: 'auth',
+                username: null,
+              }));
+            }
+            break;
+          
           case 'room':
             mainDiv.style.display = 'none'; roomDiv.style.display = '';
             
@@ -121,11 +239,41 @@
                 id: chatID++,
                 type: 'read_messages',
               }));
+              
+              chatWS.send(BSON.serialize({
+                id: chatID++,
+                type: 'get_users',
+              }));
+              
+              chatWS.send(BSON.serialize({
+                id: chatID++,
+                type: 'get_typings',
+              }));
             }
             break;
         }
         
         hashLock = true; history.replaceState(null, '', location.href.split('#')[0] + StateToHash(scene)); hashLock = false;
+      }
+      
+      function EditMsg() {
+        chatWS.send(BSON.serialize({
+          id: chatID++,
+          type: 'send_message_edit',
+          message: {
+            id: HexToUint8Array(modalID),
+            content: editModalText.value,
+          },
+        }));
+      }
+      
+      function DeleteMsg(id) {
+        if (!id) id = modalID;
+        chatWS.send(BSON.serialize({
+          id: chatID++,
+          type: 'send_message_delete',
+          message_id: HexToUint8Array(id),
+        }));
       }
       
       username.onkeydown = evt => {
@@ -136,6 +284,36 @@
         if (evt.code == 'Enter') SendMessage();
       };
       
+      message.oninput = () => {
+        if (typing && message.value == '') {
+          typing = false;
+          chatWS.send(BSON.serialize({
+            id: chatID++,
+            type: 'set_typing',
+            typing,
+          }));
+          if (typingTimeout) clearTimeout(typingTimeout);
+        } else if (message.value != '') {
+          if (!typing) {
+            typing = true;
+            chatWS.send(BSON.serialize({
+              id: chatID++,
+              type: 'set_typing',
+              typing,
+            }));
+          }
+          if (typingTimeout) clearTimeout(typingTimeout);
+          typingTimeout = setTimeout(() => {
+            typing = false;
+            chatWS.send(BSON.serialize({
+              id: chatID++,
+              type: 'set_typing',
+              typing,
+            }));
+          }, 5000);
+        }
+      };
+      
       function SendMessage() {
         chatWS.send(BSON.serialize({
           id: chatID++,
@@ -143,11 +321,23 @@
           content: message.value,
         }));
         message.value = '';
+        if (typing) {
+          typing = false;
+          chatWS.send(BSON.serialize({
+            id: chatID++,
+            type: 'set_typing',
+            typing,
+          }));
+          if (typingTimeout) clearTimeout(typingTimeout);
+        }
       }
       
       function ConnectToChatWS() {
         chatWS = new WebSocket(`wss://${location.host}/chat/ws?version=1`);
-        chatWS.onclose = () => setTimeout(ConnectToChatWS, 5000);
+        chatWS.onclose = () => {
+          if (typingTimeout) clearTimeout(typingTimeout);
+          setTimeout(ConnectToChatWS, 5000);
+        };
         chatWS.onopen = onhashchange;
         chatWS.onmessage = async msg => {
           try { msg = BSON.deserialize(await msg.data.arrayBuffer()); } catch (e) { return console.error(e, msg); }
@@ -155,6 +345,35 @@
           switch (msg.type) {
             case 'error':
               console.error(msg);
+              break;
+            
+            case 'get_users_resp':
+              vm.chatUsers.splice(0, Infinity, ...msg.users);
+              vm.chatUsers.sort();
+              break;
+            
+            case 'user_join':
+              vm.chatUsers.push(msg.username);
+              vm.chatUsers.sort();
+              break;
+            
+            case 'user_leave':
+              let userIndex = vm.chatUsers.lastIndexOf(msg.username);
+              if (userIndex > -1) vm.chatUsers.splice(userIndex, 1);
+              break;
+            
+            case 'get_typings_resp':
+              vm.chatTypings.splice(0, Infinity, ...msg.users);
+              break;
+            
+            case 'typing_update':
+              if (msg.typing) {
+                vm.chatTypings.push(msg.username);
+                vm.chatTypings.sort();
+              } else {
+                let typingIndex = vm.chatTypings.lastIndexOf(msg.username);
+                if (typingIndex > -1) vm.chatTypings.splice(typingIndex, 1);
+              }
               break;
             
             case 'read_messages_resp':
@@ -190,6 +409,25 @@
               
               vm.chatItems.push(msgObj);
               break;
+            
+            case 'message_edit':
+              let msgObj2 = {
+                id: Uint8ArrayToHex(msg.message.id.buffer),
+                content: msg.message.content,
+              };
+              
+              let index = vm.chatItems.findIndex(x => x.id == msgObj2.id);
+              
+              if (index > -1) vm.chatItems[index].content = msgObj2.content;
+              break;
+            
+            case 'message_delete':
+              let msgID = Uint8ArrayToHex(msg.message_id.buffer);
+              
+              let index2 = vm.chatItems.findIndex(x => x.id == msgID);
+              
+              if (index2 > -1) vm.chatItems.splice(index2, 1);
+              break;
           }
         };
       }
@@ -207,6 +445,14 @@
           localStorage.chat_data = JSON.stringify({ version: 1, username: username.value });
         else
           delete localStorage.chat_data;
+        
+        if (chatWS.readyState == 1) {
+          chatWS.send(BSON.serialize({
+            id: chatID++,
+            type: 'auth',
+            username: null,
+          }));
+        }
       };
       
       if (localStorage.chat_data) {

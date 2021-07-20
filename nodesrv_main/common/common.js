@@ -99,14 +99,14 @@ module.exports = exports = {
   getReqLogStr: requestProps => {
     if (requestProps.httpVersion == 1) {
       if (requestProps.type == 'main')
-        return `${requestProps.id.toString().padStart(5, '0')} ${exports.formatIP(requestProps.ip)} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} ${requestProps.method} ${requestProps.rawUrl}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${exports.formatIP(requestProps.ip)} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
     } else {
       if (requestProps.method != 'connect')
-        return `${requestProps.id.toString().padStart(5, '0')} ${exports.formatIP(requestProps.ip)} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} ${requestProps.method} ${requestProps.rawUrl}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${exports.formatIP(requestProps.ip)} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
     }
   },
   
