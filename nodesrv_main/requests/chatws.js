@@ -181,6 +181,12 @@ function chatWSFunc(ws, req, requestProps) {
               
               if (await collection.countDocuments() > 1024)
                 await collection.deleteOne();
+              
+              ws.send(BSON.serialize({
+                id: msg.id,
+                type: 'send_message_ack',
+                message_id: msgObj._id,
+              }));
             }
             break;
           
@@ -279,6 +285,9 @@ function chatWSFunc(ws, req, requestProps) {
       ws.close(4001, 'Error: invalid_chat_protocol_version: Chat version number must be 1.');
       break;
   }
+  
+  if (Number(process.env.NODESRVMAIN_CHAT_IDLE_TIMEOUT))
+    ws.on('pong', function heartbeat() { this.isAlive = true; });
 }
 
 var chatStream;

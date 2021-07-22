@@ -137,6 +137,16 @@ global.tickFunc = () => {
     if (common.vars.ownEyesCodes.get(i) < limitTime)
       common.vars.ownEyesCodes.delete(i);
   }
+  
+  if (Number(process.env.NODESRVMAIN_CHAT_IDLE_TIMEOUT) && ticks % Number(process.env.NODESRVMAIN_CHAT_IDLE_TIMEOUT) == 0) {
+    for (var ws2 of chatWSServer.clients) {
+      if (ws2.isAlive === false) return ws2.terminate();
+      
+      ws2.isAlive = false;
+      ws2.ping();
+    }
+  }
+  
   global.ticks++;
 };
 global.tickInt = setInterval(tickFunc, 1000);

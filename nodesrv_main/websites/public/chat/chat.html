@@ -19,15 +19,19 @@
     
     <link rel = 'stylesheet' href = '/libs/extern/bootstrap.min.css'>
     <style>
+      :root {
+        --bs-breadcrumb-divider: '';
+      }
+      
       .chat-item-helper {
         display: none;
       }
       
-      .chat-item:hover {
+      .chat-item:hover, .chat-user:hover {
         background: #eee;
       }
       
-      .chat-item:hover span {
+      .chat-item:hover .chat-item-helper {
         display: inline;
       }
       
@@ -41,8 +45,9 @@
   <body>
     <div class = 'container-fluid'>
       <nav class = 'navbar border-bottom' aria-label = 'breadcrumb'>
-        <ol class = 'breadcrumb mb-0'>
-          <li class = 'breadcrumb-item'><a class = 'navbar-brand' href = 'javascript:SetScene("");'>C284's Chat System (Beta)</a></li>
+        <ol class = 'breadcrumb' style = 'margin-bottom: -0.25rem;'>
+          <li class = 'breadcrumb-item mb-1 pe-1'><a class = 'navbar-brand'>C284's Chat System (Beta)</a></li>
+          <li class = 'breadcrumb-item mb-1 ps-0'><a class = 'navbar-brand' href = 'javascript:SetScene("");'>Return to Start</a></li>
         </ol>
       </nav>
       
@@ -63,7 +68,7 @@
         <p>Note: this chat is just a test toy and is not secure, for example you can edit and delete any message with your username.</p>
         <div class = 'd-flex flex-row border border-secondary border-3 rounded' id = 'chat' style = 'height: calc(100vh - 10.5rem);'>
           <div class = 'd-flex flex-column-reverse align-items-beginning border-end border-secondary border-3 p-2 overflow-auto' style = 'width: calc(100% - 10rem); height: 100%; scrollbar-width: thin;'>
-            <div>
+            <div style = 'word-break: break-word;'>
               <chat-item
                 v-for = 'item in chatItems'
                 v-bind:msg = 'item'
@@ -77,7 +82,7 @@
           </div>
           <div class = 'd-flex flex-column' style = 'width: 10rem; height: 100%;'>
             <div class = 'border-bottom border-secondary border-3 p-2'>Users:</div>
-            <div class = 'd-flex flex-column p-2 overflow-auto' style = 'scrollbar-width: thin;'>
+            <div class = 'd-flex flex-column p-2 overflow-auto' style = 'scrollbar-width: thin; word-break: break-word;'>
               <chat-user
                 v-for = 'user in chatUsers'
                 v-bind:user = 'user'
@@ -102,7 +107,7 @@
               </div>
               <div class = 'modal-footer'>
                 <button type = 'button' class = 'btn btn-outline-secondary' data-bs-dismiss = 'modal'>Nevermind</button>
-                <button type = 'button' class = 'btn btn-primary' onclick = 'EditMsg();' data-bs-dismiss = 'modal'>Confirm</button>
+                <button type = 'button' class = 'btn btn-primary' onclick = 'EditMsg();' data-bs-dismiss = 'modal'>Update</button>
               </div>
             </div>
           </div>
@@ -117,7 +122,7 @@
               </div>
               <div class = 'modal-body'>
                 <p>Are you sure you want to delete this message?</p>
-                <div class = 'chat-item' id = 'deleteConfirmModalText'></div>
+                <div class = 'chat-item' id = 'deleteConfirmModalText' style = 'word-break: break-word;'></div>
               </div>
               <div class = 'modal-footer'>
                 <button type = 'button' class = 'btn btn-outline-secondary' data-bs-dismiss = 'modal'>Nevermind</button>
@@ -195,7 +200,7 @@
       
       app.component('chat-user', {
         props: ['user'],
-        template: '<div>{{ user }}</div>',
+        template: '<div class = \'chat-user\'>{{ user }}</div>',
       });
       
       var vm = app.mount('#chat');
@@ -311,6 +316,13 @@
               typing,
             }));
           }, 5000);
+        }
+      };
+      
+      editModalText.onkeydown = evt => {
+        if (evt.code == 'Enter') {
+          EditMsg();
+          editModalObj.hide();
         }
       };
       

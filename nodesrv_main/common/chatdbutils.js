@@ -211,6 +211,14 @@ module.exports = exports = {
           content: msg.content,
         };
       
+      case 'send_message_ack':
+        if (!Buffer.isBuffer(msg.message_id)) throw new exports.ValidationError('wsmsg.message_id is invalid');
+        return {
+          id: msg.id,
+          type: msg.type,
+          message_id: msg.message_id,
+        };
+      
       case 'send_message_edit':
         let msgObj3 = exports.validateVer1Msg(msg.message);
         return {
