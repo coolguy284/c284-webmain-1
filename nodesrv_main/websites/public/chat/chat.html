@@ -409,6 +409,8 @@
               } else {
                 vm.chatItems.length = 0;
               }
+              
+              setTimeout(onresize, 0);
               break;
             
             case 'message':
@@ -421,7 +423,7 @@
               
               vm.chatItems.push(msgObj);
               
-              onresize();
+              setTimeout(onresize, 0);
               break;
             
             case 'message_edit':
@@ -434,7 +436,7 @@
               
               if (index > -1) vm.chatItems[index].content = msgObj2.content;
               
-              onresize();
+              setTimeout(onresize, 0);
               break;
             
             case 'message_delete':
@@ -444,7 +446,7 @@
               
               if (index2 > -1) vm.chatItems.splice(index2, 1);
               
-              onresize();
+              setTimeout(onresize, 0);
               break;
           }
         };
