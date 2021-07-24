@@ -23,14 +23,3 @@ format for nodesrv_main/websites/redirects.txt:
   ),
   "#" : comment,
 ```
-
-```
-format for id:
-  aaaaaaaabbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
-  bbbbbbbbccccccccddddddddddddddddeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-  a - u8 version (1 for now)
-  b - u64be unix millisecond timestamp
-  c - u8 bit server id (always 1 for now)
-  d - u16be entity id (incremented)
-  e - u32be random number
-```

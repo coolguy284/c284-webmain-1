@@ -72,6 +72,11 @@ function chatWSFunc(ws, req, requestProps) {
                   }
                 }
               }
+              
+              ws.send(BSON.serialize({
+                id: msg.id,
+                type: 'auth_ack',
+              }));
             }
             break;
           
@@ -117,6 +122,23 @@ function chatWSFunc(ws, req, requestProps) {
             }
             break;
           
+          case 'read_messages':
+            if (wsInfo.username == null) {
+              ws.send(BSON.serialize({
+                id: msg.id,
+                type: 'error',
+                code: 'not_authed',
+                description: 'Cannot read messages until a username is provided.',
+              }));
+            } else {
+              ws.send(BSON.serialize({
+                id: msg.id,
+                type: 'read_messages_resp',
+                messages: (await mongoClient.db('channels').collection('AQAAAXq7jAfzAQABZ_dDUQ').find().toArray()).map(chatDBUilts.ver1MongoMsgToMsg),
+              }));
+            }
+            break;
+          
           case 'set_typing':
             if (wsInfo.username == null) {
               ws.send(BSON.serialize({
@@ -138,22 +160,10 @@ function chatWSFunc(ws, req, requestProps) {
                   }));
                 }
               }
-            }
-            break;
-          
-          case 'read_messages':
-            if (wsInfo.username == null) {
+              
               ws.send(BSON.serialize({
                 id: msg.id,
-                type: 'error',
-                code: 'not_authed',
-                description: 'Cannot read messages until a username is provided.',
-              }));
-            } else {
-              ws.send(BSON.serialize({
-                id: msg.id,
-                type: 'read_messages_resp',
-                messages: (await mongoClient.db('channels').collection('AQAAAXq7jAfzAQABZ_dDUQ').find().toArray()).map(chatDBUilts.ver1MongoMsgToMsg),
+                type: 'set_typing_ack',
               }));
             }
             break;
@@ -217,6 +227,11 @@ function chatWSFunc(ws, req, requestProps) {
                     content: msg.message.content,
                   } }
                 );
+              
+                ws.send(BSON.serialize({
+                  id: msg.id,
+                  type: 'send_message_edit_ack',
+                }));
               }
             }
             break;
@@ -243,6 +258,11 @@ function chatWSFunc(ws, req, requestProps) {
                 }));
               } else {
                 await collection.deleteOne({ '_id': msg.message_id });
+              
+                ws.send(BSON.serialize({
+                  id: msg.id,
+                  type: 'send_message_delete_ack',
+                }));
               }
             }
             break;

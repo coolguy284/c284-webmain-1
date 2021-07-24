@@ -105,6 +105,12 @@ module.exports = exports = {
           username: msg.username,
         };
       
+      case 'auth_ack':
+        return {
+          id: msg.id,
+          type: msg.type,
+        };
+      
       case 'get_users':
         return {
           id: msg.id,
@@ -116,6 +122,32 @@ module.exports = exports = {
           id: msg.id,
           type: msg.type,
           users: Array.isArray(msg.users) ? msg.users.filter(x => typeof x == 'string') : [],
+        };
+      
+      case 'get_typings':
+        return {
+          id: msg.id,
+          type: msg.type,
+        };
+      
+      case 'get_typings_resp':
+        return {
+          id: msg.id,
+          type: msg.type,
+          users: Array.isArray(msg.users) ? msg.users.filter(x => typeof x == 'string') : [],
+        };
+      
+      case 'read_messages':
+        return {
+          id: msg.id,
+          type: msg.type,
+        };
+      
+      case 'read_messages_resp':
+        return {
+          id: msg.id,
+          type: msg.type,
+          messages: Array.isArray(msg.messages) ? msg.messages.map(exports.validateVer1Msg).filter(x => x.author != null) : [],
         };
       
       case 'user_join':
@@ -134,19 +166,6 @@ module.exports = exports = {
           username: msg.username,
         };
       
-      case 'get_typings':
-        return {
-          id: msg.id,
-          type: msg.type,
-        };
-      
-      case 'get_typings_resp':
-        return {
-          id: msg.id,
-          type: msg.type,
-          users: Array.isArray(msg.users) ? msg.users.filter(x => typeof x == 'string') : [],
-        };
-      
       case 'typing_update':
         if (typeof msg.username != 'string') throw new exports.ValidationError('wsmsg.username not string');
         if (typeof msg.typing != 'boolean') throw new exports.ValidationError('wsmsg.typing not boolean');
@@ -155,26 +174,6 @@ module.exports = exports = {
           type: msg.type,
           username: msg.username,
           typing: msg.typing,
-        };
-      
-      case 'set_typing':
-        return {
-          id: msg.id,
-          type: msg.type,
-          typing: Boolean(msg.typing),
-        };
-      
-      case 'read_messages':
-        return {
-          id: msg.id,
-          type: msg.type,
-        };
-      
-      case 'read_messages_resp':
-        return {
-          id: msg.id,
-          type: msg.type,
-          messages: Array.isArray(msg.messages) ? msg.messages.map(exports.validateVer1Msg).filter(x => x.author != null) : [],
         };
       
       case 'message':
@@ -203,20 +202,19 @@ module.exports = exports = {
           message_id: msg.message_id,
         };
       
+      case 'set_typing':
+        return {
+          id: msg.id,
+          type: msg.type,
+          typing: Boolean(msg.typing),
+        };
+      
       case 'send_message':
         if (typeof msg.content != 'string') throw new exports.ValidationError('wsmsg.content not string');
         return {
           id: msg.id,
           type: msg.type,
           content: msg.content,
-        };
-      
-      case 'send_message_ack':
-        if (!Buffer.isBuffer(msg.message_id)) throw new exports.ValidationError('wsmsg.message_id is invalid');
-        return {
-          id: msg.id,
-          type: msg.type,
-          message_id: msg.message_id,
         };
       
       case 'send_message_edit':
@@ -234,6 +232,32 @@ module.exports = exports = {
           id: msg.id,
           type: msg.type,
           message_id: messageID,
+        };
+      
+      case 'set_typing_ack':
+        return {
+          id: msg.id,
+          type: msg.type,
+        };
+      
+      case 'send_message_ack':
+        if (!Buffer.isBuffer(msg.message_id)) throw new exports.ValidationError('wsmsg.message_id is invalid');
+        return {
+          id: msg.id,
+          type: msg.type,
+          message_id: msg.message_id,
+        };
+      
+      case 'send_message_edit_ack':
+        return {
+          id: msg.id,
+          type: msg.type,
+        };
+      
+      case 'send_message_delete_ack':
+        return {
+          id: msg.id,
+          type: msg.type,
         };
       
       default:

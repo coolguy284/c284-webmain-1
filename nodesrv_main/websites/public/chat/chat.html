@@ -67,8 +67,8 @@
         
         <p>Note: this chat is just a test toy and is not secure, for example you can edit and delete any message with your username.</p>
         <div class = 'd-flex flex-row border border-secondary border-3 rounded' id = 'chat' style = 'height: calc(100vh - 10.5rem);'>
-          <div class = 'd-flex flex-column-reverse align-items-beginning border-end border-secondary border-3 p-2 overflow-auto' style = 'width: calc(100% - 10rem); height: 100%; scrollbar-width: thin;'>
-            <div style = 'word-break: break-word;'>
+          <div class = 'd-flex flex-column border-end border-secondary border-3 p-2 overflow-auto' style = 'width: calc(100% - 10rem); height: 100%; scrollbar-width: thin; word-break: break-word;'>
+            <div id = 'chat_msgs'>
               <chat-item
                 v-for = 'item in chatItems'
                 v-bind:msg = 'item'
@@ -420,6 +420,8 @@
               };
               
               vm.chatItems.push(msgObj);
+              
+              onresize();
               break;
             
             case 'message_edit':
@@ -431,6 +433,8 @@
               let index = vm.chatItems.findIndex(x => x.id == msgObj2.id);
               
               if (index > -1) vm.chatItems[index].content = msgObj2.content;
+              
+              onresize();
               break;
             
             case 'message_delete':
@@ -439,6 +443,8 @@
               let index2 = vm.chatItems.findIndex(x => x.id == msgID);
               
               if (index2 > -1) vm.chatItems.splice(index2, 1);
+              
+              onresize();
               break;
           }
         };
@@ -465,6 +471,12 @@
             username: null,
           }));
         }
+      };
+      
+      onresize = () => {
+        let chatMargin = chat.offsetHeight - chat_msgs.getBoundingClientRect().height - 22;
+        if (chatMargin > 0) chat_msgs.style.marginTop = chatMargin + 'px';
+        else chat_msgs.style.marginTop = '';
       };
       
       if (localStorage.chat_data) {
