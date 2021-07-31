@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Localstorage Editor</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'Use this website to edit various forms of localstorage for this domain.'>
+    <meta name = 'keywords' content = 'cookies, localstorage, sessionstorage'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/debug/'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Localstorage Editor'>
+    <meta name = 'og:description' content = 'Use this website to edit various forms of localstorage for this domain.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/debug/localstorage_editor.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap.min.css'>
+    <style>
+      textarea {
+        font-family: monospace;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-lg'>
+      <noscript>
+        <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+          Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
+        </div>
+      </noscript>
+      
+      <div class = 'row mt-3'>
+        <div class = 'btn-group' role = 'group' id = 'storagetypebuttons'>
+          <input type = 'radio' class = 'btn-check' name = 'storagetype' id = 'storagetype1' value = 'cookies' onchange = 'TypeUpdate();' autocomplete = 'off' checked>
+          <label class = 'col-3 btn btn-outline-primary' for = 'storagetype1'>Cookies</label>
+          
+          <input type = 'radio' class = 'btn-check' name = 'storagetype' id = 'storagetype2' value = 'localstorage' onchange = 'TypeUpdate();' autocomplete = 'off'>
+          <label class = 'col-3 btn btn-outline-primary' for = 'storagetype2'>Local Storage</label>
+          
+          <input type = 'radio' class = 'btn-check' name = 'storagetype' id = 'storagetype3' value = 'sessionstorage' onchange = 'TypeUpdate();' autocomplete = 'off'>
+          <label class = 'col-3 btn btn-outline-primary' for = 'storagetype3'>Session Storage</label>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <div class = 'row'>
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'TypeUpdate();'>Refresh Field Names</button>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'Get(1);'>Get</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'Set(1);'>Set</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'Delete();'>Delete</button>
+        </div>
+        
+        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+          <label class = 'btn btn-outline-primary' for = 'auto_get_set'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_get_set' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Auto Get and Set</label>
+        </div>
+      </div>
+      
+      <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <label for = 'name_select' class = 'col-form-label'>Field Name:</label>
+        
+        <select class = 'form-select' id = 'name_select' onchange = 'Get();'></select>
+        
+        <textarea class = 'form-control' id = 'field_name' placeholder = 'Field name here.' style = 'height: 2rem; resize: both; display: none;' oninput = 'Get();'></textarea>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'field_value' id = 'encoding_header'>Value</label></h4>
+          <div class = 'alert alert-danger' id = 'field_value_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'field_value' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'Set();'></textarea>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      function EscapeHTML(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\r/g,'&#13;');
+      }
+      
+      function UnescapeHTML(str) {
+        return str.replace(/&#13;/g, '\r').replace(/&#39;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+      }
+      
+      // html and textarea don't support carriage returns in textareas, they get auto converted to newlines 🙃, so null byte followed by a newline will be counted as a carriage return instead
+      function TextToTextArea(str) {
+        return str.replace(/\x00/g, '\x00\x00').replace(/\r/g, '\x00\n');
+      }
+      
+      // probably some advanced grammar reason why simple replace statements won't cut it here
+      function TextAreaToText(str) {
+        let result = '', i = 0;
+        for (; i < str.length - 1; i++) {
+          if (str.charCodeAt(i) == 0) {
+            if (str[i + 1] == '\x00') result += '\x00';
+            else if (str[i + 1] == '\n') result += '\r';
+            else result += '\x00' + str[i + 1];
+            i++;
+          } else result += str[i];
+        }
+        return result + (i < str.length ? str[str.length - 1] : '');
+        //return str.replace(/\x00\n/g, '\r').replace(/\x00\x00/g, '\x00');
+      }
+      
+      function GetStorageType() {
+        return Array.prototype.filter.call(document.getElementsByName('storagetype'), x => x.checked)[0].value;
+      }
+      
+      function SetStorageType(encoding) {
+        Array.prototype.forEach.call(document.getElementsByName('storagetype'), x => x.value == encoding ? x.checked = true : null);
+      }
+      
+      function TypeUpdate() {
+        let storageType = GetStorageType();
+        switch (storageType) {
+          case 'cookies':
+            let cookie = document.cookie ? document.cookie.split('; ') : [];
+            name_select.innerHTML = `<option value = 's:custom'>Custom</option><option disabled>───────────────</option>` + cookie.map(x => `<option value = 'k:${encodeURIComponent(x)}'>${EscapeHTML(x)}</option>`);
+            name_select.value = 's:custom';
+            Get();
+            break;
+          
+          case 'localstorage':
+          case 'sessionstorage':
+            name_select.innerHTML = `<option value = 's:custom'>Custom</option><option disabled>───────────────</option>` + Object.keys(storageType == 'localstorage' ? localStorage : sessionStorage).map(x => `<option value = 'k:${encodeURIComponent(x)}'>${EscapeHTML(x)}</option>`);
+            name_select.value = 's:custom';
+            Get();
+            break;
+        }
+      }
+      </script><script>
+      function GetFieldName() {
+        return name_select.value == 's:custom' ? field_name.value : decodeURIComponent(name_select.value.slice(2));
+      }
+      
+      function Get(mode) {
+        if (field_value.classList.contains('is-invalid')) {
+          field_value.classList.remove('is-invalid');
+          field_value_warning.style.display = 'none';
+          field_value_warning.innerText = '';
+        }
+        
+        let storageType = GetStorageType();
+        
+        if (name_select.value == 's:custom' && storageType != 'cookies') {
+          field_name.style.display = '';
+        } else {
+          field_name.style.display = 'none';
+        }
+        
+        if (mode == 2) return;
+        
+        if (!auto_get_set.checked && !mode) return;
+        
+        let fieldName = GetFieldName();
+        switch (storageType) {
+          case 'cookies':
+            let cookie = document.cookie.split('; ');
+            if (cookie.includes(fieldName)) {
+              field_value.value = TextToTextArea(fieldName);
+            } else {
+              if (!field_value.classList.contains('is-invalid')) field_value.classList.add('is-invalid');
+              field_value_warning.innerText = 'Cannot find cookie with value';
+              field_value_warning.style.display = '';
+            }
+            break;
+          
+          case 'localstorage':
+          case 'sessionstorage':
+            let value = (storageType == 'localstorage' ? localStorage : sessionStorage).getItem(fieldName);
+            if (value) {
+              field_value.value = TextToTextArea(value);
+            } else {
+              if (!field_value.classList.contains('is-invalid')) field_value.classList.add('is-invalid');
+              field_value_warning.innerText = 'Cannot find local/sessionstorage with name';
+              field_value_warning.style.display = '';
+            }
+            break;
+        }
+      }
+      
+      function Set(mode) {
+        if (field_value.classList.contains('is-invalid')) {
+          field_value.classList.remove('is-invalid');
+          field_value_warning.style.display = 'none';
+          field_value_warning.innerText = '';
+        }
+        
+        if (!auto_get_set.checked && !mode) return;
+        
+        let storageType = GetStorageType(), fieldName = storageType == 'cookies' ? field_value.value.split(';')[0] : GetFieldName();
+        switch (storageType) {
+          case 'cookies':
+            document.cookie = TextAreaToText(field_value.value);
+            break;
+          
+          case 'localstorage':
+          case 'sessionstorage':
+            (storageType == 'localstorage' ? localStorage : sessionStorage).setItem(fieldName, TextAreaToText(field_value.value));
+            break;
+        }
+        
+        TypeUpdate();
+        name_select.value = 'k:' + encodeURIComponent(fieldName);
+        Get(2);
+      }
+      
+      function Delete() {
+        let storageType = GetStorageType();
+        switch (storageType) {
+          case 'cookies':
+            document.cookie = GetFieldName() + '; max-age=0';
+            break;
+          
+          case 'localstorage':
+          case 'sessionstorage':
+            (storageType == 'localstorage' ? localStorage : sessionStorage).removeItem(GetFieldName());
+            break;
+        }
+        TypeUpdate();
+      }
+      
+      var lastUpdated = 1;
+      
+      function GeneralUpdate() {
+        if (lastUpdated == 1) ;
+      }
+      
+      onload = () => {
+        TypeUpdate();
+        Get();
+      };
+    </script>
+  </body>
+</html>

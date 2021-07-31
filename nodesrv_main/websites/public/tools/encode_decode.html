@@ -27,7 +27,8 @@
       #encodingbuttons { display: flex; }
       #encodingselect { display: none; }
       
-      @media (width <= 29rem) {
+      /* 'width <= 29rem' when chrome starts supporting level 4 media queries */
+      @media (max-width: 29rem) {
         #encodingbuttons { display: none; }
         #encodingselect { display: flex; }
       }
