@@ -36,7 +36,7 @@
       <div class = 'row' style = 'margin-top: 0.7rem;'>
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <div class = 'btn-group' role = 'group'>
-            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'UnencodedUpdate(1);'>Encode Text</button>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'TextUpdate(1);'>Encode Text</button>
             <button type = 'button' class = 'btn btn-outline-primary' onclick = 'EncodedUpdate(1);'>Decode Encoded Text</button>
           </div>
         </div>
@@ -74,17 +74,17 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text_unencoded'>Text</label></h4>
-          <div class = 'alert alert-danger' id = 'text_unencoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
-          <textarea class = 'form-control' id = 'text_unencoded' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'UnencodedUpdate();'></textarea>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text'>Text</label></h4>
+          <div class = 'alert alert-danger' id = 'text_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'text' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'TextUpdate();'></textarea>
         </div>
       </div>
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text_encoded'>Encoded</label></h4>
-          <div class = 'alert alert-danger' id = 'text_encoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
-          <textarea class = 'form-control' id = 'text_encoded' placeholder = 'Encoded text here.' spellcheck = 'false' oninput = 'EncodedUpdate();'></textarea>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'encoded'>Encoded</label></h4>
+          <div class = 'alert alert-danger' id = 'encoded_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'encoded' placeholder = 'Encoded text here.' spellcheck = 'false' oninput = 'EncodedUpdate();'></textarea>
         </div>
       </div>
       
@@ -115,11 +115,11 @@
       
       var lastUpdated = 1;
       
-      function UnencodedUpdate(mode) {
-        if (text_unencoded.classList.contains('is-invalid')) {
-          text_unencoded.classList.remove('is-invalid');
-          text_unencoded_warning.style.display = 'none';
-          text_unencoded_warning.innerText = '';
+      function TextUpdate(mode) {
+        if (text.classList.contains('is-invalid')) {
+          text.classList.remove('is-invalid');
+          text_warning.style.display = 'none';
+          text_warning.innerText = '';
         }
         
         if (mode == 2) return;
@@ -129,23 +129,23 @@
         if (!auto_convert.checked && !mode) return;
         
         try {
-          let binaryString = TextAreaToText(text_unencoded.value);
+          let binaryString = TextAreaToText(text.value);
           
-          text_encoded.value = encodeURI(binaryString);
+          encoded.value = encodeURI(binaryString);
           
           EncodedUpdate(2);
         } catch (e) {
-          if (!text_unencoded.classList.contains('is-invalid')) text_unencoded.classList.add('is-invalid');
-          text_unencoded_warning.innerText = e instanceof DOMException ? 'Invalid Latin1 sequence' : (console.error(e), e.toString());
-          text_unencoded_warning.style.display = '';
+          if (!text.classList.contains('is-invalid')) text.classList.add('is-invalid');
+          text_warning.innerText = e instanceof DOMException ? 'Invalid Latin1 sequence' : (console.error(e), e.toString());
+          text_warning.style.display = '';
         }
       }
       
       function EncodedUpdate(mode) {
-        if (text_encoded.classList.contains('is-invalid')) {
-          text_encoded.classList.remove('is-invalid');
-          text_encoded_warning.style.display = 'none';
-          text_encoded_warning.innerText = '';
+        if (encoded.classList.contains('is-invalid')) {
+          encoded.classList.remove('is-invalid');
+          encoded_warning.style.display = 'none';
+          encoded_warning.innerText = '';
         }
         
         if (mode == 2) return;
@@ -155,46 +155,46 @@
         if (!auto_convert.checked && !mode) return;
         
         try {
-          let binaryString = decodeURI(text_encoded.value);
+          let binaryString = decodeURI(encoded.value);
           
-          text_unencoded.value = TextToTextArea(binaryString);
+          text.value = TextToTextArea(binaryString);
           
-          UnencodedUpdate(2);
+          TextUpdate(2);
         } catch (e) {
-          if (!text_encoded.classList.contains('is-invalid')) text_encoded.classList.add('is-invalid');
-          text_encoded_warning.innerText = e instanceof URIError ? 'Cannot decode as UTF8' : e instanceof DOMException ? 'Invalid Base64' : (console.error(e), e.toString());
-          text_encoded_warning.style.display = '';
+          if (!encoded.classList.contains('is-invalid')) encoded.classList.add('is-invalid');
+          encoded_warning.innerText = e instanceof URIError ? 'Cannot decode as UTF8' : e instanceof DOMException ? 'Invalid Base64' : (console.error(e), e.toString());
+          encoded_warning.style.display = '';
         }
       }
       
       function GeneralUpdate(v) {
-        if (lastUpdated == 1) UnencodedUpdate();
+        if (lastUpdated == 1) TextUpdate();
         else if (lastUpdated == 2) EncodedUpdate();
       }
       
-      text_unencoded.ondragover = evt => evt.preventDefault();
-      text_unencoded.ondrop = evt => {
+      text.ondragover = evt => evt.preventDefault();
+      text.ondrop = evt => {
         evt.preventDefault();
         if (evt.dataTransfer && evt.dataTransfer.files.length) {
           let reader = new FileReader();
           
           reader.onload = e => {
-            text_unencoded.value = TextToTextArea(e.target.result);
-            UnencodedUpdate();
+            text.value = TextToTextArea(e.target.result);
+            TextUpdate();
           };
           
           reader.readAsText(evt.dataTransfer.files[0]);
         }
       };
       
-      text_encoded.ondragover = evt => evt.preventDefault();
-      text_encoded.ondrop = evt => {
+      encoded.ondragover = evt => evt.preventDefault();
+      encoded.ondrop = evt => {
         evt.preventDefault();
         if (evt.dataTransfer && evt.dataTransfer.files.length) {
           let reader = new FileReader();
           
           reader.onload = e => {
-            text_encoded.value = e.target.result;
+            encoded.value = e.target.result;
             EncodedUpdate();
           };
           
@@ -209,7 +209,7 @@
           let reader = new FileReader();
           
           reader.onload = e => {
-            text_encoded.value = e.target.result;
+            encoded.value = e.target.result;
             EncodedUpdate();
           };
           
@@ -218,8 +218,8 @@
           let reader = new FileReader();
           
           reader.onload = e => {
-            text_unencoded.value = TextToTextArea(e.target.result);
-            UnencodedUpdate();
+            text.value = TextToTextArea(e.target.result);
+            TextUpdate();
           };
           
           reader.readAsText(evt.target.files[0]);
@@ -239,7 +239,7 @@
       function DownloadTextAsFile() {
         let element = document.createElement('a');
         
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text_unencoded.value)));
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text.value)));
         
         element.setAttribute('download', 'file.txt');
         
@@ -252,7 +252,7 @@
       function DownloadEncodedTextAsFile() {
         let element = document.createElement('a');
         
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text_encoded.value));
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(encoded.value));
         
         element.setAttribute('download', 'file.txt');
         
