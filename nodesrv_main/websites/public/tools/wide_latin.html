@@ -3,19 +3,19 @@
   <head>
     <meta charset = 'utf-8'>
     
-    <title>coolguy284.com: Morse Code Converter</title>
+    <title>coolguy284.com: Wide Latin Converter</title>
     
     <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
-    <meta name = 'description' content = 'Convert text into its morse code representation and back with this website.'>
-    <meta name = 'keywords' content = 'morse_code'>
+    <meta name = 'description' content = 'Convert text from normal latin to wide latin unicode (located at the end of the basic multilingual plane).'>
+    <meta name = 'keywords' content = 'latin, wide_latin'>
     <meta name = 'author' content = 'coolguy284'>
     
-    <link rel = 'canonical' href = 'https://coolguy284.com/tools/morse_code.html'>
+    <link rel = 'canonical' href = 'https://coolguy284.com/tools/wide_latin.html'>
     
-    <meta name = 'og:title' content = 'coolguy284.com: Morse Code Converter'>
-    <meta name = 'og:description' content = 'Convert text into its morse code representation and back with this website.'>
+    <meta name = 'og:title' content = 'coolguy284.com: Wide Latin Converter'>
+    <meta name = 'og:description' content = 'Convert text from normal latin to wide latin unicode (located at the end of the basic multilingual plane).'>
     <meta name = 'og:type' content = 'website'>
-    <meta name = 'og:url' content = 'https://coolguy284.com/tools/morse_code.html'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/wide_latin.html'>
     
     <link rel = 'stylesheet' href = '/libs/extern/bootstrap.min.css'>
     <style>
@@ -36,17 +36,9 @@
       <div class = 'row' style = 'margin-top: 0.7rem;'>
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
           <div class = 'btn-group' role = 'group'>
-            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'TextUpdate(1);'>Text To Morse Code</button>
-            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'MorseUpdate(1);'>Morse Code To Text</button>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'TextUpdate(1);'>Text To Wide Latin</button>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'WideLatinUpdate(1);'>Wide Latin To Text</button>
           </div>
-        </div>
-        
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'simple_mode'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'simple_mode' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Simple Mode</label>
-        </div>
-        
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'simple_dots'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'simple_dots' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();'>Simple Dots</label>
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
@@ -63,7 +55,7 @@
             </button>
             <ul class = 'dropdown-menu'>
               <li><button type = 'button' class = 'dropdown-item' onclick = 'SetTextToFile();'>Set Text to File</button></li>
-              <li><button type = 'button' class = 'dropdown-item' onclick = 'SetMorseToFile();'>Set Morse Code to File</button></li>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'SetWideLatinToFile();'>Set Wide Latin to File</button></li>
             </ul>
           </div>
           
@@ -74,7 +66,7 @@
             </button>
             <ul class = 'dropdown-menu'>
               <li><button type = 'button' class = 'dropdown-item' onclick = 'DownloadTextAsFile();'>Download Text as File</button></li>
-              <li><button type = 'button' class = 'dropdown-item' onclick = 'DownloadMorseAsFile();'>Download Morse Code as File</button></li>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'DownloadWideLatinAsFile();'>Download Wide Latin as File</button></li>
             </ul>
           </div>
         </div>
@@ -89,8 +81,8 @@
       
       <div class = 'card'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'morse'>Morse Code</label></h4>
-          <textarea class = 'form-control' id = 'morse' placeholder = 'Morse code here.' spellcheck = 'false' oninput = 'MorseUpdate();'></textarea>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'wide_latin'>Wide Latin</label></h4>
+          <textarea class = 'form-control' id = 'wide_latin' placeholder = 'Wide latin here.' spellcheck = 'false' oninput = 'WideLatinUpdate();'></textarea>
         </div>
       </div>
       
@@ -99,38 +91,11 @@
     
     <script src = '/libs/extern/bootstrap.bundle.min.js' async></script>
     <script>
-      /* standard international morse code
-       * the normal mapping has 1 character for each unit of time
-       * the simple mapping has 1 character for each dot or dash
-       * time for:
-       *   part of a letter = 1 unit
-       *   in between letters = 3 units
-       *   in between words = 7 units
-       */
+      let normalLatin = ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~⸨⸩¢£¬¯¦¥₩\n',
+        wideLatin = '　！＂＃＄％＆＇（）＊＋，－．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～｟｠￠￡￢￣￤￥￦\n';
       
-      let morseMap = {
-        A: '• ---',         B: '--- • • •',     C: '--- • --- •',   D: '--- • •',
-        E: '•',             F: '• • --- •',     G: '--- --- •',     H: '• • • •',
-        I: '• •',           J: '• --- --- ---', K: '--- • ---',     L: '• --- • •',
-        M: '--- ---',       N: '--- •',         O: '--- --- ---',   P: '• --- --- •',
-        Q: '--- --- • ---', R: '• --- •',       S: '• • •',         T: '---',
-        U: '• • ---',       V: '• • • ---',     W: '• --- ---',     X: '--- • • ---',
-        Y: '--- • --- ---', Z: '--- --- • •',
-        '0': '--- --- --- --- ---',
-        '1': '• --- --- --- ---',   '2': '• • --- --- ---',     '3': '• • • --- ---',
-        '4': '• • • • ---',         '5': '• • • • •',           '6': '--- • • • •',
-        '7': '--- --- • • •',       '8': '--- --- --- • •',     '9': '--- --- --- --- •',
-      }, morseMapSimple = {
-        A: '•-',   B: '-•••', C: '-•-•', D: '-••',  E: '•',    F: '••-•', G: '--•',
-        H: '••••', I: '••',   J: '•---', K: '-•-',  L: '•-••', M: '--',   N: '-•',
-        O: '---',  P: '•--•', Q: '--•-', R: '•-•',  S: '•••',  T: '-',    U: '••-',
-        V: '•••-', W: '•--',  X: '-••-', Y: '-•--', Z: '--••',
-        '0': '-----', '1': '•----', '2': '••---', '3': '•••--', '4': '••••-',
-        '5': '•••••', '6': '-••••', '7': '--•••', '8': '---••', '9': '----•',
-      };
-      
-      let reverseMorseMapSimple = Object.fromEntries(Object.entries(morseMapSimple).map(x => [x[1], x[0]])),
-        reverseMorseMap = Object.fromEntries(Object.entries(morseMap).map(x => [x[1], x[0]]));
+      let toWideMap = Object.fromEntries(Array.prototype.map.call(normalLatin, (x, i) => [x, wideLatin[i]])),
+        toNormalMap = Object.fromEntries(Array.prototype.map.call(normalLatin, (x, i) => [wideLatin[i], x]));
       
       var lastUpdated = 1;
       
@@ -139,40 +104,20 @@
         
         if (!auto_convert.checked && !mode) return;
         
-        
-        let morseValue;
-        if (simple_mode.checked) {
-          morseValue = text.value.toUpperCase().split(/ +/g)
-            .map(x => x.split('').map(y => morseMapSimple[y]).join(' '))
-            .join('   ');
-        } else {
-          morseValue = text.value.toUpperCase().split(/ +/g)
-            .map(x => x.split('').map(y => morseMap[y]).join('   '))
-            .join('       ');
-        }
-        
-        morse.value = simple_dots.checked ? morseValue.replace(/•/g, '.') : morseValue;
+        wide_latin.value = Array.prototype.map.call(text.value, x => toWideMap[x]).join('');
       }
       
-      function MorseUpdate() {
+      function WideLatinUpdate() {
         lastUpdated = 2;
         
         if (!auto_convert.checked && !mode) return;
         
-        if (simple_mode.checked) {
-          text.value = morse.value.replace(/\./g, '•').split(/   +/g)
-            .map(x => x.split(/ +/g).map(y => reverseMorseMapSimple[y]).join(''))
-            .join(' ');
-        } else {
-          text.value = morse.value.replace(/\./g, '•').split(/       +/g)
-            .map(x => x.split(/   +/g).map(y => reverseMorseMap[y]).join(''))
-            .join(' ');
-        }
+        text.value = Array.prototype.map.call(wide_latin.value, x => toNormalMap[x]).join('');
       }
       
       function GeneralUpdate() {
         if (lastUpdated == 1) TextUpdate();
-        else if (lastUpdated == 2) MorseUpdate();
+        else if (lastUpdated == 2) WideLatinUpdate();
       }
       
       text.ondragover = evt => evt.preventDefault();
@@ -190,29 +135,29 @@
         }
       };
       
-      morse.ondragover = evt => evt.preventDefault();
-      morse.ondrop = evt => {
+      wide_latin.ondragover = evt => evt.preventDefault();
+      wide_latin.ondrop = evt => {
         evt.preventDefault();
         if (evt.dataTransfer && evt.dataTransfer.files.length) {
           let reader = new FileReader();
           
           reader.onload = e => {
-            morse.value = e.target.result;
-            MorseUpdate();
+            wide_latin.value = e.target.result;
+            WideLatinUpdate();
           };
           
           reader.readAsText(evt.dataTransfer.files[0]);
         }
       };
       
-      var setTextIsMorse;
+      var setTextIsWideLatin;
       
       file_to_load.oninput = evt => {
-        if (setTextIsMorse) {
+        if (setTextIsWideLatin) {
           let reader = new FileReader();
           
           reader.onload = e => {
-            morse.value = e.target.result;
+            wide_latin.value = e.target.result;
             MorseUpdate();
           };
           
@@ -230,12 +175,12 @@
       };
       
       function SetTextToFile() {
-        setTextIsMorse = false;
+        setTextIsWideLatin = false;
         file_to_load.click();
       }
       
-      function SetMorseToFile() {
-        setTextIsMorse = true;
+      function SetWideLatinToFile() {
+        setTextIsWideLatin = true;
         file_to_load.click();
       }
       
@@ -252,10 +197,10 @@
         document.body.removeChild(element);
       }
       
-      function DownloadMorseAsFile() {
+      function DownloadWideLatinAsFile() {
         let element = document.createElement('a');
         
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(morse.value));
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(wide_latin.value));
         
         element.setAttribute('download', 'file.txt');
         
