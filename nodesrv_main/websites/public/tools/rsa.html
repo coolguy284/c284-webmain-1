@@ -39,7 +39,7 @@
         </div>
         
         <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label for = 'keyll' class = 'col-form-label'>Key Size:</label>
+          <label class = 'col-form-label' for = 'keyll'>Key Size:</label>
           
           <select class = 'form-select' id = 'keyll' style = 'width: 7rem; margin-left: 5px; display: inline-block;' onchange = 'updsct();'>
             <option value = '512'>512 bit</option>
@@ -95,7 +95,7 @@
       <br>
     </div>
     
-    <script src = '/libs/extern/jsencrypt-rsa.js'></script>
+    <script src = '/libs/extern/jsencrypt-rsa_v1.js'></script>
     <script>
       function download(filename, text) {
         var element = document.createElement('a');

@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: QR Code Generator</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'Generate QR Codes with this utility.'>
+    <meta name = 'keywords' content = 'qr_code'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/tools/qr_code.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Wide Latin Converter'>
+    <meta name = 'og:description' content = 'Generate QR Codes with this utility.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/qr_code.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap.min.css'>
+    <style>
+      textarea {
+        font-family: monospace;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-fluid'>
+      <noscript>
+        <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+          Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
+        </div>
+      </noscript>
+      
+      <div class = 'row mt-3 mb-3'>
+        <div class = 'col-auto'>
+          <select class = 'form-select' id = 'content_type' style = 'width: 10.5em;' onchange = 'CreateQRCode(2);'>
+            <option value = 'raw'>Raw Text or URL</option>
+            <option value = 'wifi'>Wifi Login</option>
+          </select>
+        </div>
+        
+        <div class = 'col-auto'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'CreateQRCode(1);'>Create QR Code</button>
+        </div>
+        
+        <div class = 'col-auto'>
+          <label class = 'btn btn-outline-primary' for = 'auto_update'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_update' style = 'margin-right: 0.5rem;' oninput = 'CreateQRCode();' checked>Auto Update</label>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <div class = 'card' id = 'textDiv'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label id = 'encoding_header' for = 'field_value'>Text or URL</label></h4>
+          <div class = 'alert alert-danger' id = 'field_value_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'field_value' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'Set();'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'mb-3' id = 'wifiDiv' style = 'display: none;'>
+        <div class = 'row mb-2'>
+          <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
+            <label class = 'col-form-label flex-shrink-0' for = 'ssid'>SSID:</label>
+            
+            <input type = 'text' class = 'form-control' id = 'ssid' style = 'width: 20rem; margin-left: 10px; display: inline-block;'>
+          </div>
+        </div>
+        
+        <div class = 'row mb-2'>
+          <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
+            <label class = 'col-form-label flex-shrink-0' for = 'security'>Security:</label>
+            
+            <select class = 'form-select' id = 'security' style = 'margin-left: 10px;'>
+              <option value = 'WPA'>WPA / WPA2</option>
+              <option value = 'WEP'>WEP</option>
+              <option value = ''>None</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class = 'row'>
+          <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
+            <label class = 'col-form-label flex-shrink-0' for = 'password'>Password:</label>
+            
+            <input type = 'password' class = 'form-control' id = 'password' style = 'width: 20rem; margin-left: 10px; display: inline-block;'>
+          </div>
+        </div>
+        
+        <div class = 'row'>
+          <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap align-items-center'>
+            <input type = 'checkbox' class = 'form-check-input' value = '' id = 'hidden' style = 'margin-right: 0.5rem;' oninput = 'CreateQRCode();' checked>
+            
+            <label class = 'col-form-label' for = 'hidden'>Hidden</label>
+          </div>
+        </div>
+      </div>
+      
+      <hr>
+      
+      <div class = 'row mb-2'>
+        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
+          <label class = 'col-form-label flex-shrink-0'>QR Code Version:</label>
+          
+          <input type = 'number' class = 'form-control ms-2' id = 'version_min' min = 1 max = 40 step = 1 value = 1 style = 'width: 4.5rem;' oninput = 'CreateQRCode(3);'>
+          
+          <span class = 'col-form-label ms-2'>to</span>
+          
+          <input type = 'number' class = 'form-control ms-2' id = 'version_max' min = 1 max = 40 step = 1 value = 40 style = 'width: 4.5rem;' oninput = 'CreateQRCode(3);'>
+        </div>
+      </div>
+      
+      <div class = 'row mb-2'>
+        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
+          <label class = 'col-form-label flex-shrink-0' for = 'mask'>Mask (0-7, -1 for auto):</label>
+          
+          <input type = 'number' class = 'form-control ms-2' id = 'mask' min = -1 max = 7 step = 1 value = -1 style = 'width: 4.5rem;' oninput = 'CreateQRCode(4);'>
+        </div>
+      </div>
+      
+      <div class = 'row'>
+        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
+          <label class = 'col-form-label flex-shrink-0' for = 'error_correction'>Error Correction:</label>
+          
+          <select class = 'form-select ms-2' id = 'error_correction'>
+            <option value = 'LOW'>Low</option>
+            <option value = 'MEDIUM'>Medium</option>
+            <option value = 'QUARTILE'>Quartile</option>
+            <option value = 'HIGH'>High</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class = 'row'>
+        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap align-items-center'>
+          <input type = 'checkbox' class = 'form-check-input' value = '' id = 'boost_ecc' style = 'margin-right: 0.5rem;' oninput = 'CreateQRCode();' checked>
+          
+          <label class = 'col-form-label' for = 'boost_ecc'>Boost error correction within same version</label>
+        </div>
+      </div>
+    </div>
+    
+    <script src = '/libs/extern/qrcodegen_v1.js'></script>
+    <script>
+      function CreateQRCode(mode) {
+        if (mode == 2) {
+          switch (content_type.value) {
+            case 'raw': textDiv.style.display = ''; wifiDiv.style.display = 'none'; break;
+            case 'wifi': textDiv.style.display = 'none'; wifiDiv.style.display = ''; break;
+          }
+          return;
+        }
+        
+        if (!auto_update.checked && !mode) return;
+      }
+      
+      onload = () => {
+        CreateQRCode(2);
+        CreateQRCode();
+      };
+    </script>
+  </body>
+</html>

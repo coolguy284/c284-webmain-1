@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Halloween Name Generator</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'Find out what your spooky halloween name is with this tool.'>
+    <meta name = 'keywords' content = 'halloween, name_generator'>
+    <meta name = 'author' content = 'gumi, coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/tools/halloween.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Halloween Name Generator'>
+    <meta name = 'og:description' content = 'Find out what your spooky halloween name is with this tool.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/halloween.html'>
+    
+    <style>
+      body {
+        background: #080701;
+        color: #fc7427;
+        font: 24px "Comic Sans MS";
+      }
+      
+      p { margin: 0; }
+      
+      button {
+        background: #080701;
+        color: #ffffff;
+        font: 24px "Comic Sans MS";
+      }
+      
+      #inputName {
+        width: 26rem;
+        background: #080701;
+        color: #ffffff;
+        font: 24px "Comic Sans MS";
+      }
+      
+      #output { color: #912891; }
+      
+      @media (max-width: 26rem) {
+        #inputName { width: calc(100% - 0.5rem); }
+      }
+    </style>
+  </head>
+  <body>
+    <p>Put your first & last name here in order to find out your <i>ｓｐｏｏｋｙ</i> halloween name:</p>
+    <br>
+    <p><input type = 'text' id = 'inputName'></p>
+    <br>
+    <button onclick = 'SpookNormal();'>Ｓｐｏｏｋｉｆｙ</button>
+    <button onclick = 'SpookRandom();'>Random Spook</button>
+    <button onclick = 'SpookCycle();'>Iterate</button>
+    <br><br>
+    <span id = 'output'></span>
+    
+    <script>
+      function EscapeHTML(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\r/g,'&#13;');
+      }
+      
+      function UnescapeHTML(str) {
+        return str.replace(/&#13;/g, '\r').replace(/&#39;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+      }
+      
+      var initials = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '$'],
+      firstNamesMap = { // First letter of first name (first form for singular second part, second form for plural second part)
+        a: 'Transient',
+        b: 'Lord',
+        c: 'Decaying',
+        d: 'Demonic',
+        e: 'Derelict',
+        f: 'Wispy',
+        g: 'Problematic',
+        h: 'Spooky',
+        i: ['Literally just a', 'Literally just'],
+        j: 'Egg',
+        k: ['Wow, that\'s a', 'Wow, that\'s'],
+        l: 'Questionable',
+        m: 'Tentacled',
+        n: 'Skeletal',
+        o: 'Really Really Small',
+        p: 'The Anti',
+        q: 'Object Oriented',
+        r: 'Russian',
+        s: 'Jack O\'',
+        t: 'Electronic',
+        u: 'Negative',
+        v: 'Absolute',
+        w: 'Transfinite',
+        x: 'Intelligent',
+        y: 'Ackermann',
+        z: 'Alien',
+        $: 'Heckin\' Garry',
+      }, lastNames = { // First letter of last name (0 for singular, 1 for plural)
+        a: ['Lord', 0],
+        b: ['Wall Climber', 0],
+        c: ['Lord of Spooking', 0],
+        d: ['Void', 0],
+        e: ['Dentist', 0],
+        f: ['Witch', 0],
+        g: ['Thingy', 0],
+        h: ['Holumnum', 0],
+        i: ['Lantern', 0],
+        j: ['Teeth', 1],
+        k: ['Spook', 0],
+        l: ['Candy Corn', 0],
+        m: ['Construct of Pure Evil', 0],
+        n: ['Clown', 0],
+        o: ['The Entire Country of Switzerland 🇨🇭', 1],
+        p: ['Android', 0],
+        q: ['Santa Claus', 0],
+        r: ['Spider', 0],
+        s: ['Fire Hydrant', 0],
+        t: ['Doppelganger', 0],
+        u: ['Zero', 1],
+        v: ['Necromancer', 0],
+        w: ['Will Smith', 1],
+        x: ['???', 0],
+        y: ['Cactus', 0],
+        z: ['Decay', 1],
+        $: ['Programmer', 0],
+      }, outputName = '';
+      
+      function SpookInternal(firstNameIndex, lastNameIndex) {
+        let firstName = firstNamesMap[firstNameIndex] || '<first name must begin with letter or $>', lastName = lastNames[lastNameIndex] || ['<last name must begin with letter or $>', 0];
+        
+        return (typeof firstName == 'string' ? firstName : firstName[lastName[1]]) + ' ' + lastName[0];
+      }
+      
+      function SpookNormal() {
+        let nameSplit = inputName.value.trim().split(' ');
+        
+        if (nameSplit.length > 1) {
+          outputName = SpookInternal(nameSplit[0][0].toLowerCase(), nameSplit[1][0].toLowerCase());
+          
+          output.innerHTML = 'Your new name is:<br><br><b>' + EscapeHTML(outputName) + '</b>';
+        } else {
+          output.innerHTML = 'Error: Must have both first and last name.';
+        }
+      }
+      
+      function SpookRandom() {
+        outputName = SpookInternal(initials[Math.floor(Math.random() * initials.length)], initials[Math.floor(Math.random() * initials.length)]);
+        
+        output.innerHTML = 'Your new name is:<br><br><b>' + EscapeHTML(outputName) + '</b>';
+      }
+      
+      function SpookCycle() {
+        inputName.value = outputName;
+        SpookNormal();
+      }
+      
+      inputName.addEventListener('keydown', function (e) {
+        if (e.code == 'Enter') Spook();
+      });
+    </script>
+  </body>
+</html>
