@@ -33,19 +33,19 @@
         </div>
       </noscript>
       
-      <div class = 'row' style = 'margin-top: 0.7rem;'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <select class = 'form-select' id = 'aes_algo' style = 'width: 8rem;' oninput = 'GeneralUpdate(1);'>
+      <div class = 'row mt-2'>
+        <div class = 'col-auto mb-2'>
+          <select class = 'form-select' id = 'aes_algo' oninput = 'GeneralUpdate(1);'>
             <option value = 'AES-CTR'>AES-CTR</option>
             <option value = 'AES-CBC' selected>AES-CBC</option>
             <option value = 'AES-GCM'>AES-GCM</option>
           </select>
         </div>
         
-        <div class = 'col-auto d-inline-flex flex-sm-nowrap flex-wrap' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap mb-2'>
           <label class = 'col-form-label flex-shrink-0' for = 'key'>Key:</label>
           
-          <div class = 'input-group' style = 'margin-left: 10px;'>
+          <div class = 'input-group ms-2'>
             <input type = 'text' class = 'form-control' id = 'key' style = 'width: 20rem;' oninput = 'TextUpdate();'>
             <select class = 'form-select' id = 'key_format' style = 'width: 6.5rem;' oninput = 'TextUpdate();'>
               <option value = 'latin1'>Latin1</option>
@@ -55,10 +55,10 @@
           </div>
         </div>
         
-        <div class = 'col-auto d-inline-flex flex-sm-nowrap flex-wrap' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap mb-2'>
           <label class = 'col-form-label flex-shrink-0' id = 'ctr_label' for = 'iv'>IV:</label>
           
-          <div class = 'input-group' style = 'margin-left: 10px;'>
+          <div class = 'input-group ms-2'>
             <input type = 'text' class = 'form-control' id = 'iv' style = 'width: 20rem;' oninput = 'TextUpdate();'>
             <select class = 'form-select' id = 'iv_format' style = 'width: 6.5rem;' oninput = 'TextUpdate();'>
               <option value = 'latin1'>Latin1</option>
@@ -68,18 +68,17 @@
           </div>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem; display: none;' id = 'ctr_length_div'>
+        <div class = 'col-auto d-flex mb-2' style = 'display: none;' id = 'ctr_length_div'>
           <label class = 'col-form-label' for = 'ctr_length'>Length:</label>
           
-          <input type = 'number' class = 'form-control' id = 'ctr_length' min = 2 max = 128 step = 1 value = 64 style = 'width: 5rem; margin-left: 5px; display: inline-block;' oninput = 'TextUpdate();'>
+          <input type = 'number' class = 'form-control ms-2' id = 'ctr_length' min = 2 max = 128 step = 1 value = 64 style = 'width: 5rem;' oninput = 'TextUpdate();'>
         </div>
         
-        <div class = 'col-auto flex-sm-nowrap flex-wrap' style = 'display: none; margin-bottom: 0.7rem;' id = 'addl_data_div'>
+        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap mb-2' style = 'display: none;' id = 'addl_data_div'>
           <label class = 'col-form-label flex-shrink-0' for = 'addl_data'>Additional Data:</label>
           
-          <div class = 'input-group' style = 'margin-left: 10px;'>
+          <div class = 'input-group d-flex align-items-start ms-2'>
             <textarea class = 'form-control' id = 'addl_data' placeholder = 'Additional data here.' style = 'width: 20rem; height: 2rem; resize: both;' oninput = 'TextUpdate();'></textarea>
-            <!--<input type = 'text' class = 'form-control' id = 'addl_data' style = 'width: 20rem; margin-left: 5px; display: inline;' oninput = 'TextUpdate();'>-->
             <select class = 'form-select' id = 'addl_data_format' style = 'width: 12.5rem;' oninput = 'TextUpdate();'>
               <option value = 'utf8'>UTF-8</option>
               <option value = 'utf16le'>UTF-16 LE</option>
@@ -93,10 +92,10 @@
           </div>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem; display: none;' id = 'tag_length_div'>
-          <label class = 'col-form-label' for = 'tag_length'>Tag Length:</label>
+        <div class = 'col-auto d-flex mb-2' style = 'display: none;' id = 'tag_length_div'>
+          <label class = 'col-form-label flex-shrink-0' for = 'tag_length'>Tag Length:</label>
           
-          <select class = 'form-select' id = 'tag_length' style = 'width: 5rem; margin-left: 5px; display: inline-block;' oninput = 'TextUpdate();'>
+          <select class = 'form-select ms-2' id = 'tag_length' oninput = 'TextUpdate();'>
             <option value = '32'>32</option>
             <option value = '64'>64</option>
             <option value = '96'>96</option>
@@ -107,10 +106,10 @@
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'col-form-label' for = 'text_encoding'>Text Encoding:</label>
+        <div class = 'col-auto d-flex align-items-start mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'text_encoding'>Text Encoding:</label>
           
-          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;' oninput = 'GeneralUpdate();'>
+          <select class = 'form-select ms-2' id = 'text_encoding' oninput = 'GeneralUpdate();'>
             <option value = 'utf8' selected>UTF-8</option>
             <option value = 'utf16le'>UTF-16 LE</option>
             <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
@@ -122,28 +121,28 @@
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'col-form-label' for = 'output_encoding'>Output Encoding:</label>
+        <div class = 'col-auto d-flex align-items-start mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'output_encoding'>Output Encoding:</label>
           
-          <select class = 'form-select' id = 'output_encoding' style = 'width: 6.5rem; margin-left: 5px; display: inline-block;' oninput = 'GeneralUpdate();'>
+          <select class = 'form-select ms-2' id = 'output_encoding' oninput = 'GeneralUpdate();'>
             <option value = 'latin1'>Latin1</option>
             <option value = 'base64' selected>Base64</option>
             <option value = 'hex'>Hex</option>
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'> 
+        <div class = 'col-auto mb-2'> 
           <div class = 'btn-group' role = 'group'>
             <button type = 'button' class = 'btn btn-outline-primary' onclick = 'TextUpdate(1);'>Encrypt Text</button>
             <button type = 'button' class = 'btn btn-outline-primary' onclick = 'AESUpdate(1);'>Decrypt Encrypted Text</button>
           </div>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
+        <div class = 'col-auto mb-2'>
+          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_convert' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <input type = 'file' id = 'file_to_load' style = 'display: none;' aria-hidden = 'true'>
           
           <div class = 'btn-group'>

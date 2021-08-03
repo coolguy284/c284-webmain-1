@@ -20,7 +20,7 @@
     <link rel = 'stylesheet' href = '/libs/extern/bootstrap.min.css'>
   </head>
   <body>
-    <div class = 'container-fluid' style = 'padding: 1rem;'>
+    <div class = 'container-fluid p-3'>
       <noscript>
         <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
           Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
@@ -34,10 +34,10 @@
       <span id = 'num_shapes_text'>0</span><br>
       
       <div class = 'row'>
-        <div class = 'col-auto'>
+        <div class = 'col-auto d-flex'>
           <label class = 'col-form-label' for = 'shape_type'>Shape:</label>
           
-          <select class = 'form-select' id = 'shape_type' style = 'width: 10rem; margin-left: 5px; display: inline-block;' oninput = 'UpdateCanvas();'>
+          <select class = 'form-select ms-2' id = 'shape_type' oninput = 'UpdateCanvas();'>
             <option value = 'rectangles' selected>Rectangles</option>
             <option value = 'triangles'>Triangles</option>
           </select>

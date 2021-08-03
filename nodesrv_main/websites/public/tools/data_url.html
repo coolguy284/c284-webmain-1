@@ -33,11 +33,11 @@
         </div>
       </noscript>
       
-      <div class = 'row' style = 'margin-top: 0.7rem;'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'col-form-label' for = 'text_encoding'>Text Encoding:</label>
+      <div class = 'row mt-2'>
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'text_encoding'>Text Encoding:</label>
           
-          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;'  oninput = 'GeneralUpdate();'>
+          <select class = 'form-select ms-2' id = 'text_encoding' oninput = 'GeneralUpdate();'>
             <option value = 'utf8' selected>UTF-8</option>
             <option value = 'utf16le'>UTF-16 LE</option>
             <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
@@ -49,28 +49,28 @@
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto d-flex mb-2'>
           <label class = 'col-form-label' for = 'mimetype'>Mime Type:</label>
           
-          <input type = 'text' class = 'form-control' id = 'mimetype' style = 'width: 13rem; margin-left: 5px; display: inline-block;' oninput = 'Update();'>
+          <input type = 'text' class = 'form-control ms-2' id = 'mimetype' style = 'width: 13rem;' oninput = 'Update();'>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'base64_encoded'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'base64_encoded' style = 'margin-right: 0.5rem;' oninput = 'Update();'>Base64 Encoded</label>
+        <div class = 'col-auto mb-2'>
+          <label class = 'btn btn-outline-primary' for = 'base64_encoded'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'base64_encoded' oninput = 'Update();'>Base64 Encoded</label>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <div class = 'btn-group' role = 'group'>
             <button type = 'button' class = 'btn btn-outline-primary' onclick = 'Update(1);'>Convert</button>
             <button type = 'button' class = 'btn btn-outline-primary' onclick = 'DataUpdate(1);'>Unconvert</button>
           </div>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' oninput = 'Update();' checked>Auto Convert</label>
+        <div class = 'col-auto mb-2'>
+          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_convert' oninput = 'Update();' checked>Auto Convert</label>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <input type = 'file' id = 'file_to_load' style = 'display: none;' aria-hidden = 'true'>
           
           <div class = 'btn-group'>

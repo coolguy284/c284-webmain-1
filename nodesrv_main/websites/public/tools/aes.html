@@ -33,8 +33,8 @@
         </div>
       </noscript>
       
-      <div class = 'row' style = 'margin-top: 0.7rem;'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+      <div class = 'row mt-2'>
+        <div class = 'col-auto mb-2'>
           <input type = 'file' id = 'aesf' style = 'display:none;' onchange = 'tfaes(this.files[0]);'>
           <input type = 'file' id = 'texf' style = 'display:none;' onchange = 'tftex(this.files[0]);'>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'taes();'>Text > AES</button>
@@ -43,10 +43,10 @@
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'texf.click();'>AES File > Text</button>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap mb-2'>
           <label class = 'col-form-label' for = 'mapp'>Password:</label>
           
-          <input type = 'text' class = 'form-control' id = 'mapp' style = 'width: 20rem; margin-left: 5px; display: inline;' oninput = 'TextUpdate();'>
+          <input type = 'text' class = 'form-control ms-2' id = 'mapp' style = 'width: 20rem;' oninput = 'TextUpdate();'>
         </div>
       </div>
       

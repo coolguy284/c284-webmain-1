@@ -61,7 +61,7 @@
         </div>
         
         <div class = 'col'>
-          <select class = 'form-select' id = 'encodingselect' style = 'margin-top: 17px; font-size: 23px;' oninput = 'GeneralUpdate(2);' aria-label = 'Main Encoding'>
+          <select class = 'form-select mt-3' id = 'encodingselect' style = 'font-size: 23px;' oninput = 'GeneralUpdate(2);' aria-label = 'Main Encoding'>
             <option value = 'base64' selected>Base64</option>
             <option value = 'hex'>Hex</option>
             <option value = 'htmlescape'>HTML Escaping</option>
@@ -74,10 +74,10 @@
       <hr>
       
       <div class = 'row'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'col-form-label' for = 'text_encoding'>Text Encoding:</label>
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'text_encoding'>Text Encoding:</label>
           
-          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;' oninput = 'GeneralUpdate(3);'>
+          <select class = 'form-select ms-2' id = 'text_encoding' oninput = 'GeneralUpdate(3);'>
             <option value = 'utf8' selected>UTF-8</option>
             <option value = 'utf16le'>UTF-16 LE</option>
             <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
@@ -89,18 +89,18 @@
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <div class = 'btn-group' role = 'group'>
             <button type = 'button' class = 'btn btn-outline-primary' onclick = 'TextUpdate(1);'>Encode Text</button>
             <button type = 'button' class = 'btn btn-outline-primary' onclick = 'EncodedUpdate(1);'>Decode Encoded Text</button>
           </div>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
+        <div class = 'col-auto mb-2'>
+          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_convert' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <input type = 'file' id = 'file_to_load' style = 'display: none;' aria-hidden = 'true'>
           
           <div class = 'btn-group'>

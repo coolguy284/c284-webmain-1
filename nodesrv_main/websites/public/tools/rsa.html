@@ -33,15 +33,15 @@
         </div>
       </noscript>
       
-      <div class = 'row' style = 'margin-top: 0.7rem;'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+      <div class = 'row mt-2'>
+        <div class = 'col-auto mb-2'>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'gkey();'>Generate Keys</button>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'col-form-label' for = 'keyll'>Key Size:</label>
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'keyll'>Key Size:</label>
           
-          <select class = 'form-select' id = 'keyll' style = 'width: 7rem; margin-left: 5px; display: inline-block;' onchange = 'updsct();'>
+          <select class = 'form-select ms-2' id = 'keyll' onchange = 'updsct();'>
             <option value = '512'>512 bit</option>
             <option value = '1024' selected>1024 bit</option>
             <option value = '2048'>2048 bit</option>
@@ -49,7 +49,7 @@
             <option value = '0'>Other</option>
           </select>
           
-          <input type = 'number' class = 'form-control' id = 'keyl' min = 1 step = 1 value = 1 style = 'width: 7rem; margin-left: 5px; display: none;'>
+          <input type = 'number' class = 'form-control ms-2' id = 'keyl' min = 1 step = 1 value = 1 style = 'display: none; width: 7rem;'>
         </div>
       </div>
       
@@ -67,8 +67,8 @@
         </div>
       </div>
       
-      <div class = 'row' style = 'margin-top: 0.7rem;'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+      <div class = 'row mt-2'>
+        <div class = 'col-auto mb-2'>
           <input type = 'file' id = 'rsaf' style = 'display:none;' onchange = 'tfrsa(this.files[0]);'>
           <input type = 'file' id = 'texf' style = 'display:none;' onchange = 'tftex(this.files[0]);'>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'trsa();'>Text > RSA</button>

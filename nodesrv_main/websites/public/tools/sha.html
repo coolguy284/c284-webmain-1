@@ -33,9 +33,9 @@
         </div>
       </noscript>
       
-      <div class = 'row' style = 'margin-top: 0.7rem;'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <select class = 'form-select' id = 'hash_algorythm' style = 'width: 15.5rem; display: inline-block;' oninput = 'Update(1);'>
+      <div class = 'row mt-2'>
+        <div class = 'col-auto mb-2'>
+          <select class = 'form-select' id = 'hash_algorythm' style = 'width: 15.5rem;' oninput = 'Update(1);'>
             <optgroup label = 'SHA1'>
               <option value = 'SHA-1'>SHA-1</option>
             </optgroup>
@@ -70,16 +70,16 @@
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'display: none; margin-bottom: 0.7rem;' id = 'output_length_div'>
+        <div class = 'col-auto d-flex mb-2' style = 'display: none;' id = 'output_length_div'>
           <label class = 'col-form-label' for = 'output_length'>Output Length:</label>
           
-          <input type = 'number' class = 'form-control' id = 'output_length' min = 0 step = 1 value = 256 style = 'width: 7.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update();' onkeydown = 'OutputLengthUpdate();'>
+          <input type = 'number' class = 'form-control ms-2' id = 'output_length' min = 0 step = 1 value = 256 style = 'width: 7.5rem;' oninput = 'Update();' onkeydown = 'OutputLengthUpdate();'>
         </div>
         
-        <div class = 'col-auto flex-sm-nowrap flex-wrap' style = 'display: none; margin-bottom: 0.7rem;' id = 'function_name_div'>
+        <div class = 'col-auto flex-sm-nowrap flex-wrap mb-2' style = 'display: none;' id = 'function_name_div'>
           <label class = 'col-form-label flex-shrink-0' for = 'function_name'>Function Name:</label>
           
-          <div class = 'input-group' style = 'margin-left: 10px;'>
+          <div class = 'input-group ms-2'>
             <div class = 'input-group-text'>
               <input type = 'checkbox' class = 'form-check-input' id = 'function_name_check' aria-label = 'Checkbox to enable function name in CSHAKE hash.' oninput = 'Update();'>
             </div>
@@ -97,10 +97,10 @@
           </div>
         </div>
         
-        <div class = 'col-auto flex-sm-nowrap flex-wrap' style = 'display: none; margin-bottom: 0.7rem;' id = 'customization_div'>
+        <div class = 'col-auto flex-sm-nowrap flex-wrap mb-2' style = 'display: none;' id = 'customization_div'>
           <label class = 'col-form-label flex-shrink-0' for = 'customization'>Customization:</label>
           
-          <div class = 'input-group' style = 'margin-left: 10px;'>
+          <div class = 'input-group ms-2'>
             <div class = 'input-group-text'>
               <input type = 'checkbox' class = 'form-check-input' id = 'customization_check' aria-label = 'Checkbox to enable customization string in CSHAKE hash.' oninput = 'Update();'>
             </div>
@@ -118,10 +118,10 @@
           </div>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'col-form-label' for = 'text_encoding'>Text Encoding:</label>
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'text_encoding'>Text Encoding:</label>
           
-          <select class = 'form-select' id = 'text_encoding' style = 'width: 12.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update(1);'>
+          <select class = 'form-select ms-2' id = 'text_encoding' oninput = 'Update(1);'>
             <option value = 'utf8' selected>UTF-8</option>
             <option value = 'utf16le'>UTF-16 LE</option>
             <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
@@ -133,31 +133,31 @@
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'col-form-label' for = 'output_encoding'>Output Encoding:</label>
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'output_encoding'>Output Encoding:</label>
           
-          <select class = 'form-select' id = 'output_encoding' style = 'width: 6.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update(1);'>
+          <select class = 'form-select ms-2' id = 'output_encoding' oninput = 'Update(1);'>
             <option value = 'latin1'>Latin1</option>
             <option value = 'base64'>Base64</option>
             <option value = 'hex' selected>Hex</option>
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto d-flex mb-2'>
           <label class = 'col-form-label' for = 'repeats'>Repeat Times:</label>
           
-          <input type = 'number' class = 'form-control' id = 'repeats' min = 1 step = 1 value = 1 style = 'width: 7.5rem; margin-left: 5px; display: inline-block;' oninput = 'Update();'>
+          <input type = 'number' class = 'form-control ms-2' id = 'repeats' min = 1 step = 1 value = 1 style = 'width: 7.5rem;' oninput = 'Update();'>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'> 
+        <div class = 'col-auto mb-2'> 
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'Update(1);'>Hash Text</button>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_convert' style = 'margin-right: 0.5rem;' oninput = 'Update();' checked>Auto Convert</label>
+        <div class = 'col-auto mb-2'>
+          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_convert' oninput = 'Update();' checked>Auto Convert</label>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <input type = 'file' id = 'file_to_load' style = 'display: none;' aria-hidden = 'true'>
           
           <div class = 'btn-group'>

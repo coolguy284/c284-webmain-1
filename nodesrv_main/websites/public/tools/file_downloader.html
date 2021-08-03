@@ -33,17 +33,17 @@
         </div>
       </noscript>
       
-      <div class = 'row' style = 'margin-top: 0.7rem;'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+      <div class = 'row mt-2'>
+        <div class = 'col-auto d-flex mb-2'>
           <label class = 'col-form-label' for = 'filename'>Filename:</label>
           
-          <input type = 'text' class = 'form-control' id = 'filename' style = 'width: 20rem; margin-left: 5px; display: inline-block;'>
+          <input type = 'text' class = 'form-control ms-2' id = 'filename' style = 'width: 20rem;'>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'col-form-label' for = 'text_encoding'>Text Encoding:</label>
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'text_encoding'>Text Encoding:</label>
           
-          <select class = 'form-select' id = 'text_encoding' style = 'width: 13rem; margin-left: 5px; display: inline-block;'>
+          <select class = 'form-select ms-2' id = 'text_encoding'>
             <option value = 'utf8' selected>UTF-8</option>
             <option value = 'utf16le'>UTF-16 LE</option>
             <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
@@ -55,7 +55,7 @@
           </select>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'DownloadTextAsFile();'>Download Text as File</button>
           <input type = 'file' id = 'file_to_load' style = 'display: none;'>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'SetTextToFile();'>Set Text to File</button>

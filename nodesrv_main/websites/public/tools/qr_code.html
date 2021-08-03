@@ -35,7 +35,7 @@
       
       <div class = 'row mt-3 mb-3'>
         <div class = 'col-auto'>
-          <select class = 'form-select' id = 'content_type' style = 'width: 10.5em;' onchange = 'CreateQRCode(2);'>
+          <select class = 'form-select' id = 'content_type' onchange = 'CreateQRCode(2);'>
             <option value = 'raw'>Raw Text or URL</option>
             <option value = 'wifi'>Wifi Login</option>
           </select>
@@ -46,7 +46,7 @@
         </div>
         
         <div class = 'col-auto'>
-          <label class = 'btn btn-outline-primary' for = 'auto_update'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_update' style = 'margin-right: 0.5rem;' oninput = 'CreateQRCode();' checked>Auto Update</label>
+          <label class = 'btn btn-outline-primary' for = 'auto_update'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_update' oninput = 'CreateQRCode();' checked>Auto Update</label>
         </div>
       </div>
       
@@ -65,7 +65,7 @@
           <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
             <label class = 'col-form-label flex-shrink-0' for = 'ssid'>SSID:</label>
             
-            <input type = 'text' class = 'form-control' id = 'ssid' style = 'width: 20rem; margin-left: 10px; display: inline-block;'>
+            <input type = 'text' class = 'form-control ms-2' id = 'ssid' style = 'width: 20rem;'>
           </div>
         </div>
         
@@ -73,7 +73,7 @@
           <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
             <label class = 'col-form-label flex-shrink-0' for = 'security'>Security:</label>
             
-            <select class = 'form-select' id = 'security' style = 'margin-left: 10px;'>
+            <select class = 'form-select ms-2' id = 'security'>
               <option value = 'WPA'>WPA / WPA2</option>
               <option value = 'WEP'>WEP</option>
               <option value = ''>None</option>
@@ -85,13 +85,13 @@
           <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
             <label class = 'col-form-label flex-shrink-0' for = 'password'>Password:</label>
             
-            <input type = 'password' class = 'form-control' id = 'password' style = 'width: 20rem; margin-left: 10px; display: inline-block;'>
+            <input type = 'password' class = 'form-control ms-2' id = 'password' style = 'width: 20rem;'>
           </div>
         </div>
         
         <div class = 'row'>
           <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap align-items-center'>
-            <input type = 'checkbox' class = 'form-check-input' value = '' id = 'hidden' style = 'margin-right: 0.5rem;' oninput = 'CreateQRCode();' checked>
+            <input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'hidden' oninput = 'CreateQRCode();' checked>
             
             <label class = 'col-form-label' for = 'hidden'>Hidden</label>
           </div>
@@ -135,7 +135,7 @@
       
       <div class = 'row'>
         <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap align-items-center'>
-          <input type = 'checkbox' class = 'form-check-input' value = '' id = 'boost_ecc' style = 'margin-right: 0.5rem;' oninput = 'CreateQRCode();' checked>
+          <input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'boost_ecc' oninput = 'CreateQRCode();' checked>
           
           <label class = 'col-form-label' for = 'boost_ecc'>Boost error correction within same version</label>
         </div>

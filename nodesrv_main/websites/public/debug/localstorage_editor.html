@@ -49,22 +49,22 @@
       <hr>
       
       <div class = 'row'>
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'TypeUpdate();'>Refresh Field Names</button>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+        <div class = 'col-auto mb-2'>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'Get(1);'>Get</button>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'Set(1);'>Set</button>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'Delete();'>Delete</button>
         </div>
         
-        <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
-          <label class = 'btn btn-outline-primary' for = 'auto_get_set'><input type = 'checkbox' class = 'form-check-input' value = '' id = 'auto_get_set' style = 'margin-right: 0.5rem;' oninput = 'GeneralUpdate();' checked>Auto Get and Set</label>
+        <div class = 'col-auto mb-2'>
+          <label class = 'btn btn-outline-primary' for = 'auto_get_set'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_get_set' oninput = 'GeneralUpdate();' checked>Auto Get and Set</label>
         </div>
       </div>
       
-      <div class = 'col-auto' style = 'margin-bottom: 0.7rem;'>
+      <div class = 'col-auto mb-2'>
         <label class = 'col-form-label' for = 'name_select'>Field Name:</label>
         
         <select class = 'form-select' id = 'name_select' onchange = 'Get();'></select>
