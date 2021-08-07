@@ -4,7 +4,7 @@ RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install curl -y
 
-RUN curl -fsSL https://deb.nodesource.com/setup_15.x | bash -
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install nodejs -y
 
 RUN curl https://www.mongodb.org/static/pgp/server-4.4.asc | apt-key add -

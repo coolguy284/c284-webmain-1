@@ -23,6 +23,15 @@
         font-family: monospace;
         height: 200px;
       }
+      
+      th, td {
+        padding: 0.5rem;
+        border: 1px solid gray;
+      }
+      
+      td { word-break: break-word; }
+      
+      pre { white-space: pre-wrap; }
     </style>
   </head>
   <body>
@@ -33,39 +42,140 @@
         </div>
       </noscript>
       
-      <div class = 'row mt-3 mb-3'>
-        <div class = 'col-auto'>
-          <select class = 'form-select' id = 'content_type' onchange = 'CreateQRCode(2);'>
+      <div class = 'row mt-3 mb-2'>
+        <div class = 'col-auto mb-2'>
+          <select class = 'form-select' id = 'content_type' onchange = 'CreateQRCode();'>
             <option value = 'raw'>Raw Text or URL</option>
             <option value = 'wifi'>Wifi Login</option>
           </select>
         </div>
         
-        <div class = 'col-auto'>
+        <div class = 'col-auto mb-2'>
           <button type = 'button' class = 'btn btn-outline-primary' onclick = 'CreateQRCode(1);'>Create QR Code</button>
         </div>
         
-        <div class = 'col-auto'>
+        <div class = 'col-auto mb-2'>
           <label class = 'btn btn-outline-primary' for = 'auto_update'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_update' oninput = 'CreateQRCode();' checked>Auto Update</label>
+        </div>
+        
+        <div class = 'col-auto d-flex mb-2' id = 'text_encoding_div'>
+          <label class = 'col-form-label flex-shrink-0' for = 'text_encoding'>Text Encoding:</label>
+          
+          <select class = 'form-select ms-2' id = 'text_encoding' oninput = 'CreateQRCode();'>
+            <option value = 'utf8' selected>UTF-8</option>
+            <option value = 'utf16le'>UTF-16 LE</option>
+            <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
+            <option value = 'utf16be'>UTF-16 BE</option>
+            <option value = 'utf16benb'>UTF-16 BE (No BOM)</option>
+            <option value = 'latin1'>Latin1</option>
+            <option value = 'base64'>Base64</option>
+            <option value = 'hex'>Hex</option>
+          </select>
+        </div>
+        
+        <div class = 'col-auto mb-2'>
+          <input type = 'file' id = 'file_to_load' style = 'display: none;' aria-hidden = 'true'>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'SetTextToFile();'>Set Text to File</button>
+          <button type = 'button' class = 'btn btn-outline-primary' onclick = 'DownloadTextAsFile();'>Download Text as File</button>
+        </div>
+      </div>
+      
+      <div class = 'row d-flex align-items-start mb-2'>
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'qr_data_encoding'>QR Data Encoding:</label>
+          
+          <select class = 'form-select ms-2' id = 'qr_data_encoding' oninput = 'CreateQRCode();'>
+            <option value = 'numeric'>Numeric</option>
+            <option value = 'alphanumeric'>Alphanumeric</option>
+            <option value = 'bytes' selected>Bytes</option>
+          </select>
+        </div>
+        
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0'>QR Code Version:</label>
+          
+          <input type = 'number' class = 'form-control ms-2' id = 'version_min' min = 1 max = 40 step = 1 value = 1 style = 'width: 4.5rem;' oninput = 'CreateQRCode(0, event);'>
+          
+          <span class = 'col-form-label ms-2'>to</span>
+          
+          <input type = 'number' class = 'form-control ms-2' id = 'version_max' min = 1 max = 40 step = 1 value = 40 style = 'width: 4.5rem;' oninput = 'CreateQRCode(0, event);'>
+        </div>
+        
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'mask'>Mask (0-7, -1 for auto):</label>
+          
+          <input type = 'number' class = 'form-control ms-2' id = 'mask' min = -1 max = 7 step = 1 value = -1 style = 'width: 4.5rem;' oninput = 'CreateQRCode();'>
+        </div>
+        
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'ecc_level'>Error Correction:</label>
+          
+          <select class = 'form-select ms-2' id = 'ecc_level' oninput = 'CreateQRCode();'>
+            <option value = 'LOW'>Low</option>
+            <option value = 'MEDIUM'>Medium</option>
+            <option value = 'QUARTILE'>Quartile</option>
+            <option value = 'HIGH'>High</option>
+          </select>
+        </div>
+        
+        <div class = 'col-auto d-flex align-items-center'>
+          <input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'boost_ecc' oninput = 'CreateQRCode();' checked>
+          
+          <label class = 'col-form-label' for = 'boost_ecc'>Boost error correction within same version</label>
+        </div>
+      </div>
+      
+      <div class = 'row' style = 'margin-bottom: -0.5rem;'>
+        <div class = 'col-auto d-flex align-items-start mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'output_format'>Output Format:</label>
+          
+          <select class = 'form-select ms-2' id = 'output_format' oninput = 'CreateQRCode();'>
+            <option value = 'canvas' selected>Raster Image</option>
+            <option value = 'svg'>SVG</option>
+          </select>
+        </div>
+        
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'pixels_per_module'>Pixels Per Module:</label>
+          
+          <input type = 'number' class = 'form-control ms-2' id = 'pixels_per_module' min = 1 step = 1 value = 4 style = 'width: 4.5rem;' oninput = 'CreateQRCode();'>
+        </div>
+        
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'border_size'>Border Size (Modules):</label>
+          
+          <input type = 'number' class = 'form-control ms-2' id = 'border_size' min = 0 step = 1 value = 4 style = 'width: 4.5rem;' oninput = 'CreateQRCode();'>
+        </div>
+        
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'foreground_color'>Foreground Color:</label>
+          
+          <input type = 'text' class = 'form-control ms-2' id = 'foreground_color' value = 'black' style = 'width: 6rem;' oninput = 'CreateQRCode();'>
+        </div>
+        
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'background_color'>Background Color:</label>
+          
+          <input type = 'text' class = 'form-control ms-2' id = 'background_color' value = 'white' style = 'width: 6rem;' oninput = 'CreateQRCode();'>
         </div>
       </div>
       
       <hr>
       
-      <div class = 'card' id = 'textDiv'>
+      <div class = 'card' id = 'text_div'>
         <div class = 'card-body'>
-          <h4 class = 'card-title' style = 'margin-top: -7px;'><label id = 'encoding_header' for = 'field_value'>Text or URL</label></h4>
-          <div class = 'alert alert-danger' id = 'field_value_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
-          <textarea class = 'form-control' id = 'field_value' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'Set();'></textarea>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text'>Text or URL</label></h4>
+          <div class = 'alert alert-danger' id = 'text_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 11rem);'></div>
+          <textarea class = 'form-control' id = 'text' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'CreateQRCode();'></textarea>
         </div>
       </div>
       
-      <div class = 'mb-3' id = 'wifiDiv' style = 'display: none;'>
+      <div class = 'mb-3' id = 'wifi_div' style = 'display: none;'>
         <div class = 'row mb-2'>
           <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
             <label class = 'col-form-label flex-shrink-0' for = 'ssid'>SSID:</label>
             
-            <input type = 'text' class = 'form-control ms-2' id = 'ssid' style = 'width: 20rem;'>
+            <input type = 'text' class = 'form-control ms-2' id = 'ssid' style = 'width: 20rem;' oninput = 'CreateQRCode();'>
           </div>
         </div>
         
@@ -73,8 +183,8 @@
           <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
             <label class = 'col-form-label flex-shrink-0' for = 'security'>Security:</label>
             
-            <select class = 'form-select ms-2' id = 'security'>
-              <option value = 'WPA'>WPA / WPA2</option>
+            <select class = 'form-select ms-2' id = 'security' oninput = 'CreateQRCode();'>
+              <option value = 'WPA' selected>WPA / WPA2</option>
               <option value = 'WEP'>WEP</option>
               <option value = ''>None</option>
             </select>
@@ -85,13 +195,13 @@
           <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
             <label class = 'col-form-label flex-shrink-0' for = 'password'>Password:</label>
             
-            <input type = 'password' class = 'form-control ms-2' id = 'password' style = 'width: 20rem;'>
+            <input type = 'password' class = 'form-control ms-2' id = 'password' style = 'width: 20rem;' oninput = 'CreateQRCode();'>
           </div>
         </div>
         
         <div class = 'row'>
           <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap align-items-center'>
-            <input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'hidden' oninput = 'CreateQRCode();' checked>
+            <input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'hidden' oninput = 'CreateQRCode();'>
             
             <label class = 'col-form-label' for = 'hidden'>Hidden</label>
           </div>
@@ -100,64 +210,516 @@
       
       <hr>
       
-      <div class = 'row mb-2'>
-        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
-          <label class = 'col-form-label flex-shrink-0'>QR Code Version:</label>
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'>Output</h4>
           
-          <input type = 'number' class = 'form-control ms-2' id = 'version_min' min = 1 max = 40 step = 1 value = 1 style = 'width: 4.5rem;' oninput = 'CreateQRCode(3);'>
+          <canvas class = 'mb-2' id = 'canvas' style = 'display: block;'></canvas>
+          <svg xmlns = 'http://www.w3.org/2000/svg' class = 'mb-2' id = 'svg' style = 'display: none;' stroke = 'none'>
+						<rect width = '100%' height = '100%' fill = '#fff'/>
+						<path d = '' fill = '#000'/>
+					</svg>
           
-          <span class = 'col-form-label ms-2'>to</span>
+          <div class = 'row mb-2' id = 'canvas_options_div'>
+            <div class = 'col-auto d-flex mb-2'>
+              <label class = 'col-form-label flex-shrink-0' for = 'image_format'>Image Format:</label>
+              
+              <select class = 'form-select ms-2' id = 'image_format' oninput = 'UpdateImageForm();'>
+                <option value = 'image/bmp'>BMP</option>
+                <option value = 'image/png' selected>PNG</option>
+                <option value = 'image/jpeg'>JEPG</option>
+                <option value = 'image/webp'>WEBP</option>
+              </select>
+            </div>
+            
+            <div class = 'col-auto d-flex mb-2'>
+              <label class = 'col-form-label flex-shrink-0' for = 'image_quality'>Quality Factor (0 to 1 inclusive):</label>
+              
+              <input type = 'number' class = 'form-control ms-2' id = 'image_quality' min = 0 max = 1 step = 0.001 value = 0.92 style = 'width: 5.5rem;' oninput = 'UpdateImageForm();'>
+            </div>
+          </div>
           
-          <input type = 'number' class = 'form-control ms-2' id = 'version_max' min = 1 max = 40 step = 1 value = 40 style = 'width: 4.5rem;' oninput = 'CreateQRCode(3);'>
+          <div class = 'row'>
+            <div class = 'col-auto'>
+              <button type = 'button' class = 'btn btn-outline-primary' id = 'download_button' onclick = 'DownloadQR();'>Download Image</button>
+            </div>
+          </div>
+          
+          <div class = 'accordion mt-3' id = 'image_accordion'>
+            <div class = 'accordion-item'>
+              <h2 class = 'accordion-header' id = 'image_heading'>
+                <button type = 'button' class = 'accordion-button collapsed' id = 'image_button' data-bs-toggle = 'collapse' data-bs-target = '#image_collapse' aria-expanded = 'false' aria-controls = 'image_collapse' onclick = 'UpdateImageForm();'>
+                  <span style = 'font-size: 1.3rem;'>Advanced Image Form</span>
+                </button>
+              </h2>
+              <div id = 'image_collapse' class = 'accordion-collapse collapse' aria-labelledby = 'heading' data-bs-parent = '#image_accordion'>
+                <div class = 'accordion-body' id = 'image_body'>
+                  <p>This is an image in raster mode to facilitate easy copying, and the contents of the svg in svg mode.</p>
+                  <img id = 'image_image'>
+                  <pre class = 'mb-0' id = 'image_svg' style = 'display: none;'>erg</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class = 'accordion mt-3' id = 'debug_accordion'>
+            <div class = 'accordion-item'>
+              <h2 class = 'accordion-header' id = 'debug_heading'>
+                <button type = 'button' class = 'accordion-button collapsed' id = 'debug_button' data-bs-toggle = 'collapse' data-bs-target = '#debug_collapse' aria-expanded = 'false' aria-controls = 'debug_collapse' onclick = 'UpdateQRCodeDebugInfo();'>
+                  <span style = 'font-size: 1.3rem;'>QR Debug Information</span>
+                </button>
+              </h2>
+              <div id = 'debug_collapse' class = 'accordion-collapse collapse' aria-labelledby = 'heading' data-bs-parent = '#debug_accordion'>
+                <div class = 'accordion-body'>
+                  <table>
+                    <tr><th>Version</th>                <td id = 'debug_version'></td></tr>
+                    <tr><th>Mask Pattern</th>           <td id = 'debug_mask'></td></tr>
+                    <tr><th>Error Correction Level</th> <td id = 'debug_ecc_level'></td></tr>
+                    <tr><th>Total Data Bits</th>        <td id = 'debug_data_bits'></td></tr>
+                    <tr><th>Characters</th>             <td id = 'debug_characters'></td></tr>
+                    <tr><th>Data (Latin1)</th>          <td id = 'debug_data_latin1'></td></tr>
+                    <tr><th>Data (Hex)</th>             <td id = 'debug_data_hex'></td></tr>
+                    <tr><th>Segments</th>               <td id = 'debug_segments'></td></tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
-      <div class = 'row mb-2'>
-        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
-          <label class = 'col-form-label flex-shrink-0' for = 'mask'>Mask (0-7, -1 for auto):</label>
-          
-          <input type = 'number' class = 'form-control ms-2' id = 'mask' min = -1 max = 7 step = 1 value = -1 style = 'width: 4.5rem;' oninput = 'CreateQRCode(4);'>
-        </div>
-      </div>
-      
-      <div class = 'row'>
-        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap'>
-          <label class = 'col-form-label flex-shrink-0' for = 'error_correction'>Error Correction:</label>
-          
-          <select class = 'form-select ms-2' id = 'error_correction'>
-            <option value = 'LOW'>Low</option>
-            <option value = 'MEDIUM'>Medium</option>
-            <option value = 'QUARTILE'>Quartile</option>
-            <option value = 'HIGH'>High</option>
-          </select>
-        </div>
-      </div>
-      
-      <div class = 'row'>
-        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap align-items-center'>
-          <input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'boost_ecc' oninput = 'CreateQRCode();' checked>
-          
-          <label class = 'col-form-label' for = 'boost_ecc'>Boost error correction within same version</label>
-        </div>
-      </div>
+      <br>
     </div>
     
     <script src = '/libs/extern/qrcodegen_v1.js'></script>
+    <script src = '/libs/extern/bootstrap.bundle.min.js' async></script>
     <script>
-      function CreateQRCode(mode) {
-        if (mode == 2) {
-          switch (content_type.value) {
-            case 'raw': textDiv.style.display = ''; wifiDiv.style.display = 'none'; break;
-            case 'wifi': textDiv.style.display = 'none'; wifiDiv.style.display = ''; break;
-          }
-          return;
+      // next 2 funcs taken from mozilla, modified
+      function Utf8ToLatin1(str) {
+        return encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1));
+      }
+      
+      function Latin1ToUtf8(str) {
+        return decodeURIComponent(Array.prototype.map.call(str, c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''));
+      }
+      
+      function Utf16LEToLatin1(str) {
+        return Array.prototype.map.call('\ufeff' + str, c => { c = c.charCodeAt(0); return String.fromCharCode(c % 256, Math.floor(c / 256)); }).join('');
+      }
+      
+      function Latin1ToUtf16LE(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) + str.charCodeAt(i + 1) * 256));
+        arr = arr.join('');
+        return arr[0] == '\ufeff' ? arr.slice(1) : arr;
+      }
+      
+      function Utf16LENBToLatin1(str) {
+        return Array.prototype.map.call(str, c => { c = c.charCodeAt(0); return String.fromCharCode(c % 256, Math.floor(c / 256)); }).join('');
+      }
+      
+      function Latin1ToUtf16LENB(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) + str.charCodeAt(i + 1) * 256));
+        return arr.join('');
+      }
+      
+      function Utf16BEToLatin1(str) {
+        return Array.prototype.map.call('\ufeff' + str, c => { c = c.charCodeAt(0); return String.fromCharCode(Math.floor(c / 256), c % 256); }).join('');
+      }
+      
+      function Latin1ToUtf16BE(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) * 256 + str.charCodeAt(i + 1)));
+        arr = arr.join('');
+        return arr[0] == '\ufeff' ? arr.slice(1) : arr;
+      }
+      
+      function Utf16BENBToLatin1(str) {
+        return Array.prototype.map.call(str, c => { c = c.charCodeAt(0); return String.fromCharCode(Math.floor(c / 256), c % 256); }).join('');
+      }
+      
+      function Latin1ToUtf16BENB(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) * 256 + str.charCodeAt(i + 1)));
+        return arr.join('');
+      }
+      
+      function BinaryStringToHex(str) {
+        return Array.prototype.map.call(str, c => c.charCodeAt(0).toString(16).padStart(2, '0')).join('');
+      }
+      
+      function HexToBinaryString(str) {
+        str = str.replace(/[^0-9A-Fa-f]/g, '');
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(parseInt(str.slice(i, i + 2), 16)));
+        return arr.join('');
+      }
+      
+      function EscapeHTML(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/\r/g,'&#13;');
+      }
+      
+      function UnescapeHTML(str) {
+        return str.replace(/&#13;/g, '\r').replace(/&#39;/g, '\'').replace(/&quot;/g, '"').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+      }
+      
+      // html and textarea don't support carriage returns in textareas, they get auto converted to newlines 🙃, so null byte followed by a newline will be counted as a carriage return instead
+      function TextToTextArea(str) {
+        return str.replace(/\x00/g, '\x00\x00').replace(/\r/g, '\x00\n');
+      }
+      
+      // probably some advanced grammar reason why simple replace statements won't cut it here
+      function TextAreaToText(str) {
+        let result = '', i = 0;
+        for (; i < str.length - 1; i++) {
+          if (str.charCodeAt(i) == 0) {
+            if (str[i + 1] == '\x00') result += '\x00';
+            else if (str[i + 1] == '\n') result += '\r';
+            else result += '\x00' + str[i + 1];
+            i++;
+          } else result += str[i];
+        }
+        return result + (i < str.length ? str[str.length - 1] : '');
+        //return str.replace(/\x00\n/g, '\r').replace(/\x00\x00/g, '\x00');
+      }
+      
+      function BinaryStringToU8Arr(str) {
+        let arr = new Uint8Array(str.length);
+        for (var i = 0; i < str.length; i++) arr[i] = str.charCodeAt(i);
+        return arr;
+      }
+      
+      function U8ArrToBinaryString(arr) {
+        if (arr instanceof ArrayBuffer) arr = new Uint8Array(arr);
+        let str = '';
+        for (var i = 0; i < arr.length; i++) str += String.fromCharCode(arr[i]);
+        return str;
+      }
+      
+      function QRWIFIEncode(str) {
+        return str.replace(/\\/g, '\\\\')
+          .replace(/"/g, '\\"')
+          .replace(/;/g, '\\;')
+          .replace(/,/g, '\\,')
+          .replace(/:/g, '\\:');
+      }
+      
+      function QRWIFIDecode(str) {
+        return str.replace(/\\\\/g, '\\')
+          .replace(/\\"/g, '"')
+          .replace(/\\;/g, ';')
+          .replace(/\\,/g, ',')
+          .replace(/\\:/g, ':');
+      }
+      
+      var qrBinaryString, qrSegs, qrCode, qrSvgCode;
+      
+      function CreateQRCode(mode, event) {
+        if (text.classList.contains('is-invalid')) {
+          text.classList.remove('is-invalid');
+          text_warning.style.display = 'none';
+          text_warning.innerText = '';
         }
         
-        if (!auto_update.checked && !mode) return;
+        switch (content_type.value) {
+          case 'raw': text_div.style.display = ''; wifi_div.style.display = 'none'; break;
+          case 'wifi': text_div.style.display = 'none'; wifi_div.style.display = ''; break;
+        }
+        
+        switch (output_format.value) {
+          case 'canvas': canvas_options_div.style.display = ''; break;
+          case 'svg': canvas_options_div.style.display = 'none'; break;
+        }
+        
+        let versionMin = Number(version_min.value), versionMax = Number(version_max.value);
+        
+        if (Number.isNaN(versionMin)) {
+          version_min.value = version_min.value.replace(/[^0-9]/g, '');
+          versionMin = Number(version_min.value);
+        }
+        if (versionMin < 1) {
+          if (version_min.value != '') { versionMin = 1; version_min.value = versionMin; }
+          else { versionMin = 1; }
+        }
+        else if (versionMin > 40) { versionMin = 40; version_min.value = versionMin; }
+        else if (!Number.isSafeInteger(versionMin)) { versionMin = Math.round(versionMin); version_min.value = versionMin; }
+        
+        if (Number.isNaN(versionMax)) {
+          version_max.value = version_max.value.replace(/[^0-9]/g, '');
+          versionMax = Number(version_max.value);
+        }
+        if (versionMax < 1) {
+          if (version_max.value != '') { versionMax = 1; version_max.value = versionMax; }
+          else { versionMax = 1; }
+        }
+        else if (versionMax > 40) { versionMax = 40; version_max.value = versionMax; }
+        else if (!Number.isSafeInteger(versionMax)) { versionMax = Math.round(versionMax); version_max.value = versionMax; }
+        
+        if (versionMin > versionMax) {
+          if (event && event.target == version_min) {
+            if (version_min.value != '') { versionMax = versionMin; version_max.value = versionMax; }
+          } else {
+            if (version_max.value != '') { versionMin = versionMax; version_min.value = versionMin; }
+          }
+        }
+        
+        let maskNum = Number(mask.value);
+        if (Number.isNaN(maskNum)) {
+          mask.value = mask.value.replace(/[^0-9]/g, '');
+          maskNum = Number(mask.value);
+        }
+        if (maskNum < -1) { maskNum = -1; mask.value = maskNum; }
+        else if (maskNum > 7) { maskNum = 7; mask.value = maskNum; }
+        else if (!Number.isSafeInteger(maskNum)) { maskNum = Math.round(maskNum); mask.value = maskNum; }
+        
+        let pixelsPerModule = Number(pixels_per_module.value), borderSize = Number(border_size.value);
+        if (Number.isNaN(pixelsPerModule)) {
+          pixels_per_module.value = pixels_per_module.value.replace(/[^0-9]/g, '');
+          pixelsPerModule = Number(pixels_per_module.value);
+        }
+        if (pixelsPerModule < 1) {
+          if (pixels_per_module.value != '') { pixelsPerModule = 1; pixels_per_module.value = pixelsPerModule; }
+          else { pixelsPerModule = 1; }
+        }
+        else if (!Number.isSafeInteger(pixelsPerModule)) { pixelsPerModule = Math.round(pixelsPerModule); pixels_per_module.value = pixelsPerModule; }
+        
+        if (Number.isNaN(borderSize)) {
+          border_size.value = border_size.value.replace(/[^0-9]/g, '');
+          borderSize = Number(border_size.value);
+        }
+        if (borderSize < 0) { borderSize = 0; border_size.value = borderSize; }
+        else if (!Number.isSafeInteger(borderSize)) { borderSize = Math.round(borderSize); border_size.value = borderSize; }
+        
+        let downloadButtonContents = `Download ${output_format.value == 'canvas' ? 'Image' : 'SVG'}`;
+        if (download_button.innerHTML != downloadButtonContents) download_button.innerHTML = downloadButtonContents;
+        
+        if (mode == 2 || !auto_update.checked && !mode) return;
+        
+        try {
+          let binaryString = TextAreaToText(text.value);
+          switch (content_type.value) {
+            case 'raw':
+              switch (text_encoding.value) {
+                case 'utf8': binaryString = Utf8ToLatin1(binaryString); break;
+                case 'utf16le': binaryString = Utf16LEToLatin1(binaryString); break;
+                case 'utf16lenb': binaryString = Utf16LENBToLatin1(binaryString); break;
+                case 'utf16be': binaryString = Utf16BEToLatin1(binaryString); break;
+                case 'utf16benb': binaryString = Utf16BENBToLatin1(binaryString); break;
+                case 'base64': binaryString = atob(binaryString); break;
+                case 'hex': binaryString = HexToBinaryString(binaryString); break;
+              }
+              break;
+            
+            case 'wifi':
+              binaryString = Utf8ToLatin1(`WIFI:S:${QRWIFIEncode(ssid.value)};T:${QRWIFIEncode(security.value)};${security.value ? `P:${QRWIFIEncode(password.value)};` : ''}H:${hidden.checked};`);
+              break;
+          }
+          
+          let segs;
+          switch (content_type.value == 'raw' ? qr_data_encoding.value : 'bytes') {
+            case 'numeric': segs = qrcodegen.QrSegment.makeNumeric(binaryString); break;
+            case 'alphanumeric': segs = qrcodegen.QrSegment.makeAlphanumeric(binaryString); break;
+            case 'bytes': segs = qrcodegen.QrSegment.makeBytes(BinaryStringToU8Arr(binaryString)); break;
+          }
+          
+          segs = segs.numChars ? [segs] : [];
+          
+          qr = qrcodegen.QrCode.encodeSegments(
+            segs,
+            qrcodegen.QrCode.Ecc[ecc_level.value],
+            versionMin, versionMax,
+            maskNum,
+            boost_ecc.checked
+          );
+          
+          let svgCode;
+          
+          switch (output_format.value) {
+            case 'canvas':
+              canvas.width = canvas.height = (qr.size + borderSize * 2) * pixelsPerModule;
+              let ctx = canvas.getContext('2d');
+              for (let y = -borderSize; y < qr.size + borderSize; y++) {
+                for (let x = -borderSize; x < qr.size + borderSize; x++) {
+                  ctx.fillStyle = qr.getModule(x, y) ? foreground_color.value : background_color.value;
+                  ctx.fillRect((x + borderSize) * pixelsPerModule, (y + borderSize) * pixelsPerModule, pixelsPerModule, pixelsPerModule);
+                }
+              }
+              
+              canvas.style.display = 'block';
+              svg.style.display = 'none';
+              break;
+            
+            case 'svg':
+              svg.style.width = svg.style.height = (qr.size + borderSize * 2) * pixelsPerModule + 'px';
+              let parts = [];
+              for (let y = 0; y < qr.size; y++) {
+                for (let x = 0; x < qr.size; x++) {
+                  if (qr.getModule(x, y))
+                    parts.push(`M${x + borderSize},${y + borderSize}h1v1h-1z`);
+                }
+              }
+              svgCode = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 ${qr.size + borderSize * 2} ${qr.size + borderSize * 2}" stroke="none">\n  <rect width="100%" height="100%" fill="${background_color.value}"/>\n  <path d="${parts.join(' ')}" fill="${foreground_color.value}"/>\n</svg>`;
+              
+              let viewBox = / viewBox="([^"]*)"/.exec(svgCode)[1];
+              let pathD = / d="([^"]*)"/.exec(svgCode)[1];
+              svg.setAttribute('viewBox', viewBox);
+              svg.querySelector('path').setAttribute('d', pathD);
+              svg.querySelector('rect').setAttribute('fill', background_color.value);
+              svg.querySelector('path').setAttribute('fill', foreground_color.value);
+              
+              canvas.style.display = 'none';
+              svg.style.display = 'block';
+              break;
+          }
+          
+          qrBinaryString = binaryString; qrSegs = segs; qrCode = qr; qrSvgCode = svgCode;
+          UpdateQRCodeDebugInfo();
+          UpdateImageForm();
+        } catch (e) {
+          let msg = typeof e == 'string' ? e : e.toString();
+          if (!text.classList.contains('is-invalid')) text.classList.add('is-invalid');
+          text_warning.innerText = msg;
+          text_warning.style.display = '';
+        }
+      }
+      
+      function UpdateQRCodeDebugInfo() {
+        if (debug_button.classList.contains('collapsed')) return;
+        
+        debug_version.innerText = qrCode.version;
+        debug_mask.innerText = qrCode.mask;
+        debug_ecc_level.innerText = ['Low', 'Medium', 'Quartile', 'High'][qrCode.errorCorrectionLevel.ordinal];
+        debug_data_bits.innerText = qrcodegen.QrSegment.getTotalBits(qrSegs, qrCode.version);
+        debug_characters.innerText = qrBinaryString.length;
+        debug_data_latin1.innerText = qrBinaryString;
+        debug_data_hex.innerText = BinaryStringToHex(qrBinaryString);
+        debug_segments.innerText = qrSegs.length == 0 ? 'no segments' : qrSegs.map(seg => {
+          let mode;
+          switch (seg.mode) {
+            case qrcodegen.QrSegment.Mode.NUMERIC: mode = 'numeric'; break;
+            case qrcodegen.QrSegment.Mode.ALPHANUMERIC: mode = 'alphanumeric'; break;
+            case qrcodegen.QrSegment.Mode.BYTE: mode = 'byte'; break;
+            case qrcodegen.QrSegment.Mode.KANJI: mode = 'kanji'; break;
+            default: mode = 'unknown'; break;
+          }
+          return `mode: ${mode}, characters: ${seg.numChars}, number of bits: ${seg.bitData.length}, bits: ${seg.bitData.join(', ')}`;
+        }).join('\n\n');
+      }
+      
+      function UpdateImageForm() {
+        if (image_button.classList.contains('collapsed')) return;
+        
+        switch (output_format.value) {
+          case 'canvas':
+            image_image.style.display = '';
+            image_svg.style.display = 'none';
+            
+            let qualityNum = Number(image_quality.value);
+            image_image.width = image_image.height = canvas.width;
+            image_image.src = canvas.toDataURL(image_format.value, Number.isNaN(qualityNum) ? 0.92 : Math.min(Math.max(qualityNum, 0), 1));
+            image_svg.innerText = '';
+            break;
+          
+          case 'svg':
+            image_image.style.display = 'none';
+            image_svg.style.display = '';
+            
+            image_image.src = '';
+            image_svg.innerText = qrSvgCode;
+            break;
+        }
+      }
+      
+      text.ondragover = evt => evt.preventDefault();
+      text.ondrop = evt => {
+        evt.preventDefault();
+        if (evt.dataTransfer && evt.dataTransfer.files.length) {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            content_type.value = 'raw';
+            text_encoding.value = 'latin1';
+            qr_data_encoding.value = 'bytes';
+            text.value = TextToTextArea(e.target.result);
+            CreateQRCode();
+          };
+          
+          reader.readAsBinaryString(evt.dataTransfer.files[0]);
+        }
+      };
+      
+      file_to_load.oninput = evt => {
+        let reader = new FileReader();
+        
+        reader.onload = e => {
+          content_type.value = 'raw';
+          text_encoding.value = 'latin1';
+          qr_data_encoding.value = 'bytes';
+          text.value = TextToTextArea(e.target.result);
+          CreateQRCode();
+        };
+        
+        reader.readAsBinaryString(evt.target.files[0]);
+      };
+      
+      function SetTextToFile() {
+        file_to_load.click();
+      }
+      
+      function DownloadTextAsFile() {
+        let element = document.createElement('a');
+        
+        switch (text_encoding.value) {
+          case 'utf8': element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text.value))); break;
+          case 'utf16le': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16LEToLatin1(TextAreaToText(text.value)))); break;
+          case 'utf16lenb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16LENBToLatin1(TextAreaToText(text.value)))); break;
+          case 'utf16be': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BEToLatin1(TextAreaToText(text.value)))); break;
+          case 'utf16benb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BENBToLatin1(TextAreaToText(text.value)))); break;
+          case 'latin1': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(TextAreaToText(text.value))); break;
+          case 'base64': element.setAttribute('href', 'data:application/octet-stream;base64,' + text.value); break;
+          case 'hex': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(HexToBinaryString(text.value))); break;
+        }
+        
+        element.setAttribute('download', 'file.txt');
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+      
+      function DownloadQR(mode) {
+        let element = document.createElement('a');
+        
+        switch (output_format.value) {
+          case 'canvas':
+            let qualityNum = Number(image_quality.value);
+            element.setAttribute('href',
+              canvas.toDataURL(image_format.value, Number.isNaN(qualityNum) ? 0.92 : Math.min(Math.max(qualityNum, 0), 1))
+            );
+            
+            element.setAttribute('download', 'qr_code.' + image_format.value.split('/')[1]);
+            break;
+          
+          case 'svg':
+            element.setAttribute('href', 'data:image/svg;base64,' + btoa(Utf8ToLatin1(qrSvgCode)));
+            
+            element.setAttribute('download', 'qr_code.svg');
+            break;
+        }
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
       }
       
       onload = () => {
-        CreateQRCode(2);
+        // mobile phones dont show decimal places on input[type=number] even when step isnt set to an integer 🙃, so the type must be set to text
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|Windows Phone/i.test(navigator.userAgent))
+          image_quality.type = 'text';
+        
         CreateQRCode();
       };
     </script>
