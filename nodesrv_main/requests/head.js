@@ -52,5 +52,7 @@ module.exports = async function headMethod(requestProps) {
     }
   }
   
-  await common.resp.fileFull(requestProps, publicPath, true);
+  else {
+    await common.resp.fileFull(requestProps, publicPath, true);
+  }
 };

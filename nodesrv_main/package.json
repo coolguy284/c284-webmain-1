@@ -1,6 +1,6 @@
 {
   "name": "c284-webmain-1-nodesrv_main",
-  "version": "1.5.12",
+  "version": "1.5.13",
   "description": "Main node.js server for c284-webmain-1.",
   "main": "index.js",
   "scripts": {
