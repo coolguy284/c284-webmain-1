@@ -35,42 +35,42 @@
       
       <div class = 'row mt-2'>
         <div class = 'col-auto mb-2'>
-          <select class = 'form-select' id = 'hash_algorythm' style = 'width: 15.5rem;' oninput = 'Update(1);'>
+          <select class = 'form-select' id = 'hash_algorythm' oninput = 'Update(1);'>
             <optgroup label = 'SHA1'>
-              <option value = 'SHA-1'>SHA-1</option>
+              <option value = 'SHA-1'>SHA-1 (Native)</option>
             </optgroup>
             <optgroup label = 'SHA2'>
-              <option value = 'SHA-224'>SHA-224 (Non-Native)</option>
-              <option value = 'SHA-256' selected>SHA-256</option>
-              <option value = 'SHA-384'>SHA-384</option>
-              <option value = 'SHA-512'>SHA-512</option>
-              <option value = 'SHA-512_224'>SHA-512/224 (Non-Native)</option>
-              <option value = 'SHA-512_256'>SHA-512/256 (Non-Native)</option>
+              <option value = 'SHA-224'>SHA-224</option>
+              <option value = 'SHA-256' selected>SHA-256 (Native)</option>
+              <option value = 'SHA-384'>SHA-384 (Native)</option>
+              <option value = 'SHA-512'>SHA-512 (Native)</option>
+              <option value = 'SHA-512_224'>SHA-512/224</option>
+              <option value = 'SHA-512_256'>SHA-512/256</option>
             </optgroup>
             <optgroup label = 'SHA3'>
-              <option value = 'SHA3-224'>SHA3-224 (Non-Native)</option>
-              <option value = 'SHA3-256'>SHA3-256 (Non-Native)</option>
-              <option value = 'SHA3-384'>SHA3-384 (Non-Native)</option>
-              <option value = 'SHA3-512'>SHA3-512 (Non-Native)</option>
+              <option value = 'SHA3-224'>SHA3-224</option>
+              <option value = 'SHA3-256'>SHA3-256</option>
+              <option value = 'SHA3-384'>SHA3-384</option>
+              <option value = 'SHA3-512'>SHA3-512</option>
             </optgroup>
             <optgroup label = 'Keccak'>
-              <option value = 'Keccak-224'>Keccak-224 (Non-Native)</option>
-              <option value = 'Keccak-256'>Keccak-256 (Non-Native)</option>
-              <option value = 'Keccak-384'>Keccak-384 (Non-Native)</option>
-              <option value = 'Keccak-512'>Keccak-512 (Non-Native)</option>
+              <option value = 'Keccak-224'>Keccak-224</option>
+              <option value = 'Keccak-256'>Keccak-256</option>
+              <option value = 'Keccak-384'>Keccak-384</option>
+              <option value = 'Keccak-512'>Keccak-512</option>
             </optgroup>
             <optgroup label = 'SHA3-SHAKE'>
-              <option value = 'SHAKE-128'>SHAKE-128 (Non-Native)</option>
-              <option value = 'SHAKE-256'>SHAKE-256 (Non-Native)</option>
+              <option value = 'SHAKE-128'>SHAKE-128</option>
+              <option value = 'SHAKE-256'>SHAKE-256</option>
             </optgroup>
             <optgroup label = 'SHA3-CSHAKE'>
-              <option value = 'CSHAKE-128'>CSHAKE-128 (Non-Native)</option>
-              <option value = 'CSHAKE-256'>CSHAKE-256 (Non-Native)</option>
+              <option value = 'CSHAKE-128'>CSHAKE-128</option>
+              <option value = 'CSHAKE-256'>CSHAKE-256</option>
             </optgroup>
           </select>
         </div>
         
-        <div class = 'col-auto d-flex mb-2' style = 'display: none;' id = 'output_length_div'>
+        <div class = 'col-auto mb-2' style = 'display: none;' id = 'output_length_div'>
           <label class = 'col-form-label' for = 'output_length'>Output Length:</label>
           
           <input type = 'number' class = 'form-control ms-2' id = 'output_length' min = 0 step = 1 value = 256 style = 'width: 7.5rem;' oninput = 'Update();' onkeydown = 'OutputLengthUpdate();'>
@@ -332,16 +332,16 @@
             break;
           
           case 'SHAKE-128': case 'SHAKE-256':
-            output_length_div.style.display = '';
+            output_length_div.style.display = 'flex';
             function_name_div.style.display = 'none';
             customization_div.style.display = 'none';
             hash_header.innerText = 'SHAKE';
             break;
           
           case 'CSHAKE-128': case 'CSHAKE-256':
-            output_length_div.style.display = '';
-            function_name_div.style.display = 'inline-flex';
-            customization_div.style.display = 'inline-flex';
+            output_length_div.style.display = 'flex';
+            function_name_div.style.display = 'flex';
+            customization_div.style.display = 'flex';
             hash_header.innerText = 'CSHAKE';
             break;
         }

@@ -58,7 +58,7 @@
           <label class = 'btn btn-outline-primary' for = 'auto_update'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_update' oninput = 'CreateQRCode();' checked>Auto Update</label>
         </div>
         
-        <div class = 'col-auto d-flex mb-2' id = 'text_encoding_div'>
+        <div class = 'col-auto mb-2' id = 'text_encoding_div' style = 'display: flex;'>
           <label class = 'col-form-label flex-shrink-0' for = 'text_encoding'>Text Encoding:</label>
           
           <select class = 'form-select ms-2' id = 'text_encoding' oninput = 'CreateQRCode();'>
@@ -423,8 +423,8 @@
         }
         
         switch (content_type.value) {
-          case 'raw': text_div.style.display = ''; wifi_div.style.display = 'none'; break;
-          case 'wifi': text_div.style.display = 'none'; wifi_div.style.display = ''; break;
+          case 'raw': text_encoding_div.style.display = 'flex'; text_div.style.display = ''; wifi_div.style.display = 'none'; break;
+          case 'wifi': text_encoding_div.style.display = 'none'; text_div.style.display = 'none'; wifi_div.style.display = ''; break;
         }
         
         switch (output_format.value) {

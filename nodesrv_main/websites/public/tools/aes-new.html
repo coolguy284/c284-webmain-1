@@ -68,13 +68,13 @@
           </div>
         </div>
         
-        <div class = 'col-auto d-flex mb-2' style = 'display: none;' id = 'ctr_length_div'>
+        <div class = 'col-auto mb-2' style = 'display: none;' id = 'ctr_length_div'>
           <label class = 'col-form-label' for = 'ctr_length'>Length:</label>
           
           <input type = 'number' class = 'form-control ms-2' id = 'ctr_length' min = 2 max = 128 step = 1 value = 64 style = 'width: 5rem;' oninput = 'TextUpdate();'>
         </div>
         
-        <div class = 'col-auto d-flex flex-sm-nowrap flex-wrap mb-2' style = 'display: none;' id = 'addl_data_div'>
+        <div class = 'col-auto flex-sm-nowrap flex-wrap mb-2' style = 'display: none;' id = 'addl_data_div'>
           <label class = 'col-form-label flex-shrink-0' for = 'addl_data'>Additional Data:</label>
           
           <div class = 'input-group d-flex align-items-start ms-2'>
@@ -92,7 +92,7 @@
           </div>
         </div>
         
-        <div class = 'col-auto d-flex mb-2' style = 'display: none;' id = 'tag_length_div'>
+        <div class = 'col-auto mb-2' style = 'display: none;' id = 'tag_length_div'>
           <label class = 'col-form-label flex-shrink-0' for = 'tag_length'>Tag Length:</label>
           
           <select class = 'form-select ms-2' id = 'tag_length' oninput = 'TextUpdate();'>
@@ -503,9 +503,9 @@
       function GeneralUpdate(v) {
         if (v == 1) {
           switch (aes_algo.value) {
-            case 'AES-CTR': ctr_label.textContent = 'Counter:'; ctr_length_div.style.display = ''; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
+            case 'AES-CTR': ctr_label.textContent = 'Counter:'; ctr_length_div.style.display = 'flex'; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
             case 'AES-CBC': ctr_label.textContent = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = 'none'; tag_length_div.style.display = 'none'; break;
-            case 'AES-GCM': ctr_label.textContent = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = 'inline-flex'; tag_length_div.style.display = ''; break;
+            case 'AES-GCM': ctr_label.textContent = 'IV:'; ctr_length_div.style.display = 'none'; addl_data_div.style.display = 'flex'; tag_length_div.style.display = 'flex'; break;
           }
         }
         
