@@ -52,7 +52,6 @@ if (process.env.NODESRVMAIN_HTTP_IP) {
     httpServer.emit('connection', conn);
   });
   
-  
   tcpServer.listen({ host: process.env.NODESRVMAIN_HTTP_IP, port: process.env.NODESRVMAIN_HTTP_PORT }, () => {
     logger.info(`HTTP server listening on ${common.mergeIPPort(process.env.NODESRVMAIN_HTTP_IP, process.env.NODESRVMAIN_HTTP_PORT)}`);
   });
@@ -82,6 +81,17 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
       httpsServer.emit('secureConnection', conn);
     else if (conn.alpnProtocol == 'h2')
       http2Server.emit('secureConnection', conn);
+  });
+  
+  global.tlsSessionStore = new Map();
+  
+  tlsServer.on('newSession', (id, data, cb) => {
+    tlsSessionStore.set(id.toString('base64'), [data, Date.now()]);
+    cb();
+  });
+  
+  tlsServer.on('resumeSession', (id, cb) => {
+    cb(null, tlsSessionStore.get(id.toString('base64'))?.[0] || null);
   });
   
   tlsServer.listen({ host: process.env.NODESRVMAIN_HTTPS_IP, port: process.env.NODESRVMAIN_HTTPS_PORT }, () => {
@@ -130,15 +140,28 @@ process.on('unhandledRejection', err => {
 
 
 // server tick function
+global.tickIntMS = Number(process.env.NODESRVMAIN_TICK_INTERVAL) || 5000;
 global.ticks = 0;
 global.tickFunc = () => {
-  let limitTime = Date.now() - 5000;
+  // for removing old cached TLS sessions
+  let tlsSessionLimitTime = Date.now() - 300000;
+  if (process.env.NODESRVMAIN_HTTPS_IP && ticks % (300000 / tickIntMS)) {
+    for (var i of tlsSessionStore.keys()) {
+      if (tlsSessionStore.get(i)[1] < tlsSessionLimitTime)
+        tlsSessionStore.delete(i);
+    }
+  }
+  
+  // for removing old ownEyes tokens
+  let ownEyesLimitTime = Date.now() - 5000;
   for (var i of common.vars.ownEyesCodes.keys()) {
-    if (common.vars.ownEyesCodes.get(i) < limitTime)
+    if (common.vars.ownEyesCodes.get(i) < ownEyesLimitTime)
       common.vars.ownEyesCodes.delete(i);
   }
   
-  if (Number(process.env.NODESRVMAIN_CHAT_IDLE_TIMEOUT) && ticks % Number(process.env.NODESRVMAIN_CHAT_IDLE_TIMEOUT) == 0) {
+  // for disconnecting chat members more quickly if their internet has cut out
+  let chatIdleTimeout = Number(process.env.NODESRVMAIN_CHAT_IDLE_TIMEOUT);
+  if (chatIdleTimeout && ticks % chatIdleTimeout == 0) {
     for (var ws2 of chatWSServer.clients) {
       if (ws2.isAlive === false) return ws2.terminate();
       
@@ -149,7 +172,7 @@ global.tickFunc = () => {
   
   global.ticks++;
 };
-global.tickInt = setInterval(tickFunc, 1000);
+global.tickInt = setInterval(tickFunc, tickIntMS);
 
 
 // website cache
