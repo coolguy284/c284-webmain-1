@@ -35,6 +35,7 @@ RUN (cd nodesrv_main; npm install)
 COPY --chown=webmain:webmain index.js index.js
 
 COPY --chown=webmain:webmain nodesrv_main/logutils.js nodesrv_main/logutils.js
+COPY --chown=webmain:webmain .dockerenv .dockerenv
 COPY --chown=webmain:webmain nodesrv_main/helpers nodesrv_main/helpers
 COPY --chown=webmain:webmain nodesrv_main/websites/website_data.txt nodesrv_main/websites/website_data.txt
 COPY --chown=webmain:webmain nodesrv_main/index.js nodesrv_main/index.js
@@ -44,6 +45,6 @@ COPY --chown=webmain:webmain nodesrv_main/websites nodesrv_main/websites
 RUN sed '7a\\tvar global = commonjsGlobal;' nodesrv_main/node_modules/bson/dist/bson.browser.umd.js > nodesrv_main/websites/public/libs/extern/bson.browser.umd.js
 RUN cp nodesrv_main/node_modules/bson/dist/bson.browser.umd.js.map nodesrv_main/websites/public/libs/extern/bson.browser.umd.js.map
 COPY --chown=webmain:webmain nodesrv_main/package.json nodesrv_main/package.json
-RUN (cd nodesrv_main; node helpers/put_version_in_index.js && node helpers/create_sitemap.js && node helpers/compress_and_etags.js)
+RUN (cd nodesrv_main; node helpers/put_version_in_index.js && node helpers/set_contact_info.js && node helpers/create_sitemap.js && node helpers/compress_and_etags.js)
 
 CMD ["node", "index.js"]

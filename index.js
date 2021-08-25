@@ -25,7 +25,7 @@ function toBool(str) {
 }
 
 
-if (!toBool(process.env.DISABLE_MONGODB)) {
+if (!toBool(process.env.MONGODB_DISABLED)) {
   // complicated mongodb log file naming process
   var date = new Date();
   var datePart = date.toUTCString().replace(',', '').split(' ').slice(0, 3);

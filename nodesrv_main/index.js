@@ -14,7 +14,7 @@ var ws = require('ws');
 var common = require('./common');
 
 
-if (!process.env.DISABLE_MONGODB || process.env.DISABLE_MONGODB == 'false') {
+if (!process.env.MONGODB_DISABLED || process.env.MONGODB_DISABLED == 'false') {
   (async () => {
     // initalize mongo client
     var mongodb = require('mongodb');

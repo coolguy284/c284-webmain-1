@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Contact Information</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'This page has some of my contact information.'>
+    <meta name = 'keywords' content = 'contact'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/contact.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Contact Information'>
+    <meta name = 'og:description' content = 'This page has some of my contact information.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/contact.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap_5.0.0.min.css'>
+    <style>
+      body { background: #e8e8ff; }
+      
+      td { padding-right: 1rem; }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-lg'>
+      <br>
+      <h1>Contact Information</h1>
+      <br>
+      <table>
+        <tr>
+          <td><h5>Email:</h5></td>
+          <td><h5 id = 'email'></h5></td>
+        </tr>
+        <tr>
+          <td><h5>Discord:</h5></td>
+          <td><h5 id = 'discord'></h5></td>
+        </tr>
+      </table>
+    </div>
+    
+    <script>
+      function HexToBinaryString(str) {
+        str = str.replace(/[^0-9A-Fa-f]/g, '');
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(parseInt(str.slice(i, i + 2), 16)));
+        return arr.join('');
+      }
+      
+      onload = () => {
+        email.innerHTML = HexToBinaryString('{email}');
+        discord.innerText = HexToBinaryString('{discord}');
+      };
+    </script>
+  </body>
+</html>

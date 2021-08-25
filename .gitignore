@@ -1,5 +1,6 @@
 /.vs
 /node_modules
+/.dockerenv
 /.env
 /package-lock.json
 
