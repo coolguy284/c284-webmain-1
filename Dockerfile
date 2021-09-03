@@ -29,22 +29,33 @@ RUN mkdir nodesrv_main
 
 ADD --chown=webmain:webmain https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt nodesrv_main/websites/public/data/
 
+COPY --chown=webmain:webmain nodesrv_main/common/recursivereaddir.js nodesrv_main/common/recursivereaddir.js
+COPY --chown=webmain:webmain nodesrv_main/common/websitedataparse.js nodesrv_main/common/websitedataparse.js
+COPY --chown=webmain:webmain nodesrv_main/websites/website_data.txt nodesrv_main/websites/website_data.txt
+COPY --chown=webmain:webmain nodesrv_main/helpers nodesrv_main/helpers
+
+RUN (cd nodesrv_main; node helpers/compress_and_etags.js --only '^data/UnicodeData\.txt(?:\.gz|\.br)?$')
+
+COPY --chown=webmain:webmain nodesrv_main/logutils.js nodesrv_main/logutils.js
+
 COPY --chown=webmain:webmain nodesrv_main/package-basic.json nodesrv_main/package.json
 RUN (cd nodesrv_main; npm install)
 
+RUN mkdir -p nodesrv_main/websites/public/libs/extern
+RUN sed '7a\\tvar global = commonjsGlobal;' nodesrv_main/node_modules/bson/dist/bson.browser.umd.js > nodesrv_main/websites/public/libs/extern/bson.browser.umd.js
+RUN cp nodesrv_main/node_modules/bson/dist/bson.browser.umd.js.map nodesrv_main/websites/public/libs/extern/bson.browser.umd.js.map
+
+COPY --chown=webmain:webmain nodesrv_main/websites/public/libs nodesrv_main/websites/public/libs
+RUN (cd nodesrv_main; node helpers/compress_and_etags.js --only '^libs/.*$')
+
 COPY --chown=webmain:webmain index.js index.js
 
-COPY --chown=webmain:webmain nodesrv_main/logutils.js nodesrv_main/logutils.js
 COPY --chown=webmain:webmain .dockerenv .dockerenv
-COPY --chown=webmain:webmain nodesrv_main/helpers nodesrv_main/helpers
-COPY --chown=webmain:webmain nodesrv_main/websites/website_data.txt nodesrv_main/websites/website_data.txt
 COPY --chown=webmain:webmain nodesrv_main/index.js nodesrv_main/index.js
 COPY --chown=webmain:webmain nodesrv_main/common nodesrv_main/common
 COPY --chown=webmain:webmain nodesrv_main/requests nodesrv_main/requests
 COPY --chown=webmain:webmain nodesrv_main/websites nodesrv_main/websites
-RUN sed '7a\\tvar global = commonjsGlobal;' nodesrv_main/node_modules/bson/dist/bson.browser.umd.js > nodesrv_main/websites/public/libs/extern/bson.browser.umd.js
-RUN cp nodesrv_main/node_modules/bson/dist/bson.browser.umd.js.map nodesrv_main/websites/public/libs/extern/bson.browser.umd.js.map
 COPY --chown=webmain:webmain nodesrv_main/package.json nodesrv_main/package.json
-RUN (cd nodesrv_main; node helpers/put_version_in_index.js && node helpers/set_contact_info.js && node helpers/create_sitemap.js && node helpers/compress_and_etags.js)
+RUN (cd nodesrv_main; node helpers/put_version_in_index.js && node helpers/set_contact_info.js && node helpers/create_sitemap.js && node helpers/compress_and_etags.js --except '^data/UnicodeData\.txt(?:\.gz|\.br)?$' '^libs/.*$')
 
 CMD ["node", "index.js"]

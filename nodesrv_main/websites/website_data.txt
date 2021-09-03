@@ -9,3 +9,4 @@ favicon.ico: 1
 *.js: 2
 *.map: 2
 *.txt: 2
+*.xml: 2
