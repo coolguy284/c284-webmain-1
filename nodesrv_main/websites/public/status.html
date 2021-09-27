@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Server Status Page</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'A page containing CPU and memory usage information for the server.'>
+    <meta name = 'keywords' content = 'status'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/status.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Server Status Page'>
+    <meta name = 'og:description' content = 'A page containing CPU and memory usage information for the server.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/status.html'>
+    
+    <style>
+      td { padding-right: 1rem; }
+    </style>
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap_5.0.0.min.css'>
+  </head>
+  <body>
+    <div class = 'container-lg'>
+      <br>
+      <h1>Basic Information</h1>
+      <br>
+      <table>
+        <tr>
+          <td><h5>OS:</h5></td>
+          <td><h5 id = 'os_type'></h5></td>
+        </tr>
+        <tr>
+          <td><h5>Node.JS Version:</h5></td>
+          <td><h5 id = 'nodejs_version'></h5></td>
+        </tr>
+      </table>
+    </div>
+    
+    <script src = '/libs/extern/bson.browser.umd.js'></script>
+    <script>
+      var statusWS, connectTimeout;
+      
+      function ConnectToStatusWS() {
+        if (connectTimeout) { clearTimeout(connectTimeout); connectTimeout = null; }
+        
+        statusWS = new WebSocket(`wss://${location.host}/api/status_ws?version=1`);
+        
+        statusWS.onclose = evt => {
+          if (evt.code == 4001) {
+            alert(evt.reason);
+          } else {
+            connectTimeout = setTimeout(ConnectToStatusWS, 5000);
+          }
+        };
+        
+        statusWS.onmessage = async msg => {
+          try { msg = BSON.deserialize(await msg.data.arrayBuffer()); } catch (e) { return console.error(e, msg); }
+          
+          switch (msg.type) {
+            case 'error':
+              console.error(msg);
+              break;
+            
+            case 'status_update':
+              Object.entries(msg.update_info).map(x => document.getElementById(x[0]).textContent = x[1]);
+              break;
+          }
+        };
+      }
+      
+      ConnectToStatusWS();
+    </script>
+  </body>
+</html>

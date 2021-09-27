@@ -1,4 +1,4 @@
-cd /home/webmain/c284-webmain-1
+cd "${0%/*}/.."
 
 ./docker/stop.sh
 

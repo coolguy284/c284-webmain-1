@@ -37,17 +37,22 @@ module.exports = async function getMethod(requestProps) {
       let sendPort = requestProps.url.searchParams.get('port');
       sendPort = sendPort && sendPort != 'false' && sendPort != '0';
       if (/^::ffff:?(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
-        let ip = requestProps.ip.slice(7).split('.').map((x, i, a) => i % 2 && a[i - 1] != '0' ? parseInt(x).toString(16).padStart(2, '0') : parseInt(x).toString(16));
-        ip = '::ffff:' + ip[0] + ip[1] + ':' + ip[2] + ip[3];
+        let ip = requestProps.ip.slice(7).split('.').map(x => Number(x));
+        ip = '::ffff:' + (ip[0] * 256 + ip[1]).toString(16) + ':' + (ip[2] * 256 + ip[3]).toString(16);
         await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
         await common.resp.end(requestProps, sendPort ? common.mergeIPPort(ip, requestProps.port) : ip);
       } else if (/^(?:[0-9a-f]{0,4}:){1,8}[0-9a-f]{0,4}$/.test(requestProps.ip)) {
         await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
-        await common.resp.end(requestProps, sendPort ? common.mergeIPPort(ip, requestProps.port) : ip);
+        await common.resp.end(requestProps, sendPort ? common.mergeIPPort(requestProps.ip, requestProps.port) : requestProps.ip);
       } else {
         await common.resp.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
         await common.resp.end(requestProps, 'Error: client address not IPv6');
       }
+    }
+    
+    else if (requestProps.url.pathname == '/api/echo/headers') {
+      await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
+      await common.resp.end(requestProps, Object.entries(requestProps.headers).map(x => `${x[0]}: ${x[1]}`).join('\n'));
     }
     
     else if (requestProps.url.pathname == '/api/null') {

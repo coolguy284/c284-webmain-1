@@ -6,6 +6,8 @@
 
 /nodesrv_main/node_modules
 /nodesrv_main/websites/etags.json
+/nodesrv_main/websites/public/libs/extern/bson.browser.umd.js
+/nodesrv_main/websites/public/libs/extern/bson.browser.umd.js.map
 /nodesrv_main/websites/public/sitemap.xml
 /nodesrv_main/package-lock.json
 /nodesrv_main/**/*.gz

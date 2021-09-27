@@ -209,7 +209,7 @@
       var vm = app.mount('#chat');
       
       var hashLock = false,
-        chatID = 1, chatWS, connectTimeout = null,
+        incID = 1, chatWS, connectTimeout = null,
         typing = false, typingTimeout = null,
         editModalObj, deleteConfirmModalObj, modalID;
       
@@ -229,7 +229,7 @@
             
             if (chatWS.readyState == 1) {
               chatWS.send(BSON.serialize({
-                id: chatID++,
+                id: incID++,
                 type: 'auth',
                 username: null,
               }));
@@ -242,23 +242,23 @@
             if (!connectTimeout && (!chatWS || chatWS.readyState == 3)) ConnectToChatWS();
             if (chatWS.readyState == 1) {
               chatWS.send(BSON.serialize({
-                id: chatID++,
+                id: incID++,
                 type: 'auth',
                 username: username.value,
               }));
               
               chatWS.send(BSON.serialize({
-                id: chatID++,
+                id: incID++,
                 type: 'read_messages',
               }));
               
               chatWS.send(BSON.serialize({
-                id: chatID++,
+                id: incID++,
                 type: 'get_users',
               }));
               
               chatWS.send(BSON.serialize({
-                id: chatID++,
+                id: incID++,
                 type: 'get_typings',
               }));
             }
@@ -270,7 +270,7 @@
       
       function EditMsg() {
         chatWS.send(BSON.serialize({
-          id: chatID++,
+          id: incID++,
           type: 'send_message_edit',
           message: {
             id: HexToUint8Array(modalID),
@@ -282,7 +282,7 @@
       function DeleteMsg(id) {
         if (!id) id = modalID;
         chatWS.send(BSON.serialize({
-          id: chatID++,
+          id: incID++,
           type: 'send_message_delete',
           message_id: HexToUint8Array(id),
         }));
@@ -300,7 +300,7 @@
         if (typing && message.value == '') {
           typing = false;
           chatWS.send(BSON.serialize({
-            id: chatID++,
+            id: incID++,
             type: 'set_typing',
             typing,
           }));
@@ -309,7 +309,7 @@
           if (!typing) {
             typing = true;
             chatWS.send(BSON.serialize({
-              id: chatID++,
+              id: incID++,
               type: 'set_typing',
               typing,
             }));
@@ -318,7 +318,7 @@
           typingTimeout = setTimeout(() => {
             typing = false;
             chatWS.send(BSON.serialize({
-              id: chatID++,
+              id: incID++,
               type: 'set_typing',
               typing,
             }));
@@ -335,7 +335,7 @@
       
       function SendMessage() {
         chatWS.send(BSON.serialize({
-          id: chatID++,
+          id: incID++,
           type: 'send_message',
           content: message.value,
         }));
@@ -343,7 +343,7 @@
         if (typing) {
           typing = false;
           chatWS.send(BSON.serialize({
-            id: chatID++,
+            id: incID++,
             type: 'set_typing',
             typing,
           }));
@@ -353,8 +353,10 @@
       
       function ConnectToChatWS() {
         if (connectTimeout) { clearTimeout(connectTimeout); connectTimeout = null; }
+        
         chatWS = new WebSocket(`wss://${location.host}/chat/ws?version=1`);
-        chatWS.onclose = (evt) => {
+        
+        chatWS.onclose = evt => {
           if (evt.code == 4001) {
             alert(evt.reason);
           } else {
@@ -362,7 +364,9 @@
             connectTimeout = setTimeout(ConnectToChatWS, 5000);
           }
         };
+        
         chatWS.onopen = onhashchange;
+        
         chatWS.onmessage = async msg => {
           try { msg = BSON.deserialize(await msg.data.arrayBuffer()); } catch (e) { return console.error(e, msg); }
           
@@ -480,7 +484,7 @@
         
         if (chatWS.readyState == 1) {
           chatWS.send(BSON.serialize({
-            id: chatID++,
+            id: incID++,
             type: 'auth',
             username: null,
           }));

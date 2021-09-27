@@ -8,7 +8,7 @@ function chatWSFunc(ws, req, requestProps) {
     let wsInfo;
     switch (requestProps.url.searchParams.get('version')) {
       case '1':
-        chatWSServerMap.set(ws, wsInfo = { chatID: 1, username: null, typing: false });
+        chatWSServerMap.set(ws, wsInfo = { incID: 1, username: null, typing: false });
         
         ws.on('message', async msg => {
           try { msg = BSON.deserialize(msg); } catch (e) {
@@ -50,7 +50,7 @@ function chatWSFunc(ws, req, requestProps) {
                       let obj;
                       if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                         ws2.send(BSON.serialize({
-                          id: obj.chatID++,
+                          id: obj.incID++,
                           type: 'user_leave',
                           username: wsInfo.username,
                         }));
@@ -65,7 +65,7 @@ function chatWSFunc(ws, req, requestProps) {
                       let obj;
                       if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                         ws2.send(BSON.serialize({
-                          id: obj.chatID++,
+                          id: obj.incID++,
                           type: 'user_join',
                           username: wsInfo.username,
                         }));
@@ -154,7 +154,7 @@ function chatWSFunc(ws, req, requestProps) {
                   let obj;
                   if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                     ws2.send(BSON.serialize({
-                      id: obj.chatID++,
+                      id: obj.incID++,
                       type: 'typing_update',
                       username: wsInfo.username,
                       typing: wsInfo.typing,
@@ -278,7 +278,7 @@ function chatWSFunc(ws, req, requestProps) {
                 let obj;
                 if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                   ws2.send(BSON.serialize({
-                    id: obj.chatID++,
+                    id: obj.incID++,
                     type: 'typing_update',
                     username: wsInfo.username,
                     typing: wsInfo.typing,
@@ -291,7 +291,7 @@ function chatWSFunc(ws, req, requestProps) {
               let obj;
               if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                 ws2.send(BSON.serialize({
-                  id: obj.chatID++,
+                  id: obj.incID++,
                   type: 'user_leave',
                   username: wsInfo.username,
                 }));
@@ -325,7 +325,7 @@ function mongoClientOnConnect() {
           let obj;
           if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
             ws2.send(BSON.serialize({
-              id: obj.chatID++,
+              id: obj.incID++,
               type: 'message',
               message: chatDBUilts.ver1MongoMsgToMsg(changeEvent.fullDocument),
             }));
@@ -339,7 +339,7 @@ function mongoClientOnConnect() {
             let obj;
             if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
               ws2.send(BSON.serialize({
-                id: obj.chatID++,
+                id: obj.incID++,
                 type: 'message_edit',
                 message: {
                   id: changeEvent.documentKey._id,
@@ -355,7 +355,7 @@ function mongoClientOnConnect() {
           let obj;
           if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
             ws2.send(BSON.serialize({
-              id: obj.chatID++,
+              id: obj.incID++,
               type: 'message_delete',
               message_id: changeEvent.documentKey._id,
             }));

@@ -9,6 +9,8 @@ module.exports = async function connectMethod(requestProps) {
       common.resp.ws(echoWSServer, requestProps);
     } else if (requestProps.url.pathname == '/chat/ws') {
       common.resp.ws(chatWSServer, requestProps);
+    } else if (requestProps.url.pathname == '/api/status_ws') {
+      common.resp.ws(statusWSServer, requestProps);
     } else {
       await common.resp.s404(requestProps);
     }

@@ -114,6 +114,9 @@ if (process.env.NODESRVMAIN_HTTP_IP || process.env.NODESRVMAIN_HTTPS_IP) {
   global.chatWSServer = new ws.Server({ noServer: true, maxPayload: 8 * 2 ** 20 });
   chatWSServer.on('connection', require('./requests/chatws').chatWSFunc);
   global.chatWSServerMap = new WeakMap();
+  
+  global.statusWSServer = new ws.Server({ noServer: true, maxPayload: 2 ** 20 });
+  statusWSServer.on('connection', require('./requests/statusws').statusWSFunc);
 }
 
 
