@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Space Lengths</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'A website with different types of whitespace with varying lengths.'>
+    <meta name = 'keywords' content = 'unicode_spaces'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/debug/space_lengths.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Space Lengths'>
+    <meta name = 'og:description' content = 'A website with different types of whitespace with varying lengths.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/debug/space_lengths.html'>
+    
+    <style>
+      pre {
+        margin: 0; padding: 0;
+        font-family: Monospace;
+      }
+      span {
+        margin: 0; padding: 0;
+        font-family: Arial, Times New Roman;
+      }
+    </style>
+  </head>
+  <body>
+    <pre>Space Lengths:
+              No Space: <span>][</span>
+      Zero Width Space: <span>]&#8203;[</span>
+            Hair Space: <span>]&#8202;[</span>
+          1/6 Em Space: <span>]&#8198;[</span>
+            Thin Space: <span>]&#8201;[</span>
+          1/4 Em Space: <span>]&#8197;[</span>
+         Regular Space: <span>]&nbsp;[</span>
+          1/2 Em Space: <span>]&#8196;[</span>
+              En Space: <span>]&#8194;[</span>
+          Figure Space: <span>]&#8199;[</span>
+              Em Space: <span>]&#8195;[</span>
+         Tab Character: <span>]</span>&#09;<span>[</span>
+
+Spaces needed to make a certain length:
+         Tab Character: <span>]</span>&#09;<span>&#8202;&#8202;&#8202;&#8202;[ (1 + 4 hairsp)</span>
+              Em Space: <span>]&#8195;&#8195;&#8195;&#8195;[ (4)</span>
+              En Space: <span>]&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;&#8194;[ (8)</span>
+          1/2 Em Space: <span>]&#8196;&#8196;&#8196;&#8196;&#8196;&#8196;&#8196;&#8196;&#8196;&#8196;&#8196;&#8196;&#8202;&#8202;&#8202;&#8202;[ (12 + 4 hairsp)</span>
+         Regular Space: <span>]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ (16)</span>
+          1/4 Em Space: <span>]&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;&#8197;[ (16)</span>
+            Thin Space: <span>]&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8201;&#8202;[ (21 + 1 hairsp)</span>
+          1/6 Em Space: <span>]&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8198;&#8202;[ (21 + 1 hairsp)</span>
+            Hair Space: <span>]&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;&#8202;[ (64)</span>
+      Zero Width Space: <span id = 'zero_width_fill'>][ (inf (actually 2048))</span></pre>
+    <p>Unbackspaceable<span id = 'unbackspaceable'></span>e (uses 10000 zero width spaces between the 2 e's at the end)</p>
+    <p>This is a soft hy&shy;phen&shy;a&shy;ted piece of text that has a word "on&shy;o&shy;mat&shy;o&shy;poe&shy;ia" in it that might get split, and may&shy;be "pneu&shy;mo&shy;no&shy;ul&shy;tra&shy;mi&shy;cro&shy;sco&shy;pic&shy;sil&shy;i&shy;co&shy;vol&shy;ca&shy;no&shy;con&shy;i&shy;o&shy;sis" will get split as well.  A soft hy&shy;phen on&shy;ly dis&shy;plays when it is at the end of a line.</p>
+    
+    <script>
+      unbackspaceable.innerHTML = '&#8203;'.repeat(10000);
+      zero_width_fill.innerHTML = ']' + ('&#8202;' + '&#8203;'.repeat(31)).repeat(64) + '[ (inf (actually 2048))';
+    </script>
+  </body>
+</html>
