@@ -56,7 +56,7 @@ if (process.env.NODESRVMAIN_HTTP_IP) {
     logger.info(`HTTP server listening on ${common.mergeIPPort(process.env.NODESRVMAIN_HTTP_IP, process.env.NODESRVMAIN_HTTP_PORT)}`);
   });
   
-  global.httpServer = http.createServer(require('./requests/main'));
+  global.httpServer = http.createServer(require('./requests/main').bind(null, 1));
   httpServer.on('upgrade', require('./requests/upgrade'));
 }
 
