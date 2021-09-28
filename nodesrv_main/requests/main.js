@@ -15,14 +15,14 @@ var methods = {
 };
 
 // args.length == 2 is req, res (http1.1), while args.length == 4 is stream, headers, flags, rawHeaders (http2)
-module.exports = async function main(...args) {
+module.exports = async function main(httpVersion, ...args) {
   try {
-    if (args.length == 4 && args[1][':scheme'] != 'https') {
+    if (httpVersion == 2 && args[1][':scheme'] != 'https') {
       args[0].close();
       return;
     }
     
-    var requestProps = common.getRequestProps(...args, 'main');
+    var requestProps = common.getRequestProps(httpVersion, ...args, 'main');
     
     if (!requestProps.url.pathname.startsWith('/api/')) logger.info(common.getReqLogStr(requestProps));
     

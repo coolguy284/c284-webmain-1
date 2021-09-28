@@ -98,11 +98,11 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
     logger.info(`HTTPS/H2 server listening on ${common.mergeIPPort(process.env.NODESRVMAIN_HTTPS_IP, process.env.NODESRVMAIN_HTTPS_PORT)}`);
   });
   
-  global.httpsServer = https.createServer(require('./requests/main'));
+  global.httpsServer = https.createServer(require('./requests/main').bind(null, 1));
   httpsServer.on('upgrade', require('./requests/upgrade'));
   
   global.http2Server = http2.createSecureServer({ settings: { enableConnectProtocol: true } });
-  http2Server.on('stream', require('./requests/main'));
+  http2Server.on('stream', require('./requests/main').bind(null, 2));
 }
 
 if (process.env.NODESRVMAIN_HTTP_IP || process.env.NODESRVMAIN_HTTPS_IP) {

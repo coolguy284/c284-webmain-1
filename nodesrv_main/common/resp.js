@@ -30,33 +30,35 @@ module.exports = exports = {
     };
   },
   
-  // http1.1: (WSServer, req, socket, head, requestProps)
+  // http1.1: (WSServer, requestProps, req, socket, head)
   // http2: (WSServer, requestProps)
-  ws: (WSServer, ...args) => {
-    if (args.length == 4) {
-      let [ req, socket, head, requestProps ] = args;
-      WSServer.handleUpgrade(req, socket, head, ws => {
-        WSServer.emit('connection', ws, req, requestProps);
-      });
-    } else {
-      let [ requestProps ] = args;
+  ws: (WSServer, requestProps, ...args) => {
+    switch (requestProps.httpVersion) {
+      case 1: {
+        let [ req, socket, head ] = args;
+        WSServer.handleUpgrade(req, socket, head, ws => {
+          WSServer.emit('connection', ws, req, requestProps);
+        });
+        } break;
       
-      let req = {
-        method: 'GET',
-        headers: { ...requestProps.headers, 'sec-websocket-key': 'aaaaaaaaaaaaaaaaaaaaaa==', upgrade: 'websocket' },
-      };
-      
-      let streamWrite = requestProps.stream.write;
-      requestProps.stream.write = v => {
-        requestProps.stream.respond({ ':status': 200 });
-        requestProps.stream.write = streamWrite;
-      };
-      
-      requestProps.stream.setNoDelay = () => {};
-      
-      WSServer.handleUpgrade(req, requestProps.stream, Buffer.alloc(0), ws => {
-        WSServer.emit('connection', ws, req, requestProps);
-      });
+      case 2: {
+        let req = {
+          method: 'GET',
+          headers: { ...requestProps.headers, 'sec-websocket-key': 'aaaaaaaaaaaaaaaaaaaaaa==', upgrade: 'websocket' },
+        };
+        
+        let streamWrite = requestProps.stream.write;
+        requestProps.stream.write = v => {
+          requestProps.stream.respond({ ':status': 200 });
+          requestProps.stream.write = streamWrite;
+        };
+        
+        requestProps.stream.setNoDelay = () => {};
+        
+        WSServer.handleUpgrade(req, requestProps.stream, Buffer.alloc(0), ws => {
+          WSServer.emit('connection', ws, req, requestProps);
+        });
+        } break;
     }
   },
   
