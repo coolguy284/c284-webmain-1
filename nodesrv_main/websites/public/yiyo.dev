@@ -1,0 +1,10 @@
+<!doctype html>
+<html>
+  <head><title>RIP yiyo.dev</title></head>
+  <body>
+    <h1 id = 'yiyoContent'></h1>
+    <script>
+      yiyoContent.textContent = [112, 101, 110, 105, 115].map(x => String.fromCharCode(x)).join('');
+    </script>
+  </body>
+</html>

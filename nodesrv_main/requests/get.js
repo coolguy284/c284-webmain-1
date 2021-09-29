@@ -124,6 +124,13 @@ module.exports = async function getMethod(requestProps) {
     }
   }
   
+  else if (requestProps.url.pathname == '/yiyo.dev') {
+    await common.resp.fileFull(
+      requestProps, 'websites/public/yiyo.dev', null,
+      { 'content-type': 'text/html; charset=utf-8' }
+    );
+  }
+  
   else {
     await common.resp.fileFull(requestProps, publicPath);
   }
