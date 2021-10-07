@@ -28,6 +28,7 @@ PS /tools/html.html                         /tools/htmlescape.html
 PS /tools/morsecode.html                    /tools/morse_code.html
 PS /tools/qrcode.html                       /tools/qr_code.html
 PS /tools/sha256.html                       /tools/sha.html
+PS /tools/unitconv.html                     /tools/unit_converter.html
 PS /tools/widelatin.html                    /tools/wide_latin.html
 PS /chat.html                               /chat/chat.html
 PS /chathid.html                            /chat/chat.html

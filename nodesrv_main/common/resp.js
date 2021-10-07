@@ -63,24 +63,42 @@ module.exports = exports = {
   },
   
   headers: async (requestProps, statusCode, headers) => {
-    if (requestProps.httpVersion == 1)
-      requestProps.res.writeHead(statusCode, headers);
-    else if (requestProps.httpVersion == 2)
-      requestProps.stream.respond({ ':status': statusCode, ...headers });
+    try {
+      if (requestProps.httpVersion == 1)
+        requestProps.res.writeHead(statusCode, headers);
+      else if (requestProps.httpVersion == 2)
+        requestProps.stream.respond({ ':status': statusCode, ...headers });
+    } catch (err) {
+      if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
+        logger.warn('http2 stream unexpectedly closed');
+      }
+    }
   },
   
   end: async (requestProps, str) => {
-    if (requestProps.httpVersion == 1)
-      requestProps.res.end(str);
-    else if (requestProps.httpVersion == 2)
-      requestProps.stream.end(str);
+    try {
+      if (requestProps.httpVersion == 1)
+        requestProps.res.end(str);
+      else if (requestProps.httpVersion == 2)
+        requestProps.stream.end(str);
+    } catch (err) {
+      if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
+        logger.warn('http2 stream unexpectedly closed');
+      }
+    }
   },
   
   stream: async (requestProps, stream) => {
-    if (requestProps.httpVersion == 1)
-      stream.pipe(requestProps.res);
-    else if (requestProps.httpVersion == 2)
-      stream.pipe(requestProps.stream);
+    try {
+      if (requestProps.httpVersion == 1)
+        stream.pipe(requestProps.res);
+      else if (requestProps.httpVersion == 2)
+        stream.pipe(requestProps.stream);
+    } catch (err) {
+      if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
+        logger.warn('http2 stream unexpectedly closed');
+      }
+    }
   },
   
   getStream: (requestProps) => {

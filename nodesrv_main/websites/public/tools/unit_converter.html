@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Unit Converter</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'Use this page to convert from one unit to another.'>
+    <meta name = 'keywords' content = 'unit, converter'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/tools/unit_converter.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Unit Converter'>
+    <meta name = 'og:description' content = 'Use this page to convert from one unit to another.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/tools/unit_converter.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap_5.0.0.min.css'>
+    <style>
+      input[type=text] {
+        font-size: 20px;
+        font-family: monospace;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-fluid d-flex flex-column pt-3 ps-4 pe-4' style = 'width: auto; max-width: 50rem;'>
+      <noscript>
+        <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+          Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
+        </div>
+      </noscript>
+      
+      <div class = 'row'>
+        <h1 class = 'text-center'>Unit Converter</h1>
+      </div>
+      
+      <div class = 'row'>
+        <select class = 'form-select' id = 'unit_type' style = 'font-size: 20px;' oninput = 'UpdateType();'></select>
+      </div>
+      
+      <div class = 'row d-flex flex-row'>
+        <div class = 'col-6 d-flex flex-column flex-grow-1' style = 'min-width: 15rem;'>
+          <div class = 'row'>
+            <input type = 'text' class = 'form-control' id = 'value1' oninput = 'Update(1);' value = 1>
+          </div>
+          
+          <div class = 'row'>
+            <div class = 'col-4 ps-0 pe-0'>
+              <select class = 'form-select' id = 'prefix1' oninput = 'Update(2);'></select>
+            </div>
+            
+            <div class = 'col-8 ps-0 pe-0'>
+              <select class = 'form-select' id = 'unit1' oninput = 'Update(2);'></select>
+            </div>
+          </div>
+        </div>
+        
+        <div class = 'col-6 d-flex flex-column flex-grow-1' style = 'min-width: 15rem;'>
+          <div class = 'row'>
+            <input type = 'text' class = 'form-control' id = 'value2' oninput = 'Update(2);'>
+          </div>
+          
+          <div class = 'row'>
+            <div class = 'col-4 ps-0 pe-0'>
+              <select class = 'form-select' id = 'prefix2' oninput = 'Update(1);'></select>
+            </div>
+            
+            <div class = 'col-8 ps-0 pe-0'>
+              <select class = 'form-select' id = 'unit2' oninput = 'Update(1);'></select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <script>
+      var c = 299792458, ef = 1 / c ** 2;
+      var prefixes = {
+        'Y': [1e24, 'Yotta'],
+        'Z': [1e21, 'Zetta'],
+        'E': [1e18, 'Exa'],
+        'P': [1e15, 'Peta'],
+        'T': [1e12, 'Tera'],
+        'G': [1e9, 'Giga'],
+        'M': [1e6, 'Mega'],
+        'k': [1e3, 'Kilo'],
+        'h': [1e2, 'Hecto'],
+        'da': [1e1, 'Deka'],
+        '': [1, ''],
+        'd': [1e-1, 'Deci'],
+        'c': [1e-2, 'Centi'],
+        'm': [1e-3, 'Milli'],
+        'u': [1e-6, 'Micro'],
+        'n': [1e-9, 'Nano'],
+        'p': [1e-12, 'Pico'],
+        'f': [1e-15, 'Femto'],
+        'a': [1e-18, 'Atto'],
+        'z': [1e-21, 'Zepto'],
+        'y': [1e-24, 'Yocto'],
+      }, types = {
+        'mass_energy': 'Mass / Energy',
+        'distance_time': 'Distance / Time',
+        'area': 'Area',
+        'volume': 'Volume',
+        'speed': 'Speed',
+        'density': 'Density',
+        'temperature': 'Temperature',
+        'pressure': 'Pressure',
+        'angle': 'Plane Angle',
+      }, unitFactors = {
+        'mass_energy': {
+          'kg': 1, 'g': 0.001, 'mg': 1e-6, 'mt': 1000,
+          'alb': 0.45359237, 'aoz': 0.028349523125, 'ton': 907.18474,
+          'ast': 6.35029318,
+          'tlb': 0.3732417216, 'toz': 3.11034768e-2,
+          'dwt': 1.55517384e-3, 'gr': 6.479891e-5,
+          'mte': 3.2399455e-6, 'dr': 1.3499772916666666e-7, 'pr': 6.749886458333333e-9, 'bk': 2.8124526909722217e-10,
+          'mm': 7.342e22, 'em': 5.97237e24, 'jm': 1.8982e27, 'sm': 1.9885e30,
+          'j': ef,
+          'cal': ef * 4.184, 'kcal': ef * 4184,
+          'wh': ef * 3.6e3, 'kwh': ef * 3.6e6,
+          'btu': ef * 1054.3503, 'th': ef * 1.0543503e8,
+          'eg': ef * 1e-7,
+          'fp': ef * 1.3558179483314004,
+          'ev': ef * 1.6021766208e-19, 'ha': ef * 4.359744650e-18, 'ry': ef * 2.1798723248801804e-18,
+          'gtnt': ef * 4.184e3, 'kgtnt': ef * 4.184e6, 'ttnt': ef * 4.184e9,
+        },
+        'distance_time': {
+          'm': 1, 'km': 1000, 'cm': 0.01, 'mm': 0.001,
+          'in': 0.0254, 'ft': 0.3048, 'yd': 0.9144, 'mi': 1609.344,
+          'nm': 1852,
+          'a': 1e-10,
+          'cn': 20.1168, 'rd': 5.0292, 'lk': 0.201168,
+          'gm': 1855.3248,
+          'au': 149597870700, 'ly': 9460730472580800, 'pc': 30856775814913670, 'hl': 1.403983299578572e+26,
+          'mr': 1737100, 'er': 6378000, 'jr': 71492000, 'sr': 695700000,
+          'fl': 201.168, 'fm': 1.8288, 'lg': 4828.032,
+          'sec': c, 'min': c * 60, 'hr': c * 3600,
+          'dy': c * 86400, 'wk': c * 604800, 'mth': c * 2629746, 'yr': c * 31556952,
+          'pu': 1.616229e-35,
+        },
+        'area': {
+          'm2': 1, 'cm2': 1e-4, 'mm2': 1e-6, 'km2': 1e6,
+          'in2': 0.00064516, 'ft2': 0.09290304, 'yd2': 0.83612736, 'mi2': 2.589988110336e6,
+          'ac': 4046.8564224,
+          'are': 100, 'har': 10000,
+          'bn': 1e-28,
+          'plar': 2.612196180441e-70,
+        },
+        'volume': {
+          'm3': 1, 'cm3': 1e-6, 'mm3': 1e-9, 'km3': 1e9,
+          'in3': 0.000016387064, 'ft3': 0.028316846592, 'yd3': 0.764554857984, 'mi3': 4.16818182544058e9,
+          'l': 0.001, 'ml': 1e-6,
+          'lgal': 0.003785411784, 'lqt': 0.000946352946, 'lpt': 0.000473176473, 'lcp': 0.0002365882365,
+          'lfloz': 0.0000295735295625, 'ltbsp': 0.00001478676478125, 'ltsp': 0.00000492892159375,
+          'dgal': 0.00440488377086, 'dqt': 0.001101220942715, 'dpt': 0.0005506104713575, 'dcp': 0.00027530523567875,
+          'dfloz': 0.00003441315445984375, 'dtbsp': 0.000017206577229921875, 'dtsp': 0.000005735525743307292,
+          'igal': 0.00454609, 'iqt': 0.0011365225, 'ipt': 0.00056826125, 'icp': 0.000284130625,
+          'ifloz': 0.000035516328125, 'itbsp': 0.0000177581640625, 'itsp': 0.000005919388020833334,
+          'lgcp': 0.000240,
+          'mcp': 0.000250,
+          'plvl': 4.221907220517977e-105,
+        },
+        'speed': {
+          'mps': 1, 'fps': 0.3048,
+          'mph': 0.44704, 'kmph': 0.2777777777777778,
+          'mips': 1609.344, 'kmps': 1000,
+          'knt': 0.5144444444444445,
+          'mach': 340, 'c': c,
+        },
+        'density': { 'kgm3': 1, 'gcm3': 0.001, 'kgl': 0.001 },
+        'temperature': { 'C': [1, 273.15], 'F': [5 / 9, 45967 / 180], 'K': [1, 0], 'R': [5 / 9, 0] },
+        'pressure': {
+          'pa': 1, 'kpa': 1000, 'mpa': 1e6,
+          'psi': 6895,
+          'bar': 101325,
+          'tor': 133.32236842105263,
+          'mmhg': 133.322387415,
+        },
+        'angle': {
+          'rad': 1, 'deg': Math.PI / 180, 'grad': Math.PI / 200,
+          'am': Math.PI / 180 / 60, 'as': Math.PI / 180 / 3600,
+        },
+      }, unitNames = {
+        'mass_energy': {
+          'Common': {
+            'kg': 'kilogram', 'g': 'gram', 'mg': 'milligram', 'mt': 'metric ton',
+            'alb': 'pound', 'aoz': 'ounce', 'ton': 'ton', 'ast': 'stone',
+          },
+          'Troy': {
+            'tlb': 'troy pound', 'toz': 'troy ounce',
+            'dwt': 'pennyweight', 'gr': 'grain',
+            'mte': 'mite', 'dr': 'droit', 'pr': 'perit', 'bk': 'blank',
+          },
+          'Astronomical Bodies': {
+            'mm': 'moon mass', 'em': 'earth mass', 'jm': 'jupiter mass', 'sm': 'solar mass',
+          },
+          'Energy Units': {
+            'j': 'joule',
+            'cal': 'calorie', 'kcal': 'food calorie',
+            'wh': 'watt-hour', 'kwh': 'kilowatt-hour',
+            'btu': 'british thermal unit', 'th': 'therm',
+            'eg': 'erg',
+            'fp': 'foot-pound',
+            'ev': 'electronvolt', 'ha': 'hartree', 'ry': 'rydberg unit',
+            'gtnt': 'gram of tnt', 'kgtnt': 'kilogram of tnt', 'ttnt': 'ton of tnt',
+          },
+        },
+        'distance_time': {
+          'Common': {
+            'm': 'meter', 'km': 'kilometer', 'cm': 'centimeter', 'mm': 'milimeter',
+            'in': 'inch', 'ft': 'foot', 'yd': 'yard', 'mi': 'mile',
+            'nm': 'nautical mile',
+            'a': 'angstrom',
+          },
+          'Surveyor\'s': {
+            'cn': 'chain', 'rd': 'rod', 'lk': 'link', 'gm': 'geographical mile',
+          },
+          'Astronomical': {
+            'au': 'astronomical unit', 'ly': 'light year', 'pc': 'parsec', 'hl': 'hubble length',
+            'er': 'earth radius', 'jr': 'jupiter radius', 'sr': 'solar radius',
+          },
+          'Old': {
+            'fl': 'furlong', 'fm': 'fathom', 'lg': 'league',
+          },
+          'Time': {
+            'sec': 'second', 'min': 'minute', 'hr': 'hour',
+            'dy': 'day', 'wk': 'week', 'mth': 'month', 'yr': 'year',
+          },
+          'pu': 'planck length / time',
+        },
+        'area': {
+          'm2': 'square meter', 'cm2': 'square centimeter', 'mm2': 'square millimeter', 'km2': 'square kilometer',
+          'in2': 'square inch', 'ft2': 'square foot', 'yd2': 'square yard', 'mi2': 'square mile',
+          'ac': 'acre',
+          'are': 'are', 'har': 'hectare',
+          'bn': 'barn',
+          'plar': 'planck area',
+        },
+        'volume': {
+          'm3': 'cubic meter', 'cm3': 'cubic centimeter', 'mm3': 'cubic millimeter', 'km3': 'cubic kilometer',
+          'in3': 'cubic inch', 'ft3': 'cubic foot', 'yd3': 'cubic yard', 'mi3': 'cubic mile',
+          'l': 'liter', 'ml': 'milliliter',
+          'U.S. Liquid': {
+            'lgal': 'gallon', 'lqt': 'quart', 'lpt': 'pint', 'lcp': 'cup',
+            'lfloz': 'fluid ounce', 'ltbsp': 'tablespoon', 'ltsp': 'teaspoon',
+          },
+          'U.S. Dry': {
+            'dgal': 'gallon', 'dqt': 'quart', 'dpt': 'pint', 'dcp': 'cup',
+            'dfloz': 'fluid ounce', 'dtbsp': 'tablespoon', 'dtsp': 'teaspoon',
+          },
+          'Imperial': {
+            'igal': 'gallon', 'iqt': 'quart', 'ipt': 'pint', 'icp': 'cup',
+            'ifloz': 'fluid ounce', 'itbsp': 'tablespoon', 'itsp': 'teaspoon',
+          },
+          'lgcp': 'legal cup',
+          'mcp': 'metric cup',
+          'plvl': 'planck volume',
+        },
+        'speed': {
+          'mps': 'meters per second', 'fps': 'feet per second',
+          'mph': 'miles per hour', 'kmph': 'kilometers per hour',
+          'mips': 'miles per second', 'kmps': 'kilometers per second',
+          'knt': 'knots',
+          'mach': 'mach', 'c': 'speed of light',
+        },
+        'density': { 'kgm3': 'kilograms per m3', 'gcm3': 'grams per cm3', 'kgl': 'kilograms per liter' },
+        'temperature': { 'C': 'Celsius', 'F': 'Fahrenheit', 'K': 'Kelvin', 'R': 'Rankine' },
+        'pressure': {
+          'pa': 'pascal', 'kpa': 'kilopascal', 'mpa': 'megapascal',
+          'psi': 'pounds per square inch',
+          'bar': 'bar',
+          'tor': 'torr',
+          'mmhg': 'millimeter of mercury',
+        },
+        'angle': {
+          'deg': 'degrees', 'rad': 'radians', 'grad': 'gradians',
+          'am': 'arcminute', 'as': 'arcsecond',
+        },
+      };
+      
+      function UpdateType() {
+        unit1.innerHTML = unit2.innerHTML = Object.entries(unitNames[unit_type.value]).map(x => typeof x[1] == 'object' ? `<optgroup label = '${x[0]}'>` + Object.entries(x[1]).map(y => `<option value = '${y[0]}'>${y[1]}</option>`).join('') + `</optgroup>` : `<option value = '${x[0]}'>${x[1]}</option>`);
+        let entry = Object.entries(unitNames[unit_type.value])[0];
+        unit1.value = unit2.value = typeof entry[1] == 'object' ? Object.entries(entry[1])[0][0] : entry[0];
+        Update(1);
+      }
+      
+      function Update(v) {
+        let factors = unitFactors[unit_type.value];
+        let value, inputPrefix, inputUnit, outputPrefix, outputUnit;
+        
+        switch (v) {
+          case 1:
+            value1.value = value1.value.replace(/[^0-9.\-+e]/g, '');
+            value = Number(value1.value);
+            inputPrefix = prefix1.value; inputUnit = unit1.value; outputPrefix = prefix2.value; outputUnit = unit2.value;
+            break;
+          case 2:
+            value2.value = value2.value.replace(/[^0-9.\-+e]/g, '');
+            value = Number(value2.value);
+            inputPrefix = prefix2.value; inputUnit = unit2.value; outputPrefix = prefix1.value; outputUnit = unit1.value;
+            break;
+        }
+        
+        // conversion
+        value *= prefixes[inputPrefix][0];
+        value = Array.isArray(factors[inputUnit]) ? value * factors[inputUnit][0] + factors[inputUnit][1] : value * factors[inputUnit];
+        
+        value = Array.isArray(factors[inputUnit]) ? (value - factors[outputUnit][1]) / factors[outputUnit][0] : value / factors[outputUnit];
+        value /= prefixes[outputPrefix][0];
+        
+        // rounding
+        value = Number(value.toPrecision(14));
+        
+        switch (v) {
+          case 1: value2.value = value; break;
+          case 2: value1.value = value; break;
+        }
+      }
+      
+      unit_type.innerHTML = unit_type.innerHTML =
+        Object.entries(types).map(x => `<option value = ${x[0]}>${x[1]}</option>`);
+      unit_type.value = Object.keys(types)[0];
+      prefix1.innerHTML = prefix2.innerHTML =
+        Object.entries(prefixes).map(x =>
+          `<option value = '${x[0]}'>${x[1][1]}</option>`
+        ).join('');
+      prefix1.value = prefix2.value = '';
+      
+      UpdateType();
+    </script>
+  </body>
+</html>
