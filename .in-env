@@ -3,7 +3,8 @@ MONGODB_LOG_CONS: false
 
 NODESRVMAIN_LOG_DEBUG: false
 NODESRVMAIN_TLS_KEY_FILE: ../cert/nodesrv_main-key.pem
-NODESRVMAIN_TLS_CERT_FILE: ../cert/nodesrv_main-chain.pem
+NODESRVMAIN_TLS_CERT_FILE: ../cert/nodesrv_main-crt.pem
+NODESRVMAIN_TLS_CERT_ROOT_FILE: ../cert/nodesrv_main-root.pem
 NODESRVMAIN_HTTP_IP: ::
 NODESRVMAIN_HTTP_PORT: 8080
 NODESRVMAIN_HTTPS_IP: ::

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Solid Color Page</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'View one solid color fullscreen or alternate between several colors on this page.'>
+    <meta name = 'keywords' content = 'solid_color, color, fullscreen'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/debug/solid_color.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Latency Test'>
+    <meta name = 'og:description' content = 'View one solid color fullscreen or alternate between several colors on this page.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/debug/solid_color.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap_5.0.0.min.css'>
+  </head>
+  <body>
+    <noscript>
+      <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+        Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
+      </div>
+    </noscript>
+    
+    <div class = 'p-4 align-items-center justify-content-center' id = 'warning_div' style = 'display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 1200;'>
+      <div class = 'd-flex flex-column align-items-center' style = 'margin-top: -7rem;'>
+        <h1>Warning</h1>
+        
+        <h4 class = 'mt-4 mb-3'>This page can rapidly alternate between many colors. Only proceed if you are not prone to seizures and your monitor and eyes can handle it.</h4>
+        
+        <button type = 'button' class = 'btn btn-primary mt-4' style = 'padding: 0.5rem 5rem; font-size: 1.5rem;' onclick = 'removeWarning();'>Proceed</button>
+      </div>
+    </div>
+    
+    <template id = 'color_item_contents'>
+      <div class = 'card'>
+        <div class = 'card-body pt-2 pb-0'>
+          <div class = 'row'>
+            <div class = 'col-auto g-0 me-1 mb-2'>
+              <input type = 'color' class = 'form-control' style = 'width: 3rem; height: 2.36rem;' v-bind:value = 'color' @input = '$emit("update:color", $event.target.value)'>
+            </div>
+            
+            <div class = 'col-auto g-0 me-2 mb-2'>
+              <input type = 'text' class = 'form-control' style = 'width: 5.8rem;' v-bind:value = 'color' @input = '$emit("update:color", $event.target.value)'>
+            </div>
+            
+            <div class = 'col-auto g-0 me-1 mb-2'>
+              <label class = 'col-form-label' for = 'duration'>Duration:</label>
+            </div>
+            
+            <div class = 'col-auto g-0 me-1 mb-2'>
+              <input type = 'text' class = 'form-control' style = 'width: 4.3rem;' v-bind:value = 'duration' @input = '$emit("update:duration", $event.target.value)'>
+            </div>
+            
+            <div class = 'col-auto g-0 me-1 mb-2'>
+              <select class = 'form-select' style = 'width: 6.5rem;' v-bind:value = 'duration_unit' @input = '$emit("update:duration_unit", $event.target.value)'>
+                <option value = 'frames'>frames</option>
+                <option value = 'ms'>ms</option>
+              </select>
+            </div>
+            
+            <div class = 'col-auto g-0 mb-2'>
+              <button type = 'button' class = 'btn-close pt-2 pb-2' @click = 'remove(index)' aria-label = 'Close'></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+    
+    <div class = 'container-fluid mt-2 mb-5 pt-3 pb-2 ps-4 pe-4' id = 'main_div' style = 'width: auto; max-width: 30.3rem; background: #ffffff7f; border-radius: 1rem;'>
+      <h3>Colors</h3>
+      
+      <div id = 'color_items'>
+        <color-item
+          v-for = '(item, index) in colorItems'
+          v-bind:index = 'index'
+          v-bind:color = 'item.color'
+          v-on:update:color = 'item.color = $event; callChangeFunc();'
+          v-bind:duration = 'item.duration'
+          v-on:update:duration = 'item.duration = $event; callChangeFunc();'
+          v-bind:duration_unit = 'item.duration_unit'
+          v-on:update:duration_unit = 'item.duration_unit = $event; callChangeFunc();'
+        ></color-item>
+      </div>
+      
+      <button type = 'button' class = 'btn btn-primary mt-2 mb-2 pt-0 pb-0' style = 'width: 100%; font-size: 1.5rem;' onclick = 'addColorItem();'><span style = 'position: relative; top: -0.1rem;'>+</span></button>
+      
+      <hr class = 'mt-2 mb-2'>
+      
+      <div class = 'form-check form-switch mb-1' style = 'height: 1.8rem;'>
+        <input type = 'checkbox' class = 'form-check-input' id = 'active' style = 'width: 3rem; height: 1.5rem;' oninput = 'callChangeFunc();' checked>
+        <label class = 'form-check-label ms-2' for = 'active' style = 'margin-top: -0.05rem; font-size: 1.3rem;'>Active</label>
+      </div>
+      
+      <button type = 'button' class = 'btn btn-primary mt-2 mb-2 pt-0 pb-0' style = 'width: 100%; font-size: 1.5rem;' onclick = 'toggleFullscreen();'>Toggle Fullscreen</button>
+      
+      <button type = 'button' class = 'btn btn-primary mt-2 mb-2 pt-0 pb-0' style = 'width: 100%; font-size: 1.5rem;' onclick = 'toggleMenu();'>Hide Menu</button>
+      
+      <p>Double-click anywhere in the blank space to show or hide this content.</p>
+    </div>
+    
+    <script src = '/libs/extern/vue_3.1.5.global.prod.js'></script>
+    <script>
+      function sleep(ms) {
+        return new Promise((r, j) => setTimeout(r, ms));
+      }
+      
+      async function sleepFrames(frames) {
+        if (frames <= 0) {
+          await new Promise((r, j) => setTimeout(r, 0));
+        } else {
+          for (var i = 0; i < frames; i++) {
+            await new Promise((r, j) => requestAnimationFrame(r));
+          }
+        }
+      }
+      
+      var colorIndex = 0, changeFunc = null, hashLock = false;
+      
+      function getHash() {
+        let hashParams = new URLSearchParams();
+        hashParams.set('ver', 1);
+        hashParams.set('colors', vm.colorItems.map(x => [x.color.slice(1), x.duration, x.duration_unit == 'frames' ? '0' : '1'].join('.')).join('-'));
+        hashParams.set('menu', !main_div.style.display + 0);
+        hashParams.set('active', active.checked + 0);
+        
+        hashParams = hashParams.toString();
+        
+        if (hashParams == 'ver=1&colors=ffffff.1.0&menu=1&active=1')
+          return '';
+        else
+          return '#?' + hashParams;
+      }
+      
+      function callChangeFunc() {
+        hashLock = true;
+        history.replaceState(null, '', location.href.split('#')[0] + getHash());
+        hashLock = false;
+        
+        if (changeFunc) {
+          changeFunc();
+          changeFunc = null;
+        }
+      }
+      
+      function awaitChange() {
+        return new Promise((r, j) => changeFunc = r);
+      }
+      
+      var app = Vue.createApp({
+        data() {
+          return {
+            colorItems: [
+              { color: '#ffffff', duration: 1, duration_unit: 'frames' },
+            ],
+          };
+        },
+        methods: {
+          callChangeFunc,
+        }
+      });
+      
+      app.component('color-item', {
+        props: ['index', 'color', 'duration', 'duration_unit'],
+        template: color_item_contents.innerHTML,
+        methods: {
+          remove(index) {
+            vm.colorItems.splice(index, 1);
+            callChangeFunc();
+          },
+        },
+      });
+      
+      function addColorItem() {
+        vm.colorItems.push({ color: '#ffffff', duration: 1, duration_unit: 'frames' });
+        callChangeFunc();
+      }
+      
+      var vm = app.mount('#color_items');
+      
+      function removeWarning() {
+        warning_div.style.display = 'none';
+        mainLoop();
+      }
+      
+      async function toggleFullscreen() {
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          try {
+            document.documentElement.requestFullscreen();
+          } catch (err) {
+            alert(`Error: cannot fullscreen: ${err.message} (${err.name})`);
+          }
+        }
+      }
+      
+      function toggleMenu() {
+        main_div.style.display = main_div.style.display ? '' : 'none';
+        callChangeFunc();
+      }
+      
+      document.documentElement.ondblclick = e => {
+        if (e.target != document.documentElement && e.target != document.body) return;
+        toggleMenu();
+      };
+      
+      onhashchange = () => {
+        if (hashLock) return;
+        if (location.hash) {
+          let hashParams = new URLSearchParams(location.hash.split('?')[1]);
+          switch (hashParams.get('ver')) {
+            default:
+              vm.colorItems = hashParams.get('colors') ?
+                hashParams.get('colors').split('-')
+                  .map(x => {
+                    x = x.split('.');
+                    let color = '#' + (x[0] + '').replace(/[^0-9a-fA-F]/, ''),
+                      duration = Number(x[1] + ''), duration_unit = x[2] == '1' ? 'ms' : 'frames';
+                    return { color, duration, duration_unit };
+                  }) :
+                [{ color: '#ffffff', duration: 1, duration_unit: 'frames' }];
+              main_div.style.display = hashParams.get('menu') == '0' ? 'none' : '';
+              active.checked = hashParams.get('active') ? Boolean(Number(hashParams.get('active'))) : true;
+              break;
+          }
+        } else {
+          vm.colorItems = [{ color: '#ffffff', duration: 1, duration_unit: 'frames' }];
+          main_div.style.display = '';
+          active.checked = true;
+        }
+        
+        hashLock = true;
+        history.replaceState(null, '', location.href.split('#')[0] + getHash());
+        hashLock = false;
+      };
+      
+      async function mainLoop() {
+        while (true) {
+          console.log(1, Date.now());
+          if (active.checked) {
+            if (vm.colorItems.length == 0) {
+              document.body.style.background = 'white';
+              await awaitChange();
+            } else if (vm.colorItems.length == 1) {
+              document.body.style.background = vm.colorItems[0].color;
+              await awaitChange();
+            } else {
+              let item = vm.colorItems[colorIndex];
+              document.body.style.background = item.color;
+              switch (item.duration_unit) {
+                case 'frames': await sleepFrames(Number(item.duration)); break;
+                case 'ms': await sleep(Number(item.duration)); break;
+              }
+              colorIndex++;
+              if (colorIndex >= vm.colorItems.length) colorIndex = 0;
+            }
+          } else {
+            if (vm.colorItems.length == 0) {
+              document.body.style.background = 'white';
+              await awaitChange();
+            } else {
+              document.body.style.background = vm.colorItems[colorIndex].color;
+              await awaitChange();
+              if (colorIndex >= vm.colorItems.length) colorIndex = 0;
+            }
+          }
+          console.log(2, Date.now());
+        }
+      }
+      
+      onhashchange();
+    </script>
+  </body>
+</html>
