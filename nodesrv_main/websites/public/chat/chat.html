@@ -67,7 +67,7 @@
         
         <p>Note: this chat is just a test toy and is not secure, for example you can edit and delete any message with your username.</p>
         <div class = 'd-flex flex-row border border-secondary border-3 rounded' id = 'chat' style = 'height: calc(100vh - 10.5rem);'>
-          <div class = 'd-flex flex-column border-end border-secondary border-3 p-2 overflow-auto' style = 'width: calc(100% - 10rem); height: 100%; scrollbar-width: thin; word-break: break-word;'>
+          <div class = 'd-flex flex-column border-end border-secondary border-3 p-2 overflow-auto' id = 'chat_msgs_outer' style = 'width: calc(100% - 10rem); height: 100%; scrollbar-width: thin; word-break: break-word;'>
             <div id = 'chat_msgs'>
               <chat-item
                 v-for = 'item in chatItems'
@@ -208,7 +208,7 @@
       
       var vm = app.mount('#chat');
       
-      var hashLock = false,
+      var hashLock = false, onresizeScroll = null,
         incID = 1, chatWS, connectTimeout = null,
         typing = false, typingTimeout = null,
         editModalObj, deleteConfirmModalObj, modalID;
@@ -439,6 +439,10 @@
               
               vm.chatItems.push(msgObj);
               
+              if (chat_msgs_outer.scrollTop + chat_msgs_outer.clientHeight >= chat_msgs_outer.scrollHeight) {
+                vm.$nextTick(() => chat_msgs_outer.scrollTo(0, chat_msgs_outer.scrollHeight));
+              }
+              
               setTimeout(onresize, 0);
               break;
             
@@ -478,7 +482,11 @@
       
       onbeforeunload = () => {
         if (username.value)
-          localStorage.chat_data = JSON.stringify({ version: 1, username: username.value });
+          localStorage.chat_data = JSON.stringify({
+            version: 1,
+            username: username.value,
+            scroll: chat_msgs_outer.scrollTop,
+          });
         else
           delete localStorage.chat_data;
         
@@ -493,17 +501,32 @@
       
       onresize = () => {
         let chatMargin = chat.offsetHeight - chat_msgs.getBoundingClientRect().height - 22;
+        
         if (chatMargin > 0) chat_msgs.style.marginTop = chatMargin + 'px';
         else chat_msgs.style.marginTop = '';
+        
+        if (onresizeScroll != null) {
+          chat_msgs_outer.scrollTo(0, onresizeScroll);
+          onresizeScroll = null;
+        }
       };
       
       if (localStorage.chat_data) {
         try {
           let chatData = JSON.parse(localStorage.chat_data);
-          if (chatData.version == 1 && typeof chatData.username == 'string') {
-            username.value = chatData.username;
+          if (typeof chatData == 'object') {
+            switch (chatData.version) {
+              case 1:
+                if (typeof chatData.username == 'string')
+                  username.value = chatData.username;
+                if (Number.isSafeInteger(chatData.scroll))
+                  onresizeScroll = chatData.scroll;
+                break;
+            }
           }
-        } catch (e) {}
+        } catch (err) {
+          console.error('Error when parsing localstorage', err);
+        }
       }
       
       ConnectToChatWS();

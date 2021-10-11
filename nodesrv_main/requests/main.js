@@ -8,9 +8,6 @@ var methods = {
   get: require('./get'),
   head: require('./head'),
   post: require('./post'),
-  //put: require('./put'),
-  //patch: require('./patch'),
-  //delete: require('./delete'),
   connect: require('./connect'),
 };
 
