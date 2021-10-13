@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <!--
+      acceptable url params: #?mode=[full|partial|canvas]&width=int_cols&height=int_rows
+    -->
+    
+    <title>coolguy284.com: Big Scroll Area</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0, maximum-scale=10.0, minimum-scale=0.1'>
+    <meta name = 'description' content = 'Big scroll area for testing.'>
+    <meta name = 'keywords' content = 'blank, scroll, idle'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/debug/big_scroll_area.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Big Scroll Area'>
+    <meta name = 'og:description' content = 'Big scroll area for testing.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/debug/big_scroll_area.html'>
+    
+    <style>
+      body { margin: 0; }
+      
+      div {
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        align-items: start;
+        justify-content: end;
+        font-family: Arial;
+        font-size: 30px;
+        width: 354px;
+        height: 354px;
+        padding: 20px;
+        margin: 0;
+        position: absolute;
+        border: 3px solid black;
+      }
+      
+      canvas {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id = 'canvas' style = 'display: none;'></canvas>
+    
+    <script>
+      var rowWidth = 400, colWidth = 400, loadBufferCells = 3,
+        mode, rows, cols, currentCells = new Set();
+      
+      var ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'black';
+      
+      function clampRow(row) { return Math.min(Math.max(row, 0), rows - 1); }
+      function clampCol(col) { return Math.min(Math.max(col, 0), cols - 1); }
+      
+      function setParamsFromURLHash() {
+        if (location.hash) {
+          let params = new URLSearchParams(location.hash.slice(1));
+          
+          let attemptedRows = Number(params.get('rows') || 0.5);
+          if (Number.isSafeInteger(attemptedRows))
+            rows = Math.min(Math.max(attemptedRows, 0), 1e7);
+          else
+            rows = 100;
+          
+          let attemptedCols = Number(params.get('cols') || 0.5);
+          if (Number.isSafeInteger(attemptedCols))
+            cols = Math.min(Math.max(attemptedCols, 0), 1e7);
+          else
+            cols = 100;
+          
+          let attemptedMode = params.get('mode');
+          if (attemptedMode == 'full' || attemptedMode == 'partial' || attemptedMode == 'canvas')
+            mode = attemptedMode;
+          else
+            mode = 'partial';
+        } else {
+          rows = 100;
+          cols = 100;
+          mode = 'partial';
+        }
+        
+        document.body.style.width = colWidth * cols + 'px';
+        document.body.style.height = rowWidth * rows + 'px';
+        
+        // remove old elements
+        for (var id of currentCells) {
+          document.body.removeChild(document.getElementById(id));
+          
+          currentCells.delete(id);
+        }
+        
+        switch (mode) {
+          case 'full':
+          case 'partial':
+            canvas.style.display = 'none';
+            break;
+          
+          case 'canvas':
+            canvas.style.display = '';
+            break;
+        }
+        
+        if (mode == 'full') {
+          for (var row = 0; row < rows; row++) {
+            for (var col = 0; col < cols; col++) {
+              var id = row + ',' + col;
+              if (!currentCells.has(id)) {
+                var elem = document.createElement('div');
+                
+                elem.id = id;
+                
+                elem.textContent = col + ', ' + row;
+                
+                elem.style.top = row * rowWidth + 'px';
+                elem.style.left = col * colWidth + 'px';
+                
+                document.body.appendChild(elem);
+                
+                currentCells.add(id);
+              }
+            }
+          }
+        }
+        
+        onresize();
+      }
+      
+      function placeVisibleTiles() {
+        if (mode == 'full') return;
+        
+        var tileLeft = Math.floor(window.scrollX / colWidth),
+          tileRight = Math.ceil((window.scrollX + window.innerWidth) / colWidth),
+          tileUp = Math.floor(window.scrollY / rowWidth),
+          tileDown = Math.ceil((window.scrollY + window.innerHeight) / rowWidth);
+        
+        switch (mode) {
+          case 'partial':
+            tileLeft -= loadBufferCells;
+            tileRight += loadBufferCells;
+            tileUp -= loadBufferCells;
+            tileDown += loadBufferCells;
+            
+            tileLeft = clampCol(tileLeft); tileRight = clampCol(tileRight);
+            tileUp = clampRow(tileUp); tileDown = clampRow(tileDown);
+            
+            // place new elements
+            for (var row = tileUp; row <= tileDown; row++) {
+              for (var col = tileLeft; col <= tileRight; col++) {
+                var id = row + ',' + col;
+                if (!currentCells.has(id)) {
+                  var elem = document.createElement('div');
+                  
+                  elem.id = id;
+                  
+                  elem.textContent = col + ', ' + row;
+                  
+                  elem.style.top = row * rowWidth + 'px';
+                  elem.style.left = col * colWidth + 'px';
+                  
+                  document.body.appendChild(elem);
+                  
+                  currentCells.add(id);
+                }
+              }
+            }
+            
+            // remove old ones
+            for (var id of currentCells) {
+              var [ row, col ] = id.split(',').map(Number);
+              if (row < tileUp || row > tileDown || col < tileLeft || col > tileRight) {
+                document.body.removeChild(document.getElementById(id));
+                
+                currentCells.delete(id);
+              }
+            }
+            break;
+          
+          case 'canvas':
+            tileLeft = clampCol(tileLeft); tileRight = clampCol(tileRight);
+            tileUp = clampRow(tileUp); tileDown = clampRow(tileDown);
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // draw elements
+            for (var row = tileUp; row <= tileDown; row++) {
+              for (var col = tileLeft; col <= tileRight; col++) {
+                ctx.lineWidth = 5;
+                ctx.strokeRect(
+                  col * colWidth - window.scrollX,
+                  row * rowWidth - window.scrollY,
+                  colWidth, rowWidth
+                );
+                
+                ctx.font = '30px Arial';
+                ctx.fillText(
+                  col + ', ' + row,
+                  col * colWidth - window.scrollX + 23,
+                  (row + 1) * rowWidth - window.scrollY - 30
+                );
+              }
+            }
+            break;
+        }
+      }
+      
+      onhashchange = setParamsFromURLHash;
+      onscroll = placeVisibleTiles;
+      onresize = () => {
+        switch (mode) {
+          case 'full':
+          case 'partial':
+            placeVisibleTiles();
+            break;
+          
+          case 'canvas':
+            let style = getComputedStyle(canvas);
+            canvas.width = parseInt(style.width);
+            canvas.height = parseInt(style.height);
+            placeVisibleTiles();
+            break;
+        }
+      };
+      
+      setParamsFromURLHash();
+    </script>
+  </body>
+</html>
