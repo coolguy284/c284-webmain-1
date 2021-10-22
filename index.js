@@ -21,7 +21,7 @@ try {
 
 // because Boolean is useless on strings 'true' and 'false'
 function toBool(str) {
-  return str == 'false' ? false : Boolean(str);
+  return str == 'false' || str == '0' ? false : Boolean(str);
 }
 
 

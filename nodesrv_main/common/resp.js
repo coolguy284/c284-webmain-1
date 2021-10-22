@@ -333,4 +333,9 @@ module.exports = exports = {
       }
     }
   },
+  
+  data: async (requestProps, statusCode, data, headers) => {
+    await exports.headers(requestProps, statusCode, { 'content-type': 'text/plain; charset=utf-8', ...headers });
+    await exports.end(requestProps, data);
+  },
 };
