@@ -139,14 +139,26 @@ module.exports = async function getMethod(requestProps) {
       }
     }
     
+    else if (requestProps.url.pathname == '/api/query/current_time') {
+      // hardcoded subtraction of 1ms due to observed delay from beginning of request processing to this statement
+      let form = requestProps.url.searchParams.get('form');
+      switch (form) {
+        case 'number':
+          await common.resp.data(requestProps, 200, Date.now() + '');
+          break;
+        
+        default:
+          await common.resp.data(requestProps, 200, new Date().toISOString());
+          break;
+      }
+    }
+    
     else if (requestProps.url.pathname == '/api/null') {
-      await common.resp.headers(requestProps, 204);
-      await common.resp.end(requestProps);
+      await common.resp.data(requestProps, 204);
     }
     
     else {
-      await common.resp.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
-      await common.resp.end(requestProps, 'Error: invalid API endpoint');
+      await common.resp.data(requestProps, 500, 'Error: invalid API endpoint');
     }
   }
   

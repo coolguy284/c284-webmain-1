@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Time Syncer</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'This page calculates the difference between the time of the server and the client in order to show the server time.'>
+    <meta name = 'keywords' content = 'tools'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/debug/time_syncer.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Time Syncer'>
+    <meta name = 'og:description' content = 'This page calculates the difference between the time of the server and the client in order to show the server time.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/debug/time_syncer.html'>
+    
+    <style>
+      body {
+        width: 500px;
+      }
+      
+      @media (max-width: 510px) {
+        body {
+          width: calc(100% - 10px);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    This page calculates the difference between the time of the server and the client in order to show the server time.
+    <br><br>
+    Client Time: <span id = 'client_time'></span>
+    <br>
+    Server Time: <span id = 'server_time'></span>
+    <br><br>
+    <span id = 'result'></span>
+    <br><br><br><br>
+    
+    <script>
+      var TEST_LENGTH = 10000, TEST_WAIT_INTERVAL = 150;
+      var avgDiffGlobal;
+      
+      function setResult(beginRTTime, beginTestTime, RTTs, times) {
+        var [ avgRTT, minRTT, maxRTT ] = RTTs.reduce(
+          (a, c) => [a[0] + c, Math.min(a[1], c), Math.max(a[2], c)],
+          [0, Infinity, -Infinity]
+        );
+        avgRTT /= RTTs.length;
+        
+        var completePercent = Math.min((beginRTTime - beginTestTime) / TEST_LENGTH * 100, 100);
+        
+        if (completePercent >= 100) {        
+          var latencyDiff = avgRTT / 2;
+          
+          var [ avgDiff, minDiff, maxDiff ] = times.reduce(
+            (a, c) => [a[0] + c, Math.min(a[1], c), Math.max(a[2], c)],
+            [0, Infinity, -Infinity]
+          );
+          avgDiff /= times.length;
+          
+          avgDiffGlobal = avgDiff;
+          
+          avgDiff += latencyDiff;
+          minDiff += latencyDiff;
+          maxDiff += latencyDiff;
+          
+          result.innerText =
+            `Average Diff: ${avgDiff.toFixed(3)}ms, ` +
+            `Min Diff: ${minDiff.toFixed(3)}ms, ` +
+            `Max Diff: ${maxDiff.toFixed(3)}ms\n\n` +
+            `Progress: ${completePercent.toFixed(2)}%\n\n` +
+            `Average RTT: ${avgRTT.toFixed(3)}ms, ` +
+            `Min RTT: ${minRTT}ms, ` +
+            `Max RTT: ${maxRTT}ms\n\n` +
+            `Individual Latencies: ${RTTs.map(x => x + 'ms').join(', ')}\n\n` +
+            `Individual Diffs: ${times.map(x => x + 'ms').join(', ')}\n\n` +
+            `Diff Correction Factor: ${latencyDiff.toFixed(3)}ms\n\n` +
+            `Corrected Individual Diffs: ${times.map(x => (x + latencyDiff).toFixed(3) + 'ms').join(', ')}`;
+          
+          updateTime();
+        } else {
+          result.innerText =
+            `Progress: ${completePercent.toFixed(2)}%\n\n` +
+            `Average RTT: ${avgRTT.toFixed(3)}ms, ` +
+            `Min RTT: ${minRTT}ms, ` +
+            `Max RTT: ${maxRTT}ms\n\n` +
+            `Individual Latencies: ${RTTs.map(x => x + 'ms').join(', ')}\n\n` +
+            `Individual Diffs: ${times.map(x => x + 'ms').join(', ')}`;
+        }
+      }
+      
+      function updateTime() {
+        var currentTime = Date.now();
+        
+        var currentServerTime = currentTime - avgDiffGlobal;
+        
+        client_time.textContent = new Date(currentTime).toISOString();
+        server_time.textContent = new Date(currentServerTime).toISOString();
+        
+        requestAnimationFrame(updateTime);
+      }
+      
+      onload = async () => {
+        var RTTs = [], times = [];
+        var beginTestTime = Date.now();
+        var endTestTime = beginTestTime + TEST_LENGTH;
+        
+        setResult(beginRTTime, beginTestTime, RTTs, times);
+        
+        for (var i = 0, beginRTTime = 0, request; beginRTTime < endTestTime; i++) {
+          beginRTTime = Date.now();
+          
+          request = new XMLHttpRequest();
+          request.open('GET', '/api/query/current_time?form=number', false);
+          request.send();
+          
+          RTTs.push(Date.now() - beginRTTime);
+          
+          times.push(beginRTTime - Number(request.responseText));
+          
+          if (i % 10 == 9) setResult(beginRTTime, beginTestTime, RTTs, times);
+          
+          await new Promise(r => setTimeout(r, TEST_WAIT_INTERVAL));
+        }
+        
+        setResult(beginRTTime, beginTestTime, RTTs, times);
+      };
+    </script>
+  </body>
+</html>
