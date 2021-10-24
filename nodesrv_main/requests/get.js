@@ -1,9 +1,8 @@
-var path = require('path');
 var common = require('../common');
 var unicode = require('../common/unicode');
 
 module.exports = async function getMethod(requestProps) {
-  var publicPath = path.join('websites/public', decodeURI(requestProps.url.pathname.endsWith('/') || !requestProps.url.pathname ? requestProps.url.pathname + 'index.html' : requestProps.url.pathname));
+  var publicPath = common.getPublicPath(requestProps.url.pathname);
   
   if (!common.isSubDir('websites/public', publicPath)) {
     await common.resp.s404(requestProps);
@@ -23,6 +22,7 @@ module.exports = async function getMethod(requestProps) {
     else if (requestProps.url.pathname == '/api/echo/ipv4') {
       let sendPort = common.toBool(requestProps.url.searchParams.get('port'));
       let form = requestProps.url.searchParams.get('form');
+      
       if (/^(?:::ffff:)?(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
         let ip = requestProps.ip.replace('::ffff:', '');
         switch (form) {
@@ -65,6 +65,7 @@ module.exports = async function getMethod(requestProps) {
     else if (requestProps.url.pathname == '/api/echo/ipv6') {
       let sendPort = common.toBool(requestProps.url.searchParams.get('port'));
       let form = requestProps.url.searchParams.get('form');
+      
       let ip;
       if (/^::ffff:?(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
         ip = requestProps.ip.slice(7).split('.').map(x => Number(x));
@@ -74,6 +75,7 @@ module.exports = async function getMethod(requestProps) {
       } else {
         ip = null;
       }
+      
       if (ip != null) {
         switch (form) {
           case 'bytes':

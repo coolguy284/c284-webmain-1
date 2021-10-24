@@ -3,7 +3,7 @@ var common = require('../common');
 var unicode = require('../common/unicode');
 
 module.exports = async function headMethod(requestProps) {
-  var publicPath = path.join('websites/public', decodeURI(requestProps.url.pathname.endsWith('/') || !requestProps.url.pathname ? requestProps.url.pathname + 'index.html' : requestProps.url.pathname));
+  var publicPath = common.getPublicPath(requestProps.url.pathname);
   
   if (!common.isSubDir('websites/public', publicPath)) {
     await common.resp.s404(requestProps, true);
@@ -50,6 +50,13 @@ module.exports = async function headMethod(requestProps) {
       await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeadersHead(fileLength, 'text/html; charset=utf-8'));
       await common.resp.end(requestProps);
     }
+  }
+  
+  else if (requestProps.url.pathname == '/yiyo.dev') {
+    await common.resp.fileFull(
+      requestProps, 'websites/public/yiyo.dev', true,
+      { 'content-type': 'text/html; charset=utf-8' }
+    );
   }
   
   else {

@@ -323,7 +323,7 @@ module.exports = exports = {
     try {
       await exports.file(requestProps, process.platform.startsWith('win') ? filename.replaceAll('\\', '/') : filename, null, headOnly, headers);
     } catch (err) {
-      if (err.code == 'ENOENT') {
+      if (err.code == 'ENOENT' || err.code == 'ENOTDIR') {
         await exports.s404(requestProps, headOnly);
       } else if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
         logger.warn('http2 stream unexpectedly closed');

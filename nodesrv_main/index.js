@@ -42,6 +42,12 @@ global.currentRequestID = 0;
 
 if (process.env.NODESRVMAIN_HTTP_IP) {
   global.tcpServer = net.createServer(conn => {
+    if (conn.destroyed) {
+      if (process.env.NODESRVMAIN_LOG_DEBUG == 'true')
+        logger.debug(`TCP open-instaclose ${conn.remoteAddress}, ${conn.remotePort}`);
+      return;
+    }
+    
     if (process.env.NODESRVMAIN_LOG_DEBUG == 'true') {
       logger.debug(`TCP open ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)}`);
       conn.on('close', hadError => logger.debug(`TCP close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`));
@@ -70,6 +76,12 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
     
     ALPNProtocols: ['h2', 'http/1.1'],
   }, conn => {
+    if (conn.destroyed) {
+      if (process.env.NODESRVMAIN_LOG_DEBUG == 'true')
+        logger.debug(`TLS open-instaclose ${conn.remoteAddress}, ${conn.remotePort}`);
+      return;
+    }
+    
     if (process.env.NODESRVMAIN_LOG_DEBUG == 'true') {
       logger.debug(`TLS open ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${conn.servername} ${conn.alpnProtocol} ${conn.authorized}`);
       conn.on('close', hadError => logger.debug(`TLS close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`));

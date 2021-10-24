@@ -70,7 +70,17 @@ module.exports = exports = {
         if (!requestProps.urlString.startsWith('/'))
           requestProps.urlString = '/' + requestProps.urlString;
         
-        requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://${requestProps.host}${requestProps.urlString}`);
+        try {
+          requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://${requestProps.host}${requestProps.urlString}`);
+        } catch (err) {
+          try {
+            requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://[${requestProps.host}]:${requestProps.proto == 'http' ? process.env.NODESRVMAIN_HTTP_PORT : process.env.NODESRVMAIN_HTTPS_PORT}${requestProps.urlString}`);
+          } catch (err2) {
+            console.error(err2);
+            console.log([requestProps.proto, requestProps.host, requestProps.urlString]);
+            requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://NULL/null`);
+          }
+        }
         
         return requestProps;
       
@@ -108,9 +118,24 @@ module.exports = exports = {
         if (!requestProps.urlString.startsWith('/'))
           requestProps.urlString = '/' + requestProps.urlString;
         
-        requestProps.url = new URL(`https://${requestProps.host}${requestProps.urlString}`);
+        try {
+          requestProps.url = new URL(`https://${requestProps.host}${requestProps.urlString}`);
+        } catch (err) {
+          try {
+            requestProps.url = new URL(`https://[${requestProps.host}]:${process.env.NODESRVMAIN_HTTPS_PORT}${requestProps.urlString}`);
+          } catch (err2) {
+            console.error(err2);
+            console.log([requestProps.proto, requestProps.host, requestProps.urlString]);
+            requestProps.url = new URL(`https://NULL/null`);
+          }
+        }
         
         return requestProps;
+      
+      default:
+        console.log('not possible');
+        console.log(httpVersion);
+        throw new Error('NotPossibleError');
     }
   },
   
@@ -126,6 +151,17 @@ module.exports = exports = {
       else
         return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
     }
+  },
+  
+  getPublicPath: (pathName) => {
+    if (pathName.endsWith('/') || !pathName)
+      pathName += 'index.html';
+    
+    try {
+      pathName = decodeURI(pathName);
+    } catch (err) {}
+    
+    return path.join('websites/public', pathName);
   },
   
   resp: require('./resp'),
