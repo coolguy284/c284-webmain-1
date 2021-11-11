@@ -32,7 +32,12 @@
         <h3>The page you requested does not exist.</h3><br>
         <h3><a href = 'javascript:history.back();'>Return to Previous Page</a></h3>
         <h3 class = 'mt-4'><a href = '/'>Return to Main Page</a></h3>
+        <h4 class = 'mt-5'>If it used to exist, try visiting the same URL on <a href = 'javascript:location.host = "c284.herokuapp.com"' id = 'old_anchor'>The Old Server</a></h4>
       </div>
     </div>
+    
+    <script>
+      old_anchor.href = 'https://c284.herokuapp.com' + location.pathname;
+    </script>
   </body>
 </html>
