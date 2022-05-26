@@ -191,7 +191,7 @@ module.exports = async function getMethod(requestProps) {
   
   else if (requestProps.url.pathname == '/misc/own_eyes.html') {
     let code = crypto.randomBytes(16).toString('base64').replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
-    let file = (process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/own_eyes.html'] : Buffer.from((await fs.promises.readFile('websites/public/misc/own_eyes.html'))).toString().replace('{code}', code));
+    let file = process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/own_eyes.html'] : (await fs.promises.readFile('websites/public/misc/own_eyes.html')).toString().replace('{code}', code);
     await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
     await common.resp.end(requestProps, file);
     common.vars.ownEyesCodes.set(code, Date.now());
