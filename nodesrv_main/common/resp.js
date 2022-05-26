@@ -141,7 +141,7 @@ module.exports = exports = {
     }
     
     var mimeType = mime.getType(filename);
-    mimeType = mimeType ? `${mimeType}${mimeType.split('/')[0] == 'text' || mimeType == 'application/javascript' ? '; charset=utf-8' : ''}` : 'application/octet-stream';
+    mimeType = mimeType ? `${mimeType}${mimeType.split('/')[0] == 'text' || mimeType == 'application/javascript' ? '; charset=utf-8' : ''}` : null;
     
     // range headers
     if (requestProps.headers.range && !statusCode && !headers) {
@@ -176,7 +176,7 @@ module.exports = exports = {
           } else {
             // everything is correct
             await exports.headers(requestProps, 206, {
-              'content-type': mimeType,
+              ...(mimeType ? { 'content-type': mimeType } : null),
               'content-length': end - start + 1,
               'content-range': `bytes ${start}-${end}/${size}`,
               'last-modified': stats.mtime.toUTCString(),
@@ -249,7 +249,7 @@ module.exports = exports = {
         }
         
         await exports.headers(requestProps, statusCode || 200, {
-          'content-type': mimeType,
+          ...(mimeType ? { 'content-type': mimeType } : null),
           'content-length': size,
           ...(hasVal < 2 ? { 'content-encoding': hasVal == 0 ? 'br' : 'gzip' } : {}),
           'last-modified': stats.mtime.toUTCString(),
@@ -289,7 +289,7 @@ module.exports = exports = {
   
   s404: async (requestProps, headOnly) => {
     try {
-      await exports.file(requestProps, 'websites/public/debug/templates/404.html', 404, headOnly);
+      await exports.file(requestProps, 'websites/public/misc/debug/templates/404.html', 404, headOnly);
     } catch (err) {
       if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
         logger.warn('http2 stream unexpectedly closed');
@@ -305,7 +305,7 @@ module.exports = exports = {
   
   s500: async (requestProps, headOnly) => {
     try {
-      await exports.file(requestProps, 'websites/public/debug/templates/500.html', 500, headOnly);
+      await exports.file(requestProps, 'websites/public/misc/debug/templates/500.html', 500, headOnly);
     } catch (err) {
       if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
         logger.warn('http2 stream unexpectedly closed');

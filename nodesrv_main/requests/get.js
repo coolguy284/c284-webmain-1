@@ -166,14 +166,14 @@ module.exports = async function getMethod(requestProps) {
   
   else if (requestProps.url.pathname == '/r') {
     if (requestProps.url.search.startsWith('?u=')) {
-      let file = Buffer.from((process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
+      let file = Buffer.from((process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
       await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
       await common.resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?uh=')) {
       await common.resp.headers(requestProps, 303, { 'location': decodeURIComponent(requestProps.url.search.slice(4)) });
       await common.resp.end(requestProps);
     } else if (requestProps.url.search.startsWith('?e=')) {
-      let file = Buffer.from((process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
+      let file = Buffer.from((process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
       await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
       await common.resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?eh=')) {
@@ -182,22 +182,22 @@ module.exports = async function getMethod(requestProps) {
     }
   }
   
-  else if (requestProps.url.pathname == '/no_source.html') {
+  else if (requestProps.url.pathname == '/misc/no_source.html') {
     await common.resp.fileFull(
-      requestProps, 'websites/public/no_source.html', null,
+      requestProps, 'websites/public/misc/no_source.html', null,
       { 'link': '<no_source.css>; rel="stylesheet"' }
     );
   }
   
-  else if (requestProps.url.pathname == '/own_eyes.html') {
+  else if (requestProps.url.pathname == '/misc/own_eyes.html') {
     let code = crypto.randomBytes(16).toString('base64').replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
-    let file = (process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/own_eyes.html'] : Buffer.from((await fs.promises.readFile('websites/public/own_eyes.html'))).toString().replace('{code}', code));
+    let file = (process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/own_eyes.html'] : Buffer.from((await fs.promises.readFile('websites/public/misc/own_eyes.html'))).toString().replace('{code}', code));
     await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
     await common.resp.end(requestProps, file);
     common.vars.ownEyesCodes.set(code, Date.now());
   }
   
-  else if (requestProps.url.pathname.startsWith('/unicode/') && (match = /^\/unicode\/([Uu])\+((?:0?[0-9A-Fa-f]|10|)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
+  else if (requestProps.url.pathname.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/([Uu])\+((?:0?[0-9A-Fa-f]|10|)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
     let fancyCodePoint = parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0');
     if (match[1] == 'u' || fancyCodePoint != match[2]) {
       let newURL = new URL(requestProps.url);
@@ -210,7 +210,7 @@ module.exports = async function getMethod(requestProps) {
       let codePoint = match[2].toUpperCase();
       let unicodeChar = unicode.getEntry(codePoint);
       let file = Buffer.from(
-        (process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/debug/templates/unicode.html'] : (await fs.promises.readFile('websites/public/debug/templates/unicode.html'))).toString()
+        (process.env.NODESRVMAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/debug/templates/unicode.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/unicode.html'))).toString()
           .replaceAll('{code_point}', codePoint)
           .replaceAll('{category}', unicodeChar[1] ? unicode.categoryAbbr[unicodeChar[1]] : 'N/A')
           .replaceAll('{name}', unicodeChar[0] || 'N/A')

@@ -20,14 +20,14 @@ module.exports = async function headMethod(requestProps) {
     }
   }
   
-  else if (requestProps.url.pathname == '/no_source.html') {
+  else if (requestProps.url.pathname == '/misc/no_source.html') {
     await common.resp.fileFull(
-      requestProps, 'websites/public/no_source.html', true,
+      requestProps, 'websites/public/misc/no_source.html', true,
       { 'link': '<no_source.css>; rel="stylesheet"' }
     );
   }
   
-  else if (requestProps.url.pathname.startsWith('/unicode/') && (match = /^\/unicode\/([Uu])\+((?:0?[0-9A-Fa-f]|10|)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
+  else if (requestProps.url.pathname.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/([Uu])\+((?:0?[0-9A-Fa-f]|10|)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
     let fancyCodePoint = parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0');
     if (match[1] == 'u' || fancyCodePoint != match[2]) {
       let newURL = new URL(requestProps.url);
@@ -40,7 +40,7 @@ module.exports = async function headMethod(requestProps) {
       let codePoint = match[2].toUpperCase();
       let unicodeChar = unicode.getEntry(codePoint);
       let fileLength = Buffer.from(
-        (await fs.promises.readFile('websites/public/debug/templates/unicode.html')).toString()
+        (await fs.promises.readFile('websites/public/misc/debug/templates/unicode.html')).toString()
           .replaceAll('{code_point}', codePoint)
           .replaceAll('{category}', unicodeChar[1] ? unicode.categoryAbbr[unicodeChar[1]] : 'N/A')
           .replaceAll('{name}', unicodeChar[0] || 'N/A')

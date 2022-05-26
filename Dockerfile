@@ -18,9 +18,7 @@ RUN adduser webmain -u 2201
 USER webmain
 WORKDIR /home/webmain
 
-RUN mkdir cert
-RUN mkdir logs-mongodb
-RUN mkdir mongodb
+RUN mkdir cert logs_mongodb mongodb
 
 COPY --chown=webmain:webmain package.json package.json
 RUN npm install

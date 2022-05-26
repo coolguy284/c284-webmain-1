@@ -10,8 +10,8 @@ fs.readFileSync('../.dockerenv').toString().split(/\r?\n/g).forEach(entry => {
   process.env[key] = value;
 });
 
-fs.writeFileSync('websites/public/contact.html',
-  fs.readFileSync('websites/public/contact.html').toString()
+fs.writeFileSync('websites/public/misc/contact.html',
+  fs.readFileSync('websites/public/misc/contact.html').toString()
     .replace('{email}', Buffer.from(process.env.NODESRVMAIN_CONTACT_EMAIL).toString('hex'))
     .replace('{discord}', Buffer.from(process.env.NODESRVMAIN_CONTACT_DISCORD).toString('hex'))
 );

@@ -3,6 +3,7 @@ cd "${0%/*}/.."
 ./docker/stop.sh
 
 mkdir -p ../c284-webmain-1_s/cert
+mkdir -p ../c284-webmain-1_s/logs
 mkdir -p ../c284-webmain-1_s/logs_mongodb
 mkdir -p ../c284-webmain-1_s/mongodb
 if [ ! -f "../c284-webmain-1_s/.env" ]; then touch ../c284-webmain-1_s/.env; fi

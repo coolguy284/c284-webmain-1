@@ -1,0 +1,16 @@
+add more requests to head.js
+add base64_url encoder/decoder
+fancier latency test
+add support for http1.1 connect requests
+rename /chat/chat.html to /chat/index.html
+
+hex editor
+english words searcher
+add pseudo live birth and death tracker that is not linear but instead has realistic randomness in the timing, also maybe other events, also random names
+rename qr code to qr code generator and make qr code reader
+converter or smth w. encodings, textboxes, n other stuff and contenteditable div, more general version of base64/url/uricomp etc, but also horizontal instead of vertical
+random number gens and testing suites
+optional service worker for caching and testing
+opencloudhash and cloudhash (csprng based fake hash using database, with api for access), opencloudhash has hash entries visible, cloudhash does not
+xampp subfolder /x, wordpress subfolder /x/w
+auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
