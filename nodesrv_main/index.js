@@ -19,7 +19,7 @@ if (!process.env.MONGODB_DISABLED || process.env.MONGODB_DISABLED == 'false') {
     // initalize mongo client
     var mongodb = require('mongodb');
 
-    global.mongoClient = mongodb.MongoClient('mongodb://127.0.0.1', { useUnifiedTopology: true });
+    global.mongoClient = new mongodb.MongoClient('mongodb://127.0.0.1', { useUnifiedTopology: true });
     
     await mongoClient.connect();
     logger.info('Connected to mongodb server');

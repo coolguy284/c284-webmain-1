@@ -15,12 +15,12 @@
   "author": "coolguy284",
   "license": "MIT",
   "dependencies": {
-    "bson": "^4.4.1",
-    "bufferutil": "^4.0.3",
-    "mime": "^2.5.2",
-    "mongodb": "^3.6.9",
-    "utf-8-validate": "^5.0.5",
-    "winston": "^3.3.3",
-    "ws": "^7.4.6"
+    "bson": "^4.6.4",
+    "bufferutil": "^4.0.6",
+    "mime": "^3.0.0",
+    "mongodb": "^4.6.0",
+    "utf-8-validate": "^5.0.9",
+    "winston": "^3.7.2",
+    "ws": "^8.6.0"
   }
 }
