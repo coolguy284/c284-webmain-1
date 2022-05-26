@@ -1,8 +1,9 @@
+update canonical urls
 add more requests to head.js
 add base64_url encoder/decoder
 fancier latency test
 add support for http1.1 connect requests
-rename /chat/chat.html to /chat/index.html
+websocket connection not using http2
 
 hex editor
 english words searcher
