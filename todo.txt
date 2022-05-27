@@ -16,3 +16,4 @@ optional service worker for caching and testing
 opencloudhash and cloudhash (csprng based fake hash using database, with api for access), opencloudhash has hash entries visible, cloudhash does not
 xampp subfolder /x, wordpress subfolder /x/w
 auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
+user account system
