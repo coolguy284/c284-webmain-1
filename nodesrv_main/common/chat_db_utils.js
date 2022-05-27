@@ -1,5 +1,5 @@
 module.exports = exports = {
-  ValidationError: require('./utilscommon').ValidationError,
+  ValidationError: require('./utils_common').ValidationError,
   
   entityID: 0,
   entityTimestamp: 0n,

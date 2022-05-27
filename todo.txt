@@ -1,5 +1,3 @@
-add underscores to js files, particularly in common
-
 add base64_url encoder/decoder
 fancier latency test
 add support for http1.1 connect requests

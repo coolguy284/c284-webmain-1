@@ -1,7 +1,7 @@
-var logger = require('../logutils.js')('requests/statusws');
+var logger = require('../log_utils.js')('requests/status_ws');
 
 var BSON = require('bson');
-var statusUilts = require('../common/statusutils');
+var statusUilts = require('../common/status_utils');
 
 function statusWSFunc(ws, req, requestProps) {
   switch (requestProps.url.searchParams.get('version')) {

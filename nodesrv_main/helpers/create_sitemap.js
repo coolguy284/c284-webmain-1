@@ -1,7 +1,7 @@
 var fs = require('fs');
-var crawler = require('../common/sitemapcrawler.js');
+var crawler = require('../common/sitemap_crawler.js');
 
-let websiteData = require('../common/websitedataparse')();
+let websiteData = require('../common/website_data_parse')();
 websiteData['sitemap.xml'] = 0;
 
 crawler.crawl('/index.html', crawler.fsGetterFuncGen('websites/public')).then(sites => {

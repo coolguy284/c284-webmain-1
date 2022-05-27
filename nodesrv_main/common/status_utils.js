@@ -1,5 +1,5 @@
 module.exports = {
-  ValidationError: require('./utilscommon').ValidationError,
+  ValidationError: require('./utils_common').ValidationError,
   
   validateVer1Msg: function validateVer1Msg(msg) {
     let msgIsObject = typeof msg == 'object';

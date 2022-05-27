@@ -1,7 +1,7 @@
-var logger = require('../logutils.js')('requests/chatws');
+var logger = require('../log_utils.js')('requests/chat_ws');
 
 var BSON = require('bson');
-var chatDBUilts = require('../common/chatdbutils');
+var chatDBUilts = require('../common/chat_db_utils');
 
 function chatWSFunc(ws, req, requestProps) {
   if (!process.env.MONGODB_DISABLED || process.env.MONGODB_DISABLED == 'false') {

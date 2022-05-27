@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-var parseArgString = require('./argstringparse');
+var parseArgString = require('./arg_string_parse');
 
 var redirectArr = fs.readFileSync('websites/redirects.txt').toString().split('\n').filter(entry => entry && !entry.startsWith('#'));
 

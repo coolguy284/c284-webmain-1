@@ -1,9 +1,9 @@
 var fs = require('fs');
 var mime = require('mime');
-var websiteData = require('./websitedata');
+var websiteData = require('./website_data');
 try { var etags = require('../websites/etags.json'); } catch (e) { var etags = {}; }
 
-var logger = require('../logutils.js')('common/resp');
+var logger = require('../log_utils.js')('common/resp');
 
 module.exports = exports = {
   getBasicFileHeaders: (file, mimeType) => {

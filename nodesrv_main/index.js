@@ -1,4 +1,4 @@
-global.logger = require('./logutils.js')('main');
+global.logger = require('./log_utils.js')('main');
 
 logger.info('Starting c284-webmain-1/nodesrv_main');
 
@@ -32,7 +32,7 @@ if (!process.env.MONGODB_DISABLED || process.env.MONGODB_DISABLED == 'false') {
       logger.info('Initialized replica set');
     }
     
-    require('./requests/chatws').mongoClientOnConnect();
+    require('./requests/chat_ws').mongoClientOnConnect();
   })();
 }
 
@@ -124,11 +124,11 @@ if (process.env.NODESRVMAIN_HTTP_IP || process.env.NODESRVMAIN_HTTPS_IP) {
   });
   
   global.chatWSServer = new ws.Server({ noServer: true, maxPayload: 8 * 2 ** 20 });
-  chatWSServer.on('connection', require('./requests/chatws').chatWSFunc);
+  chatWSServer.on('connection', require('./requests/chat_ws').chatWSFunc);
   global.chatWSServerMap = new WeakMap();
   
   global.statusWSServer = new ws.Server({ noServer: true, maxPayload: 2 ** 20 });
-  statusWSServer.on('connection', require('./requests/statusws').statusWSFunc);
+  statusWSServer.on('connection', require('./requests/status_ws').statusWSFunc);
 }
 
 
@@ -193,7 +193,7 @@ global.tickInt = setInterval(tickFunc, tickIntMS);
 // website cache
 if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
   global.filesCache = {};
-  require('./common/recursivereaddir')('websites/public').forEach(filename => {
+  require('./common/recursive_readdir')('websites/public').forEach(filename => {
     filename = 'websites/public/' + filename;
     global.filesCache[filename] = {
       stats: { mtime: fs.statSync(filename).mtime },

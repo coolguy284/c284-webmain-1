@@ -1,7 +1,7 @@
 var fs = require('fs');
 
 module.exports = function parseWebsiteData() {
-  let files = require('./recursivereaddir')('websites/public');
+  let files = require('./recursive_readdir')('websites/public');
   
   let filesObject = Object.fromEntries(files.map(path => [path, 0]));
   

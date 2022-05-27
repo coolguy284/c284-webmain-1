@@ -30,14 +30,14 @@ RUN mkdir nodesrv_main
 
 ADD --chown=webmain:webmain https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt nodesrv_main/websites/public/data/
 
-COPY --chown=webmain:webmain nodesrv_main/common/recursivereaddir.js nodesrv_main/common/recursivereaddir.js
-COPY --chown=webmain:webmain nodesrv_main/common/websitedataparse.js nodesrv_main/common/websitedataparse.js
+COPY --chown=webmain:webmain nodesrv_main/common/recursive_readdir.js nodesrv_main/common/recursive_readdir.js
+COPY --chown=webmain:webmain nodesrv_main/common/website_data_parse.js nodesrv_main/common/website_data_parse.js
 COPY --chown=webmain:webmain nodesrv_main/websites/website_data.txt nodesrv_main/websites/website_data.txt
 COPY --chown=webmain:webmain nodesrv_main/helpers nodesrv_main/helpers
 
 RUN (cd nodesrv_main; node helpers/compress_and_etags.js --only '^data/UnicodeData\.txt(?:\.gz|\.br)?$')
 
-COPY --chown=webmain:webmain nodesrv_main/logutils.js nodesrv_main/logutils.js
+COPY --chown=webmain:webmain nodesrv_main/log_utils.js nodesrv_main/log_utils.js
 
 COPY --chown=webmain:webmain nodesrv_main/package-basic.json nodesrv_main/package.json
 RUN (cd nodesrv_main; npm install)

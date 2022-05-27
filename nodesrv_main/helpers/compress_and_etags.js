@@ -4,7 +4,7 @@ var fs = require('fs');
 var zlib = require('zlib');
 var crypto = require('crypto');
 
-let websiteData = require('../common/websitedataparse')();
+let websiteData = require('../common/website_data_parse')();
 
 let prevEtags;
 try { prevEtags = JSON.parse(fs.readFileSync('websites/etags.json').toString()); } catch (e) { prevEtags = {}; }
