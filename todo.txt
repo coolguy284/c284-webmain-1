@@ -4,6 +4,7 @@ add support for http1.1 connect requests
 websocket connection not using http2
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
 
+enigma machine and other sites in tools and other from the old site
 hex editor
 english words searcher
 add pseudo live birth and death tracker that is not linear but instead has realistic randomness in the timing, also maybe other events, also random names
