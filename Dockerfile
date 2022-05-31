@@ -42,9 +42,7 @@ COPY --chown=webmain:webmain nodesrv_main/log_utils.js nodesrv_main/log_utils.js
 COPY --chown=webmain:webmain nodesrv_main/package-basic.json nodesrv_main/package.json
 RUN (cd nodesrv_main; npm install)
 
-RUN mkdir -p nodesrv_main/websites/public/libs/extern
-RUN sed '7a\\tvar global = commonjsGlobal;' nodesrv_main/node_modules/bson/dist/bson.browser.umd.js > nodesrv_main/websites/public/libs/extern/bson.browser.umd.js
-RUN cp nodesrv_main/node_modules/bson/dist/bson.browser.umd.js.map nodesrv_main/websites/public/libs/extern/bson.browser.umd.js.map
+RUN (cd nodesrv_main; mkdir -p websites/public/libs/extern && cp node_modules/bson/dist/bson.browser.umd.js websites/public/libs/extern/bson.browser.umd.js && cp node_modules/bson/dist/bson.browser.umd.js.map websites/public/libs/extern/bson.browser.umd.js.map)
 
 COPY --chown=webmain:webmain nodesrv_main/websites/public/libs nodesrv_main/websites/public/libs
 RUN (cd nodesrv_main; node helpers/compress_and_etags.js --only '^libs/.*$')
