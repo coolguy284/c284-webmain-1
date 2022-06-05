@@ -1,7 +1,7 @@
 MONGODB_DISABLED: false
 MONGODB_LOG_CONS: false
 
-NODESRVMAIN_LOG_DEBUG: false
+NODESRVMAIN_LOG_DEBUG: true
 NODESRVMAIN_TLS_KEY_FILE: ../cert/nodesrv_main-key.pem
 NODESRVMAIN_TLS_CERT_FILE: ../cert/nodesrv_main-crt.pem
 NODESRVMAIN_TLS_CERT_ROOT_FILE: ../cert/nodesrv_main-root.pem

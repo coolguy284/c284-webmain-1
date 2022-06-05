@@ -5,7 +5,7 @@ module.exports = async function connectMethod(requestProps) {
   if (requestProps.httpVersion == 1) return 1;
   
   if (requestProps.headers[':protocol'] == 'websocket') {
-    if (requestProps.url.pathname == '/echows') {
+    if (requestProps.url.pathname == '/echo_ws') {
       common.resp.ws(echoWSServer, requestProps);
     } else if (requestProps.url.pathname == '/chat/ws') {
       common.resp.ws(chatWSServer, requestProps);

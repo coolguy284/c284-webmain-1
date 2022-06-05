@@ -68,6 +68,7 @@ PS /unicode/                                /misc/unicode/
 PS /chat.html                               /chat/
 PS /chathid.html                            /chat/
 PS /contact.html                            /misc/contact.html
+PS /echows                                  /echo_ws
 PS /encodedecode.html                       /misc/tools/encode_decode.html
 PS /encodingdecoding.html                   /misc/tools/encode_decode.html
 PS /indexredirect.html                      /r?u=%2Findex.html

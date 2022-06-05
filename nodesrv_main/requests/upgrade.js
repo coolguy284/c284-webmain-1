@@ -9,7 +9,7 @@ module.exports = function serverUpgradeFunc(req, socket, head) {
     logger.info(common.getReqLogStr(requestProps));
     
     if (requestProps.headers.upgrade.toLowerCase() == 'websocket') {
-      if (requestProps.url.pathname == '/echows') {
+      if (requestProps.url.pathname == '/echo_ws') {
         common.resp.ws(echoWSServer, requestProps, req, socket, head);
       } else if (requestProps.url.pathname == '/chat/ws') {
         common.resp.ws(chatWSServer, requestProps, req, socket, head);
