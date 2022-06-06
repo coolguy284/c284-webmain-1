@@ -8,8 +8,7 @@ module.exports = function serverConnectFunc(req, socket, head) {
     
     logger.info(common.getReqLogStr(requestProps));
     
-    socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
-    socket.end();
+    common.resp.manual404(req, socket);
   } catch (err) {
     logger.error(err);
   }

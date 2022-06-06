@@ -16,12 +16,10 @@ module.exports = function serverUpgradeFunc(req, socket, head) {
       } else if (requestProps.url.pathname == '/api/status_ws') {
         common.resp.ws(statusWSServer, requestProps, req, socket, head);
       } else {
-        socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
-        socket.end();
+        common.resp.manual404(req, socket);
       }
     } else {
-      socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
-      socket.end();
+      common.resp.manual404(req, socket);
     }
   } catch (err) {
     logger.error(err);

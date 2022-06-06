@@ -2,6 +2,7 @@ add base64_url encoder/decoder
 fancier latency test
 websocket connection not using http2
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
+add no javascript banner to all pages that use javascript in the slightest
 
 enigma machine and other sites in tools and other from the old site
 hex editor

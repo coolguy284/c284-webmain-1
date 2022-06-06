@@ -50,11 +50,14 @@ RUN (cd nodesrv_main; node helpers/compress_and_etags.js --only '^libs/.*$')
 COPY --chown=webmain:webmain index.js index.js
 
 COPY --chown=webmain:webmain .dockerenv .dockerenv
+
+COPY --chown=webmain:webmain nodesrv_main/package.json nodesrv_main/package.json
+
 COPY --chown=webmain:webmain nodesrv_main/index.js nodesrv_main/index.js
 COPY --chown=webmain:webmain nodesrv_main/common nodesrv_main/common
 COPY --chown=webmain:webmain nodesrv_main/requests nodesrv_main/requests
 COPY --chown=webmain:webmain nodesrv_main/websites nodesrv_main/websites
-COPY --chown=webmain:webmain nodesrv_main/package.json nodesrv_main/package.json
+
 RUN (cd nodesrv_main; node helpers/put_version_in_index.js && node helpers/set_contact_info.js && node helpers/create_sitemap.js && node helpers/compress_and_etags.js --except '^data/UnicodeData\.txt(?:\.gz|\.br)?$' '^libs/.*$')
 
 CMD ["node", "index.js"]
