@@ -123,14 +123,14 @@
         switch (storageType) {
           case 'cookies':
             let cookie = document.cookie ? document.cookie.split('; ') : [];
-            name_select.innerHTML = `<option value = 's:custom'>Custom</option><option disabled>───────────────</option>` + cookie.map(x => `<option value = 'k:${encodeURIComponent(x)}'>${EscapeHTML(x)}</option>`);
+            name_select.innerHTML = '<option value = \'s:custom\'>Custom</option><option disabled>───────────────</option>' + cookie.map(x => `<option value = 'k:${encodeURIComponent(x)}'>${EscapeHTML(x)}</option>`);
             name_select.value = 's:custom';
             Get();
             break;
           
           case 'localstorage':
           case 'sessionstorage':
-            name_select.innerHTML = `<option value = 's:custom'>Custom</option><option disabled>───────────────</option>` + Object.keys(storageType == 'localstorage' ? localStorage : sessionStorage).map(x => `<option value = 'k:${encodeURIComponent(x)}'>${EscapeHTML(x)}</option>`);
+            name_select.innerHTML = '<option value = \'s:custom\'>Custom</option><option disabled>───────────────</option>' + Object.keys(storageType == 'localstorage' ? localStorage : sessionStorage).map(x => `<option value = 'k:${encodeURIComponent(x)}'>${EscapeHTML(x)}</option>`);
             name_select.value = 's:custom';
             Get();
             break;

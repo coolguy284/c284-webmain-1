@@ -29,13 +29,13 @@ if (!toBool(process.env.MONGODB_DISABLED)) {
   // complicated mongodb log file naming process
   var date = new Date();
   var datePart = date.toUTCString().replace(',', '').split(' ').slice(0, 3);
-  var mongoLogFile = `logs_mongodb/` +
+  var mongoLogFile = 'logs_mongodb/' +
     `${date.getUTCFullYear()}_${(date.getUTCMonth() + 1 + '').padStart(2, '0')}_${(date.getUTCDate() + '').padStart(2, '0')} ` +
     `${(date.getUTCHours() + '').padStart(2, '0')}_${(date.getUTCMinutes() + '').padStart(2, '0')}_${(date.getUTCSeconds() + '').padStart(2, '0')} ` +
     `${[datePart[0], datePart[2], datePart[1]].join(' ')} ` +
     `${((date.getUTCHours() % 12 + 11) % 12 + 1 + '').padStart(2, '0')}_${(date.getUTCMinutes() + '').padStart(2, '0')}_${(date.getUTCSeconds() + '').padStart(2, '0')} ` +
     `${date.getUTCHours() < 12 ? 'AM' : 'PM'} ` +
-    `UTC.log`;
+    'UTC.log';
   
   // mongodb server for database of server
   var logMongodb = toBool(process.env.MONGODB_LOG_CONS);

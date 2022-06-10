@@ -126,7 +126,7 @@ module.exports = exports = {
           } catch (err2) {
             console.error(err2);
             console.log([requestProps.proto, requestProps.host, requestProps.urlString]);
-            requestProps.url = new URL(`https://NULL/null`);
+            requestProps.url = new URL('https://NULL/null');
           }
         }
         
