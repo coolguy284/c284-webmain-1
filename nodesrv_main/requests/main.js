@@ -32,16 +32,10 @@ module.exports = async function main(httpVersion, ...args) {
       return;
     }
     
-    if (requestProps.url.pathname in redirects.redirects) {
-      let redirectInfo = redirects.redirects[requestProps.url.pathname], newURL;
-      if (redirectInfo[0].startsWith('http://') || redirectInfo[0].startsWith('https://')) {
-        newURL = redirectInfo[0];
-      } else {
-        newURL = new URL(requestProps.url);
-        newURL.pathname = redirectInfo[0];
-        newURL = newURL.href;
-      }
-      await common.resp.headers(requestProps, redirects.mapping[redirectInfo[1]], { 'location': newURL });
+    let potentialRedirect = redirects.followRedirects(requestProps.url);
+    
+    if (potentialRedirect[0]) {
+      await common.resp.headers(requestProps, potentialRedirect[1], { 'location': potentialRedirect[2] });
       await common.resp.end(requestProps);
       return;
     }

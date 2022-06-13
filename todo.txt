@@ -1,6 +1,6 @@
-add full folder redirects
-redirect index.htmls to page slash, make all sites redirect to canonical url
+make all sites redirect to canonical url
 
+add privacy policy
 add base64_url encoder/decoder
 fancier latency test
 websocket connection not using http2
@@ -21,7 +21,14 @@ rename qr code to qr code generator and make qr code reader
 converter or smth w. encodings, textboxes, n other stuff and contenteditable div, more general version of base64/url/uricomp etc, but also horizontal instead of vertical
 random number gens and testing suites
 optional service worker for caching and testing
+finish unicode viewer and link it
 opencloudhash and cloudhash (csprng based fake hash using database, with api for access), opencloudhash has hash entries visible, cloudhash does not
 xampp subfolder /x, wordpress subfolder /x/w
 auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
 user account system
+chat upgrades
+  option to send as markdown, bbcode, or html
+  text, voice, raw data thru voice, inputs keyboard mouse controller etc sent to bot and output stream from bot (thru voice channel)
+
+problems:
+if there is a unicode url it can be redirected by the default redirect code and the unicode code one at a time

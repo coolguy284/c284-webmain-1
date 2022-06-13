@@ -201,7 +201,7 @@ module.exports = async function getMethod(requestProps) {
     let fancyCodePoint = parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0');
     if (match[1] == 'u' || fancyCodePoint != match[2]) {
       let newURL = new URL(requestProps.url);
-      newURL.pathname = '/unicode/U+' + fancyCodePoint;
+      newURL.pathname = '/misc/unicode/U+' + fancyCodePoint;
       newURL = newURL.href;
       
       await common.resp.headers(requestProps, 308, { 'location': newURL });
