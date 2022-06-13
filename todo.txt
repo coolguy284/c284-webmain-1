@@ -1,12 +1,13 @@
-make all sites redirect to canonical url
-
 add privacy policy
 add base64_url encoder/decoder
 fancier latency test
 websocket connection not using http2
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
+  also some validation for the description somehow
 add no javascript banner to all pages that use javascript in the slightest
 add warnings to encrypting, decrypting, hashing, etc. to not use for security purposes
+improve localstorage editor cookies handling
+add description to more misc pages
 
 enigma machine and other sites in tools and other from the old site
 hex editor
