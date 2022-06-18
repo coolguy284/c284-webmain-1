@@ -9,6 +9,7 @@ add warnings to encrypting, decrypting, hashing, etc. to not use for security pu
 improve localstorage editor cookies handling
 add description to more misc pages
 sitemap lastmod from git repo, changefreq based on lastmod (maybe)
+add adblock detector site (for fun)
 
 enigma machine and other sites in tools and other from the old site
 hex editor
@@ -31,6 +32,8 @@ user account system
 chat upgrades
   option to send as markdown, bbcode, or html
   text, voice, raw data thru voice, inputs keyboard mouse controller etc sent to bot and output stream from bot (thru voice channel)
+spaces
+  universes, zones, simple objects and physical simulation regions
 
 problems:
 if there is a unicode url it can be redirected by the default redirect code and the unicode code one at a time
