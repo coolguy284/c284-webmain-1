@@ -1,6 +1,4 @@
-cd "${0%/*}/.."
-
-./proc_main/docker/stop.sh
-./srv_web_main/docker/stop.sh
-./proc_mongodb/docker/stop.sh
-./srv_web_old/docker/stop.sh
+sudo docker stop -t 25 c284-webmain-1_proc_main
+sudo docker stop -t 1 c284-webmain-1_srv_web_main
+sudo docker stop -t 1 c284-webmain-1_proc_mongodb
+sudo docker stop -t 1 c284-webmain-1_srv_web_old

@@ -14,7 +14,7 @@ var ws = require('ws');
 var common = require('./common');
 
 
-if (!process.env.MONGODB_DISABLED || process.env.MONGODB_DISABLED == 'false') {
+if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == 'false') {
   (async () => {
     // initalize mongo client
     var mongodb = require('mongodb');
@@ -116,6 +116,16 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
   httpsServer.on('connect', require('./requests/connect_http1'));
   
   global.http2Server = http2.createSecureServer({ settings: { enableConnectProtocol: true } });
+  global.http2ServerSessions = new Set();
+  global.http2ServerStreams = new Set();
+  http2Server.on('session', session => {
+    http2ServerSessions.add(session);
+    session.on('stream', stream => {
+      http2ServerStreams.add(stream);
+      stream.on('close', () => { http2ServerStreams.delete(stream); });
+    });
+    session.on('close', () => { http2ServerSessions.delete(session); });
+  });
   http2Server.on('stream', require('./requests/main').bind(null, 2));
 }
 
@@ -209,7 +219,7 @@ if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
 async function exitHandler() {
   logger.info('Shutting down');
   
-  replServer.close();
+  if (global.replServer) replServer.close();
   
   if (global.tcpServer) {
     tcpServer.close(() => {
@@ -228,10 +238,11 @@ async function exitHandler() {
     });
     httpsServer.close();
     http2Server.close();
+    for (var session of http2ServerSessions) { session.close(); }
     setTimeout(() => {
       logger.info('Forcibly closing all HTTPS/H2 connections');
       httpsServer.closeAllConnections();
-      http2Server.closeAllConnections();
+      for (var stream of http2ServerStreams) { stream.close(); }
     }, 10000).unref();
   }
   
@@ -261,9 +272,9 @@ process.on('SIGINT', exitHandler);
 // simple repl for executing commands
 global.replServer = require('repl').start({
   prompt: '',
-  terminal: true,
+  terminal: false,
   useColors: true,
   useGlobal: true,
   preview: false,
-  breakEvalOnSigint: true,
+  breakEvalOnSigint: false,
 });

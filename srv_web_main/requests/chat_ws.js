@@ -4,7 +4,7 @@ var BSON = require('bson');
 var chatDBUilts = require('../common/chat_db_utils');
 
 function chatWSFunc(ws, req, requestProps) {
-  if (!process.env.MONGODB_DISABLED || process.env.MONGODB_DISABLED == 'false') {
+  if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == 'false') {
     let wsInfo;
     switch (requestProps.url.searchParams.get('version')) {
       case '1':

@@ -42,7 +42,7 @@ if (!toBool(process.env.PROC_MONGODB_DISABLED)) {
   var logMongodb = toBool(process.env.PROC_MONGODB_LOG_CONS);
   
   var proc_mongodb = cp.spawn('docker', [
-    'run', '--rm', '-t', '--name', 'c284-webmain-1_proc_mongodb', '--network', NETWORK_NAME, '--network-alias', 'proc_mongodb',
+    'run', '--rm', '-i', '--name', 'c284-webmain-1_proc_mongodb', '--network', NETWORK_NAME, '--network-alias', 'proc_mongodb',
     '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/mongodb,target=/home/webmain/mongodb',
     'c284-webmain-1_proc_mongodb'
   ], { stdio: ['ignore', 'pipe', 'pipe'] });
@@ -82,7 +82,7 @@ if (!toBool(process.env.PROC_MONGODB_DISABLED)) {
 
 // main nodejs server for website
 var srv_web_main = cp.spawn('docker', [
-  'run', '--rm', '-t', '--name', 'c284-webmain-1_srv_web_main', '--network', NETWORK_NAME, '--network-alias', 'srv_web_main',
+  'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_main', '--network', NETWORK_NAME, '--network-alias', 'srv_web_main',
   '--env-file', '/home/webmain/c284-webmain-1_s/env.list',
   '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/cert,target=/home/webmain/cert,readonly',
   ...(process.argv[3] ? ['--mount', 'type=bind,source=/home/webmain/c284-webmain-1/srv_web_main/websites,target=/home/webmain/srv_web_main/websites,readonly'] : []),
