@@ -10,7 +10,7 @@ the files are laid out as follows for linux:
 ```
 /home/webmain/c284-webmain-1   . github repository
 /home/webmain/c284-webmain-1_s/
-  cert .   .   .   .   .   .   . certificates for nodesrv_main
+  cert .   .   .   .   .   .   . certificates for srv_web_main
   logs .   .   .   .   .   .   . main log files
   logs_mongodb .   .   .   .   . mongodb log files
   mongodb  .   .   .   .   .   . mongodb database
@@ -21,7 +21,7 @@ the files are laid out as follows for windows:
 ```
 D:/Data/c284-webmain-1 . github repository
 D:/Data/c284-webmain-1_s/
-  cert .   .   .   .   . certificates for nodesrv_main
+  cert .   .   .   .   . certificates for srv_web_main
   logs .   .   .   .   . main log files
   logs_mongodb .   .   . mongodb log files
   mongodb  .   .   .   . mongodb database

@@ -1,6 +1,6 @@
 global.logger = require('./log_utils.js')('main');
 
-logger.info('Starting c284-webmain-1/nodesrv_main');
+logger.info('Starting c284-webmain-1/srv_web_main');
 
 var fs = require('fs');
 var net = require('net');

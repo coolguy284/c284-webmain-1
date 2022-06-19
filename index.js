@@ -76,21 +76,21 @@ if (!toBool(process.env.MONGODB_DISABLED)) {
 
 
 // main nodejs server for website
-var nodesrv_main = cp.fork('index.js', { cwd: 'nodesrv_main' });
+var srv_web_main = cp.fork('index.js', { cwd: 'srv_web_main' });
 
 
 // ping server every second for response, if unresponsive for 5 responses kill it
 var missedAcks = 0;
 var tickInt = setInterval(() => {
   if (missedAcks >= 5) {
-    nodesrv_main.kill();
+    srv_web_main.kill();
     clearInterval(tickInt);
   }
-  nodesrv_main.send({ type: 'ping' });
+  srv_web_main.send({ type: 'ping' });
   missedAcks++;
 }, 1000);
 
-nodesrv_main.on('message', msg => {
+srv_web_main.on('message', msg => {
   switch (msg.type) {
     case 'pong':
       missedAcks = 0;
@@ -100,7 +100,7 @@ nodesrv_main.on('message', msg => {
 
 
 // if main server exits mongodb server has soft and then hard shutdown
-nodesrv_main.on('exit', () => {
+srv_web_main.on('exit', () => {
   clearInterval(tickInt);
   if (!mongod) {
     console.log('Mongod not run');

@@ -1,4 +1,4 @@
-var projectFolders = ['.', 'nodesrv_main'];
+var projectFolders = ['.', 'srv_web_main'];
 var filesToCheck = ['package.json', 'package-basic.json'];
 
 var fs = require('fs');

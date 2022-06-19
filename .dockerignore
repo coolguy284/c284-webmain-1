@@ -4,7 +4,7 @@ node_modules
 .env
 package-lock.json
 
-nodesrv_main/node_modules
-nodesrv_main/package-lock.json
-nodesrv_main/**/*.gz
-nodesrv_main/**/*.br
+srv_web_main/node_modules
+srv_web_main/package-lock.json
+srv_web_main/**/*.gz
+srv_web_main/**/*.br

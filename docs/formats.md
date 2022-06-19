@@ -1,5 +1,5 @@
 ```
-format for nodesrv_main/websites/website_data.txt:
+format for srv_web_main/websites/website_data.txt:
   # repeated paths' numbers are added together, "/*" at end of path to include entire folder, "*.ext" to include all files with extension
   <path> : int (flags) (
       bits:
@@ -10,7 +10,7 @@ format for nodesrv_main/websites/website_data.txt:
 ```
 
 ```
-format for nodesrv_main/websites/redirects.txt:
+format for srv_web_main/websites/redirects.txt:
   # put <from> and/or <to> in quotes to escape special characters in pathnames
   <type> <from> <to> : string (
     type : 3 char string (

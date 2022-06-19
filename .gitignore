@@ -4,11 +4,11 @@
 /.env
 /package-lock.json
 
-/nodesrv_main/node_modules
-/nodesrv_main/websites/etags.json
-/nodesrv_main/websites/public/libs/extern/bson.browser.umd.js
-/nodesrv_main/websites/public/libs/extern/bson.browser.umd.js.map
-/nodesrv_main/websites/public/sitemap.xml
-/nodesrv_main/package-lock.json
-/nodesrv_main/**/*.gz
-/nodesrv_main/**/*.br
+/srv_web_main/node_modules
+/srv_web_main/websites/etags.json
+/srv_web_main/websites/public/libs/extern/bson.browser.umd.js
+/srv_web_main/websites/public/libs/extern/bson.browser.umd.js.map
+/srv_web_main/websites/public/sitemap.xml
+/srv_web_main/package-lock.json
+/srv_web_main/**/*.gz
+/srv_web_main/**/*.br
