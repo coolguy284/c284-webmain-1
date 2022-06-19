@@ -1,3 +1,9 @@
+add semicolon
+remove unused code
+unnecessary semicolon
+replace unnecessary template string
+unused function args and vars in code
+
 add privacy policy
 add base64_url encoder/decoder
 fancier latency test
@@ -10,6 +16,7 @@ improve localstorage editor cookies handling
 add description to more misc pages
 sitemap lastmod from git repo, changefreq based on lastmod (maybe)
 add adblock detector site (for fun)
+chat empty string should show up as anonymous
 
 enigma machine and other sites in tools and other from the old site
 hex editor
