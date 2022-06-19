@@ -19,7 +19,7 @@ if (!process.env.MONGODB_DISABLED || process.env.MONGODB_DISABLED == 'false') {
     // initalize mongo client
     var mongodb = require('mongodb');
 
-    global.mongoClient = new mongodb.MongoClient('mongodb://127.0.0.1', { useUnifiedTopology: true });
+    global.mongoClient = new mongodb.MongoClient('mongodb://proc_mongodb', { useUnifiedTopology: true });
     
     await mongoClient.connect();
     logger.info('Connected to mongodb server');
@@ -40,15 +40,15 @@ if (!process.env.MONGODB_DISABLED || process.env.MONGODB_DISABLED == 'false') {
 // servers
 global.currentRequestID = 0;
 
-if (process.env.NODESRVMAIN_HTTP_IP) {
+if (process.env.SRV_WEB_MAIN_HTTP_IP) {
   global.tcpServer = net.createServer(conn => {
     if (conn.destroyed) {
-      if (process.env.NODESRVMAIN_LOG_DEBUG == 'true')
+      if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true')
         logger.debug(`TCP open-instaclose ${conn.remoteAddress}, ${conn.remotePort}`);
       return;
     }
     
-    if (process.env.NODESRVMAIN_LOG_DEBUG == 'true') {
+    if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true') {
       logger.debug(`TCP open ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)}`);
       conn.on('close', hadError => logger.debug(`TCP close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`));
     }
@@ -58,8 +58,8 @@ if (process.env.NODESRVMAIN_HTTP_IP) {
     httpServer.emit('connection', conn);
   });
   
-  tcpServer.listen({ host: process.env.NODESRVMAIN_HTTP_IP, port: process.env.NODESRVMAIN_HTTP_PORT }, () => {
-    logger.info(`HTTP server listening on ${common.mergeIPPort(process.env.NODESRVMAIN_HTTP_IP, process.env.NODESRVMAIN_HTTP_PORT)}`);
+  tcpServer.listen({ host: process.env.SRV_WEB_MAIN_HTTP_IP, port: process.env.SRV_WEB_MAIN_HTTP_PORT }, () => {
+    logger.info(`HTTP server listening on ${common.mergeIPPort(process.env.SRV_WEB_MAIN_HTTP_IP, process.env.SRV_WEB_MAIN_HTTP_PORT)}`);
   });
   
   global.httpServer = http.createServer(require('./requests/main').bind(null, 1));
@@ -67,23 +67,23 @@ if (process.env.NODESRVMAIN_HTTP_IP) {
   httpServer.on('connect', require('./requests/connect_http1'));
 }
 
-if (process.env.NODESRVMAIN_HTTPS_IP) {
+if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
   global.tlsServer = tls.createServer({
     secureOptions: crypto.constants.SSL_OP_NO_SSLv2 | crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_TLSv1 | crypto.constants.SSL_OP_NO_TLSv1_1,
     //ciphers: crypto.constants.defaultCoreCipherList + ':!TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256:!TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384:!TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:!TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:!TLS_RSA_WITH_AES_256_GCM_SHA384:!TLS_RSA_WITH_AES_256_CCM_8:!TLS_RSA_WITH_AES_256_CCM:!TLS_RSA_WITH_ARIA_256_GCM_SHA384:!TLS_RSA_WITH_AES_128_GCM_SHA256:!TLS_RSA_WITH_AES_128_CCM_8:!TLS_RSA_WITH_AES_128_CCM:!TLS_RSA_WITH_ARIA_128_GCM_SHA256:!TLS_RSA_WITH_AES_256_CBC_SHA256:!TLS_RSA_WITH_AES_128_CBC_SHA256:!TLS_RSA_WITH_AES_256_CBC_SHA:!TLS_RSA_WITH_AES_128_CBC_SHA:@STRENGTH',
     ciphers: 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256:TLS_ECDHE_RSA_WITH_ARIA_256_GCM_SHA384:TLS_ECDHE_RSA_WITH_ARIA_128_GCM_SHA256:@STRENGTH',
-    key: fs.readFileSync(process.env.NODESRVMAIN_TLS_KEY_FILE),
-    cert: fs.readFileSync(process.env.NODESRVMAIN_TLS_CERT_FILE) + fs.readFileSync(process.env.NODESRVMAIN_TLS_CERT_ROOT_FILE),
+    key: fs.readFileSync(process.env.SRV_WEB_MAIN_TLS_KEY_FILE),
+    cert: fs.readFileSync(process.env.SRV_WEB_MAIN_TLS_CERT_FILE) + fs.readFileSync(process.env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE),
     
     ALPNProtocols: ['h2', 'http/1.1'],
   }, conn => {
     if (conn.destroyed) {
-      if (process.env.NODESRVMAIN_LOG_DEBUG == 'true')
+      if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true')
         logger.debug(`TLS open-instaclose ${conn.remoteAddress}, ${conn.remotePort}`);
       return;
     }
     
-    if (process.env.NODESRVMAIN_LOG_DEBUG == 'true') {
+    if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true') {
       logger.debug(`TLS open ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${conn.servername} ${conn.alpnProtocol} ${conn.authorized}`);
       conn.on('close', hadError => logger.debug(`TLS close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`));
     }
@@ -107,8 +107,8 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
     cb(null, tlsSessionStore.get(id.toString('base64'))?.[0] || null);
   });
   
-  tlsServer.listen({ host: process.env.NODESRVMAIN_HTTPS_IP, port: process.env.NODESRVMAIN_HTTPS_PORT }, () => {
-    logger.info(`HTTPS/H2 server listening on ${common.mergeIPPort(process.env.NODESRVMAIN_HTTPS_IP, process.env.NODESRVMAIN_HTTPS_PORT)}`);
+  tlsServer.listen({ host: process.env.SRV_WEB_MAIN_HTTPS_IP, port: process.env.SRV_WEB_MAIN_HTTPS_PORT }, () => {
+    logger.info(`HTTPS/H2 server listening on ${common.mergeIPPort(process.env.SRV_WEB_MAIN_HTTPS_IP, process.env.SRV_WEB_MAIN_HTTPS_PORT)}`);
   });
   
   global.httpsServer = https.createServer(require('./requests/main').bind(null, 1));
@@ -119,7 +119,7 @@ if (process.env.NODESRVMAIN_HTTPS_IP) {
   http2Server.on('stream', require('./requests/main').bind(null, 2));
 }
 
-if (process.env.NODESRVMAIN_HTTP_IP || process.env.NODESRVMAIN_HTTPS_IP) {
+if (process.env.SRV_WEB_MAIN_HTTP_IP || process.env.SRV_WEB_MAIN_HTTPS_IP) {
   global.echoWSServer = new ws.Server({ noServer: true, maxPayload: 2 ** 20 });
   echoWSServer.on('connection', function echoWSFunc(ws, req, requestProps) {
     ws.on('message', msg => ws.send(msg));
@@ -157,12 +157,12 @@ process.on('unhandledRejection', err => {
 
 
 // server tick function
-global.tickIntMS = Number(process.env.NODESRVMAIN_TICK_INTERVAL) || 5000;
+global.tickIntMS = Number(process.env.SRV_WEB_MAIN_TICK_INTERVAL) || 5000;
 global.ticks = 0;
 global.tickFunc = () => {
   // for removing old cached TLS sessions
   let tlsSessionLimitTime = Date.now() - 300000;
-  if (process.env.NODESRVMAIN_HTTPS_IP && ticks % (300000 / tickIntMS)) {
+  if (process.env.SRV_WEB_MAIN_HTTPS_IP && ticks % (300000 / tickIntMS)) {
     for (var i of tlsSessionStore.keys()) {
       if (tlsSessionStore.get(i)[1] < tlsSessionLimitTime)
         tlsSessionStore.delete(i);
@@ -177,7 +177,7 @@ global.tickFunc = () => {
   }
   
   // for disconnecting chat members more quickly if their internet has cut out
-  let chatIdleTimeout = Number(process.env.NODESRVMAIN_CHAT_IDLE_TIMEOUT);
+  let chatIdleTimeout = Number(process.env.SRV_WEB_MAIN_CHAT_IDLE_TIMEOUT);
   if (chatIdleTimeout && ticks % chatIdleTimeout == 0) {
     for (var ws2 of chatWSServer.clients) {
       if (ws2.isAlive === false) return ws2.terminate();
@@ -193,7 +193,7 @@ global.tickInt = setInterval(tickFunc, tickIntMS);
 
 
 // website cache
-if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
   global.filesCache = {};
   require('./common/recursive_readdir')('websites/public').forEach(filename => {
     filename = 'websites/public/' + filename;
@@ -205,8 +205,61 @@ if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
 }
 
 
+// handle a shutdown signal
+async function exitHandler() {
+  logger.info('Shutting down');
+  
+  replServer.close();
+  
+  if (global.tcpServer) {
+    tcpServer.close(() => {
+      logger.info('HTTP server closed');
+    });
+    httpServer.close();
+    setTimeout(() => {
+      logger.info('Forcibly closing all HTTP connections');
+      httpServer.closeAllConnections();
+    }, 10000).unref();
+  }
+  
+  if (global.tlsServer) {
+    tlsServer.close(() => {
+      logger.info('HTTPS/H2 server closed');
+    });
+    httpsServer.close();
+    http2Server.close();
+    setTimeout(() => {
+      logger.info('Forcibly closing all HTTPS/H2 connections');
+      httpsServer.closeAllConnections();
+      http2Server.closeAllConnections();
+    }, 10000).unref();
+  }
+  
+  if (global.tcpServer || global.tlsServer) {
+    echoWSServer.close();
+    chatWSServer.close();
+    statusWSServer.close();
+  }
+  
+  process.removeAllListeners('message');
+  
+  clearInterval(tickInt);
+  
+  if (global.mongoClient) {
+    await mongoClient.close();
+  }
+  
+  setTimeout(() => {
+    logger.info('Forcibly shutting down');
+    process.exit();
+  }, 20000).unref();
+}
+
+process.on('SIGINT', exitHandler);
+
+
 // simple repl for executing commands
-require('repl').start({
+global.replServer = require('repl').start({
   prompt: '',
   terminal: true,
   useColors: true,

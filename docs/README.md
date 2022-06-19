@@ -14,7 +14,7 @@ the files are laid out as follows for linux:
   logs .   .   .   .   .   .   . main log files
   logs_mongodb .   .   .   .   . mongodb log files
   mongodb  .   .   .   .   .   . mongodb database
-  .env .   .   .   .   .   .   . environment variable file
+  env.list .   .   .   .   .   . environment variable file
 ```
 
 the files are laid out as follows for windows:
@@ -25,9 +25,9 @@ D:/Data/c284-webmain-1_s/
   logs .   .   .   .   . main log files
   logs_mongodb .   .   . mongodb log files
   mongodb  .   .   .   . mongodb database
-  .env .   .   .   .   . environment variable file
+  env.list .   .   .   . environment variable file
 ```
 
 # Environment Variables
 
-The .in-env file in the repo directly corresponds to the .env file out of the repo, and things in angle brackets are substitutions. Same for the .in-dockerenv and .dockerenv files.
+The in-env.list file in the repo directly corresponds to the env.list file out of the repo, and things in angle brackets are substitutions. Same for the in-srv_web_main.dockerenv.list and srv_web_main.dockerenv.list files.

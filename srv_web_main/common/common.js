@@ -74,7 +74,7 @@ module.exports = exports = {
           requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://${requestProps.host}${requestProps.urlString}`);
         } catch (err) {
           try {
-            requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://[${requestProps.host}]:${requestProps.proto == 'http' ? process.env.NODESRVMAIN_HTTP_PORT : process.env.NODESRVMAIN_HTTPS_PORT}${requestProps.urlString}`);
+            requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://[${requestProps.host}]:${requestProps.proto == 'http' ? process.env.SRV_WEB_MAIN_HTTP_PORT : process.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
           } catch (err2) {
             console.error(err2);
             console.log([requestProps.proto, requestProps.host, requestProps.urlString]);
@@ -122,7 +122,7 @@ module.exports = exports = {
           requestProps.url = new URL(`https://${requestProps.host}${requestProps.urlString}`);
         } catch (err) {
           try {
-            requestProps.url = new URL(`https://[${requestProps.host}]:${process.env.NODESRVMAIN_HTTPS_PORT}${requestProps.urlString}`);
+            requestProps.url = new URL(`https://[${requestProps.host}]:${process.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
           } catch (err2) {
             console.error(err2);
             console.log([requestProps.proto, requestProps.host, requestProps.urlString]);

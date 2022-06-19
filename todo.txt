@@ -1,8 +1,13 @@
+re add srv_web_main pinging
+
 add semicolon
 remove unused code
 unnecessary semicolon
 replace unnecessary template string
 unused function args and vars in code
+
+old.coolguy284.com and coolguy284.com/old
+http.coolguy284.com or insecure.coolguy284.com
 
 add privacy policy
 add base64_url encoder/decoder

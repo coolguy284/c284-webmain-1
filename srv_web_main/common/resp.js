@@ -129,7 +129,7 @@ module.exports = exports = {
   
   file: async (requestProps, filename, statusCode, headOnly, headers) => {
     // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
-    if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+    if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
       if (!(filename in global.filesCache)) {
         let error = new Error('ENOENT'); error.code = 'ENOENT';
         throw error;
@@ -193,7 +193,7 @@ module.exports = exports = {
             if (headOnly) {
               await exports.end(requestProps);
             } else {
-              if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+              if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
                 await exports.end(requestProps, fileEntry.file.slice(start, end));
               } else {
                 let readStream = fs.createReadStream(filename, { start, end });
@@ -230,7 +230,7 @@ module.exports = exports = {
         
         let hasVal = 0, stat;
         if (encodings.has('br') || encodings.has('*')) {
-          if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+          if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
             stat = global.filesCache[filename + '.br'];
             stat ? (size = stat.file.length, filename += '.br') : hasVal++;
           } else {
@@ -242,7 +242,7 @@ module.exports = exports = {
         } else hasVal++;
         if (hasVal == 1) {
           if (encodings.has('gzip')) {
-            if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+            if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
             stat = global.filesCache[filename + '.gz'];
             stat ? (size = stat.file.length, filename += '.gz') : hasVal++;
             } else {
@@ -270,7 +270,7 @@ module.exports = exports = {
         if (headOnly) {
           await exports.end(requestProps);
         } else {
-          if (process.env.NODESRVMAIN_CACHE_MODE == '1') {
+          if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
             await exports.end(requestProps, fileEntry.file);
           } else {
             let readStream = fs.createReadStream(filename);

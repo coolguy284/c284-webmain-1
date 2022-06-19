@@ -1,4 +1,4 @@
-var projectFolders = ['.', 'srv_web_main'];
+var projectFolders = ['srv_web_main'];
 var filesToCheck = ['package.json', 'package-basic.json'];
 
 var fs = require('fs');
@@ -7,7 +7,7 @@ var https = require('https');
 (async () => {
   // get all files
   var files = {};
-
+  
   for (var folder of projectFolders) {
     for (var file of filesToCheck) {
       var path = folder + '/' + file;
@@ -31,17 +31,17 @@ var https = require('https');
       }
     }
   }
-
+  
   // get packages
   var packages = new Set();
-
+  
   for (var file of Object.values(files)) {
     Object.keys(file.json.dependencies).forEach(x => packages.add(x));
   }
-
+  
   // get package info
   var packageVersion = {};
-
+  
   for (var packageName of packages) {
     console.log(`Getting package ${packageName}`);
     packageVersion[packageName] = await new Promise(r => {
@@ -52,7 +52,7 @@ var https = require('https');
       });
     });
   }
-
+  
   // replace version numbers
   for (var file of Object.values(files)) {
     for (var package in file.json.dependencies) {
@@ -64,7 +64,7 @@ var https = require('https');
     }
     file.text = file.lines.join('\n') + '\n';
   }
-
+  
   // replace files
   for (var path in files) {
     console.log(`Updating file ${path}`);

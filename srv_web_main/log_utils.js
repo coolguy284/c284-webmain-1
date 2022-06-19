@@ -7,6 +7,6 @@ module.exports = function createLoggerWrapper(name) {
       winston.format.colorize({ all: true }),
       winston.format.printf(info => `[${new Date().toISOString()}] [${name}] ${info.level}: ${info instanceof Error ? util.inspect(info) : typeof info.message == 'string' ? info.message : util.inspect(info.message)}`)
     ),
-    transports: [new winston.transports.Console({ level: process.env.NODESRVMAIN_LOG_DEBUG == 'true' ? 'debug' : 'info' })]
+    transports: [new winston.transports.Console({ level: process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true' ? 'debug' : 'info' })]
   });
 };

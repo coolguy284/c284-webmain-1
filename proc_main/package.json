@@ -1,7 +1,7 @@
 {
-  "name": "c284-webmain-1-init",
-  "version": "1.1.0",
-  "description": "C284 Webmain init script.",
+  "name": "c284-webmain-1-proc_main",
+  "version": "1.2.0",
+  "description": "C284 Webmain main process script.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,1 +1,6 @@
-sudo docker build -t c284-webmain-1 "${0%/*}/.."
+cd "${0%/*}/.."
+
+./proc_main/docker/build.sh
+./proc_mongodb/docker/build.sh
+#./srv_web_old/docker/build.sh
+./srv_web_main/docker/build.sh

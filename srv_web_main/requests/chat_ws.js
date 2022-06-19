@@ -307,7 +307,7 @@ function chatWSFunc(ws, req, requestProps) {
         break;
     }
 
-    if (Number(process.env.NODESRVMAIN_CHAT_IDLE_TIMEOUT))
+    if (Number(process.env.SRV_WEB_MAIN_CHAT_IDLE_TIMEOUT))
       ws.on('pong', function heartbeat() { this.isAlive = true; });
   } else {
     ws.close(4001, 'Error: mongodb_offline: MongoDB server is offline.');

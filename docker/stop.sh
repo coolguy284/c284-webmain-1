@@ -1,2 +1,6 @@
-sudo docker stop c284-webmain-1
-sudo docker container rm c284-webmain-1
+cd "${0%/*}/.."
+
+./proc_main/docker/stop.sh
+./srv_web_main/docker/stop.sh
+./proc_mongodb/docker/stop.sh
+./srv_web_old/docker/stop.sh
