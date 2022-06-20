@@ -366,6 +366,10 @@ function mongoClientOnConnect() {
   });
 }
 
+function mongoClientOnClose() {
+  chatStream.close();
+}
+
 module.exports = {
-  chatWSFunc, chatStream, mongoClientOnConnect,
+  chatWSFunc, chatStream, mongoClientOnConnect, mongoClientOnClose,
 };

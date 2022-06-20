@@ -1,7 +1,7 @@
 var NETWORK_NAME = process.argv[2];
 
-var fs = require('fs');
 var cp = require('child_process');
+var fs = require('fs');
 var ReadlineStream = require('readline-stream');
 
 // load environment variables from .env file
@@ -53,7 +53,7 @@ if (!toBool(process.env.PROC_MONGODB_DISABLED)) {
     if (logMongodb) {
       try {
         let logElemJSON = JSON.parse(logElem);
-        let logString = `[${logElemJSON.t['$date'].split('+')[0]}Z] [MONGODB:${logElemJSON.ctx}] ${logElemJSON.c}: ${logElemJSON.msg}`;
+        let logString = `[${logElemJSON.t.$date.split('+')[0]}Z] [MONGODB:${logElemJSON.ctx}] ${logElemJSON.c}: ${logElemJSON.msg}`;
         if (logElemJSON.attr && logElemJSON.attr.error) {
           if (typeof logElemJSON.attr.error == 'string')
             logString += `\n  Error: ${logElemJSON.attr.error}`;
@@ -64,7 +64,7 @@ if (!toBool(process.env.PROC_MONGODB_DISABLED)) {
         }
         console.log(logString);
       } catch (e) {
-        console.log(logElem);
+        console.log(logElem.trim());
       }
     }
   };
@@ -96,21 +96,16 @@ srv_web_main.stderr.pipe(process.stderr);
 
 
 // servers have soft and then hard shutdown
-function exitHandler() {
-  if (!proc_mongodb) {
-    console.log('proc_mongodb not run');
-  } else if (proc_mongodb.exitCode) {
-    console.log('proc_mongodb already shutdown');
-  } else {
-    console.log('Killing proc_mongodb');
-    proc_mongodb.kill('SIGINT');
-    var timeout = setTimeout(() => {
-      // proc_mongodb not explicitly killed, instead implicitly killed by closing docker container as main nodejs process exits
-      console.log('Forcibly killing proc_mongodb');
-      proc_mongodb.removeAllListeners('exit');
-    }, 10000);
-    proc_mongodb.on('exit', () => clearTimeout(timeout));
-  }
+async function exitHandler() {
+  // stop srv_web_main
+  let srv_web_main_exit_promise_r;
+  let srv_web_main_exit_promise_r_called = false;
+  let srv_web_main_exit_promise_r_call = () => {
+    if (srv_web_main_exit_promise_r_called) return;
+    srv_web_main_exit_promise_r_called = true;
+    srv_web_main_exit_promise_r();
+  };
+  let srv_web_main_exit_promise = new Promise(r => srv_web_main_exit_promise_r = r);
   
   if (!srv_web_main) {
     console.log('srv_web_main not run');
@@ -124,8 +119,27 @@ function exitHandler() {
       // srv_web_main not explicitly killed, instead implicitly killed by closing docker container as main nodejs process exits
       console.log('Forcibly killing srv_web_main');
       srv_web_main.removeAllListeners('exit');
+      srv_web_main_exit_promise_r_call();
     }, 10000);
     srv_web_main.on('exit', () => clearTimeout(timeout));
+  }
+  
+  await srv_web_main_exit_promise;
+  
+  // stop proc_mongodb
+  if (!proc_mongodb) {
+    console.log('proc_mongodb not run');
+  } else if (proc_mongodb.exitCode) {
+    console.log('proc_mongodb already shutdown');
+  } else {
+    console.log('Killing proc_mongodb');
+    proc_mongodb.kill('SIGINT');
+    var timeout = setTimeout(() => {
+      // proc_mongodb not explicitly killed, instead implicitly killed by closing docker container as main nodejs process exits
+      console.log('Forcibly killing proc_mongodb');
+      proc_mongodb.removeAllListeners('exit');
+    }, 10000);
+    proc_mongodb.on('exit', () => clearTimeout(timeout));
   }
 }
 

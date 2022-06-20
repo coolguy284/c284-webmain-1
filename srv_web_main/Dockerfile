@@ -5,9 +5,9 @@ RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install curl -y
 
+# install node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install nodejs -y
-
 RUN npm install -g npm
 
 RUN adduser webmain -u 2201

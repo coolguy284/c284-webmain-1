@@ -12,10 +12,17 @@ RUN echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mon
 RUN apt-get update
 RUN apt-get install mongodb-org -y
 
+# install node.js
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+RUN apt-get install nodejs -y
+RUN npm install -g npm
+
 RUN adduser webmain -u 2201
 USER webmain
 WORKDIR /home/webmain
 
 RUN mkdir mongodb
 
-CMD ["mongod", "--dbpath", "mongodb", "--bind_ip", "0.0.0.0", "--replSet", "c284wm1_1"]
+COPY --chown=webmain:webmain index.js index.js
+
+CMD ["node", "index.js"]

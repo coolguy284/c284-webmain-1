@@ -17,5 +17,4 @@ sudo docker run --rm -it --name c284-webmain-1_proc_main --network ${NETWORK_NAM
   --mount type=bind,source=/home/webmain/c284-webmain-1_s/mongodb,target=/home/webmain/c284-webmain-1_s/mongodb \
   --mount type=bind,source=/home/webmain/c284-webmain-1_s/env.list,target=/home/webmain/c284-webmain-1_s/env.list,readonly \
   --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
-  -p 80 -p 443 \
   c284-webmain-1_proc_main ${NETWORK_NAME} $1 | tee "../../c284-webmain-1_s/logs/$(date -u +'%Y_%m_%d %H_%M_%S %a %b %d %I_%M_%S %p %Z').log"

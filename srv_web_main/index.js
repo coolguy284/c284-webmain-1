@@ -2,13 +2,13 @@ global.logger = require('./log_utils.js')('main');
 
 logger.info('Starting c284-webmain-1/srv_web_main');
 
+var crypto = require('crypto');
 var fs = require('fs');
-var net = require('net');
-var tls = require('tls');
 var http = require('http');
 var https = require('https');
 var http2 = require('http2');
-var crypto = require('crypto');
+var net = require('net');
+var tls = require('tls');
 var ws = require('ws');
 
 var common = require('./common');
@@ -16,11 +16,31 @@ var common = require('./common');
 
 if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == 'false') {
   (async () => {
+    // start reverse proxy
+    global.mongoProxyServer = net.createServer(conn => {
+      if (conn.remoteAddress != '::ffff:127.0.0.1') {
+        logger.debug(`Mongodb proxy connection invalid, ${conn.remoteAddress}:${conn.remotePort} is not permitted to connect to the proxy`);
+        conn.destroy();
+        return;
+      }
+      logger.debug(`Mongodb proxy new connection from localhost:${conn.remotePort}`);
+      var proxyConn = net.connect(27016, 'proc_mongodb');
+      conn.pipe(proxyConn);
+      proxyConn.pipe(conn);
+      conn.on('error', err => logger.error(`localhost:${conn.remotePort} conn ` + err));
+      proxyConn.on('error', err => logger.error(`localhost:${conn.remotePort} proxyConn ` + err));
+      conn.on('close', hadError => logger.debug(`Mongodb proxy connection from localhost:${conn.remotePort} closed ${hadError ? 'with' : 'without'} error`));
+    });
+    mongoProxyServer.on('error', err => logger.error('Proxy ' + err.toString()));
+
+    mongoProxyServer.listen(27017, () => logger.info('Mongodb proxy server listening'));
+    
     // initalize mongo client
     var mongodb = require('mongodb');
-
-    global.mongoClient = new mongodb.MongoClient('mongodb://proc_mongodb', { useUnifiedTopology: true });
     
+    global.mongoClient = new mongodb.MongoClient('mongodb://127.0.0.1', { useUnifiedTopology: true });
+    
+    await new Promise(r => setTimeout(r, 3000));
     await mongoClient.connect();
     logger.info('Connected to mongodb server');
     
@@ -154,6 +174,19 @@ process.on('message', msg => {
 });
 
 
+// website cache
+if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
+  global.filesCache = {};
+  require('./common/recursive_readdir')('websites/public').forEach(filename => {
+    filename = 'websites/public/' + filename;
+    global.filesCache[filename] = {
+      stats: { mtime: fs.statSync(filename).mtime },
+      file: fs.readFileSync(filename),
+    };
+  });
+}
+
+
 // so server doesnt go down for an error
 process.on('uncaughtException', err => {
   logger.error('UncaughtException');
@@ -201,20 +234,6 @@ global.tickFunc = () => {
 };
 global.tickInt = setInterval(tickFunc, tickIntMS);
 
-
-// website cache
-if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
-  global.filesCache = {};
-  require('./common/recursive_readdir')('websites/public').forEach(filename => {
-    filename = 'websites/public/' + filename;
-    global.filesCache[filename] = {
-      stats: { mtime: fs.statSync(filename).mtime },
-      file: fs.readFileSync(filename),
-    };
-  });
-}
-
-
 // handle a shutdown signal
 async function exitHandler() {
   logger.info('Shutting down');
@@ -257,7 +276,9 @@ async function exitHandler() {
   clearInterval(tickInt);
   
   if (global.mongoClient) {
+    require('./requests/chat_ws').mongoClientOnClose();
     await mongoClient.close();
+    mongoProxyServer.close();
   }
   
   setTimeout(() => {
