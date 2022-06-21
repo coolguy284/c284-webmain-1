@@ -42,7 +42,7 @@ if (!toBool(process.env.PROC_MONGODB_DISABLED)) {
   var logMongodb = toBool(process.env.PROC_MONGODB_LOG_CONS);
   
   var proc_mongodb = cp.spawn('docker', [
-    'run', '--rm', '-i', '--name', 'c284-webmain-1_proc_mongodb', '--network', NETWORK_NAME, '--network-alias', 'proc_mongodb',
+    'run', '--rm', '--name', 'c284-webmain-1_proc_mongodb', '--network', NETWORK_NAME, '--network-alias', 'proc_mongodb',
     '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/mongodb,target=/home/webmain/mongodb',
     'c284-webmain-1_proc_mongodb'
   ], { stdio: ['ignore', 'pipe', 'pipe'] });

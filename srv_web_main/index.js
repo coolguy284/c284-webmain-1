@@ -83,6 +83,13 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP) {
   });
   
   global.httpServer = http.createServer(require('./requests/main').bind(null, 1));
+  global.httpServerConns = new Set();
+  httpServer.on('connection', socket => {
+    httpServerConns.add(socket);
+    socket.on('close', () => {
+      httpServerConns.delete(socket);
+    });
+  });
   httpServer.on('upgrade', require('./requests/upgrade'));
   httpServer.on('connect', require('./requests/connect_http1'));
 }
@@ -132,6 +139,13 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
   });
   
   global.httpsServer = https.createServer(require('./requests/main').bind(null, 1));
+  global.httpsServerConns = new Set();
+  httpsServer.on('secureConnection', socket => {
+    httpsServerConns.add(socket);
+    socket.on('close', () => {
+      httpsServerConns.delete(socket);
+    });
+  });
   httpsServer.on('upgrade', require('./requests/upgrade'));
   httpsServer.on('connect', require('./requests/connect_http1'));
   
@@ -150,16 +164,16 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
 }
 
 if (process.env.SRV_WEB_MAIN_HTTP_IP || process.env.SRV_WEB_MAIN_HTTPS_IP) {
-  global.echoWSServer = new ws.Server({ noServer: true, maxPayload: 2 ** 20 });
+  global.echoWSServer = new ws.Server({ noServer: true, clientTracking: true, maxPayload: 2 ** 20 });
   echoWSServer.on('connection', function echoWSFunc(ws, req, requestProps) {
     ws.on('message', msg => ws.send(msg));
   });
   
-  global.chatWSServer = new ws.Server({ noServer: true, maxPayload: 8 * 2 ** 20 });
+  global.chatWSServer = new ws.Server({ noServer: true, clientTracking: true, maxPayload: 8 * 2 ** 20 });
   chatWSServer.on('connection', require('./requests/chat_ws').chatWSFunc);
   global.chatWSServerMap = new WeakMap();
   
-  global.statusWSServer = new ws.Server({ noServer: true, maxPayload: 2 ** 20 });
+  global.statusWSServer = new ws.Server({ noServer: true, clientTracking: true, maxPayload: 2 ** 20 });
   statusWSServer.on('connection', require('./requests/status_ws').statusWSFunc);
 }
 
@@ -246,8 +260,10 @@ async function exitHandler() {
     });
     httpServer.close();
     setTimeout(() => {
-      logger.info('Forcibly closing all HTTP connections');
+      if (!httpServerConns.size) return;
+      logger.warn('Forcibly closing all HTTP connections');
       httpServer.closeAllConnections();
+      for (var socket of httpServerConns) socket.destroy();
     }, 10000).unref();
   }
   
@@ -257,11 +273,17 @@ async function exitHandler() {
     });
     httpsServer.close();
     http2Server.close();
-    for (var session of http2ServerSessions) { session.close(); }
+    for (var session of http2ServerSessions) session.close();
     setTimeout(() => {
-      logger.info('Forcibly closing all HTTPS/H2 connections');
-      httpsServer.closeAllConnections();
-      for (var stream of http2ServerStreams) { stream.close(); }
+      if (!httpsServerConns.size && !http2ServerStreams.size) return;
+      logger.warn('Forcibly closing all HTTPS/H2 connections');
+      if (httpsServerConns.size) {
+        httpsServer.closeAllConnections();
+        for (var socket of httpsServerConns) socket.destroy();
+      }
+      if (http2ServerStreams.size) {
+        for (var stream of http2ServerStreams) stream.close();
+      }
     }, 10000).unref();
   }
   
@@ -269,6 +291,20 @@ async function exitHandler() {
     echoWSServer.close();
     chatWSServer.close();
     statusWSServer.close();
+    
+    setTimeout(() => {
+      if (!echoWSServer.clients.size && !chatWSServer.clients.size && !statusWSServer.clients.size) return;
+      logger.warn('Forcibly closing all WebSocket connections');
+      if (echoWSServer.clients.size) {
+        for (var ws of echoWSServer.clients) ws.close();
+      }
+      if (chatWSServer.clients.size) {
+        for (var ws of chatWSServer.clients) ws.close();
+      }
+      if (statusWSServer.clients.size) {
+        for (var ws of statusWSServer.clients) ws.close();
+      }
+    }, 8000).unref();
   }
   
   process.removeAllListeners('message');
@@ -282,9 +318,9 @@ async function exitHandler() {
   }
   
   setTimeout(() => {
-    logger.info('Forcibly shutting down');
+    logger.warn('Forcibly shutting down');
     process.exit();
-  }, 20000).unref();
+  }, 12000).unref();
 }
 
 process.on('SIGINT', exitHandler);

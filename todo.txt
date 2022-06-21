@@ -1,4 +1,4 @@
-close srv_web_main websockets
+add debug mode support to website
 
 re add srv_web_main pinging
 
@@ -24,6 +24,7 @@ add description to more misc pages
 sitemap lastmod from git repo, changefreq based on lastmod (maybe)
 add adblock detector site (for fun)
 chat empty string should show up as anonymous
+chat, echo, status websockets should have proper server close exit code and server close procedure where client closes, instead of force close
 
 enigma machine and other sites in tools and other from the old site
 hex editor
