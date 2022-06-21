@@ -30,4 +30,4 @@ D:/Data/c284-webmain-1_s/
 
 # Environment Variables
 
-The in-env.list file in the repo directly corresponds to the env.list file out of the repo, and things in angle brackets are substitutions. Same for the in-srv_web_main.dockerenv.list and srv_web_main.dockerenv.list files.
+The in-env.list file in the repo directly corresponds to the env.list file out of the repo, and things in angle brackets are substitutions. Same for the srv_web_main/in-dockerenv.list and srv_web_main/dockerenv.list files.
