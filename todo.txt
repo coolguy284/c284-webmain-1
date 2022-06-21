@@ -1,5 +1,3 @@
-re add srv_web_main pinging
-
 old.coolguy284.com and coolguy284.com/old
   check validity of node server and new server and wm1 issubdir checks before inclusion in wm1
   add old and old2 to index as addl links

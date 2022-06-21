@@ -23,14 +23,21 @@ if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == '
         conn.destroy();
         return;
       }
+      mongoProxyServerConns.add(conn);
       logger.debug(`Mongodb proxy new connection from localhost:${conn.remotePort}`);
       var proxyConn = net.connect(27016, 'proc_mongodb');
+      mongoProxyServerConns.add(proxyConn);
       conn.pipe(proxyConn);
       proxyConn.pipe(conn);
       conn.on('error', err => logger.error(`localhost:${conn.remotePort} conn ` + err));
       proxyConn.on('error', err => logger.error(`localhost:${conn.remotePort} proxyConn ` + err));
-      conn.on('close', hadError => logger.debug(`Mongodb proxy connection from localhost:${conn.remotePort} closed ${hadError ? 'with' : 'without'} error`));
+      conn.on('close', hadError => {
+        mongoProxyServerConns.delete(conn);
+        mongoProxyServerConns.delete(proxyConn);
+        logger.debug(`Mongodb proxy connection from localhost:${conn.remotePort} closed ${hadError ? 'with' : 'without'} error`)
+      });
     });
+    global.mongoProxyServerConns = new Set();
     mongoProxyServer.on('error', err => logger.error('Proxy ' + err.toString()));
 
     mongoProxyServer.listen(27017, () => logger.info('Mongodb proxy server listening'));
@@ -178,16 +185,6 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP || process.env.SRV_WEB_MAIN_HTTPS_IP) {
 }
 
 
-// responding to pings from main process
-process.on('message', msg => {
-  switch (msg.type) {
-    case 'ping':
-      process.send({ type: 'pong' });
-      break;
-  }
-});
-
-
 // website cache
 if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
   global.filesCache = {};
@@ -307,14 +304,17 @@ async function exitHandler() {
     }, 8000).unref();
   }
   
-  process.removeAllListeners('message');
-  
   try { clearInterval(tickInt); } catch (e) { logger.error(e); }
   
   if (global.mongoClient) {
     try { require('./requests/chat_ws').mongoClientOnClose(); } catch (e) { logger.error(e); }
     try { await mongoClient.close(); } catch (e) { logger.error(e); }
     try { mongoProxyServer.close(); } catch (e) { logger.error(e); }
+    
+    setTimeout(() => {
+      logger.warn('Forcibly closing all mongodb connections');
+      for (var socket in mongoProxyServerConns) socket.destroy();
+    }, 10000).unref();
   }
   
   setTimeout(() => {
