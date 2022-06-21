@@ -1,8 +1,14 @@
-add debug mode support to website
-
 re add srv_web_main pinging
 
 old.coolguy284.com and coolguy284.com/old
+  check validity of node server and new server and wm1 issubdir checks before inclusion in wm1
+  add old and old2 to index as addl links
+  possibly /old-node-server and /old-node-server-new instead of /old and /old2 but possibly just explained in index
+  robots.txt deny old and old2
+  change old site link in 404 to old site
+  make old and maybe old2 not use polling, probably use eventsource instead
+    dompurify to old node chat
+  add external links warning to index for old and old2
 http.coolguy284.com or insecure.coolguy284.com
 
 add semicolon
@@ -26,8 +32,14 @@ add adblock detector site (for fun)
 chat empty string should show up as anonymous
 chat, echo, status websockets should have proper server close exit code and server close procedure where client closes, instead of force close
 add alternate webpage access url /api/page?page=<url> or /api/page?page_b64=<b64_url> endpoint with optional &replace_internal_urls=true
-
+  forward headers and call request func with headers, except maybe not forward last modified
+  possible future support for full urls for proxy like instead of just server urls
+  possible tie in to virtual browser
+  maybe a public or api keyed js api to make any http query
+make docs accessible on website
 enigma machine and other sites in tools and other from the old site
+auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
+
 hex editor
 english words searcher
 add pseudo live birth and death tracker that is not linear but instead has realistic randomness in the timing, also maybe other events, also random names
@@ -43,8 +55,8 @@ optional service worker for caching and testing
 finish unicode viewer and link it
 opencloudhash and cloudhash (csprng based fake hash using database, with api for access), opencloudhash has hash entries visible, cloudhash does not
 xampp subfolder /x, wordpress subfolder /x/w
-auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
 user account system
+add open declaration of password security and data handling (when its time)
 chat upgrades
   option to send as markdown, bbcode, or html
   text, voice, raw data thru voice, inputs keyboard mouse controller etc sent to bot and output stream from bot (thru voice channel)

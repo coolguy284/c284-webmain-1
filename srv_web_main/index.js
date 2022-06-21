@@ -309,12 +309,12 @@ async function exitHandler() {
   
   process.removeAllListeners('message');
   
-  clearInterval(tickInt);
+  try { clearInterval(tickInt); } catch (e) { logger.error(e); }
   
   if (global.mongoClient) {
-    require('./requests/chat_ws').mongoClientOnClose();
-    await mongoClient.close();
-    mongoProxyServer.close();
+    try { require('./requests/chat_ws').mongoClientOnClose(); } catch (e) { logger.error(e); }
+    try { await mongoClient.close(); } catch (e) { logger.error(e); }
+    try { mongoProxyServer.close(); } catch (e) { logger.error(e); }
   }
   
   setTimeout(() => {

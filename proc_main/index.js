@@ -85,7 +85,7 @@ var srv_web_main = cp.spawn('docker', [
   'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_main', '--network', NETWORK_NAME, '--network-alias', 'srv_web_main',
   '--env-file', '/home/webmain/c284-webmain-1_s/env.list',
   '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/cert,target=/home/webmain/cert,readonly',
-  ...(process.argv[3] ? ['--mount', 'type=bind,source=/home/webmain/c284-webmain-1/srv_web_main/websites,target=/home/webmain/srv_web_main/websites,readonly'] : []),
+  ...(process.argv[3] ? ['--mount', 'type=bind,source=/home/webmain/c284-webmain-1/srv_web_main/websites,target=/home/webmain/websites,readonly'] : []),
   '-p', '80:8080', '-p', '443:8443',
   'c284-webmain-1_srv_web_main'
 ], { stdio: ['pipe', 'pipe', 'pipe'] });

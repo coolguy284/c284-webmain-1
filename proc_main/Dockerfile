@@ -15,7 +15,6 @@ RUN apt-get install nodejs -y
 RUN npm install -g npm
 
 WORKDIR /home/webmain
-RUN mkdir /home/webmain/c284-webmain-1_s
 
 COPY package.json package.json
 RUN npm install
