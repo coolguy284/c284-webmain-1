@@ -246,7 +246,12 @@ global.tickFunc = () => {
 global.tickInt = setInterval(tickFunc, tickIntMS);
 
 // handle a shutdown signal
+global.exitHandlerCalled = false;
+
 async function exitHandler() {
+  if (exitHandlerCalled) return;
+  exitHandlerCalled = true;
+  
   logger.info('Shutting down');
   
   if (global.replServer) replServer.close();

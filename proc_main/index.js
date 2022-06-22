@@ -1,4 +1,4 @@
-var NETWORK_NAME = process.argv[2];
+var NETWORK_NAME = process.argv[2] || 'c284-webmain-1_net';
 
 var cp = require('child_process');
 var fs = require('fs');
@@ -90,13 +90,20 @@ var srv_web_main = cp.spawn('docker', [
   'c284-webmain-1_srv_web_main'
 ], { stdio: ['pipe', 'pipe', 'pipe'] });
 
-process.stdin.pipe(srv_web_main.stdin);
 srv_web_main.stdout.pipe(process.stdout);
 srv_web_main.stderr.pipe(process.stderr);
 
 
 // servers have soft and then hard shutdown
+var exitHandlerCalled = false;
+
 async function exitHandler() {
+  if (exitHandlerCalled) return;
+  exitHandlerCalled = true;
+  
+  // disconnect input
+  process.stdin.unpipe();
+  
   // stop srv_web_main
   let srv_web_main_exit_promise_r;
   let srv_web_main_exit_promise_r_called = false;
@@ -109,19 +116,22 @@ async function exitHandler() {
   
   if (!srv_web_main) {
     console.log('srv_web_main not run');
-  } else if (srv_web_main.exitCode) {
+  } else if (srv_web_main.exitCode != null) {
     console.log('srv_web_main already shutdown');
   } else {
-    console.log('Killing srv_web_main');
+    console.log('Shutting down srv_web_main');
     srv_web_main.kill('SIGINT');
     srv_web_main.kill('SIGINT');
-    var timeout = setTimeout(() => {
+    let timeout = setTimeout(() => {
       // srv_web_main not explicitly killed, instead implicitly killed by closing docker container as main nodejs process exits
-      console.log('Forcibly killing srv_web_main');
+      console.log('Forcibly shutting down srv_web_main');
       srv_web_main.removeAllListeners('exit');
       srv_web_main_exit_promise_r_call();
-    }, 10000);
-    srv_web_main.on('exit', () => clearTimeout(timeout));
+    }, 13000);
+    srv_web_main.on('exit', () => {
+      clearTimeout(timeout);
+      srv_web_main_exit_promise_r_call();
+    });
   }
   
   await srv_web_main_exit_promise;
@@ -129,22 +139,22 @@ async function exitHandler() {
   // stop proc_mongodb
   if (!proc_mongodb) {
     console.log('proc_mongodb not run');
-  } else if (proc_mongodb.exitCode) {
+  } else if (proc_mongodb.exitCode != null) {
     console.log('proc_mongodb already shutdown');
   } else {
-    console.log('Killing proc_mongodb');
+    console.log('Shutting down proc_mongodb');
     proc_mongodb.kill('SIGINT');
-    var timeout = setTimeout(() => {
+    let timeout = setTimeout(() => {
       // proc_mongodb not explicitly killed, instead implicitly killed by closing docker container as main nodejs process exits
-      console.log('Forcibly killing proc_mongodb');
+      console.log('Forcibly shutting down proc_mongodb');
       proc_mongodb.removeAllListeners('exit');
     }, 10000);
     proc_mongodb.on('exit', () => clearTimeout(timeout));
   }
 }
 
-if (srv_web_main) srv_web_main.on('exit', () => exitHandler);
-process.on('SIGINT', () => exitHandler);
+if (srv_web_main) srv_web_main.on('exit', () => exitHandler());
+process.on('SIGINT', () => exitHandler());
 
 // so server doesnt go down for an error
 process.on('uncaughtException', err => {
@@ -155,4 +165,21 @@ process.on('uncaughtException', err => {
 process.on('unhandledRejection', err => {
   console.error('UnhandledRejection');
   console.error(err);
+});
+
+// command execution
+var process_stdin = new ReadlineStream({});
+process.stdin.pipe(process_stdin);
+
+var sendServer = 1;
+process_stdin.on('data', input => {
+  switch (input) {
+    case ':q\n': exitHandler(); break;
+    case ':s1\n': sendServer = 1; break;
+    default:
+      switch (sendServer) {
+        case 1: if (srv_web_main) srv_web_main.stdin.write(input); break;
+      }
+      break;
+  }
 });

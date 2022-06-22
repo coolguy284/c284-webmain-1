@@ -1,3 +1,14 @@
+add to proc_main/index.js:
+  // old nodejs server
+  var srv_web_old = cp.spawn('docker', [
+    'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_old', '--network', NETWORK_NAME, '--network-alias', 'srv_web_old',
+    '-e', 'PORT=25000',
+    'c284-webmain-1_srv_web_old'
+  ], { stdio: ['pipe', 'pipe', 'pipe'] });
+
+  srv_web_old.stdout.pipe(process.stdout);
+  srv_web_old.stderr.pipe(process.stderr);
+
 old.coolguy284.com and coolguy284.com/old
   check validity of node server and new server and wm1 issubdir checks before inclusion in wm1
   add old and old2 to index as addl links
@@ -7,6 +18,9 @@ old.coolguy284.com and coolguy284.com/old
   make old and maybe old2 not use polling, probably use eventsource instead
     dompurify to old node chat
   add external links warning to index for old and old2
+
+fix all docker containers getting a sigint simultaneously when proc_main one does
+
 http.coolguy284.com or insecure.coolguy284.com
 
 add semicolon

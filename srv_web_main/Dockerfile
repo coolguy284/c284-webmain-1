@@ -48,4 +48,4 @@ COPY --chown=webmain:webmain websites websites
 
 RUN node helpers/put_version_in_index.js && node helpers/set_contact_info.js && node helpers/create_sitemap.js && node helpers/compress_and_etags.js --except '^data/UnicodeData\.txt(?:\.gz|\.br)?$' '^libs/.*$'
 
-CMD ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]
+ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]

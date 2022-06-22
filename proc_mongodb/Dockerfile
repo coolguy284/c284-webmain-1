@@ -25,4 +25,4 @@ RUN mkdir mongodb
 
 COPY --chown=webmain:webmain index.js index.js
 
-CMD ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]
+ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]
