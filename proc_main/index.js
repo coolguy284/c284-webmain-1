@@ -75,16 +75,27 @@ if (!toBool(process.env.PROC_MONGODB_DISABLED)) {
 }
 
 
+function fancyServerLog(serverName, msg) {
+  let dateMatch = /^\[([0-9]+-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}.[0-9]{3}Z)\] (.+)$/s.exec(msg);
+  if (dateMatch) {
+    return `[${dateMatch[1]}] [${serverName}] ${dateMatch[2]}`;
+  } else {
+    return `[${new Date().toISOString()}] [${serverName}] ${msg}`;
+  }
+}
+
+
 // old nodejs server
 if (!toBool(process.env.SRV_WEB_OLD_DISABLED)) {
   var srv_web_old = cp.spawn('docker', [
     'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_old', '--network', NETWORK_NAME, '--network-alias', 'srv_web_old',
-    '-e', 'PORT=25000',
+    '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/srv_web_old_data,target=/home/webmain/data',
+    '-e', 'PORT=8080',
     'c284-webmain-1_srv_web_old'
   ], { stdio: ['pipe', 'pipe', 'pipe'] });
-
-  srv_web_old.stdout.pipe(ReadlineStream({})).on('data', data => console.log(`[srv_web_old] ${data.slice(0, -1)}`));
-  srv_web_old.stderr.pipe(ReadlineStream({})).on('data', data => console.error(`[srv_web_old] ${data.slice(0, -1)}`));
+  
+  srv_web_old.stdout.pipe(ReadlineStream({})).on('data', msg => console.log(fancyServerLog('srv_web_old', msg.slice(0, -1))));
+  srv_web_old.stderr.pipe(ReadlineStream({})).on('data', msg => console.error(fancyServerLog('srv_web_old', msg.slice(0, -1))));
 }
 
 
@@ -92,21 +103,21 @@ if (!toBool(process.env.SRV_WEB_OLD_DISABLED)) {
 if (!toBool(process.env.SRV_WEB_OLD2_DISABLED)) {
   var srv_web_old2 = cp.spawn('docker', [
     'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_old2', '--network', NETWORK_NAME, '--network-alias', 'srv_web_old2',
-    '-e', 'PORT=25000', '-e', 'PORTTLS=nullorsmthidk', // rework this whole thing, then send to srv_web_old2/docker/start.sh
+    '-e', 'HTTP=true', '-e', 'HTTPS=false', '-e', 'PORT=8080',
     'c284-webmain-1_srv_web_old2'
   ], { stdio: ['pipe', 'pipe', 'pipe'] });
   
-  srv_web_old2.stdout.pipe(ReadlineStream({})).on('data', data => console.log(`[srv_web_old2] ${data.slice(0, -1)}`));
-  srv_web_old2.stderr.pipe(ReadlineStream({})).on('data', data => console.error(`[srv_web_old2] ${data.slice(0, -1)}`));
+  srv_web_old2.stdout.pipe(ReadlineStream({})).on('data', msg => console.log(fancyServerLog('srv_web_old2', msg.slice(0, -1))));
+  srv_web_old2.stderr.pipe(ReadlineStream({})).on('data', msg => console.error(fancyServerLog('srv_web_old2', msg.slice(0, -1))));
 }
 
 
 // main nodejs server for website
 var srv_web_main = cp.spawn('docker', [
   'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_main', '--network', NETWORK_NAME, '--network-alias', 'srv_web_main',
-  '--env-file', '/home/webmain/c284-webmain-1_s/env.list',
   '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/cert,target=/home/webmain/cert,readonly',
   ...(process.argv[3] ? ['--mount', 'type=bind,source=/home/webmain/c284-webmain-1/srv_web_main/websites,target=/home/webmain/websites,readonly'] : []),
+  '--env-file', '/home/webmain/c284-webmain-1_s/env.list',
   '-p', '80:8080', '-p', '443:8443',
   'c284-webmain-1_srv_web_main'
 ], { stdio: ['pipe', 'pipe', 'pipe'] });
@@ -119,15 +130,20 @@ srv_web_main.stderr.pipe(process.stderr);
 function processShutdownRoutine(proc, procName, forceTimeout, promiseCall) {
   if (!proc) {
     console.log(`${procName} not run`);
+    if (promiseCall) promiseCall();
   } else if (proc.exitCode != null) {
     console.log(`${procName} already shutdown`);
+    if (promiseCall) promiseCall();
   } else {
     console.log(`Shutting down ${procName}`);
     proc.kill('SIGINT');
     let timeout = setTimeout(() => {
-      // proc not explicitly killed, instead implicitly killed by closing docker container as main nodejs process exits
       console.log(`Forcibly shutting down ${procName}`);
+      proc.kill('SIGKILL');
       proc.removeAllListeners('exit');
+      cp.spawn('docker', ['stop', '-t', '0', `c284-webmain-1_${procName}`]);
+      // set timeout to give docker process time to send stop signal to the daemon
+      setTimeout(() => {}, 500);
       if (promiseCall) promiseCall();
     }, forceTimeout ?? 10000);
     proc.on('exit', () => {

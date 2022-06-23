@@ -20,4 +20,12 @@ RUN rmdir node-server
 
 RUN npm install
 
+RUN echo 'process.on("SIGINT", function () {\n\
+  letterm = true;\n\
+  checkable = false;\n\
+  clearInterval(scint);\n\
+  console.log("SIGINT recieved, shutting down server.");\n\
+  serv.kill();\n\
+});' >> index.js
+
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]

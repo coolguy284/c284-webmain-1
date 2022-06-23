@@ -1,16 +1,14 @@
 unarchive node-server-new to make common flags http and https server be related to common.port and common.porttls, also make common port and porttls default to null, null meaning server won't get run; either this or make common flags http and https into environment variables, probably this latter as it matches the code style more
   check how well node-server and node-server-new handle sigints
   update each server's github repo to deny all in their robots txt since they are old sites, see if a flag can be added to robots.txt explaining why disallow
-  implement x-robots-tag: noindex header to all 3 servers, but for wm1 only in /old and /old2 subdirs (forwards headers from the server but also adds in the x-robots-tag header)
+  implement x-robots-tag: noindex header to all 3 servers, but for wm1 only in /old and /old2 subdirs (forwards headers from the server but also adds in the x-robots-tag header, until the server is updated to send the header itself)
   crlf and all eslint checks on all 3 servers
   maybe add coolguy284.github.io to site as well
   update github repos description urls once hosted
 
 old.coolguy284.com and coolguy284.com/old
-  check validity of node server and new server and wm1 issubdir checks before inclusion in wm1
   add old and old2 to index as addl links
   possibly /old-node-server and /old-node-server-new instead of /old and /old2 but possibly just explained in index
-  robots.txt deny old and old2
   change old site link in 404 to old site
   make old and maybe old2 not use polling, probably use eventsource instead
     dompurify to old node chat
@@ -21,6 +19,9 @@ fix all docker containers getting a sigint simultaneously when proc_main one doe
 http.coolguy284.com or insecure.coolguy284.com
 
 add website flag for sending a x-robots-tag of noindex with the page
+
+potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
+update options method responses
 
 add semicolon
 remove unused code
@@ -50,6 +51,7 @@ add alternate webpage access url /api/page?page=<url> or /api/page?page_b64=<b64
 make docs accessible on website
 enigma machine and other sites in tools and other from the old site
 auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
+add strange files page, with weird zips and wims and stuff
 
 hex editor
 english words searcher
@@ -76,3 +78,4 @@ spaces
 
 problems:
 if there is a unicode url it can be redirected by the default redirect code and the unicode code one at a time
+proc_main index.js seems to stay running if one of sibling docker containers started by it is still running

@@ -32,7 +32,7 @@ module.exports = exports = {
   
   isSubDir: (parent, dir) => {
     var relativePath = path.relative(parent, dir);
-    return relativePath && relativePath != '..' && !relativePath.startsWith('..' + path.sep);
+    return relativePath && relativePath != '..' && !relativePath.startsWith('..' + path.sep) && !path.isAbsolute(relativePath);
   },
   
   getRequestProps: (httpVersion, ...args) => {
@@ -81,8 +81,7 @@ module.exports = exports = {
             requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://NULL/null`);
           }
         }
-        
-        return requestProps;
+        break;
       
       case 2:
         var [ stream, headers, flags, rawHeaders, type ] = args;
@@ -129,14 +128,17 @@ module.exports = exports = {
             requestProps.url = new URL('https://NULL/null');
           }
         }
-        
-        return requestProps;
+        break;
       
       default:
         console.log('not possible');
         console.log(httpVersion);
         throw new Error('NotPossibleError');
     }
+    
+    requestProps.url.path = requestProps.url.href.slice(requestProps.url.origin.length);
+    
+    return requestProps;
   },
   
   getReqLogStr: requestProps => {
@@ -168,5 +170,10 @@ module.exports = exports = {
   
   vars: {
     ownEyesCodes: new Map(),
+  },
+  
+  constVars: {
+    oldServerNoLogURLs: new Set(['/livechat.dat', '/liverchat.json', '/liveviews.dat', '/comms.json', '/colog.dat', '/cologd.dat', '/livechathere.dat', '/livechattyp.dat', '/livechatkick.dat', '/pkey.log', '/lat.log']),
+    oldServerNoLogURLStarts: ['/s?her=', '/s?typ=', '/m?cnl=', '/a?co=', '/a?cd=', '/a?ccp=', '/a?rc=', '/a?fstyp=', '/a?fsdir=', '/a?fstex='],
   },
 };

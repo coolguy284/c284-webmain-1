@@ -317,6 +317,7 @@ async function exitHandler() {
     try { mongoProxyServer.close(); } catch (e) { logger.error(e); }
     
     setTimeout(() => {
+      if (!mongoProxyServerConns.size) return;
       logger.warn('Forcibly closing all mongodb connections');
       for (var socket in mongoProxyServerConns) socket.destroy();
     }, 10000).unref();
