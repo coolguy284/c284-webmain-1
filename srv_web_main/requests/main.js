@@ -41,10 +41,13 @@ module.exports = async function main(httpVersion, ...args) {
       return;
     }
     
-    if (requestProps.host == 'old.coolguy284.com' || requestProps.url.pathname.startsWith('/old/')) {
+    let isOldServer = requestProps.host == 'old.coolguy284.com' || requestProps.url.pathname.startsWith('/old/');
+    let isHttp2Connect = requestProps.httpVersion == 2 && requestProps.method == 'connect';
+    if (isOldServer && !isHttp2Connect) {
       // old server proxying
       let sendURL = requestProps.url.pathname.startsWith('/old/') ? requestProps.url.path.slice(4) : requestProps.url.path;
       let sendHeaders = {
+        ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
         ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
         'x-forwarded-for': requestProps.ip,
         'x-forwarded-proto': 'https',
@@ -56,6 +59,7 @@ module.exports = async function main(httpVersion, ...args) {
         path: sendURL,
         headers: sendHeaders,
         setHost: false,
+        timeout: 10000,
       }, async res => {
         await common.resp.headers(requestProps, res.statusCode, {
           ...Object.fromEntries(Object.entries(res.headers).filter(x => x[0].toLowerCase() != 'connection')),
@@ -63,15 +67,20 @@ module.exports = async function main(httpVersion, ...args) {
         });
         await common.resp.stream(requestProps, res);
       });
+      httpServerProxyConns.add(srvReq);
+      srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
+      srvReq.on('error', logger.error);
       common.resp.getStream(requestProps).pipe(srvReq);
     } else {
       // main server processing
-      let potentialRedirect = redirects.followRedirects(requestProps.url);
-      
-      if (potentialRedirect[0]) {
-        await common.resp.headers(requestProps, potentialRedirect[1], { 'location': potentialRedirect[2] });
-        await common.resp.end(requestProps);
-        return;
+      if (!isOldServer) {
+        let potentialRedirect = redirects.followRedirects(requestProps.url);
+        
+        if (potentialRedirect[0]) {
+          await common.resp.headers(requestProps, potentialRedirect[1], { 'location': potentialRedirect[2] });
+          await common.resp.end(requestProps);
+          return;
+        }
       }
       
       let methodRun;

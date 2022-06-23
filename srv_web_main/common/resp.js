@@ -109,7 +109,7 @@ module.exports = exports = {
   
   getStream: (requestProps) => {
     if (requestProps.httpVersion == 1)
-      return requestProps.res;
+      return requestProps.req;
     else if (requestProps.httpVersion == 2)
       return requestProps.stream;
   },

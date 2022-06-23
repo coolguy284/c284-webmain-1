@@ -1,7 +1,7 @@
 var path = require('path');
 var common = require('../common');
 
-module.exports = async function getMethod(requestProps) {
+module.exports = async function postMethod(requestProps) {
   var publicPath = common.getPublicPath(requestProps.url.pathname);
   
   if (!common.isSubDir('websites/public', publicPath)) {

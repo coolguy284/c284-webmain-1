@@ -22,6 +22,7 @@ add website flag for sending a x-robots-tag of noindex with the page
 
 potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
 update options method responses
+http2 websocket 404 strange behavior
 
 add semicolon
 remove unused code

@@ -34,7 +34,7 @@ if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == '
       conn.on('close', hadError => {
         mongoProxyServerConns.delete(conn);
         mongoProxyServerConns.delete(proxyConn);
-        logger.debug(`Mongodb proxy connection from localhost:${conn.remotePort} closed ${hadError ? 'with' : 'without'} error`)
+        logger.debug(`Mongodb proxy connection from localhost:${conn.remotePort} closed ${hadError ? 'with' : 'without'} error`);
       });
     });
     global.mongoProxyServerConns = new Set();
@@ -77,7 +77,9 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP) {
     
     if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true') {
       logger.debug(`TCP open ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)}`);
-      conn.on('close', hadError => logger.debug(`TCP close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`));
+      conn.on('close', hadError => {
+        logger.debug(`TCP close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`);
+      });
     }
     
     conn.setNoDelay(true);
@@ -93,9 +95,7 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP) {
   global.httpServerConns = new Set();
   httpServer.on('connection', socket => {
     httpServerConns.add(socket);
-    socket.on('close', () => {
-      httpServerConns.delete(socket);
-    });
+    socket.on('close', () => { httpServerConns.delete(socket); });
   });
   httpServer.on('upgrade', require('./requests/upgrade'));
   httpServer.on('connect', require('./requests/connect_http1'));
@@ -119,7 +119,9 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
     
     if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true') {
       logger.debug(`TLS open ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${conn.servername} ${conn.alpnProtocol} ${conn.authorized}`);
-      conn.on('close', hadError => logger.debug(`TLS close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`));
+      conn.on('close', hadError => {
+        logger.debug(`TLS close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`);
+      });
     }
     
     conn.setNoDelay(true);
@@ -149,9 +151,7 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
   global.httpsServerConns = new Set();
   httpsServer.on('secureConnection', socket => {
     httpsServerConns.add(socket);
-    socket.on('close', () => {
-      httpsServerConns.delete(socket);
-    });
+    socket.on('close', () => { httpsServerConns.delete(socket); });
   });
   httpsServer.on('upgrade', require('./requests/upgrade'));
   httpsServer.on('connect', require('./requests/connect_http1'));
@@ -182,6 +182,8 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP || process.env.SRV_WEB_MAIN_HTTPS_IP) {
   
   global.statusWSServer = new ws.Server({ noServer: true, clientTracking: true, maxPayload: 2 ** 20 });
   statusWSServer.on('connection', require('./requests/status_ws').statusWSFunc);
+  
+  global.httpServerProxyConns = new Set();
 }
 
 
@@ -306,6 +308,12 @@ async function exitHandler() {
       if (statusWSServer.clients.size) {
         for (var ws of statusWSServer.clients) ws.close();
       }
+    }, 8000).unref();
+    
+    setTimeout(() => {
+      if (!httpServerProxyConns.size) return;
+      logger.warn('Forcibly closing all http server proxy connections');
+      for (var httpReq of httpServerProxyConns) httpReq.destroy();
     }, 8000).unref();
   }
   
