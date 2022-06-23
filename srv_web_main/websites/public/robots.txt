@@ -1,2 +1,9 @@
 User-agent: *
-Disallow:
+User-agent: AdsBot-Google
+User-agent: AdsBot-Google-Mobile
+User-agent: Mediapartners-Google
+Disallow: /misc/debug/templates/
+# these two directories are old sites and thus should not show up in search results
+Disallow: /old/
+Disallow: /old2/
+Sitemap: https://coolguy284.com/sitemap.xml

@@ -1,13 +1,10 @@
-add to proc_main/index.js:
-  // old nodejs server
-  var srv_web_old = cp.spawn('docker', [
-    'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_old', '--network', NETWORK_NAME, '--network-alias', 'srv_web_old',
-    '-e', 'PORT=25000',
-    'c284-webmain-1_srv_web_old'
-  ], { stdio: ['pipe', 'pipe', 'pipe'] });
-
-  srv_web_old.stdout.pipe(process.stdout);
-  srv_web_old.stderr.pipe(process.stderr);
+unarchive node-server-new to make common flags http and https server be related to common.port and common.porttls, also make common port and porttls default to null, null meaning server won't get run; either this or make common flags http and https into environment variables, probably this latter as it matches the code style more
+  check how well node-server and node-server-new handle sigints
+  update each server's github repo to deny all in their robots txt since they are old sites, see if a flag can be added to robots.txt explaining why disallow
+  implement x-robots-tag: noindex header to all 3 servers, but for wm1 only in /old and /old2 subdirs (forwards headers from the server but also adds in the x-robots-tag header)
+  crlf and all eslint checks on all 3 servers
+  maybe add coolguy284.github.io to site as well
+  update github repos description urls once hosted
 
 old.coolguy284.com and coolguy284.com/old
   check validity of node server and new server and wm1 issubdir checks before inclusion in wm1
@@ -22,6 +19,8 @@ old.coolguy284.com and coolguy284.com/old
 fix all docker containers getting a sigint simultaneously when proc_main one does
 
 http.coolguy284.com or insecure.coolguy284.com
+
+add website flag for sending a x-robots-tag of noindex with the page
 
 add semicolon
 remove unused code

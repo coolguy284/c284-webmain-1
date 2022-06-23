@@ -1,1 +1,1 @@
-sudo docker stop -t 60 c284-webmain-1_proc_mongodb
+sudo docker stop -t 1 c284-webmain-1_proc_mongodb
