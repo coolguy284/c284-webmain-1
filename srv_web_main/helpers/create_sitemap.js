@@ -1,4 +1,5 @@
 var fs = require('fs');
+
 var crawler = require('../common/sitemap_crawler.js');
 
 let websiteData = require('../common/website_data_parse')();
@@ -6,7 +7,7 @@ websiteData['sitemap.xml'] = 0;
 
 crawler.crawl('/index.html', crawler.fsGetterFuncGen('websites/public')).then(sites => {
   fs.writeFileSync('websites/public/sitemap.xml', 
-  '<?xml version = \'1.0\' encoding = \'UTF-8\'?>\n' +
+  '<?xml version = \'1.0\' encoding = \'utf-8\'?>\n' +
   '<urlset xmlns = \'http://www.sitemaps.org/schemas/sitemap/0.9\'>\n' +
   Array.from(sites.entries()).map(site =>
     '  <url>\n' +
