@@ -35,7 +35,7 @@ module.exports = async function connectMethod(requestProps) {
     });
     httpServerProxyConns.add(srvReq);
     srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
-    srvReq.on('error', logger.error);
+    srvReq.on('error', x => logger.error(x));
     srvReq.on('upgrade', (res, srvSocket, srvHead) => {
       let stream = common.resp.getStream(requestProps);
       stream.write(srvHead);

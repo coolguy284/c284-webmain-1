@@ -198,7 +198,7 @@ module.exports = exports = {
               } else {
                 let readStream = fs.createReadStream(filename, { start, end });
                 await exports.stream(requestProps, readStream);
-                readStream.on('error', logger.error);
+                readStream.on('error', x => logger.error(x));
               }
             }
           }
@@ -275,7 +275,7 @@ module.exports = exports = {
           } else {
             let readStream = fs.createReadStream(filename);
             await exports.stream(requestProps, readStream);
-            readStream.on('error', logger.error);
+            readStream.on('error', x => logger.error(x));
           }
         }
       } else {

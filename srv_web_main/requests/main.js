@@ -69,7 +69,7 @@ module.exports = async function main(httpVersion, ...args) {
       });
       httpServerProxyConns.add(srvReq);
       srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
-      srvReq.on('error', logger.error);
+      srvReq.on('error', x => logger.error(x));
       common.resp.getStream(requestProps).pipe(srvReq);
     } else {
       // main server processing

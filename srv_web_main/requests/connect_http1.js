@@ -28,7 +28,7 @@ module.exports = function serverConnectFunc(req, socket, head) {
       });
       httpServerProxyConns.add(srvReq);
       srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
-      srvReq.on('error', logger.error);
+      srvReq.on('error', x => logger.error(x));
       srvReq.on('connect', (res, srvSocket, srvHead) => {
         srvSocket.write(head);
         socket.write(srvHead);
