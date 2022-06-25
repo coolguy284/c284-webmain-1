@@ -14,6 +14,7 @@ the files are laid out as follows for linux:
   logs .   .   .   .   .   .   . main log files
   logs_mongodb .   .   .   .   . mongodb log files
   mongodb  .   .   .   .   .   . mongodb database
+  srv_web_old_data .   .   .   . srv_web_old mounted data dir
   env.list .   .   .   .   .   . environment variable file
 ```
 
@@ -25,6 +26,7 @@ D:/Data/c284-webmain-1_s/
   logs .   .   .   .   . main log files
   logs_mongodb .   .   . mongodb log files
   mongodb  .   .   .   . mongodb database
+  srv_web_old_data .   . srv_web_old mounted data dir
   env.list .   .   .   . environment variable file
 ```
 

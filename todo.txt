@@ -24,6 +24,8 @@ potential put srv_web_main through readline stream and add on timestamp and "[ma
 update options method responses
 http2 websocket 404 strange behavior
 add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages 
+make proxies disconnect other end if one end closes, forward errors as well
+  make socketLink function in common that does all this to prevent code duplication
 
 add semicolon
 remove unused code
