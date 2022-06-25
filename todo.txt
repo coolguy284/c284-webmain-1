@@ -23,6 +23,7 @@ add website flag for sending a x-robots-tag of noindex with the page
 potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
 update options method responses
 http2 websocket 404 strange behavior
+add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages 
 
 add semicolon
 remove unused code
@@ -32,7 +33,7 @@ unused function args and vars in code
 
 add privacy policy
 add base64_url encoder/decoder
-fancier latency test
+fancier latency test and time syncer, less NaN
 websocket connection not using http2
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
   also some validation for the description somehow

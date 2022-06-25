@@ -43,8 +43,13 @@
         position: absolute;
         bottom: 0;
         width: 100%;
-        height: 60px;
-        line-height: 60px;
+        height: 6.7rem;
+        padding-top: 4.2rem;
+      }
+      
+      .inside-footer {
+        height: 6.7rem;
+        line-height: 3rem;
         background: #f0f0ff;
       }
       
@@ -114,14 +119,19 @@
           </tr>
         </table><br>
         <h2>Some Info About Me</h2>
-        <p class = 'pb-3'>I am a coder who likes to program websites and webservers, and I also like to program in Python. I like to put one space after each sentence.</p>
+        <p>I am a programmer with a major interest in logic, math, and science. I create websites with HTML/CSS/JS and webservers with NodeJS. I also make mathematical and natural simulations using JavaScript and Python. Previously, I put two spaces after each sentence. However now I only put one space after each sentence.</p>
       </div>
     </div>
     
     <footer class = 'footer'>
-      <div class = 'container-fluid'>
-        This website is <a href = 'https://github.com/coolguy284/c284-webmain-1'>open source</a>.
-        <span class = 'float-end'>Version {version}</span>
+      <div class = 'inside-footer container-fluid'>
+        <div style = 'border-bottom: 1px solid #c7c7ff;'>
+          This website is <a href = 'https://github.com/coolguy284/c284-webmain-1'>open source</a>.
+          <span class = 'float-end'>Version {version}</span>
+        </div>
+        <div style = 'font-size: small;'>
+          Powered by <a href = 'http://www.vanilla-js.com/'>Vanilla JS</a>
+        </div>
       </div>
     </footer>
     
