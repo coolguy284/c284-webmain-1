@@ -16,6 +16,6 @@ crawler.crawl('/index.html', crawler.fsGetterFuncGen('websites/public')).then(si
     `    <changefreq>${websiteData[site[0].slice(1)] & 1 ? 'yearly' : 'daily'}</changefreq>\n` +
     `    <priority>${(site[0].startsWith('/debug') || site[0].startsWith('/errors') ? 0.0 : 1.0 - site[1] / 10).toFixed(1)}</priority>\n` +
     '  </url>'
-  ).join('\n\n') + '\n' +
+  ).join('\n  \n') + '\n' +
   '</urlset>\n');
 });
