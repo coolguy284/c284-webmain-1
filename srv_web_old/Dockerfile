@@ -14,9 +14,12 @@ RUN adduser webmain -u 2201
 USER webmain
 WORKDIR /home/webmain
 
-RUN git clone https://github.com/coolguy284/node-server.git
-RUN mv node-server/* ./ && mv node-server/.[^.]* ./
-RUN rmdir node-server
+# uses this CLEVER solution to invalidate cache when repo is updated (the comment):
+# https://stackoverflow.com/questions/27529191/how-to-update-code-from-git-to-a-docker-container/41361409#41361409
+ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/node-server/commits?per_page=1' node-server_latest_commit
+RUN rm node-server_latest_commit
+RUN git clone --depth 1 https://github.com/coolguy284/node-server.git
+RUN mv node-server/* ./ && mv node-server/.[^.]* ./ && rmdir node-server
 
 RUN npm install
 
