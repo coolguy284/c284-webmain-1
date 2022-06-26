@@ -29,7 +29,6 @@ module.exports = async function connectMethod(requestProps) {
     }, async res => {
       await common.resp.headers(requestProps, res.statusCode, {
         ...Object.fromEntries(Object.entries(res.headers).filter(x => x[0].toLowerCase() != 'connection')),
-        'x-robots-tag': 'noindex',
       });
       await common.resp.stream(requestProps, res);
     });

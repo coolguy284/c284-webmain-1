@@ -1,45 +1,45 @@
+make misc index proper
+check for srv_web_old env before proxying connection
+
 unarchive node-server-new to make common flags http and https server be related to common.port and common.porttls, also make common port and porttls default to null, null meaning server won't get run; either this or make common flags http and https into environment variables, probably this latter as it matches the code style more
-  check how well node-server and node-server-new handle sigints
-  update each server's github repo to deny all in their robots txt since they are old sites, see if a flag can be added to robots.txt explaining why disallow
-  implement x-robots-tag: noindex header to all 3 servers, but for wm1 only in /old and /old2 subdirs (forwards headers from the server but also adds in the x-robots-tag header, until the server is updated to send the header itself)
-  crlf and all eslint checks on all 3 servers
+  check how well node-server-new handles sigints
+  implement x-robots-tag: noindex header to node-server-new
   maybe add coolguy284.github.io to site as well
   update github repos description urls once hosted
 
-old.coolguy284.com and coolguy284.com/old
-  add old and old2 to index as addl links
-  possibly /old-node-server and /old-node-server-new instead of /old and /old2 but possibly just explained in index
-  change old site link in 404 to old site
+crlf and all eslint checks on wm
+  add semicolon
+  remove unused code
+  unnecessary semicolon
+  replace unnecessary template string
+  unused function args and vars in code
+
+old sites
+  add old2 to index as addl links
   make old and maybe old2 not use polling, probably use eventsource instead
     dompurify to old node chat
-  add external links warning to index for old and old2
+  add external links, only links, not implicit includes, warning to index for old2
 
+add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
 fix all docker containers getting a sigint simultaneously when proc_main one does
 
 http.coolguy284.com or insecure.coolguy284.com
 
-add website flag for sending a x-robots-tag of noindex with the page
+add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
 potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
 update options method responses
 http2 websocket 404 strange behavior
-add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages 
+add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages
 make proxies disconnect other end if one end closes, forward errors as well
   make socketLink function in common that does all this to prevent code duplication
 create_sitemap return lastmod and other properties, also return array of objects instead of map
-
-add semicolon
-remove unused code
-unnecessary semicolon
-replace unnecessary template string
-unused function args and vars in code
 
 add privacy policy
 add base64_url encoder/decoder
 fancier latency test and time syncer, less NaN
 websocket connection not using http2
-add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
-  also some validation for the description somehow
+validation for meta description tags, to supplement validation for canonical urls
 add no javascript banner to all pages that use javascript in the slightest
 add warnings to encrypting, decrypting, hashing, etc. to not use for security purposes
 improve localstorage editor cookies handling
@@ -57,6 +57,7 @@ make docs accessible on website
 enigma machine and other sites in tools and other from the old site
 auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
 add strange files page, with weird zips and wims and stuff
+status garden with api endpoints or regular endpoints for every http status code
 
 hex editor
 english words searcher
