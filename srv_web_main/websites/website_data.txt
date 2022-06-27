@@ -1,6 +1,6 @@
 # immutable files
-libs/extern/*: 1
-favicon.ico: 1
+libs/extern/*: 3
+favicon.ico: 3
 
 # files to compress:
 *.css: 2

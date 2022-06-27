@@ -2,7 +2,7 @@ make misc index proper
 check for srv_web_old env before proxying connection
 
 unarchive node-server-new to make common flags http and https server be related to common.port and common.porttls, also make common port and porttls default to null, null meaning server won't get run; either this or make common flags http and https into environment variables, probably this latter as it matches the code style more
-  check how well node-server-new handles sigints
+  check how well node-server-new handles sigints, increase manager ping timeout
   implement x-robots-tag: noindex header to node-server-new
   maybe add coolguy284.github.io to site as well
   update github repos description urls once hosted
@@ -31,6 +31,8 @@ potential put srv_web_main through readline stream and add on timestamp and "[ma
 update options method responses
 http2 websocket 404 strange behavior
 add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages
+  do the same in node srv, node srv new, c284 git io
+  if sitemap is self referential run sitemap gen twice or make it the current date somehow
 make proxies disconnect other end if one end closes, forward errors as well
   make socketLink function in common that does all this to prevent code duplication
 create_sitemap return lastmod and other properties, also return array of objects instead of map
@@ -53,11 +55,15 @@ add alternate webpage access url /api/page?page=<url> or /api/page?page_b64=<b64
   possible future support for full urls for proxy like instead of just server urls
   possible tie in to virtual browser
   maybe a public or api keyed js api to make any http query
-make docs accessible on website
+add comments to wm1 code
+rework docs on wm1, make docs accessible as wm1 subpage, link to all docs from main doc or subdocs
+make sure each page in docs is fully up to date and add more pages as necessary
 enigma machine and other sites in tools and other from the old site
 auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
 add strange files page, with weird zips and wims and stuff
 status garden with api endpoints or regular endpoints for every http status code
+potentially put old sites in archive tab which links to a page with detailed explanations of all of them
+use fs.promises and async for everything possible
 
 hex editor
 english words searcher
@@ -81,6 +87,7 @@ chat upgrades
   text, voice, raw data thru voice, inputs keyboard mouse controller etc sent to bot and output stream from bot (thru voice channel)
 spaces
   universes, zones, simple objects and physical simulation regions
+add oldg, production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
 
 problems:
 if there is a unicode url it can be redirected by the default redirect code and the unicode code one at a time

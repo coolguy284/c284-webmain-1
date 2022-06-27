@@ -4,21 +4,21 @@ var fs = require('fs');
 var zlib = require('zlib');
 var crypto = require('crypto');
 
-let websiteData = require('../common/website_data_parse')();
-
-let prevEtags;
-try { prevEtags = JSON.parse(fs.readFileSync('websites/etags.json').toString()); } catch (e) { prevEtags = {}; }
-
-let etags = {};
-
-(async () => {
+async function compressAndEtags(...params) {
+  let websiteData = require('../common/website_data_parse')();
+  
+  let prevEtags;
+  try { prevEtags = JSON.parse(fs.readFileSync('websites/etags.json').toString()); } catch (e) { prevEtags = {}; }
+  
+  let etags = {};
+  
   let paths = Object.keys(websiteData);
   
-  if (process.argv[2] == '--only') {
-    let toAdd = process.argv.slice(3).map(x => new RegExp(x));
+  if (params[0] == '--only') {
+    let toAdd = params.slice(1).map(x => new RegExp(x));
     paths = paths.filter(x => toAdd.every(y => y.test(x)));
-  } else if (process.argv[2] == '--except') {
-    let toRemove = process.argv.slice(3).map(x => new RegExp(x));
+  } else if (params[0] == '--except') {
+    let toRemove = params.slice(1).map(x => new RegExp(x));
     paths = paths.filter(x => !toRemove.some(y => y.test(x)));
   }
   
@@ -155,4 +155,10 @@ let etags = {};
   }
   
   fs.writeFileSync('websites/etags.json', JSON.stringify(etags));
-})();
+}
+
+if (require.main == module) {
+  compressAndEtags(...process.argv.slice(2));
+} else {
+  module.exports = compressAndEtags;
+}
