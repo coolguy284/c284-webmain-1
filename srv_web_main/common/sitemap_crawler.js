@@ -2,14 +2,20 @@ var fs = require('fs');
 var path = require('path');
 
 module.exports = {
-  fsGetterFuncGen: function fsGetterFuncGen(rootPath) {
+  fsGetterFuncGen: function fsGetterFuncGen(rootPath, extraSites) {
+    if (!extraSites) extraSites = new Set();
     return async filePath => {
-      let fullPath = path.join(rootPath, new URL('http:/e/' + (filePath.startsWith('/') ? filePath.slice(1) : filePath)).pathname);
+      let properFilePath = new URL('http:/e/' + (filePath.startsWith('/') ? filePath.slice(1) : filePath)).pathname;
+      let fullPath = path.join(rootPath, properFilePath);
       if (path.sep == '\\') fullPath = fullPath.replaceAll('\\', '/');
       try {
         return await fs.promises.readFile(fullPath);
       } catch (e) {
-        return undefined;
+        if (extraSites.has(properFilePath)) {
+          return null; // null is special value for site that doesn't actually exist but is in extraSites
+        } else {
+          return undefined;
+        }
       }
     };
   },
@@ -20,17 +26,18 @@ module.exports = {
     for (var depth = 1; newPaths.length > 0 && depth < 10; depth++) {
       newPaths = (await Promise.all(
         newPaths.map(filePath => {
-          let matched = filePath[1] ? filePath[1].toString().match(/(?<=<a.*href\s*=\s*(?:'|")).*?(?=(?:'|")>)/g) ?? [] : [];
+          if (filePath[1] == null) return [];
+          let matched = filePath[1].toString().match(/(?<=<a.*href\s*=\s*(?:'|")).*?(?=(?:'|")>)/g) ?? [];
           return matched.map(subFilePath => {
-              subFilePath = subFilePath.endsWith('/') ? subFilePath + 'index.html' : subFilePath;
-              return subFilePath.startsWith('/') ? subFilePath : path.join(filePath[0], '../' + subFilePath).split(path.sep).join(path.posix.sep);
-            });
+            subFilePath = subFilePath.endsWith('/') ? subFilePath + 'index.html' : subFilePath;
+            return subFilePath.startsWith('/') ? subFilePath : path.join(filePath[0], '../' + subFilePath).split(path.sep).join(path.posix.sep);
+          });
         })
         .reduce((a, c) => (c.forEach(x => a.push(x)), a), [])
         .filter(filePath => !paths.has(filePath))
         .map(async filePath => [filePath, await getterFunc(filePath)])
       ))
-      .filter(filePath => filePath[1]);
+      .filter(filePath => filePath[1] !== undefined);
       
       newPaths.forEach(filePath => paths.set(filePath[0], depth));
     }

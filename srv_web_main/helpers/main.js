@@ -15,11 +15,18 @@ fs.readFileSync('dockerenv.list').toString().split(/\r?\n/g).forEach(entry => {
   // get current file mtimes
   var crawler = require('../common/sitemap_crawler.js');
   
-  var sites = await crawler.crawl('/index.html', crawler.fsGetterFuncGen('websites/public'));
+  var sites = await crawler.crawl('/index.html', crawler.fsGetterFuncGen('websites/public', new Set(['/sitemap.xml'])));
   
-  var siteNames = Array.from(sites.keys()).map(x => 'websites/public' + x);
+  var siteNames = Array.from(sites.keys());
+  var siteFullNames = siteNames.map(x => 'websites/public' + x);
   
-  var siteModTimes = await Promise.all(siteNames.map(async x => (await fs.promises.stat(x)).mtime));
+  var siteModTimes = await Promise.all(siteFullNames.map(async x => {
+    try {
+      return (await fs.promises.stat(x)).mtime;
+    } catch (e) {
+      return null;
+    }
+  }));
   
   
   // put version in index.html
@@ -45,15 +52,19 @@ fs.readFileSync('dockerenv.list').toString().split(/\r?\n/g).forEach(entry => {
   
   // reset current file mtimes
   
-  await Promise.all(siteNames.map(async (x, i) => {
+  await Promise.all(siteFullNames.map(async (x, i) => {
     let date = siteModTimes[i];
-    return await fs.promises.utimes(x, date, date);
+    if (date)
+      return await fs.promises.utimes(x, date, date);
   }));
   
   
   // create sitemap
   
-  await require('./create_sitemap')(sites);
+  var siteModTimesObj = Object.fromEntries(siteNames.map((x, i) => [x, siteModTimes[i]]));
+  siteModTimesObj['/sitemap.xml'] = siteModTimes.reduce((a, c) => c > a ? c : a, siteModTimes[0]);
+  
+  await require('./create_sitemap')(sites, siteModTimesObj);
   
   
   // compress files and create etags

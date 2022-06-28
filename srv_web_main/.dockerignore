@@ -1,4 +1,9 @@
 node_modules
+websites/public/libs/extern/bson.browser.umd.js
+websites/public/libs/extern/bson.browser.umd.js.map
+websites/public/sitemap.xml
+websites/etags.json
+env.list
 package-lock.json
 **/*.gz
 **/*.br

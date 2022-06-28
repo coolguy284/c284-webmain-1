@@ -1,3 +1,8 @@
+maybe copy .git to dockerfile
+
+use sitemap moddate as returned lastmod, so probably move to a json file
+make more lib/extern copied from node_modules in dockerfile
+
 make misc index proper
 check for srv_web_old env before proxying connection
 
@@ -32,7 +37,6 @@ update options method responses
 http2 websocket 404 strange behavior
 add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages
   do the same in node srv, node srv new, c284 git io
-  if sitemap is self referential run sitemap gen twice or make it the current date somehow
 make proxies disconnect other end if one end closes, forward errors as well
   make socketLink function in common that does all this to prevent code duplication
 create_sitemap return lastmod and other properties, also return array of objects instead of map
@@ -46,7 +50,8 @@ add no javascript banner to all pages that use javascript in the slightest
 add warnings to encrypting, decrypting, hashing, etc. to not use for security purposes
 improve localstorage editor cookies handling
 add description to more misc pages
-sitemap lastmod from git repo, changefreq based on lastmod (maybe)
+sitemap gen proper html parser and proper parsing of urls
+sitemap changefreq based on lastmod (maybe)
 add adblock detector site (for fun)
 chat empty string should show up as anonymous
 chat, echo, status websockets should have proper server close exit code and server close procedure where client closes, instead of force close
@@ -64,6 +69,8 @@ add strange files page, with weird zips and wims and stuff
 status garden with api endpoints or regular endpoints for every http status code
 potentially put old sites in archive tab which links to a page with detailed explanations of all of them
 use fs.promises and async for everything possible
+add nested layers of indexes for unicode
+potentially add more multi page auto generated pages like unicode
 
 hex editor
 english words searcher

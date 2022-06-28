@@ -1,4 +1,4 @@
-// node set_modtime_to_git.js <repoPath> [folderInRepoPath]
+var DEBUG = false;
 
 var cp = require('child_process');
 var fs = require('fs');
@@ -44,7 +44,7 @@ async function setModTimes(repoPath, folderInRepoPath) {
     var modDate = await getGitModDate(repoPath, repoFilePath);
     if (modDate) {
       var trueFilePath = repoPath + '/' + repoFilePath;
-      console.log(`updating: ${modDate.toISOString()} ${trueFilePath}`);
+      if (DEBUG) console.log(`updating: ${modDate.toISOString()} ${trueFilePath}`);
       fs.promises.utimes(trueFilePath, modDate, modDate);
     }
   }
