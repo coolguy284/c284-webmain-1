@@ -3,6 +3,7 @@ User-agent: AdsBot-Google
 User-agent: AdsBot-Google-Mobile
 User-agent: Mediapartners-Google
 Disallow: /misc/debug/templates/
+Disallow: /misc/debug/config/
 # these two directories are old sites and thus should not show up in search results
 Disallow: /old/
 Disallow: /old2/
