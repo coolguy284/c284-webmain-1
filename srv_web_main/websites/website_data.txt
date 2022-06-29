@@ -1,12 +1,14 @@
 # immutable files
-libs/extern/*: 3
-favicon.ico: 3
+libs/extern/*: 1
+favicon.ico: 1
 
 # files to compress:
 *.css: 2
 *.html: 2
 *.ico: 2
 *.js: 2
+*.json: 2
 *.map: 2
 *.txt: 2
 *.xml: 2
+yiyo.dev: 2

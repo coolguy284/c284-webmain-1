@@ -3,7 +3,7 @@ STOPSIGNAL SIGINT
 
 RUN apt-get update && apt-get upgrade -y
 
-RUN apt-get install curl -y
+RUN apt-get install curl git -y
 
 # install node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
@@ -18,34 +18,41 @@ RUN mkdir cert
 
 ADD --chown=webmain:webmain https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt websites/public/data/
 
-COPY --chown=webmain:webmain common/recursive_readdir.js common/recursive_readdir.js
-COPY --chown=webmain:webmain common/website_data_parse.js common/website_data_parse.js
-COPY --chown=webmain:webmain websites/website_data.txt websites/website_data.txt
-COPY --chown=webmain:webmain helpers/compress_and_etags.js helpers/compress_and_etags.js
+COPY --chown=webmain:webmain srv_web_main/common/recursive_readdir.js common/recursive_readdir.js
+COPY --chown=webmain:webmain srv_web_main/common/website_data_parse.js common/website_data_parse.js
+COPY --chown=webmain:webmain srv_web_main/websites/website_data.txt websites/website_data.txt
+COPY --chown=webmain:webmain srv_web_main/helpers/compress_and_etags.js helpers/compress_and_etags.js
 
 RUN node helpers/compress_and_etags.js --only '^data/UnicodeData\.txt(?:\.gz|\.br)?$'
 
-COPY --chown=webmain:webmain log_utils.js log_utils.js
+COPY --chown=webmain:webmain srv_web_main/log_utils.js log_utils.js
 
-COPY --chown=webmain:webmain package-basic.json package.json
+COPY --chown=webmain:webmain srv_web_main/package-basic.json package.json
 RUN npm install
 
 RUN mkdir -p websites/public/libs/extern && cp node_modules/bson/dist/bson.browser.umd.js websites/public/libs/extern/bson.browser.umd.js && cp node_modules/bson/dist/bson.browser.umd.js.map websites/public/libs/extern/bson.browser.umd.js.map
 
-COPY --chown=webmain:webmain websites/public/libs websites/public/libs
+COPY --chown=webmain:webmain srv_web_main/websites/public/libs websites/public/libs
 RUN node helpers/compress_and_etags.js --only '^libs/.*$'
 
-COPY --chown=webmain:webmain helpers helpers
+COPY --chown=webmain:webmain srv_web_main/dockerenv.list dockerenv.list
 
-COPY --chown=webmain:webmain dockerenv.list dockerenv.list
+COPY --chown=webmain:webmain srv_web_main/package.json package.json
 
-COPY --chown=webmain:webmain package.json package.json
+COPY --chown=webmain:webmain .git .git
 
-COPY --chown=webmain:webmain index.js index.js
-COPY --chown=webmain:webmain common common
-COPY --chown=webmain:webmain requests requests
-COPY --chown=webmain:webmain websites websites
+COPY --chown=webmain:webmain srv_web_main/helpers helpers
+COPY --chown=webmain:webmain srv_web_main/index.js index.js
+COPY --chown=webmain:webmain srv_web_main/common common
+COPY --chown=webmain:webmain srv_web_main/requests requests
+COPY --chown=webmain:webmain srv_web_main/websites websites
+
+COPY --chown=webmain:webmain srv_web_main/websites/redirects.txt srv_web_main/websites/website_data.txt websites/public/misc/debug/config/
+
+RUN ln -s . srv_web_main
 
 RUN node helpers/main.js
+
+RUN rm srv_web_main
 
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]

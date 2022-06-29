@@ -10,14 +10,16 @@ async function compressAndEtags(...params) {
   let prevEtags;
   try { prevEtags = JSON.parse(fs.readFileSync('websites/etags.json').toString()); } catch (e) { prevEtags = {}; }
   
-  let etags = {};
+  let etags = Object.fromEntries(Object.entries(prevEtags));
   
   let paths = Object.keys(websiteData);
   
+  var exceptMode; // except mode is only true for the last compress_and_etags call of the build
   if (params[0] == '--only') {
     let toAdd = params.slice(1).map(x => new RegExp(x));
     paths = paths.filter(x => toAdd.every(y => y.test(x)));
   } else if (params[0] == '--except') {
+    exceptMode = true;
     let toRemove = params.slice(1).map(x => new RegExp(x));
     paths = paths.filter(x => !toRemove.some(y => y.test(x)));
   }
@@ -154,7 +156,34 @@ async function compressAndEtags(...params) {
     }
   }
   
-  fs.writeFileSync('websites/etags.json', JSON.stringify(etags));
+  let etagsBuf = Buffer.from(JSON.stringify(etags, null, 2));
+  
+  if (exceptMode) {
+    if (DEBUG) console.log('selfreferential etag');
+    
+    let path = 'misc/debug/config/etags.json';
+    let fullPath = 'websites/public/' + path;
+    
+    let etagsBufHash = crypto.createHash('sha256').update(etagsBuf).digest('base64');
+    
+    if (prevEtags[path] != etagsBufHash) {
+      let etagsBufGzip = zlib.gzipSync(etagsBuf);
+      let etagsBufBr = zlib.brotliCompressSync(etagsBuf);
+      
+      etags[path] = etagsBufHash;
+      etags[path + '.gz'] = crypto.createHash('sha256').update(etagsBufGzip).digest('base64');
+      etags[path + '.br'] = crypto.createHash('sha256').update(etagsBufBr).digest('base64');
+      
+      let newEtagsBuf = Buffer.from(JSON.stringify(etags, null, 2));
+      
+      fs.writeFileSync('websites/etags.json', newEtagsBuf);
+      fs.writeFileSync(fullPath, newEtagsBuf);
+      fs.writeFileSync(fullPath + '.gz', zlib.gzipSync(newEtagsBuf));
+      fs.writeFileSync(fullPath + '.br', zlib.brotliCompressSync(newEtagsBuf));
+    }
+  } else {
+    fs.writeFileSync('websites/etags.json', etagsBuf);
+  }
 }
 
 if (require.main == module) {

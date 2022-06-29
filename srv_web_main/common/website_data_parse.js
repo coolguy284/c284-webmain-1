@@ -13,11 +13,11 @@ module.exports = function parseWebsiteData() {
     
     let match;
     if (match = /^(.*)\/\*$/.exec(path)) {
-      files.filter(path => path.startsWith(match[1])).forEach(path => filesObject[path] += val);
+      files.filter(path => path.startsWith(match[1])).forEach(path => val >= 0 ? (filesObject[path] |= val) : (filesObject[path] &= ~-val));
     } else if (match = /^\*\.([^/]+)$/.exec(path)) {
-      files.filter(path => path.endsWith('.' + match[1])).forEach(path => filesObject[path] += val);
+      files.filter(path => path.endsWith('.' + match[1])).forEach(path => val >= 0 ? (filesObject[path] |= val) : (filesObject[path] &= ~-val));
     } else {
-      if (path in filesObject) filesObject[path]++;
+      if (path in filesObject) val >= 0 ? (filesObject[path] |= val) : (filesObject[path] &= ~-val);
     }
   });
   

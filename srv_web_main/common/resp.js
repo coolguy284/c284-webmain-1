@@ -1,7 +1,8 @@
 var fs = require('fs');
 var mime = require('mime');
 var websiteData = require('./website_data');
-try { var etags = require('../websites/etags.json'); } catch (e) { var etags = {}; }
+var etags; try { etags = require('../websites/etags.json'); } catch (e) { etags = {}; }
+var modtimes; try { modtimes = require('../websites/modtimes.json'); } catch (e) { modtimes = {}; }
 
 var logger = require('../log_utils.js')('common/resp');
 
@@ -128,22 +129,27 @@ module.exports = exports = {
   },
   
   file: async (requestProps, filename, statusCode, headOnly, headers) => {
+    var shortPath = filename.replace(/\\/g, '/').replace('websites/public/', '') || 'index.html';
+    
     // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
     if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
       if (!(filename in global.filesCache)) {
         let error = new Error('ENOENT'); error.code = 'ENOENT';
         throw error;
       }
+      
       var fileEntry = global.filesCache[filename];
-      var stats = fileEntry.stats, size = fileEntry.file.length;
+      
+      var stats = fileEntry.stats, size = fileEntry.file.length, mtime = new Date(modtimes[shortPath]) ?? fileEntry.stats.mtime;
     } else {
       var stats = await fs.promises.stat(filename);
+      
       if (stats.isDirectory()) {
         let error = new Error('EISDIR'); error.code = 'ENOENT';
         throw error;
       }
       
-      var size = stats.size;
+      var size = stats.size, mtime = new Date(modtimes[shortPath]) ?? stats.mtime;
     }
     
     var mimeType = mime.getType(filename);
@@ -185,7 +191,8 @@ module.exports = exports = {
               ...(mimeType ? { 'content-type': mimeType } : null),
               'content-length': end - start + 1,
               'content-range': `bytes ${start}-${end}/${size}`,
-              'last-modified': stats.mtime.toUTCString(),
+              'last-modified': mtime.toUTCString(),
+              ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
               'x-content-type-options': 'nosniff',
               'strict-transport-security': 'max-age=31536000; preload',
             });
@@ -212,13 +219,12 @@ module.exports = exports = {
       }
     } else {
       // normal request
-      let shortPath = filename.replace(/\\/g, '/').replace('websites/public/', '') || 'index.html';
       
       // check for etag or modified since and no statusCode var set
       if (statusCode ||
         (requestProps.headers['if-none-match'] && shortPath in etags ?
           (!requestProps.headers['if-none-match'].split(', ').some(x => x == etags[shortPath])) :
-          (!requestProps.headers['if-modified-since'] || Math.floor(stats.mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000)))) {
+          (!requestProps.headers['if-modified-since'] || Math.floor(mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000)))) {
         // modified since
         let encodings;
         if (requestProps.headers['accept-encoding'])
@@ -258,7 +264,7 @@ module.exports = exports = {
           ...(mimeType ? { 'content-type': mimeType } : null),
           'content-length': size,
           ...(hasVal < 2 ? { 'content-encoding': hasVal == 0 ? 'br' : 'gzip' } : {}),
-          'last-modified': stats.mtime.toUTCString(),
+          'last-modified': mtime.toUTCString(),
           ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
           'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
           'accept-ranges': 'bytes',
