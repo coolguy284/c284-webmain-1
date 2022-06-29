@@ -1,6 +1,5 @@
 base website index.html not redirecting but subfolder index.html is
 sort etags.json
-fix base64 page hex encoding
 add html entity escaping to local sitemap gen since its xml
 rework dockerfiles
 etag or lastmod match should return 304 even if range request

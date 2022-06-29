@@ -320,7 +320,7 @@
         return arr.join('');
       }
       
-      // html and textarea don't support carriage returns in textareas, they get auto converted to newlines 🙃, so null byte followed by a newline will be counted as a carriage return instead
+      // html and textarea don't support carriage returns in textareas, they get auto converted to newlines 🙃, so null byte followed by a newline will be counted as a carriage return instead (two null bytes in a row for an actual null byte)
       function TextToTextArea(str) {
         return str.replace(/\x00/g, '\x00\x00').replace(/\r/g, '\x00\n');
       }
