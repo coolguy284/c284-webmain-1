@@ -1,4 +1,4 @@
-var logger = require('../log_utils.js')('requests/main');
+var logger = require('../log_utils')('requests/main');
 
 var common = require('../common');
 var redirects = require('../common/redirects');

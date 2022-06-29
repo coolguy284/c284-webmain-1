@@ -4,7 +4,7 @@ var websiteData = require('./website_data');
 var etags; try { etags = require('../websites/etags.json'); } catch (e) { etags = {}; }
 var modtimes; try { modtimes = require('../websites/modtimes.json'); } catch (e) { modtimes = {}; }
 
-var logger = require('../log_utils.js')('common/resp');
+var logger = require('../log_utils')('common/resp');
 
 module.exports = exports = {
   getBasicFileHeaders: (file, mimeType) => {

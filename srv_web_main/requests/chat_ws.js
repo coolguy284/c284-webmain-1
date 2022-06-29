@@ -1,4 +1,4 @@
-var logger = require('../log_utils.js')('requests/chat_ws');
+var logger = require('../log_utils')('requests/chat_ws');
 
 var BSON = require('bson');
 var chatDBUilts = require('../common/chat_db_utils');

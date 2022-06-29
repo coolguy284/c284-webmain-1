@@ -1,4 +1,4 @@
-var logger = require('../log_utils.js')('requests/connect_http1');
+var logger = require('../log_utils')('requests/connect_http1');
 
 var common = require('../common');
 

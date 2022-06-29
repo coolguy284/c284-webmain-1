@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-var crawler = require('../common/sitemap_crawler.js');
+var crawler = require('../common/sitemap_crawler');
 
 async function createSitemap(sites, siteModTimesObj) {
   if (sites == null) {

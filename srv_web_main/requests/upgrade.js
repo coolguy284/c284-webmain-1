@@ -1,4 +1,4 @@
-var logger = require('../log_utils.js')('requests/upgrade');
+var logger = require('../log_utils')('requests/upgrade');
 
 var common = require('../common');
 

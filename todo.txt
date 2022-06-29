@@ -3,7 +3,6 @@ sort etags.json
 fix base64 page hex encoding
 add html entity escaping to local sitemap gen since its xml
 rework dockerfiles
-remove js at end of require
 etag or lastmod match should return 304 even if range request
 
 use map and promise all for git log and others or for none of them
