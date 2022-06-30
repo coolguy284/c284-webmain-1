@@ -49,7 +49,7 @@ function getGitModDate(repoPath, filePath) {
   var recursiveReaddir = require('../common/recursive_readdir');
   
   var pageNames = recursiveReaddir('websites/public');
-  pageNames = pageNames.filter(x => !x.endsWith('.gz') && !x.endsWith('.br'));
+  pageNames = pageNames.filter(x => !x.endsWith('.br') && !x.endsWith('.gz'));
   
   var pageNamesFiltered = pageNames.filter(x => !x.includes('/'));
   var pageNamesFilteredAddIndex = pageNames.indexOf(pageNamesFiltered[0]);
@@ -100,10 +100,10 @@ function getGitModDate(repoPath, filePath) {
   
   var pageModTimeKeys = [];
   pageModTimes = Object.entries(pageModTimes).reduce((a, c) => {
-    pageModTimeKeys.push(c[0], c[0] + '.gz', c[0] + '.br');
+    pageModTimeKeys.push(c[0], c[0] + '.br', c[0] + '.gz');
     a[c[0]] = c[1];
-    a[c[0] + '.gz'] = c[1];
     a[c[0] + '.br'] = c[1];
+    a[c[0] + '.gz'] = c[1];
     return a;
   }, {});
   
@@ -147,5 +147,5 @@ function getGitModDate(repoPath, filePath) {
   
   // compress files and create etags
   
-  await require('./compress_and_etags')('--except', '^data/UnicodeData\.txt(?:\.gz|\.br)?$', '^libs/.*$');
+  await require('./compress_and_etags')('--except', '^data/UnicodeData\.txt(?:\.br|\.gz)?$', '^libs/.*$');
 })();

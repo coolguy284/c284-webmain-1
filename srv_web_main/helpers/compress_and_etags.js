@@ -37,16 +37,6 @@ async function compressAndEtags(...params) {
         let bytes = fs.readFileSync(fullPath);
         etags[path] = crypto.createHash('sha256').update(bytes).digest('base64');
         
-        if (!fs.existsSync(fullPath + '.gz') || prevEtags[path] != etags[path]) {
-          if (DEBUG) console.debug(`gzip ${path}`);
-          
-          let zlibBytes = zlib.gzipSync(bytes);
-          fs.writeFileSync(fullPath + '.gz', zlibBytes);
-          etags[path + '.gz'] = crypto.createHash('sha256').update(zlibBytes).digest('base64');
-          
-          if (DEBUG) console.debug(`gzip finish ${path}`);
-        }
-        
         if (!fs.existsSync(fullPath + '.br') || prevEtags[path] != etags[path]) {
           if (DEBUG) console.debug(`br ${path}`);
           
@@ -55,6 +45,16 @@ async function compressAndEtags(...params) {
           etags[path + '.br'] = crypto.createHash('sha256').update(zlibBytes).digest('base64');
           
           if (DEBUG) console.debug(`br finish ${path}`);
+        }
+        
+        if (!fs.existsSync(fullPath + '.gz') || prevEtags[path] != etags[path]) {
+          if (DEBUG) console.debug(`gzip ${path}`);
+          
+          let zlibBytes = zlib.gzipSync(bytes);
+          fs.writeFileSync(fullPath + '.gz', zlibBytes);
+          etags[path + '.gz'] = crypto.createHash('sha256').update(zlibBytes).digest('base64');
+          
+          if (DEBUG) console.debug(`gzip finish ${path}`);
         }
       } else {
         etags[path] = crypto.createHash('sha256').update(fs.readFileSync(fullPath)).digest('base64');
@@ -78,8 +78,8 @@ async function compressAndEtags(...params) {
           hash.on('error', err => reject(err));
         });
         
-        let bool1 = !fs.existsSync(fullPath + '.gz') || prevEtags[path] != etags[path],
-          bool2 = !fs.existsSync(fullPath + '.br') || prevEtags[path] != etags[path];
+        let bool1 = !fs.existsSync(fullPath + '.br') || prevEtags[path] != etags[path],
+          bool2 = !fs.existsSync(fullPath + '.gz') || prevEtags[path] != etags[path];
         
         let compressStream;
         if (bool1 || bool2) {
@@ -87,43 +87,19 @@ async function compressAndEtags(...params) {
         }
         
         if (bool1) {
-          if (DEBUG) console.debug(`gzip ${path}`);
-          
-          let gzipStream = zlib.createGzip();
-          
-          compressStream.pipe(gzipStream);
-          gzipStream.pipe(fs.createWriteStream(fullPath + '.gz'));
-          
-          let gzipHash = crypto.createHash('sha256');
-          
-          gzipStream.pipe(gzipHash);
-          
-          bool1 = new Promise((resolve, reject) => {
-            gzipHash.on('finish', () => {
-              etags[path + '.gz'] = gzipHash.read().toString('base64');
-              
-              resolve();
-              
-              if (DEBUG) console.debug(`gzip finish ${path}`);
-            });
-            
-            gzipHash.on('error', err => reject(err));
-          });
-        }
-        
-        if (bool2) {
           if (DEBUG) console.debug(`br ${path}`);
           
           let brotliStream = zlib.createBrotliCompress();
           
           compressStream.pipe(brotliStream);
+          
           brotliStream.pipe(fs.createWriteStream(fullPath + '.br'));
           
           let brotliHash = crypto.createHash('sha256');
           
           brotliStream.pipe(brotliHash);
           
-          bool2 = new Promise((resolve, reject) => {
+          bool1 = new Promise((resolve, reject) => {
             brotliHash.on('finish', () => {
               etags[path + '.br'] = brotliHash.read().toString('base64');
               
@@ -133,6 +109,32 @@ async function compressAndEtags(...params) {
             });
             
             brotliHash.on('error', err => reject(err));
+          });
+        }
+        
+        if (bool2) {
+          if (DEBUG) console.debug(`gzip ${path}`);
+          
+          let gzipStream = zlib.createGzip();
+          
+          compressStream.pipe(gzipStream);
+          
+          gzipStream.pipe(fs.createWriteStream(fullPath + '.gz'));
+          
+          let gzipHash = crypto.createHash('sha256');
+          
+          gzipStream.pipe(gzipHash);
+          
+          bool2 = new Promise((resolve, reject) => {
+            gzipHash.on('finish', () => {
+              etags[path + '.gz'] = gzipHash.read().toString('base64');
+              
+              resolve();
+              
+              if (DEBUG) console.debug(`gzip finish ${path}`);
+            });
+            
+            gzipHash.on('error', err => reject(err));
           });
         }
         
@@ -171,15 +173,33 @@ async function compressAndEtags(...params) {
       let etagsBufBr = zlib.brotliCompressSync(etagsBuf);
       
       etags[path] = etagsBufHash;
-      etags[path + '.gz'] = crypto.createHash('sha256').update(etagsBufGzip).digest('base64');
       etags[path + '.br'] = crypto.createHash('sha256').update(etagsBufBr).digest('base64');
+      etags[path + '.gz'] = crypto.createHash('sha256').update(etagsBufGzip).digest('base64');
+      
+      // sort etags for final form (folders above files)
+      etags = Object.fromEntries(
+        Object.entries(etags).sort((a, b) => {
+          a = a[0]; b = b[0];
+          var aSplit = a.split('/'), bSplit = b.split('/');
+          var iMax = Math.min(aSplit.length, bSplit.length) - 1;
+          for (var i = 0; i <= iMax; i++) {
+            let aSplitVal = aSplit[i], bSplitVal = bSplit[i];
+            if (i == iMax) {
+              if (aSplit.length < bSplit.length) return 1;
+              if (aSplit.length > bSplit.length) return -1;
+            }
+            if (aSplitVal > bSplitVal) return 1;
+            if (aSplitVal < bSplitVal) return -1;
+          }
+        })
+      );
       
       let newEtagsBuf = Buffer.from(JSON.stringify(etags, null, 2));
       
       fs.writeFileSync('websites/etags.json', newEtagsBuf);
       fs.writeFileSync(fullPath, newEtagsBuf);
-      fs.writeFileSync(fullPath + '.gz', zlib.gzipSync(newEtagsBuf));
       fs.writeFileSync(fullPath + '.br', zlib.brotliCompressSync(newEtagsBuf));
+      fs.writeFileSync(fullPath + '.gz', zlib.gzipSync(newEtagsBuf));
     }
   } else {
     fs.writeFileSync('websites/etags.json', etagsBuf);

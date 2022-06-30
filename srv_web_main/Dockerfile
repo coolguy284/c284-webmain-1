@@ -23,7 +23,7 @@ COPY --chown=webmain:webmain srv_web_main/common/website_data_parse.js common/we
 COPY --chown=webmain:webmain srv_web_main/websites/website_data.txt websites/website_data.txt
 COPY --chown=webmain:webmain srv_web_main/helpers/compress_and_etags.js helpers/compress_and_etags.js
 
-RUN node helpers/compress_and_etags.js --only '^data/UnicodeData\.txt(?:\.gz|\.br)?$'
+RUN node helpers/compress_and_etags.js --only '^data/UnicodeData\.txt(?:\.br|\.gz)?$'
 
 COPY --chown=webmain:webmain srv_web_main/log_utils.js log_utils.js
 
