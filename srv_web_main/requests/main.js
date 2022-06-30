@@ -23,11 +23,11 @@ module.exports = async function main(httpVersion, ...args) {
     
     if (!requestProps.url.pathname.startsWith('/api/') &&
       !(requestProps.host == 'old.coolguy284.com' && (
-        common.constVars.oldServerNoLogURLs.has(requestProps.url.path) &&
-        !common.constVars.oldServerNoLogURLStarts.some(x => requestProps.url.path.startsWith(x))
+        common.constVars.oldServerNoLogURLs.has(requestProps.url.path) ||
+        common.constVars.oldServerNoLogURLStarts.some(x => requestProps.url.path.startsWith(x))
       ) || requestProps.url.path.startsWith('/old') && (
-        common.constVars.oldServerNoLogURLs.has(requestProps.url.path.slice(4)) &&
-        !common.constVars.oldServerNoLogURLStarts.some(x => requestProps.url.path.slice(4).startsWith(x))
+        common.constVars.oldServerNoLogURLs.has(requestProps.url.path.slice(4)) ||
+        common.constVars.oldServerNoLogURLStarts.some(x => requestProps.url.path.slice(4).startsWith(x))
       )))
       logger.info(common.getReqLogStr(requestProps));
     
