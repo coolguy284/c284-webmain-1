@@ -1,7 +1,6 @@
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
 add error logging for failed stdin send on repl (for use with s2 and s3 options primarily)
-base website index.html not redirecting but subfolder index.html is
 add html entity escaping to local sitemap gen since its xml
 rework dockerfiles
 etag or lastmod match should return 304 even if range request
@@ -12,10 +11,6 @@ use map and promise all for git log and others or for none of them
 make more lib/extern copied from node_modules in dockerfile
 
 check for srv_web_old env before proxying connection
-
-unarchive node-server-new to make common flags http and https server be related to common.port and common.porttls, also make common port and porttls default to null, null meaning server won't get run; either this or make common flags http and https into environment variables, probably this latter as it matches the code style more
-  maybe add coolguy284.github.io to site as well
-  update github repos description urls once hosted
 
 crlf and all eslint checks on wm
   add semicolon
@@ -28,6 +23,9 @@ old sites
   make old and maybe old2 not use polling, probably use eventsource instead
     dompurify to old node chat
   bring back important
+  make wm1, ns, nsn work as subfolder on website, meaning change html and js files to not use absolute paths
+  maybe add coolguy284.github.io to site as well
+  update github repos description urls once hosted
 
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
 fix all docker containers getting a sigint simultaneously when proc_main one does
