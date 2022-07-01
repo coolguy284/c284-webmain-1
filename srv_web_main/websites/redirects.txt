@@ -53,6 +53,8 @@ FPS /no_source.css                           /misc/no_source.css
 FPS /no_source.html                          /misc/no_source.html
 FPS /own_eyes.html                           /misc/own_eyes.html
 FPS /p404.html                               /misc/debug/templates/404.html
+FPS /page_404.html                           /misc/debug/templates/404.html
+FPS /page_500.html                           /misc/debug/templates/500.html
 FPS /perr.html                               /misc/debug/templates/500.html
 FPS /rectangles.html                         /misc/rectangles.html
 FPS /redirecttemplate.html                   /misc/debug/templates/meta_redirect.html

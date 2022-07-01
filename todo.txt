@@ -1,9 +1,11 @@
+split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
 add error logging for failed stdin send on repl (for use with s2 and s3 options primarily)
 base website index.html not redirecting but subfolder index.html is
 add html entity escaping to local sitemap gen since its xml
 rework dockerfiles
 etag or lastmod match should return 304 even if range request
+fix server undockered run (useful for quick purposes)
 
 use map and promise all for git log and others or for none of them
 
@@ -12,8 +14,6 @@ make more lib/extern copied from node_modules in dockerfile
 check for srv_web_old env before proxying connection
 
 unarchive node-server-new to make common flags http and https server be related to common.port and common.porttls, also make common port and porttls default to null, null meaning server won't get run; either this or make common flags http and https into environment variables, probably this latter as it matches the code style more
-  check how well node-server-new handles sigints, increase manager ping timeout
-  implement x-robots-tag: noindex header to node-server-new
   maybe add coolguy284.github.io to site as well
   update github repos description urls once hosted
 
@@ -25,12 +25,9 @@ crlf and all eslint checks on wm
   unused function args and vars in code
 
 old sites
-  add old2 to index as addl links
   make old and maybe old2 not use polling, probably use eventsource instead
     dompurify to old node chat
-  add external links, only links, not implicit includes, warning to index for old2
   bring back important
-  old srvs do not accept stdin repls
 
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
 fix all docker containers getting a sigint simultaneously when proc_main one does
@@ -46,6 +43,7 @@ add sitemap.xml, robots.txt, and others to debug pages, basically all currently 
   do the same in node srv, node srv new, c284 git io
 make proxies disconnect other end if one end closes, forward errors as well
   make socketLink function in common that does all this to prevent code duplication
+  if http proxy res function is given already complete res it will hang and not close socket and browser will load indefinitely as well
 create_sitemap return lastmod and other properties, also return array of objects instead of map
 
 add privacy policy
@@ -53,6 +51,7 @@ add base64_url encoder/decoder
 fancier latency test and time syncer, less NaN
 websocket connection not using http2
 validation for meta description tags, to supplement validation for canonical urls
+  also validator to make sure "to" urls in redirects.txt are the final form of the url for the most part
 add no javascript banner to all pages that use javascript in the slightest
 add warnings to encrypting, decrypting, hashing, etc. to not use for security purposes
 improve localstorage editor cookies handling
@@ -89,6 +88,7 @@ convert server to restful api
 add /api/help endpoint that explains api endpoints
   explains /chat/ws and future chat endpoints as well, or points to a /chat/docs endpoint that explains the same
 logs reform, make all logged requests debug and turn off debug, put basic info (ip and url) into seperate file for processing and conversion to aggregate format
+  beginner log reform is hide ip and maybe url or more from main log, make addl log that doesnt have terminal formatting characters that does have the info, then think of how to collate into url accessed in country and per operating system thing like old server viewshist
 add website version to status, maybe also add more things
 rename qr code to qr code generator and make qr code reader
 converter or smth w. encodings, textboxes, n other stuff and contenteditable div, more general version of base64/url/uricomp etc, but also horizontal instead of vertical
@@ -105,6 +105,9 @@ chat upgrades
 spaces
   universes, zones, simple objects and physical simulation regions
 add oldg, production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
+
+extra:
+experiment with unsorted readdirs using fuse, if works potential necessity to sort c284-webmain-1 modtimes.json or maybe just sort it anyway
 
 problems:
 if there is a unicode url it can be redirected by the default redirect code and the unicode code one at a time

@@ -8,9 +8,12 @@ module.exports = function serverConnectFunc(req, socket, head) {
     
     logger.info(common.getReqLogStr(requestProps));
     
-    if (requestProps.host == 'old.coolguy284.com' || requestProps.url.pathname.startsWith('/old/')) {
+    let isOldServerHost = common.constVars.otherServerHosts.has(requestProps.host),
+      oldServerURLStart = common.constVars.otherServerURLStarts.find(x => requestProps.url.pathname.startsWith(x));
+    
+    if (isOldServerHost || oldServerURLStart) {
       // old server proxying
-      let sendURL = requestProps.url.pathname.startsWith('/old/') ? requestProps.url.path.slice(4) : requestProps.url.path;
+      let sendURL = isOldServerHost ? requestProps.url.path : '/' + requestProps.url.path.slice(oldServerURLStart.length);
       let sendHeaders = {
         ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
         ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
@@ -18,7 +21,7 @@ module.exports = function serverConnectFunc(req, socket, head) {
         'x-forwarded-proto': 'https',
       };
       let srvReq = http.request({
-        host: 'srv_web_old',
+        host: isOldServerHost ? common.constVars.otherServerHostsMap.get(requestProps.host) : common.constVars.otherServerURLStartsMap.get(oldServerURLStart),
         port: 8080,
         method: requestProps.method,
         path: sendURL,

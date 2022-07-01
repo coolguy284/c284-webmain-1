@@ -103,6 +103,7 @@ if (!toBool(process.env.SRV_WEB_OLD_DISABLED)) {
 if (!toBool(process.env.SRV_WEB_OLD2_DISABLED)) {
   var srv_web_old2 = cp.spawn('docker', [
     'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_old2', '--network', NETWORK_NAME, '--network-alias', 'srv_web_old2',
+    '--env-file', '/home/webmain/c284-webmain-1_s/srv_web_old2.env.list',
     '-e', 'HTTP=true', '-e', 'HTTPS=false', '-e', 'PORT=8080',
     'c284-webmain-1_srv_web_old2'
   ], { stdio: ['pipe', 'pipe', 'pipe'] });

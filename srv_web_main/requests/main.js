@@ -32,7 +32,7 @@ module.exports = async function main(httpVersion, ...args) {
       logger.info(common.getReqLogStr(requestProps));
     
     // redirect main page to https
-    if (requestProps.proto == 'http' && requestProps.host != 'old.coolguy284.com' || requestProps.host == 'www.coolguy284.com') {
+    if (requestProps.proto == 'http' && !common.constVars.otherServerHosts.has(requestProps.host) || requestProps.host == 'www.coolguy284.com') {
       let newURL = new URL(requestProps.url);
       if (requestProps.proto == 'http') newURL.protocol = 'https:';
       if (requestProps.host == 'www.coolguy284.com') newURL.host = 'coolguy284.com';
@@ -41,11 +41,14 @@ module.exports = async function main(httpVersion, ...args) {
       return;
     }
     
-    let isOldServer = requestProps.host == 'old.coolguy284.com' || requestProps.url.pathname.startsWith('/old/');
+    let isOldServerHost = common.constVars.otherServerHosts.has(requestProps.host),
+      oldServerURLStart = common.constVars.otherServerURLStarts.find(x => requestProps.url.pathname.startsWith(x));
+    let isOldServer = isOldServerHost || Boolean(oldServerURLStart);
     let isHttp2Connect = requestProps.httpVersion == 2 && requestProps.method == 'connect';
+    
     if (isOldServer && !isHttp2Connect) {
-      // old server proxying
-      let sendURL = requestProps.url.pathname.startsWith('/old/') ? requestProps.url.path.slice(4) : requestProps.url.path;
+      // server proxying
+      let sendURL = isOldServerHost ? requestProps.url.path : '/' + requestProps.url.path.slice(oldServerURLStart.length);
       let sendHeaders = {
         ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
         ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
@@ -53,7 +56,7 @@ module.exports = async function main(httpVersion, ...args) {
         'x-forwarded-proto': 'https',
       };
       let srvReq = http.request({
-        host: 'srv_web_old',
+        host: isOldServerHost ? common.constVars.otherServerHostsMap.get(requestProps.host) : common.constVars.otherServerURLStartsMap.get(oldServerURLStart),
         port: 8080,
         method: requestProps.method,
         path: sendURL,

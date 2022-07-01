@@ -173,6 +173,20 @@ module.exports = exports = {
   },
   
   constVars: {
+    otherServerHosts: new Set(['old.coolguy284.com', 'old2.coolguy284.com', 'oldg.coolguy284.com', 'test.coolguy284.com']),
+    otherServerURLStarts: ['/old/', '/old2/', '/oldg/'],
+    otherServerHostsMap: new Map([
+      ['old.coolguy284.com', 'srv_web_old'],
+      ['old2.coolguy284.com', 'srv_web_old2'],
+      ['oldg.coolguy284.com', 'srv_web_oldg'],
+      ['test.coolguy284.com', 'srv_web_old'],
+    ]),
+    otherServerURLStartsMap: new Map([
+      ['/old/', 'srv_web_old'],
+      ['/old2/', 'srv_web_old2'],
+      ['/oldg/', 'srv_web_oldg'],
+    ]),
+    
     oldServerNoLogURLs: new Set(['/livechat.dat', '/liverchat.json', '/liveviews.dat', '/comms.json', '/colog.dat', '/cologd.dat', '/livechathere.dat', '/livechattyp.dat', '/livechatkick.dat', '/pkey.log', '/lat.log']),
     oldServerNoLogURLStarts: ['/s?her=', '/s?typ=', '/m?cnl=', '/a?co=', '/a?cd=', '/a?ccp=', '/a?rc=', '/a?fstyp=', '/a?fsdir=', '/a?fstex='],
   },
