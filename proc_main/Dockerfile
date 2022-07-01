@@ -19,6 +19,6 @@ WORKDIR /home/webmain
 COPY package-basic.json package.json
 RUN npm install
 
-COPY package.json index.js .
+COPY package.json index.js ./
 
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]
