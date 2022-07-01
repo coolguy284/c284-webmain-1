@@ -1,6 +1,6 @@
+add mounted srv_web_old data dir
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
-add error logging for failed stdin send on repl (for use with s2 and s3 options primarily)
 add html entity escaping to local sitemap gen since its xml
 rework dockerfiles
 etag or lastmod match should return 304 even if range request

@@ -200,19 +200,30 @@ process.on('unhandledRejection', err => {
 var process_stdin = ReadlineStream({});
 process.stdin.pipe(process_stdin);
 
-var sendServer = 1;
+var serverList = [srv_web_main, srv_web_old, srv_web_old2];
+var serverNameList = ['srv_web_main', 'srv_web_old', 'srv_web_old2'];
+var sendServerIndex = 0;
 process_stdin.on('data', input => {
-  switch (input) {
-    case ':q\n': exitHandler(); break;
-    case ':s1\n': sendServer = 1; break;
-    case ':s2\n': sendServer = 2; break;
-    case ':s3\n': sendServer = 3; break;
-    default:
-      switch (sendServer) {
-        case 1: if (srv_web_main) srv_web_main.stdin.write(input); break;
-        case 2: if (srv_web_old) srv_web_old.stdin.write(input); break;
-        case 3: if (srv_web_old2) srv_web_old2.stdin.write(input); break;
-      }
-      break;
+  if (input == ':q\n') {
+    exitHandler();
+    return;
   }
+  
+  var sMatch = /^:s([0-9]+)\n$/.exec(input);
+  if (sMatch) {
+    let sMatchIndex = parseInt(sMatch[1]);
+    if (sMatchIndex in serverList) {
+      sendServerIndex = sMatchIndex;
+      console.log(`Sending stdin to ${serverNameList[sendServerIndex]}`);
+    } else {
+      console.log(`No such server at index ${sMatchIndex}`);
+    }
+    return;
+  }
+  
+  var sendServer = serverList[sendServerIndex];
+  if (sendServer)
+    sendServer.stdin.write(input);
+  else
+    console.log(`Cannot send stdin to ${serverNameList[sendServerIndex]} as it was not run`);
 });
