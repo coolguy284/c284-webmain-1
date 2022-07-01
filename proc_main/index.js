@@ -213,8 +213,12 @@ process_stdin.on('data', input => {
   if (sMatch) {
     let sMatchIndex = parseInt(sMatch[1]);
     if (sMatchIndex in serverList) {
-      sendServerIndex = sMatchIndex;
-      console.log(`Sending stdin to ${serverNameList[sendServerIndex]}`);
+      if (serverList[sMatchIndex]) {
+        sendServerIndex = sMatchIndex;
+        console.log(`Sending stdin to ${serverNameList[sendServerIndex]}`);
+      } else {
+        console.log(`Server at index ${sMatchIndex} not run`);
+      }
     } else {
       console.log(`No such server at index ${sMatchIndex}`);
     }
