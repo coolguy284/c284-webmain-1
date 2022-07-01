@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "readline-stream": "^1.0.2"
+  }
+}

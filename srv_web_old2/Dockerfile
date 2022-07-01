@@ -23,7 +23,7 @@ RUN mv node-server-new/* ./ && mv node-server-new/.[^.]* ./ && rmdir node-server
 
 RUN npm install
 
-RUN touch .env
+RUN touch .env && mkdir data
 RUN sed -i 's/terminal: true/terminal: false/' index.js && sed -i 's/preview: true/preview: false/' index.js
 
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "manager.js"]

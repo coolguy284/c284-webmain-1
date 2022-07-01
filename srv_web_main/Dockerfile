@@ -37,9 +37,9 @@ RUN node helpers/compress_and_etags.js --only '^libs/.*$'
 
 COPY --chown=webmain:webmain srv_web_main/dockerenv.list dockerenv.list
 
-COPY --chown=webmain:webmain srv_web_main/package.json package.json
-
 COPY --chown=webmain:webmain .git .git
+
+COPY --chown=webmain:webmain srv_web_main/package.json package.json
 
 COPY --chown=webmain:webmain srv_web_main/helpers helpers
 COPY --chown=webmain:webmain srv_web_main/index.js index.js

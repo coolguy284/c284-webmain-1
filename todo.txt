@@ -1,4 +1,3 @@
-add mounted srv_web_old data dir
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
 add html entity escaping to local sitemap gen since its xml
