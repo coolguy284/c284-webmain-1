@@ -1,3 +1,4 @@
+var fs = require('fs');
 var common = require('../common');
 var unicode = require('../common/unicode');
 

@@ -1,5 +1,6 @@
 var logger = require('../log_utils')('requests/connect_http1');
 
+var http = require('http');
 var common = require('../common');
 
 module.exports = function serverConnectFunc(req, socket, head) {

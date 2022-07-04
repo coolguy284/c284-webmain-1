@@ -1,5 +1,6 @@
 var logger = require('../log_utils')('requests/connect');
 
+var http = require('http');
 var common = require('../common');
 
 module.exports = async function connectMethod(requestProps) {

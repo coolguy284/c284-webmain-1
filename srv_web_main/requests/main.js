@@ -1,5 +1,6 @@
 var logger = require('../log_utils')('requests/main');
 
+var http = require('http');
 var common = require('../common');
 var redirects = require('../common/redirects');
 

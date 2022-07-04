@@ -1,5 +1,6 @@
 var logger = require('../log_utils')('requests/upgrade');
 
+var http = require('http');
 var common = require('../common');
 
 module.exports = function serverUpgradeFunc(req, socket, head) {
