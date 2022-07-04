@@ -1,5 +1,3 @@
-var logger = require('../log_utils')('requests/status_ws');
-
 var BSON = require('bson');
 var statusUilts = require('../common/status_utils');
 

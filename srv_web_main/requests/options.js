@@ -1,4 +1,3 @@
-var path = require('path');
 var common = require('../common');
 
 module.exports = async function optionsMethod(requestProps) {
