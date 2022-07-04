@@ -69,7 +69,7 @@ module.exports = async function getMethod(requestProps) {
       let ip;
       if (/^::ffff:?(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
         ip = requestProps.ip.slice(7).split('.').map(x => Number(x));
-        ip = '::ffff:' + (ip[0] * 256 + ip[1]).toString(16) + ':' + (ip[2] * 256 + ip[3]).toString(16);;
+        ip = '::ffff:' + (ip[0] * 256 + ip[1]).toString(16) + ':' + (ip[2] * 256 + ip[3]).toString(16);
       } else if (/^(?:[0-9a-f]{0,4}:){1,8}[0-9a-f]{0,4}$/.test(requestProps.ip)) {
         ip = requestProps.ip;
       } else {
