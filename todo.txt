@@ -99,7 +99,10 @@ user account system
 add open declaration of password security and data handling (when its time)
 chat upgrades
   option to send as markdown, bbcode, or html
-  text, voice, raw data thru voice, inputs keyboard mouse controller etc sent to bot and output stream from bot (thru voice channel)
+  text, voice, raw data thru voice (or maybe data channels), inputs keyboard mouse controller etc sent to bot and output stream from bot (thru voice channel)
+  arbitrary kv pairs on msgs, user, channel, member, server, etc
+  colored server mutes
+  ability to see whether people can see livestream and what their latency to it is
 spaces
   universes, zones, simple objects and physical simulation regions
 add oldg, production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
