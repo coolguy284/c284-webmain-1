@@ -8,28 +8,32 @@ The website is split into 2 parts, the code part on the github repo, and informa
 
 the files are laid out as follows for linux:
 ```
-/home/webmain/c284-webmain-1   . github repository
+/home/webmain/c284-webmain-1/  . github repository
+  srv_web_main/dockerenv.list  . docker build environment variable file
 /home/webmain/c284-webmain-1_s/
   cert .   .   .   .   .   .   . certificates for srv_web_main
   logs .   .   .   .   .   .   . main log files
   logs_mongodb .   .   .   .   . mongodb log files
   mongodb  .   .   .   .   .   . mongodb database
   srv_web_old_data .   .   .   . srv_web_old mounted data dir
+  srv_web_old2_data    .   .   . srv_web_old2 mounted data dir
   env.list .   .   .   .   .   . environment variable file
   srv_web_old2.env.list    .   . srv_web_old2 environment variable file
 ```
 
 the files are laid out as follows for windows:
 ```
-D:/Data/c284-webmain-1 .   . github repository
+D:/Data/c284-webmain-1/    .   . github repository
+  srv_web_main/dockerenv.list  . docker build environment variable file
 D:/Data/c284-webmain-1_s/
-  cert .   .   .   .   .   . certificates for srv_web_main
-  logs .   .   .   .   .   . main log files
-  logs_mongodb .   .   .   . mongodb log files
-  mongodb  .   .   .   .   . mongodb database
-  srv_web_old_data .   .   . srv_web_old mounted data dir
-  env.list .   .   .   .   . environment variable file
-  srv_web_old2.env.list    . srv_web_old2 environment variable file
+  cert .   .   .   .   .   .   . certificates for srv_web_main
+  logs .   .   .   .   .   .   . main log files
+  logs_mongodb .   .   .   .   . mongodb log files
+  mongodb  .   .   .   .   .   . mongodb database
+  srv_web_old_data .   .   .   . srv_web_old mounted data dir
+  srv_web_old2_data    .   .   . srv_web_old2 mounted data dir
+  env.list .   .   .   .   .   . environment variable file
+  srv_web_old2.env.list    .   . srv_web_old2 environment variable file
 ```
 
 # Environment Variables
