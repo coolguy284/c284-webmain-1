@@ -77,6 +77,7 @@ potentially add more multi page auto generated pages like unicode
 make misc index proper
 replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70) 
 add top navbar to base64 site and other tools sites and rest of website
+add waveform gen and other repl sites to website
 
 hex editor
 english words searcher
