@@ -4,7 +4,7 @@ module.exports = exports = {
   toBool: (str, defaultBool) => {
     if (str == null || str == '') return defaultBool;
     else {
-      str = str == 'false' || str == '0' ? false : true
+      str = str == 'false' || str == '0' ? false : true;
     }
   },
   
