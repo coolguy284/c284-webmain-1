@@ -216,10 +216,12 @@ process.on('unhandledRejection', err => {
 global.tickIntMS = Number(process.env.SRV_WEB_MAIN_TICK_INTERVAL) || 5000;
 global.ticks = 0;
 global.tickFunc = () => {
+  var i;
+  
   // for removing old cached TLS sessions
   let tlsSessionLimitTime = Date.now() - 300000;
   if (process.env.SRV_WEB_MAIN_HTTPS_IP && ticks % (300000 / tickIntMS)) {
-    for (var i of tlsSessionStore.keys()) {
+    for (i of tlsSessionStore.keys()) {
       if (tlsSessionStore.get(i)[1] < tlsSessionLimitTime)
         tlsSessionStore.delete(i);
     }
@@ -227,7 +229,7 @@ global.tickFunc = () => {
   
   // for removing old ownEyes tokens
   let ownEyesLimitTime = Date.now() - 5000;
-  for (var i of common.vars.ownEyesCodes.keys()) {
+  for (i of common.vars.ownEyesCodes.keys()) {
     if (common.vars.ownEyesCodes.get(i) < ownEyesLimitTime)
       common.vars.ownEyesCodes.delete(i);
   }
@@ -299,14 +301,15 @@ async function exitHandler() {
     setTimeout(() => {
       if (!echoWSServer.clients.size && !chatWSServer.clients.size && !statusWSServer.clients.size) return;
       logger.warn('Forcibly closing all WebSocket connections');
+      var ws;
       if (echoWSServer.clients.size) {
-        for (var ws of echoWSServer.clients) ws.close();
+        for (ws of echoWSServer.clients) ws.close();
       }
       if (chatWSServer.clients.size) {
-        for (var ws of chatWSServer.clients) ws.close();
+        for (ws of chatWSServer.clients) ws.close();
       }
       if (statusWSServer.clients.size) {
-        for (var ws of statusWSServer.clients) ws.close();
+        for (ws of statusWSServer.clients) ws.close();
       }
     }, 8000).unref();
     

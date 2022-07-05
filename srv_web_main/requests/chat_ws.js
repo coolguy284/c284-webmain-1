@@ -44,7 +44,8 @@ function chatWSFunc(ws, req, requestProps) {
               } else {
                 if (wsInfo.username != msg.username) {
                   if (wsInfo.username != null) {
-                    for (var ws2 of chatWSServer.clients) {
+                    let ws2;
+                    for (ws2 of chatWSServer.clients) {
                       let obj;
                       if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                         ws2.send(BSON.serialize({
@@ -59,7 +60,8 @@ function chatWSFunc(ws, req, requestProps) {
                   wsInfo.username = msg.username;
                   
                   if (wsInfo.username != null) {
-                    for (var ws2 of chatWSServer.clients) {
+                    let ws2;
+                    for (ws2 of chatWSServer.clients) {
                       let obj;
                       if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                         ws2.send(BSON.serialize({
@@ -148,7 +150,8 @@ function chatWSFunc(ws, req, requestProps) {
                 }));
               } else if (wsInfo.typing != msg.typing) {
                 wsInfo.typing = msg.typing;
-                for (var ws2 of chatWSServer.clients) {
+                let ws2;
+                for (ws2 of chatWSServer.clients) {
                   let obj;
                   if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                     ws2.send(BSON.serialize({
@@ -270,9 +273,11 @@ function chatWSFunc(ws, req, requestProps) {
         
         ws.on('close', () => {
           if (wsInfo.username != null) {
+            let ws2;
+            
             if (wsInfo.typing) {
               wsInfo.typing = false;
-              for (var ws2 of chatWSServer.clients) {
+              for (ws2 of chatWSServer.clients) {
                 let obj;
                 if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                   ws2.send(BSON.serialize({
@@ -285,7 +290,7 @@ function chatWSFunc(ws, req, requestProps) {
               }
             }
             
-            for (var ws2 of chatWSServer.clients) {
+            for (ws2 of chatWSServer.clients) {
               let obj;
               if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
                 ws2.send(BSON.serialize({
@@ -332,8 +337,9 @@ function mongoClientOnConnect() {
         break;
       
       case 'update':
-        if (typeof changeEvent.updateDescription.updatedFields.content == 'string')
-          for (var ws2 of chatWSServer.clients) {
+        if (typeof changeEvent.updateDescription.updatedFields.content == 'string') {
+          let ws2;
+          for (ws2 of chatWSServer.clients) {
             let obj;
             if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
               ws2.send(BSON.serialize({
@@ -346,10 +352,12 @@ function mongoClientOnConnect() {
               }));
             }
           }
+        }
         break;
       
-      case 'delete':
-        for (var ws2 of chatWSServer.clients) {
+      case 'delete': {
+        let ws2;
+        for (ws2 of chatWSServer.clients) {
           let obj;
           if (ws2.readyState == 1 && (obj = chatWSServerMap.get(ws2)).username != null) {
             ws2.send(BSON.serialize({
@@ -360,6 +368,7 @@ function mongoClientOnConnect() {
           }
         }
         break;
+      }
     }
   });
 }

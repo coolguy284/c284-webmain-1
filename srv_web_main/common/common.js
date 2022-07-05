@@ -36,11 +36,13 @@ module.exports = exports = {
   },
   
   getRequestProps: (httpVersion, ...args) => {
+    let requestProps;
+    
     switch (httpVersion) {
-      case 1:
-        var [ req, res, type ] = args;
+      case 1: {
+        let [ req, res, type ] = args;
         
-        var requestProps = {
+        requestProps = {
           httpVersion: 1,
           type,
           req, res, headers: req.headers,
@@ -82,11 +84,12 @@ module.exports = exports = {
           }
         }
         break;
+      }
       
-      case 2:
-        var [ stream, headers, flags, rawHeaders, type ] = args;
+      case 2: {
+        let [ stream, headers, flags, rawHeaders, type ] = args;
         
-        var requestProps = {
+        requestProps = {
           httpVersion: 2,
           type,
           stream, headers, flags, rawHeaders,
@@ -102,7 +105,7 @@ module.exports = exports = {
           id: currentRequestID++,
         };
         
-        var hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
+        let hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
         if (hostHeader != null) {
           if (/[a-z0-9-.]+/.test(hostHeader))
             requestProps.host = hostHeader;
@@ -129,6 +132,7 @@ module.exports = exports = {
           }
         }
         break;
+      }
       
       default:
         console.log('not possible');

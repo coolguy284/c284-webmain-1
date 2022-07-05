@@ -78,6 +78,7 @@ make misc index proper
 replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70) 
 add top navbar to base64 site and other tools sites and rest of website
 add waveform gen and other repl sites to website
+add /unicode/random for link to random unicode character
 
 hex editor
 english words searcher

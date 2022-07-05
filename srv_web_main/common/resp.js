@@ -131,6 +131,8 @@ module.exports = exports = {
   file: async (requestProps, filename, statusCode, headOnly, headers) => {
     var shortPath = filename.replace(/\\/g, '/').replace('websites/public/', '') || 'index.html';
     
+    var stats, size, mtime;
+    
     // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
     if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
       if (!(filename in global.filesCache)) {
@@ -140,16 +142,19 @@ module.exports = exports = {
       
       var fileEntry = global.filesCache[filename];
       
-      var stats = fileEntry.stats, size = fileEntry.file.length, mtime = new Date(modtimes[shortPath]) ?? fileEntry.stats.mtime;
+      stats = fileEntry.stats;
+      size = fileEntry.file.length;
+      mtime = new Date(modtimes[shortPath]) ?? fileEntry.stats.mtime;
     } else {
-      var stats = await fs.promises.stat(filename);
+      stats = await fs.promises.stat(filename);
       
       if (stats.isDirectory()) {
         let error = new Error('EISDIR'); error.code = 'ENOENT';
         throw error;
       }
       
-      var size = stats.size, mtime = new Date(modtimes[shortPath]) ?? stats.mtime;
+      size = stats.size;
+      mtime = new Date(modtimes[shortPath]) ?? stats.mtime
     }
     
     var mimeType = mime.getType(filename);
