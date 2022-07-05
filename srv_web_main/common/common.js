@@ -55,7 +55,7 @@ module.exports = exports = {
           urlString: null,
           url: null,
           timestamp: new Date(),
-          id: currentRequestID++,
+          id: exports.vars.currentRequestID++,
         };
         
         if ('host' in req.headers) {
@@ -102,7 +102,7 @@ module.exports = exports = {
           urlString: null,
           url: null,
           timestamp: new Date(),
-          id: currentRequestID++,
+          id: exports.vars.currentRequestID++,
         };
         
         let hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
@@ -173,6 +173,41 @@ module.exports = exports = {
   resp: require('./resp'),
   
   vars: {
+    mongoProxyServer: null,
+    mongoProxyServerConns: null,
+    mongoClient: null,
+    
+    currentRequestID: 0,
+    
+    tcpServer: null,
+    httpServer: null,
+    httpServerConns: null,
+    
+    tlsServer: null,
+    tlsSessionStore: null,
+    httpsServer: null,
+    httpsServerConns: null,
+    http2Server: null,
+    http2ServerSessions: null,
+    http2ServerStreams: null,
+    
+    httpServerProxyConns: null,
+    
+    echoWSServer: null,
+    chatWSServer: null,
+    chatWSServerMap: null,
+    statusWSServer: null,
+    
+    filesCache: null,
+    
+    tickIntMs: null,
+    ticks: null,
+    tickFunc: null,
+    
+    exitHandlerCalled: null,
+    
+    replServer: null,
+    
     ownEyesCodes: new Map(),
   },
   

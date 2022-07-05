@@ -1,5 +1,6 @@
 var BSON = require('bson');
 var chatDBUilts = require('../common/chat_db_utils');
+var { mongoClient, chatWSServer, chatWSServerMap } = require('../common').vars;
 
 function chatWSFunc(ws, req, requestProps) {
   if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == 'false') {

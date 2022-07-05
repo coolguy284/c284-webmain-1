@@ -2,6 +2,7 @@ var logger = require('../log_utils')('requests/connect');
 
 var http = require('http');
 var common = require('../common');
+var { httpServerProxyConns, echoWSServer, chatWSServer, statusWSServer } = require('../common').vars;
 
 module.exports = async function connectMethod(requestProps) {
   // this is exclusively for http2

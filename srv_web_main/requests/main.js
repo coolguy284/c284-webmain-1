@@ -3,6 +3,7 @@ var logger = require('../log_utils')('requests/main');
 var http = require('http');
 var common = require('../common');
 var redirects = require('../common/redirects');
+var { httpServerProxyConns } = require('../common').vars;
 
 var methods = {
   options: require('./options'),

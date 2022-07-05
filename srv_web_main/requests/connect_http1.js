@@ -2,6 +2,7 @@ var logger = require('../log_utils')('requests/connect_http1');
 
 var http = require('http');
 var common = require('../common');
+var { httpServerProxyConns } = require('../common').vars;
 
 module.exports = function serverConnectFunc(req, socket, head) {
   try {
