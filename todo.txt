@@ -79,6 +79,7 @@ replace string startswith checks followed by string slicing with regex matching 
 add top navbar to base64 site and other tools sites and rest of website
 add waveform gen and other repl sites to website
 add /unicode/random for link to random unicode character
+  possibly live website_data.txt evaluating because of unicode characters pages, should be marked no crawl at first but will need to send that header
 
 hex editor
 english words searcher

@@ -154,7 +154,7 @@ module.exports = exports = {
       }
       
       size = stats.size;
-      mtime = new Date(modtimes[shortPath]) ?? stats.mtime
+      mtime = new Date(modtimes[shortPath]) ?? stats.mtime;
     }
     
     var mimeType = mime.getType(filename);
