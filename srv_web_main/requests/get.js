@@ -1,12 +1,13 @@
 var fs = require('fs');
 var common = require('../common');
+var resp = require('../common/resp');
 var unicode = require('../common/unicode');
 
 module.exports = async function getMethod(requestProps) {
   var publicPath = common.getPublicPath(requestProps.url.pathname);
   
   if (!common.isSubDir('websites/public', publicPath)) {
-    await common.resp.s404(requestProps);
+    await resp.s404(requestProps);
     return;
   }
   
@@ -16,8 +17,8 @@ module.exports = async function getMethod(requestProps) {
     if (requestProps.url.pathname == '/api/echo/ip') {
       let sendPort = requestProps.url.searchParams.get('port');
       sendPort = sendPort && sendPort != 'false' && sendPort != '0';
-      await common.resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
-      await common.resp.end(requestProps, sendPort ? common.mergeIPPort(requestProps.ip, requestProps.port) : requestProps.ip);
+      await resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
+      await resp.end(requestProps, sendPort ? common.mergeIPPort(requestProps.ip, requestProps.port) : requestProps.ip);
     }
     
     else if (requestProps.url.pathname == '/api/echo/ipv4') {
@@ -28,7 +29,7 @@ module.exports = async function getMethod(requestProps) {
         let ip = requestProps.ip.replace('::ffff:', '');
         switch (form) {
           case 'bytes':
-            await common.resp.data(
+            await resp.data(
               requestProps,
               200,
               sendPort ?
@@ -39,7 +40,7 @@ module.exports = async function getMethod(requestProps) {
             break;
           
           case 'hex':            
-            await common.resp.data(
+            await resp.data(
               requestProps,
               200,
               sendPort ?
@@ -49,7 +50,7 @@ module.exports = async function getMethod(requestProps) {
             break;
           
           default:
-            await common.resp.data(
+            await resp.data(
               requestProps,
               200,
               sendPort ?
@@ -59,7 +60,7 @@ module.exports = async function getMethod(requestProps) {
             break;
         }
       } else {
-        await common.resp.data(requestProps, 500, 'Error: client address not IPv4');
+        await resp.data(requestProps, 500, 'Error: client address not IPv4');
       }
     }
     
@@ -80,7 +81,7 @@ module.exports = async function getMethod(requestProps) {
       if (ip != null) {
         switch (form) {
           case 'bytes':
-            await common.resp.data(
+            await resp.data(
               requestProps,
               200,
               Buffer.from(
@@ -94,7 +95,7 @@ module.exports = async function getMethod(requestProps) {
             break;
           
           case 'hex':
-            await common.resp.data(
+            await resp.data(
               requestProps,
               200,
               sendPort ?
@@ -104,7 +105,7 @@ module.exports = async function getMethod(requestProps) {
             break;
           
           default:
-            await common.resp.data(
+            await resp.data(
               requestProps,
               200,
               sendPort ?
@@ -114,7 +115,7 @@ module.exports = async function getMethod(requestProps) {
             break;
         }
       } else {
-        await common.resp.data(requestProps, 500, 'Error: client address not IPv6');
+        await resp.data(requestProps, 500, 'Error: client address not IPv6');
       }
     }
     
@@ -122,7 +123,7 @@ module.exports = async function getMethod(requestProps) {
       let form = requestProps.url.searchParams.get('form');
       switch (form) {
         case 'json':
-          await common.resp.data(
+          await resp.data(
             requestProps,
             200,
             JSON.stringify(requestProps.headers),
@@ -131,7 +132,7 @@ module.exports = async function getMethod(requestProps) {
           break;
         
         default:
-          await common.resp.data(
+          await resp.data(
             requestProps,
             200,
             Object.entries(requestProps.headers)
@@ -147,44 +148,44 @@ module.exports = async function getMethod(requestProps) {
       let form = requestProps.url.searchParams.get('form');
       switch (form) {
         case 'number':
-          await common.resp.data(requestProps, 200, Date.now() + '');
+          await resp.data(requestProps, 200, Date.now() + '');
           break;
         
         default:
-          await common.resp.data(requestProps, 200, new Date().toISOString());
+          await resp.data(requestProps, 200, new Date().toISOString());
           break;
       }
     }
     
     else if (requestProps.url.pathname == '/api/null') {
-      await common.resp.data(requestProps, 204);
+      await resp.data(requestProps, 204);
     }
     
     else {
-      await common.resp.data(requestProps, 500, 'Error: invalid API endpoint');
+      await resp.data(requestProps, 500, 'Error: invalid API endpoint');
     }
   }
   
   else if (requestProps.url.pathname == '/r') {
     if (requestProps.url.search.startsWith('?u=')) {
       let file = Buffer.from((process.env.SRV_WEB_MAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
-      await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
-      await common.resp.end(requestProps, file);
+      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?uh=')) {
-      await common.resp.headers(requestProps, 303, { 'location': decodeURIComponent(requestProps.url.search.slice(4)) });
-      await common.resp.end(requestProps);
+      await resp.headers(requestProps, 303, { 'location': decodeURIComponent(requestProps.url.search.slice(4)) });
+      await resp.end(requestProps);
     } else if (requestProps.url.search.startsWith('?e=')) {
       let file = Buffer.from((process.env.SRV_WEB_MAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
-      await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
-      await common.resp.end(requestProps, file);
+      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?eh=')) {
-      await common.resp.headers(requestProps, 303, { 'location': Buffer.from(requestProps.url.search.slice(3), 'base64').toString() });
-      await common.resp.end(requestProps);
+      await resp.headers(requestProps, 303, { 'location': Buffer.from(requestProps.url.search.slice(3), 'base64').toString() });
+      await resp.end(requestProps);
     }
   }
   
   else if (requestProps.url.pathname == '/misc/no_source.html') {
-    await common.resp.fileFull(
+    await resp.fileFull(
       requestProps, 'websites/public/misc/no_source.html', null,
       { 'link': '<no_source.css>; rel="stylesheet"' }
     );
@@ -193,8 +194,8 @@ module.exports = async function getMethod(requestProps) {
   else if (requestProps.url.pathname == '/misc/own_eyes.html') {
     let code = crypto.randomBytes(16).toString('base64').replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
     let file = process.env.SRV_WEB_MAIN_CACHE_MODE == '1' ? global.filesCache['websites/public/misc/own_eyes.html'] : (await fs.promises.readFile('websites/public/misc/own_eyes.html')).toString().replace('{code}', code);
-    await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
-    await common.resp.end(requestProps, file);
+    await resp.headers(requestProps, 200, resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+    await resp.end(requestProps, file);
     common.vars.ownEyesCodes.set(code, Date.now());
   }
   
@@ -205,8 +206,8 @@ module.exports = async function getMethod(requestProps) {
       newURL.pathname = '/misc/unicode/U+' + fancyCodePoint;
       newURL = newURL.href;
       
-      await common.resp.headers(requestProps, 308, { 'location': newURL });
-      await common.resp.end(requestProps);
+      await resp.headers(requestProps, 308, { 'location': newURL });
+      await resp.end(requestProps);
     } else {
       let codePoint = match[2].toUpperCase();
       let unicodeChar = unicode.getEntry(codePoint);
@@ -218,19 +219,19 @@ module.exports = async function getMethod(requestProps) {
           .replaceAll('{alias}', unicodeChar[9] || 'N/A')
           .replaceAll('{name_alias}', unicodeChar[9] || unicodeChar[0] || 'N/A')
       );
-      await common.resp.headers(requestProps, 200, common.resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
-      await common.resp.end(requestProps, file);
+      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await resp.end(requestProps, file);
     }
   }
   
   else if (requestProps.url.pathname == '/yiyo.dev') {
-    await common.resp.fileFull(
+    await resp.fileFull(
       requestProps, 'websites/public/yiyo.dev', null,
       { 'content-type': 'text/html; charset=utf-8' }
     );
   }
   
   else {
-    await common.resp.fileFull(requestProps, publicPath);
+    await resp.fileFull(requestProps, publicPath);
   }
 };

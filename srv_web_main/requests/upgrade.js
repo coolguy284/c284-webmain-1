@@ -2,6 +2,7 @@ var logger = require('../log_utils')('requests/upgrade');
 
 var http = require('http');
 var common = require('../common');
+var resp = require('../common/resp');
 var { httpServerProxyConns, echoWSServer, chatWSServer, statusWSServer } = require('../common').vars;
 
 module.exports = function serverUpgradeFunc(req, socket, head) {
@@ -44,16 +45,16 @@ module.exports = function serverUpgradeFunc(req, socket, head) {
       // main server processing
       if (requestProps.headers.upgrade.toLowerCase() == 'websocket') {
         if (requestProps.url.pathname == '/echo_ws') {
-          common.resp.ws(echoWSServer, requestProps, req, socket, head);
+          resp.ws(echoWSServer, requestProps, req, socket, head);
         } else if (requestProps.url.pathname == '/chat/ws') {
-          common.resp.ws(chatWSServer, requestProps, req, socket, head);
+          resp.ws(chatWSServer, requestProps, req, socket, head);
         } else if (requestProps.url.pathname == '/api/status_ws') {
-          common.resp.ws(statusWSServer, requestProps, req, socket, head);
+          resp.ws(statusWSServer, requestProps, req, socket, head);
         } else {
-          common.resp.manual404(req, socket);
+          resp.manual404(req, socket);
         }
       } else {
-        common.resp.manual404(req, socket);
+        resp.manual404(req, socket);
       }
     }
   } catch (err) {

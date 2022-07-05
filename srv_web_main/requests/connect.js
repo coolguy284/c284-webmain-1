@@ -2,6 +2,7 @@ var logger = require('../log_utils')('requests/connect');
 
 var http = require('http');
 var common = require('../common');
+var resp = require('../common/resp');
 var { httpServerProxyConns, echoWSServer, chatWSServer, statusWSServer } = require('../common').vars;
 
 module.exports = async function connectMethod(requestProps) {
@@ -32,22 +33,22 @@ module.exports = async function connectMethod(requestProps) {
       setHost: false,
       timeout: 10000,
     }, async res => {
-      await common.resp.headers(requestProps, res.statusCode, {
+      await resp.headers(requestProps, res.statusCode, {
         ...Object.fromEntries(Object.entries(res.headers).filter(x => x[0].toLowerCase() != 'connection')),
       });
-      await common.resp.stream(requestProps, res);
+      await resp.stream(requestProps, res);
     });
     httpServerProxyConns.add(srvReq);
     srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
     srvReq.on('error', x => logger.error(x));
     srvReq.on('upgrade', (res, srvSocket, srvHead) => {
-      let stream = common.resp.getStream(requestProps);
+      let stream = resp.getStream(requestProps);
       stream.write(srvHead);
       stream.pipe(srvSocket);
       srvSocket.pipe(stream);
     });
     srvReq.on('connect', (res, srvSocket, srvHead) => {
-      let stream = common.resp.getStream(requestProps);
+      let stream = resp.getStream(requestProps);
       stream.write(srvHead);
       stream.pipe(srvSocket);
       srvSocket.pipe(stream);
@@ -56,16 +57,16 @@ module.exports = async function connectMethod(requestProps) {
     // main server processing
     if (requestProps.headers[':protocol'] == 'websocket') {
       if (requestProps.url.pathname == '/echo_ws') {
-        common.resp.ws(echoWSServer, requestProps);
+        resp.ws(echoWSServer, requestProps);
       } else if (requestProps.url.pathname == '/chat/ws') {
-        common.resp.ws(chatWSServer, requestProps);
+        resp.ws(chatWSServer, requestProps);
       } else if (requestProps.url.pathname == '/api/status_ws') {
-        common.resp.ws(statusWSServer, requestProps);
+        resp.ws(statusWSServer, requestProps);
       } else {
-        await common.resp.s404(requestProps);
+        await resp.s404(requestProps);
       }
     } else {
-      await common.resp.s404(requestProps);
+      await resp.s404(requestProps);
     }
   }
 };

@@ -3,6 +3,7 @@ var logger = require('../log_utils')('requests/main');
 var http = require('http');
 var common = require('../common');
 var redirects = require('../common/redirects');
+var resp = require('../common/resp');
 var { httpServerProxyConns } = require('../common').vars;
 
 var methods = {
@@ -38,8 +39,8 @@ module.exports = async function main(httpVersion, ...args) {
       let newURL = new URL(requestProps.url);
       if (requestProps.proto == 'http') newURL.protocol = 'https:';
       if (requestProps.host == 'www.coolguy284.com') newURL.host = 'coolguy284.com';
-      await common.resp.headers(requestProps, 307, { 'location': newURL.href });
-      await common.resp.end(requestProps);
+      await resp.headers(requestProps, 307, { 'location': newURL.href });
+      await resp.end(requestProps);
       return;
     }
     
@@ -66,23 +67,23 @@ module.exports = async function main(httpVersion, ...args) {
         setHost: false,
         timeout: 10000,
       }, async res => {
-        await common.resp.headers(requestProps, res.statusCode, {
+        await resp.headers(requestProps, res.statusCode, {
           ...Object.fromEntries(Object.entries(res.headers).filter(x => x[0].toLowerCase() != 'connection')),
         });
-        await common.resp.stream(requestProps, res);
+        await resp.stream(requestProps, res);
       });
       httpServerProxyConns.add(srvReq);
       srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
       srvReq.on('error', x => logger.error(x));
-      common.resp.getStream(requestProps).pipe(srvReq);
+      resp.getStream(requestProps).pipe(srvReq);
     } else {
       // main server processing
       if (!isOldServer) {
         let potentialRedirect = redirects.followRedirects(requestProps.url);
         
         if (potentialRedirect[0]) {
-          await common.resp.headers(requestProps, potentialRedirect[1], { 'location': potentialRedirect[2] });
-          await common.resp.end(requestProps);
+          await resp.headers(requestProps, potentialRedirect[1], { 'location': potentialRedirect[2] });
+          await resp.end(requestProps);
           return;
         }
       }
@@ -90,14 +91,14 @@ module.exports = async function main(httpVersion, ...args) {
       let methodRun;
       if (requestProps.method in methods) methodRun = methods[requestProps.method](requestProps) != 1;
       if (!methodRun) {
-        await common.resp.headers(requestProps, 501);
-        await common.resp.end(requestProps);
+        await resp.headers(requestProps, 501);
+        await resp.end(requestProps);
       }
     }
   } catch (err) {
     logger.error(err);
     try {
-      await common.resp.s500(requestProps);
+      await resp.s500(requestProps);
     } catch (err2) {
       logger.error(err2);
     }

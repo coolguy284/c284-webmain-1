@@ -2,6 +2,7 @@ var logger = require('../log_utils')('requests/connect_http1');
 
 var http = require('http');
 var common = require('../common');
+var resp = require('../common/resp');
 var { httpServerProxyConns } = require('../common').vars;
 
 module.exports = function serverConnectFunc(req, socket, head) {
@@ -42,7 +43,7 @@ module.exports = function serverConnectFunc(req, socket, head) {
       });
     } else {
       // main server processing
-      common.resp.manual404(req, socket);
+      resp.manual404(req, socket);
     }
   } catch (err) {
     logger.error(err);

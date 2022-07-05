@@ -1,4 +1,3 @@
-simply some variable access chains like "common.resp."
 make env switches enable based instead of disable based
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
@@ -13,13 +12,6 @@ use map and promise all for git log and others or for none of them
 make more lib/extern copied from node_modules in dockerfile
 
 check for srv_web_old env before proxying connection
-
-crlf and all eslint checks on wm
-  add semicolon
-  remove unused code
-  unnecessary semicolon
-  replace unnecessary template string
-  unused function args and vars in code
 
 old sites
   make old and maybe old2 not use polling, probably use eventsource instead
