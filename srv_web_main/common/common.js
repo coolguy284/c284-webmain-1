@@ -161,7 +161,7 @@ module.exports = exports = {
     
     try {
       pathName = decodeURI(pathName);
-    } catch (err) {}
+    } catch (err) { /* empty */ }
     
     return path.join('websites/public', pathName);
   },
