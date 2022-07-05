@@ -3,7 +3,7 @@ var statusUilts = require('../common/status_utils');
 
 function statusWSFunc(ws, req, requestProps) {
   switch (requestProps.url.searchParams.get('version')) {
-    case '1':
+    case '1': {
       let wsInfo = { incID: 0 };
       
       ws.on('message', msg => {
@@ -58,6 +58,7 @@ function statusWSFunc(ws, req, requestProps) {
         },
       }));
       break;
+    }
   }
 }
 

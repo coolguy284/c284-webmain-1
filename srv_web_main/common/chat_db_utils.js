@@ -176,7 +176,7 @@ module.exports = exports = {
           typing: msg.typing,
         };
       
-      case 'message':
+      case 'message': {
         let msgObj = exports.validateVer1Msg(msg.message);
         if (msgObj.author == null) throw new exports.ValidationError('wsmsg.message.author is null');
         return {
@@ -184,15 +184,17 @@ module.exports = exports = {
           type: msg.type,
           message: msgObj,
         };
+      }
       
-      case 'message_edit':
-        let msgObj2 = exports.validateVer1Msg(msg.message);
-        if (msgObj2.author == null) throw new exports.ValidationError('wsmsg.message.author is null');
+      case 'message_edit': {
+        let msgObj = exports.validateVer1Msg(msg.message);
+        if (msgObj.author == null) throw new exports.ValidationError('wsmsg.message.author is null');
         return {
           id: msg.id,
           type: msg.type,
-          message: msgObj2,
+          message: msgObj,
         };
+      }
       
       case 'message_delete':
         if (!Buffer.isBuffer(msg.message_id)) throw new exports.ValidationError('wsmsg.message_id is invalid');
@@ -217,15 +219,16 @@ module.exports = exports = {
           content: msg.content,
         };
       
-      case 'send_message_edit':
-        let msgObj3 = exports.validateVer1Msg(msg.message);
+      case 'send_message_edit': {
+        let msgObj = exports.validateVer1Msg(msg.message);
         return {
           id: msg.id,
           type: msg.type,
-          message: msgObj3,
+          message: msgObj,
         };
+      }
       
-      case 'send_message_delete':
+      case 'send_message_delete': {
         let messageID = typeof msg.message_id == 'object' ? (Buffer.isBuffer(msg.message_id) ? msg.message_id : Buffer.isBuffer(msg.message_id.buffer) ? msg.message_id.buffer : null) : null;
         if (!messageID) throw new exports.ValidationError('wsmsg.message_id is invalid');
         return {
@@ -233,6 +236,7 @@ module.exports = exports = {
           type: msg.type,
           message_id: messageID,
         };
+      }
       
       case 'set_typing_ack':
         return {
