@@ -91,7 +91,7 @@ module.exports = exports = {
           id: msg.id,
           type: msg.type,
           code: typeof msg.code == 'string' ? msg.code : 'error',
-          description: typeof msg.description ? msg.description : 'An error occured.',
+          description: typeof msg.description == 'string' ? msg.description : 'An error occured.',
           ...(typeof msg.addl_data == 'object' ? { addl_data : {
             ...(Buffer.isBuffer(msg.addl_data.original_msg) ? { original_msg: msg.addl_data.original_msg } : {}),
           } } : {}),
