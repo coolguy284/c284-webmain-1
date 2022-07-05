@@ -23,7 +23,7 @@ module.exports = {
           id: msg.id,
           type: msg.type,
           code: typeof msg.code == 'string' ? msg.code : 'error',
-          description: typeof msg.description ? msg.description : 'An error occured.',
+          description: typeof msg.description == 'string' ? msg.description : 'An error occured.',
         };
       
       case 'status_update_request':
