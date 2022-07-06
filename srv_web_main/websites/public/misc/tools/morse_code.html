@@ -160,12 +160,12 @@
         if (!auto_convert.checked && !mode) return;
         
         if (simple_mode.checked) {
-          text.value = morse.value.replace(/\./g, '•').split(/   +/g)
+          text.value = morse.value.replace(/\./g, '•').split(/ {3,}/g)
             .map(x => x.split(/ +/g).map(y => reverseMorseMapSimple[y]).join(''))
             .join(' ');
         } else {
-          text.value = morse.value.replace(/\./g, '•').split(/       +/g)
-            .map(x => x.split(/   +/g).map(y => reverseMorseMap[y]).join(''))
+          text.value = morse.value.replace(/\./g, '•').split(/ {7,}/g)
+            .map(x => x.split(/ {3,}/g).map(y => reverseMorseMap[y]).join(''))
             .join(' ');
         }
       }
