@@ -10,6 +10,7 @@ var http2 = require('http2');
 var net = require('net');
 var repl = require('repl');
 var tls = require('tls');
+var util = require('util');
 var ws = require('ws');
 
 var common = require('./common');
@@ -346,19 +347,13 @@ process.on('SIGINT', exitHandler);
 common.vars.replServer = repl.start({
   prompt: '',
   terminal: false,
-  useColors: true,
   preview: false,
-  breakEvalOnSigint: false,
   // declaring eval explicitly so code is evaluated in the context of index.js
   eval: msg => {
     try {
-      return eval(msg);
+      console.log(util.inspect(eval(msg), { colors: true, showProxy: true }));
     } catch (err) {
-      if (err instanceof SyntaxError && err.message == 'Unexpected end of input') {
-        throw repl.Recoverable;
-      } else {
-        throw err;
-      }
+      console.error(err.stack);
     }
   },
 });

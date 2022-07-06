@@ -1,6 +1,7 @@
 .vs
 docker
 docs
+node_modules
 proc_main
 proc_mongodb
 srv_web_main/docker

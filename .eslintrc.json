@@ -13,6 +13,7 @@
     "ecmaVersion": "latest"
   },
   "plugins": [
+    "eslint-plugin-html",
     "vue"
   ],
   "rules": {

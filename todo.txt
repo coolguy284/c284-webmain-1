@@ -25,6 +25,7 @@ add validator for canonical urls and meta urls, printing if they exist but do no
 fix all docker containers getting a sigint simultaneously when proc_main one does
 
 http.coolguy284.com or insecure.coolguy284.com
+  implement by adding a works with http flag that must be turned on for each page that works with http, otherwise a 404 is sent
 
 add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
@@ -75,6 +76,8 @@ add top navbar to base64 site and other tools sites and rest of website
 add waveform gen and other repl sites to website
 add /unicode/random for link to random unicode character
   possibly live website_data.txt evaluating because of unicode characters pages, should be marked no crawl at first but will need to send that header
+experiment with wiki stuff
+add /misc/trail which is a page with status code 451, links to other stuff if bypassed (by setting ?location=space&admin=true), 1 layer deep it will say trail ends here for now until extended
 
 hex editor
 english words searcher
