@@ -41,7 +41,8 @@
       "rules": {
         "no-cond-assign": 1,
         "no-undef": 0,
-        "no-control-regex": 0
+        "no-control-regex": 0,
+        "no-loss-of-precision": 0
       }
     }
   ]
