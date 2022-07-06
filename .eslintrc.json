@@ -40,7 +40,8 @@
       "files": [ "srv_web_main/websites/public/**/*.*" ],
       "rules": {
         "no-cond-assign": 1,
-        "no-undef": 0
+        "no-undef": 0,
+        "no-control-regex": 0
       }
     }
   ]
