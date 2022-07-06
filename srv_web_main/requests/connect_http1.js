@@ -3,7 +3,7 @@ var logger = require('../log_utils')('requests/connect_http1');
 var http = require('http');
 var common = require('../common');
 var resp = require('../common/resp');
-var { httpServerProxyConns } = require('../common').vars;
+var commonVars = require('../common').vars;
 
 module.exports = function serverConnectFunc(req, socket, head) {
   try {
@@ -32,8 +32,8 @@ module.exports = function serverConnectFunc(req, socket, head) {
         setHost: false,
         timeout: 10000,
       });
-      httpServerProxyConns.add(srvReq);
-      srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
+      commonVars.httpServerProxyConns.add(srvReq);
+      srvReq.on('close', () => { commonVars.httpServerProxyConns.delete(srvReq); });
       srvReq.on('error', x => logger.error(x));
       srvReq.on('connect', (res, srvSocket, srvHead) => {
         srvSocket.write(head);

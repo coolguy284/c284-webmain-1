@@ -4,7 +4,7 @@ var http = require('http');
 var common = require('../common');
 var redirects = require('../common/redirects');
 var resp = require('../common/resp');
-var { httpServerProxyConns } = require('../common').vars;
+var commonVars = require('../common').vars;
 
 var methods = {
   options: require('./options'),
@@ -72,8 +72,8 @@ module.exports = async function main(httpVersion, ...args) {
         });
         await resp.stream(requestProps, res);
       });
-      httpServerProxyConns.add(srvReq);
-      srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
+      commonVars.httpServerProxyConns.add(srvReq);
+      srvReq.on('close', () => { commonVars.httpServerProxyConns.delete(srvReq); });
       srvReq.on('error', x => logger.error(x));
       resp.getStream(requestProps).pipe(srvReq);
     } else {

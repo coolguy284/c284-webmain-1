@@ -3,7 +3,7 @@ var logger = require('../log_utils')('requests/connect');
 var http = require('http');
 var common = require('../common');
 var resp = require('../common/resp');
-var { httpServerProxyConns, echoWSServer, chatWSServer, statusWSServer } = require('../common').vars;
+var commonVars = require('../common').vars;
 
 module.exports = async function connectMethod(requestProps) {
   // this is exclusively for http2
@@ -38,8 +38,8 @@ module.exports = async function connectMethod(requestProps) {
       });
       await resp.stream(requestProps, res);
     });
-    httpServerProxyConns.add(srvReq);
-    srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
+    commonVars.httpServerProxyConns.add(srvReq);
+    srvReq.on('close', () => { commonVars.httpServerProxyConns.delete(srvReq); });
     srvReq.on('error', x => logger.error(x));
     srvReq.on('upgrade', (res, srvSocket, srvHead) => {
       let stream = resp.getStream(requestProps);
@@ -57,11 +57,11 @@ module.exports = async function connectMethod(requestProps) {
     // main server processing
     if (requestProps.headers[':protocol'] == 'websocket') {
       if (requestProps.url.pathname == '/echo_ws') {
-        resp.ws(echoWSServer, requestProps);
+        resp.ws(commonVars.echoWSServer, requestProps);
       } else if (requestProps.url.pathname == '/chat/ws') {
-        resp.ws(chatWSServer, requestProps);
+        resp.ws(commonVars.chatWSServer, requestProps);
       } else if (requestProps.url.pathname == '/api/status_ws') {
-        resp.ws(statusWSServer, requestProps);
+        resp.ws(commonVars.statusWSServer, requestProps);
       } else {
         await resp.s404(requestProps);
       }

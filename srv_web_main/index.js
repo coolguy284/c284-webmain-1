@@ -19,6 +19,7 @@ var common = require('./common');
 if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == 'false') {
   (async () => {
     // start reverse proxy
+    common.vars.mongoProxyServerConns = new Set();
     common.vars.mongoProxyServer = net.createServer(conn => {
       if (conn.remoteAddress != '::ffff:127.0.0.1') {
         logger.debug(`Mongodb proxy connection invalid, ${conn.remoteAddress}:${conn.remotePort} is not permitted to connect to the proxy`);
@@ -39,7 +40,6 @@ if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == '
         logger.debug(`Mongodb proxy connection from localhost:${conn.remotePort} closed ${hadError ? 'with' : 'without'} error`);
       });
     });
-    common.vars.mongoProxyServerConns = new Set();
     common.vars.mongoProxyServer.on('error', err => logger.error('Proxy ' + err.toString()));
 
     common.vars.mongoProxyServer.listen(27017, () => logger.info('Mongodb proxy server listening'));
@@ -91,8 +91,8 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP) {
     logger.info(`HTTP server listening on ${common.mergeIPPort(process.env.SRV_WEB_MAIN_HTTP_IP, process.env.SRV_WEB_MAIN_HTTP_PORT)}`);
   });
   
-  common.vars.httpServer = http.createServer(require('./requests/main').bind(null, 1));
   common.vars.httpServerConns = new Set();
+  common.vars.httpServer = http.createServer(require('./requests/main').bind(null, 1));
   common.vars.httpServer.on('connection', socket => {
     common.vars.httpServerConns.add(socket);
     socket.on('close', () => { common.vars.httpServerConns.delete(socket); });
@@ -147,8 +147,8 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
     logger.info(`HTTPS/H2 server listening on ${common.mergeIPPort(process.env.SRV_WEB_MAIN_HTTPS_IP, process.env.SRV_WEB_MAIN_HTTPS_PORT)}`);
   });
   
-  common.vars.httpsServer = https.createServer(require('./requests/main').bind(null, 1));
   common.vars.httpsServerConns = new Set();
+  common.vars.httpsServer = https.createServer(require('./requests/main').bind(null, 1));
   common.vars.httpsServer.on('secureConnection', socket => {
     common.vars.httpsServerConns.add(socket);
     socket.on('close', () => { common.vars.httpsServerConns.delete(socket); });
@@ -156,9 +156,9 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
   common.vars.httpsServer.on('upgrade', require('./requests/upgrade'));
   common.vars.httpsServer.on('connect', require('./requests/connect_http1'));
   
-  common.vars.http2Server = http2.createSecureServer({ settings: { enableConnectProtocol: true } });
   common.vars.http2ServerSessions = new Set();
   common.vars.http2ServerStreams = new Set();
+  common.vars.http2Server = http2.createSecureServer({ settings: { enableConnectProtocol: true } });
   common.vars.http2Server.on('session', session => {
     common.vars.http2ServerSessions.add(session);
     session.on('stream', stream => {

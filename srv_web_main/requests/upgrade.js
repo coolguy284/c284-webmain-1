@@ -3,7 +3,7 @@ var logger = require('../log_utils')('requests/upgrade');
 var http = require('http');
 var common = require('../common');
 var resp = require('../common/resp');
-var { httpServerProxyConns, echoWSServer, chatWSServer, statusWSServer } = require('../common').vars;
+var commonVars = require('../common').vars;
 
 module.exports = function serverUpgradeFunc(req, socket, head) {
   try {
@@ -32,8 +32,8 @@ module.exports = function serverUpgradeFunc(req, socket, head) {
         setHost: false,
         timeout: 10000,
       });
-      httpServerProxyConns.add(srvReq);
-      srvReq.on('close', () => { httpServerProxyConns.delete(srvReq); });
+      commonVars.httpServerProxyConns.add(srvReq);
+      srvReq.on('close', () => { commonVars.httpServerProxyConns.delete(srvReq); });
       srvReq.on('error', x => logger.error(x));
       srvReq.on('upgrade', (res, srvSocket, srvHead) => {
         srvSocket.write(head);
@@ -45,11 +45,11 @@ module.exports = function serverUpgradeFunc(req, socket, head) {
       // main server processing
       if (requestProps.headers.upgrade.toLowerCase() == 'websocket') {
         if (requestProps.url.pathname == '/echo_ws') {
-          resp.ws(echoWSServer, requestProps, req, socket, head);
+          resp.ws(commonVars.echoWSServer, requestProps, req, socket, head);
         } else if (requestProps.url.pathname == '/chat/ws') {
-          resp.ws(chatWSServer, requestProps, req, socket, head);
+          resp.ws(commonVars.chatWSServer, requestProps, req, socket, head);
         } else if (requestProps.url.pathname == '/api/status_ws') {
-          resp.ws(statusWSServer, requestProps, req, socket, head);
+          resp.ws(commonVars.statusWSServer, requestProps, req, socket, head);
         } else {
           resp.manual404(req, socket);
         }
