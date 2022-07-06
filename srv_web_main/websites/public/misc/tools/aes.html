@@ -94,7 +94,7 @@
           try {
             download('aes.txt', CryptoJS.AES.encrypt(fro.result, mapp.value));
           } catch (e) { alert(e); }
-        }
+        };
         fro.readAsText(file);
       }
       function tftex(file) {
@@ -103,7 +103,7 @@
           try {
             download('file.txt', CryptoJS.enc.Utf8.stringify(CryptoJS.AES.decrypt(fro.result, mapp.value)));
           } catch (e) { alert(e); }
-        }
+        };
         fro.readAsText(file);
       }
     </script>

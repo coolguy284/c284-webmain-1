@@ -128,7 +128,7 @@
           var crypt = new JSEncrypt();
           crypt.setPublicKey(pubta.value);
           download('rsa.txt', crypt.encrypt(fro.result));
-        }
+        };
         fro.readAsText(file);
       }
       function tftex(file) {
@@ -137,7 +137,7 @@
           var crypt = new JSEncrypt();
           crypt.setPrivateKey(prita.value);
           download('file.txt', crypt.decrypt(fro.result));
-        }
+        };
         fro.readAsText(file);
       }
       function updsct() {

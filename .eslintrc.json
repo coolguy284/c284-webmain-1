@@ -16,6 +16,9 @@
     "eslint-plugin-html",
     "vue"
   ],
+  "settings": {
+    "html/html-extensions": [ ".html", ".dev" ]
+  },
   "rules": {
     "linebreak-style": [
       "error",
@@ -31,5 +34,15 @@
     ],
     "no-unused-vars": 0,
     "no-cond-assign": 0
-  }
+  },
+  "overrides": [
+    {
+      "files": [ "srv_web_main/websites/public/**/*.*" ],
+      "rules": {
+        "no-unused-vars": 1,
+        "no-cond-assign": 1,
+        "no-undef": 0
+      }
+    }
+  ]
 }
