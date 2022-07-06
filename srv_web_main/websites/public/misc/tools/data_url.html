@@ -252,7 +252,7 @@
         lastUpdated = 2;
         
         try {
-          let match = /^data:([a-z.\/]*[a-z0-9;=-]*?;base64|[a-z.\/]*[a-z0-9;=-]*?)?,(.*)$/.exec(data_url.value);
+          let match = /^data:([a-z./]*[a-z0-9;=-]*?;base64|[a-z./]*[a-z0-9;=-]*?)?,(.*)$/.exec(data_url.value);
           
           if (!match) throw new Error('invalid data url');
           
