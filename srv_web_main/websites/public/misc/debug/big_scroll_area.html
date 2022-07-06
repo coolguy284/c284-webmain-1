@@ -63,6 +63,7 @@
       function clampCol(col) { return Math.min(Math.max(col, 0), cols - 1); }
       
       function setParamsFromURLHash() {
+        // set parameters from url hash (treated like url searchparams, as in #?<params>)
         if (location.hash) {
           let params = new URLSearchParams(location.hash.slice(1));
           
@@ -89,16 +90,20 @@
           mode = 'partial';
         }
         
+        // set document body size (to ensure the big area is scrollable)
         document.body.style.width = colWidth * cols + 'px';
         document.body.style.height = rowWidth * rows + 'px';
         
+        var id;
+        
         // remove old elements
-        for (var id of currentCells) {
+        for (id of currentCells) {
           document.body.removeChild(document.getElementById(id));
           
           currentCells.delete(id);
         }
         
+        // update canvas visibilty (only used for canvas mode, not visible otherwise)
         switch (mode) {
           case 'full':
           case 'partial':
@@ -110,10 +115,11 @@
             break;
         }
         
+        // add new elements all at once for full mode
         if (mode == 'full') {
           for (var row = 0; row < rows; row++) {
             for (var col = 0; col < cols; col++) {
-              var id = row + ',' + col;
+              id = row + ',' + col;
               if (!currentCells.has(id)) {
                 var elem = document.createElement('div');
                 
@@ -143,6 +149,8 @@
           tileUp = Math.floor(window.scrollY / rowWidth),
           tileDown = Math.ceil((window.scrollY + window.innerHeight) / rowWidth);
         
+        var id, row, col;
+        
         switch (mode) {
           case 'partial':
             tileLeft -= loadBufferCells;
@@ -154,9 +162,9 @@
             tileUp = clampRow(tileUp); tileDown = clampRow(tileDown);
             
             // place new elements
-            for (var row = tileUp; row <= tileDown; row++) {
-              for (var col = tileLeft; col <= tileRight; col++) {
-                var id = row + ',' + col;
+            for (row = tileUp; row <= tileDown; row++) {
+              for (col = tileLeft; col <= tileRight; col++) {
+                id = row + ',' + col;
                 if (!currentCells.has(id)) {
                   var elem = document.createElement('div');
                   
@@ -175,8 +183,8 @@
             }
             
             // remove old ones
-            for (var id of currentCells) {
-              var [ row, col ] = id.split(',').map(Number);
+            for (id of currentCells) {
+              [ row, col ] = id.split(',').map(Number);
               if (row < tileUp || row > tileDown || col < tileLeft || col > tileRight) {
                 document.body.removeChild(document.getElementById(id));
                 
@@ -192,8 +200,8 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
             // draw elements
-            for (var row = tileUp; row <= tileDown; row++) {
-              for (var col = tileLeft; col <= tileRight; col++) {
+            for (row = tileUp; row <= tileDown; row++) {
+              for (col = tileLeft; col <= tileRight; col++) {
                 ctx.lineWidth = 5;
                 ctx.strokeRect(
                   col * colWidth - window.scrollX,

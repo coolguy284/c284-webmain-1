@@ -365,21 +365,23 @@
           
           binaryString = BinaryStringToU8Arr(binaryString);
           
+          var i;
+          
           switch (hash_algorythm.value) {
             case 'SHA-1': case 'SHA-256': case 'SHA-384': case 'SHA-512':
-              for (var i = 0; i < repeatCount; i++) binaryString = await crypto.subtle.digest(hash_algorythm.value, binaryString);
+              for (i = 0; i < repeatCount; i++) binaryString = await crypto.subtle.digest(hash_algorythm.value, binaryString);
               break;
             
             case 'SHA-224': case 'SHA-512_224': case 'SHA-512_256': {
               let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
-              for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString)));
+              for (i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString)));
               break;
             }
             
             case 'SHA3-224': case 'SHA3-256': case 'SHA3-384': case 'SHA3-512':
             case 'Keccak-224': case 'Keccak-256': case 'Keccak-384': case 'Keccak-512': {
               let alg = window[hash_algorythm.value.replace('-', '_').toLowerCase()];
-              for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString)));
+              for (i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString)));
               break;
             }
             
@@ -390,7 +392,7 @@
               else if (!Number.isSafeInteger(outputLength)) { outputLength = Math.round(outputLength); output_length.value = outputLength; }
               
               let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
-              for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString, output_length.value)));
+              for (i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString, output_length.value)));
               break;
             }
             
@@ -427,7 +429,7 @@
               }
               
               let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
-              for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString, output_length.value, function_name_check.checked ? functionName : '', customization_check.checked ? customizationStr : '')));
+              for (i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString, output_length.value, function_name_check.checked ? functionName : '', customization_check.checked ? customizationStr : '')));
               break;
             }
           }

@@ -427,15 +427,17 @@
           private_key.classList.remove('is-invalid');
         }
         
+        var keyExponent;
+        
         try {
           if (key_exponent.value == 'custom') {
             try {
-              var keyExponent = BigInt(key_exponent_number.value);
+              keyExponent = BigInt(key_exponent_number.value);
             } catch (e) {
-              var keyExponent = BigInt(Math.round(Number(key_exponent_number.value)));
+              keyExponent = BigInt(Math.round(Number(key_exponent_number.value)));
             }
           } else {
-            var keyExponent = BigInt(key_exponent.value);
+            keyExponent = BigInt(key_exponent.value);
           }
           
           if (keyExponent < 0) keyExponent = -keyExponent;
