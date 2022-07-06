@@ -385,10 +385,11 @@
               vm.chatUsers.sort();
               break;
             
-            case 'user_leave':
+            case 'user_leave': {
               let userIndex = vm.chatUsers.lastIndexOf(msg.username);
               if (userIndex > -1) vm.chatUsers.splice(userIndex, 1);
               break;
+            }
             
             case 'get_typings_resp':
               vm.chatTypings.splice(0, Infinity, ...msg.users);
@@ -404,7 +405,7 @@
               }
               break;
             
-            case 'read_messages_resp':
+            case 'read_messages_resp': {
               let msgs = msg.messages.map(x => {
                 return {
                   id: Uint8ArrayToHex(x.id.buffer),
@@ -428,8 +429,9 @@
               
               setTimeout(onresize, 0);
               break;
+            }
             
-            case 'message':
+            case 'message': {
               let msgObj = {
                 id: Uint8ArrayToHex(msg.message.id.buffer),
                 timestamp: new Date(Number(new DataView(msg.message.id.buffer.buffer).getBigUint64(msg.message.id.buffer.byteOffset + 1))).toISOString(),
@@ -445,29 +447,32 @@
               
               setTimeout(onresize, 0);
               break;
+            }
             
-            case 'message_edit':
-              let msgObj2 = {
+            case 'message_edit': {
+              let msgObj = {
                 id: Uint8ArrayToHex(msg.message.id.buffer),
                 content: msg.message.content,
               };
               
-              let index = vm.chatItems.findIndex(x => x.id == msgObj2.id);
+              let index = vm.chatItems.findIndex(x => x.id == msgObj.id);
               
-              if (index > -1) vm.chatItems[index].content = msgObj2.content;
+              if (index > -1) vm.chatItems[index].content = msgObj.content;
               
               setTimeout(onresize, 0);
               break;
+            }
             
-            case 'message_delete':
+            case 'message_delete': {
               let msgID = Uint8ArrayToHex(msg.message_id.buffer);
               
-              let index2 = vm.chatItems.findIndex(x => x.id == msgID);
+              let index = vm.chatItems.findIndex(x => x.id == msgID);
               
-              if (index2 > -1) vm.chatItems.splice(index2, 1);
+              if (index > -1) vm.chatItems.splice(index, 1);
               
               setTimeout(onresize, 0);
               break;
+            }
           }
         };
       }

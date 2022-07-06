@@ -329,7 +329,7 @@
           }
           
           switch (aes_algo.value) {
-            case 'AES-CTR':
+            case 'AES-CTR': {
               let counterBuf = iv.value;
               switch (iv_format.value) {
                 case 'base64': counterBuf = atob(counterBuf); break;
@@ -337,6 +337,7 @@
               }
               options = { name: aes_algo.value, counter: BinaryStringToU8Arr(counterBuf), length: lengthNum };
               break;
+            }
             
             case 'AES-CBC': {
               let ivBuf = iv.value;
@@ -431,7 +432,7 @@
           }
           
           switch (aes_algo.value) {
-            case 'AES-CTR':
+            case 'AES-CTR': {
               let counterBuf = iv.value;
               switch (iv_format.value) {
                 case 'base64': counterBuf = atob(counterBuf); break;
@@ -439,6 +440,7 @@
               }
               options = { name: aes_algo.value, counter: BinaryStringToU8Arr(counterBuf), length: lengthNum };
               break;
+            }
             
             case 'AES-CBC': {
               let ivBuf = iv.value;
@@ -447,7 +449,8 @@
                 case 'hex': ivBuf = HexToBinaryString(ivBuf); break;
               }
               options = { name: aes_algo.value, iv: BinaryStringToU8Arr(ivBuf) };
-              } break;
+              break;
+            }
             
             case 'AES-GCM': {
               let ivBuf = iv.value, addlData = TextAreaToText(addl_data.value);
@@ -465,7 +468,8 @@
                 case 'hex': addlData = HexToBinaryString(addlData); break;
               }
               options = { name: aes_algo.value, iv: BinaryStringToU8Arr(ivBuf), additionalData: BinaryStringToU8Arr(addlData), tagLength: tag_length.value };
-              } break;
+              break;
+            }
           }
           
           binaryString = U8ArrToBinaryString(

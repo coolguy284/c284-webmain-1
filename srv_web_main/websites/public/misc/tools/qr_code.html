@@ -536,7 +536,7 @@
           let svgCode;
           
           switch (output_format.value) {
-            case 'canvas':
+            case 'canvas': {
               canvas.width = canvas.height = (qr.size + borderSize * 2) * pixelsPerModule;
               let ctx = canvas.getContext('2d');
               for (let y = -borderSize; y < qr.size + borderSize; y++) {
@@ -549,8 +549,9 @@
               canvas.style.display = 'block';
               svg.style.display = 'none';
               break;
+            }
             
-            case 'svg':
+            case 'svg': {
               svg.style.width = svg.style.height = (qr.size + borderSize * 2) * pixelsPerModule + 'px';
               let parts = [];
               for (let y = 0; y < qr.size; y++) {
@@ -571,6 +572,7 @@
               canvas.style.display = 'none';
               svg.style.display = 'block';
               break;
+            }
           }
           
           qrBinaryString = binaryString; qrSegs = segs; qrCode = qr; qrSvgCode = svgCode;
@@ -611,7 +613,7 @@
         if (image_button.classList.contains('collapsed')) return;
         
         switch (output_format.value) {
-          case 'canvas':
+          case 'canvas': {
             image_image.style.display = '';
             image_svg.style.display = 'none';
             
@@ -620,6 +622,7 @@
             image_image.src = canvas.toDataURL(image_format.value, Number.isNaN(qualityNum) ? 0.92 : Math.min(Math.max(qualityNum, 0), 1));
             image_svg.innerText = '';
             break;
+          }
           
           case 'svg':
             image_image.style.display = 'none';
@@ -693,7 +696,7 @@
         let element = document.createElement('a');
         
         switch (output_format.value) {
-          case 'canvas':
+          case 'canvas': {
             let qualityNum = Number(image_quality.value);
             element.setAttribute('href',
               canvas.toDataURL(image_format.value, Number.isNaN(qualityNum) ? 0.92 : Math.min(Math.max(qualityNum, 0), 1))
@@ -701,6 +704,7 @@
             
             element.setAttribute('download', 'qr_code.' + image_format.value.split('/')[1]);
             break;
+          }
           
           case 'svg':
             element.setAttribute('href', 'data:image/svg;base64,' + btoa(Utf8ToLatin1(qrSvgCode)));

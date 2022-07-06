@@ -222,12 +222,13 @@
             placeVisibleTiles();
             break;
           
-          case 'canvas':
+          case 'canvas': {
             let style = getComputedStyle(canvas);
             canvas.width = parseInt(style.width);
             canvas.height = parseInt(style.height);
             placeVisibleTiles();
             break;
+          }
         }
       };
       

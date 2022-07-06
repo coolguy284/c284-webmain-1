@@ -370,16 +370,18 @@
               for (var i = 0; i < repeatCount; i++) binaryString = await crypto.subtle.digest(hash_algorythm.value, binaryString);
               break;
             
-            case 'SHA-224': case 'SHA-512_224': case 'SHA-512_256':
+            case 'SHA-224': case 'SHA-512_224': case 'SHA-512_256': {
               let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
               for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString)));
               break;
+            }
             
             case 'SHA3-224': case 'SHA3-256': case 'SHA3-384': case 'SHA3-512':
             case 'Keccak-224': case 'Keccak-256': case 'Keccak-384': case 'Keccak-512': {
               let alg = window[hash_algorythm.value.replace('-', '_').toLowerCase()];
               for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString)));
-              } break;
+              break;
+            }
             
             case 'SHAKE-128': case 'SHAKE-256': {
               let outputLength = Number(output_length.value);
@@ -389,7 +391,8 @@
               
               let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
               for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString, output_length.value)));
-              } break;
+              break;
+            }
             
             case 'CSHAKE-128': case 'CSHAKE-256': {
               let outputLength = Number(output_length.value), functionName, customizationStr;
@@ -425,7 +428,8 @@
               
               let alg = window[hash_algorythm.value.replace('-', '').toLowerCase()];
               for (var i = 0; i < repeatCount; i++) binaryString = BinaryStringToU8Arr(HexToBinaryString(alg(binaryString, output_length.value, function_name_check.checked ? functionName : '', customization_check.checked ? customizationStr : '')));
-              } break;
+              break;
+            }
           }
           
           binaryString = U8ArrToBinaryString(binaryString);

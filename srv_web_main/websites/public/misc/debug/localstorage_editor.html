@@ -121,12 +121,13 @@
       function TypeUpdate() {
         let storageType = GetStorageType();
         switch (storageType) {
-          case 'cookies':
+          case 'cookies': {
             let cookie = document.cookie ? document.cookie.split('; ') : [];
             name_select.innerHTML = '<option value = \'s:custom\'>Custom</option><option disabled>───────────────</option>' + cookie.map(x => `<option value = 'k:${encodeURIComponent(x)}'>${EscapeHTML(x)}</option>`);
             name_select.value = 's:custom';
             Get();
             break;
+          }
           
           case 'localstorage':
           case 'sessionstorage':
@@ -162,7 +163,7 @@
         
         let fieldName = GetFieldName();
         switch (storageType) {
-          case 'cookies':
+          case 'cookies': {
             let cookie = document.cookie.split('; ');
             if (cookie.includes(fieldName)) {
               field_value.value = TextToTextArea(fieldName);
@@ -172,9 +173,10 @@
               field_value_warning.style.display = '';
             }
             break;
+          }
           
           case 'localstorage':
-          case 'sessionstorage':
+          case 'sessionstorage': {
             let value = (storageType == 'localstorage' ? localStorage : sessionStorage).getItem(fieldName);
             if (value) {
               field_value.value = TextToTextArea(value);
@@ -184,6 +186,7 @@
               field_value_warning.style.display = '';
             }
             break;
+          }
         }
       }
       

@@ -39,7 +39,6 @@
     {
       "files": [ "srv_web_main/websites/public/**/*.*" ],
       "rules": {
-        "no-unused-vars": 1,
         "no-cond-assign": 1,
         "no-undef": 0
       }
