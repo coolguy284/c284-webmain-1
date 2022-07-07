@@ -22,11 +22,14 @@ try {
 
 // because Boolean is useless on strings 'true' and 'false'
 function toBool(str) {
-  return str == 'false' || str == '0' ? false : Boolean(str);
+  if (str == null || str == '')
+    return false;
+  else
+    return str == 'false' || str == '0' ? false : true;
 }
 
 
-if (!toBool(process.env.PROC_MONGODB_DISABLED)) {
+if (toBool(process.env.PROC_MONGODB_ENABLED)) {
   // complicated mongodb log file naming process
   var date = new Date();
   var datePart = date.toUTCString().replace(',', '').split(' ').slice(0, 3);
@@ -86,7 +89,7 @@ function fancyServerLog(serverName, msg) {
 
 
 // old nodejs server
-if (!toBool(process.env.SRV_WEB_OLD_DISABLED)) {
+if (toBool(process.env.SRV_WEB_OLD_ENABLED)) {
   var srv_web_old = cp.spawn('docker', [
     'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_old', '--network', NETWORK_NAME, '--network-alias', 'srv_web_old',
     '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/srv_web_old_data,target=/home/webmain/data',
@@ -100,7 +103,7 @@ if (!toBool(process.env.SRV_WEB_OLD_DISABLED)) {
 
 
 // second old nodejs server
-if (!toBool(process.env.SRV_WEB_OLD2_DISABLED)) {
+if (toBool(process.env.SRV_WEB_OLD2_ENABLED)) {
   var srv_web_old2 = cp.spawn('docker', [
     'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_old2', '--network', NETWORK_NAME, '--network-alias', 'srv_web_old2',
     '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/srv_web_old2_data,target=/home/webmain/data',

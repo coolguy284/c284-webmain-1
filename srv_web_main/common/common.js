@@ -2,10 +2,10 @@ var path = require('path');
 
 module.exports = exports = {
   toBool: (str, defaultBool) => {
-    if (str == null || str == '') return defaultBool;
-    else {
-      str = str == 'false' || str == '0' ? false : true;
-    }
+    if (str == null || str == '')
+      return defaultBool ?? false;
+    else
+      return str == 'false' || str == '0' ? false : true;
   },
   
   formatIP: ip => {

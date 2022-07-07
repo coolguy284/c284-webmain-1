@@ -16,7 +16,7 @@ var ws = require('ws');
 var common = require('./common');
 
 
-if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == 'false') {
+if (common.toBool(process.env.PROC_MONGODB_ENABLED)) {
   (async () => {
     // start reverse proxy
     common.vars.mongoProxyServerConns = new Set();

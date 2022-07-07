@@ -1,9 +1,10 @@
 var BSON = require('bson');
+var { toBool } = require('../common');
 var chatDBUilts = require('../common/chat_db_utils');
 var commonVars = require('../common').vars;
 
 function chatWSFunc(ws, req, requestProps) {
-  if (!process.env.PROC_MONGODB_DISABLED || process.env.PROC_MONGODB_DISABLED == 'false') {
+  if (toBool(process.env.PROC_MONGODB_ENABLED)) {
     let wsInfo;
     switch (requestProps.url.searchParams.get('version')) {
       case '1':

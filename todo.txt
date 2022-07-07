@@ -1,4 +1,5 @@
-make env switches enable based instead of disable based
+make server proxying use port as well
+  also more generic non logged urls
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
@@ -26,6 +27,7 @@ fix all docker containers getting a sigint simultaneously when proc_main one doe
 
 http.coolguy284.com or insecure.coolguy284.com
   implement by adding a works with http flag that must be turned on for each page that works with http, otherwise a 404 is sent
+  api endpoints also should be marked as working on insecure or not
 
 add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
@@ -38,6 +40,15 @@ make proxies disconnect other end if one end closes, forward errors as well
   make socketLink function in common that does all this to prevent code duplication
   if http proxy res function is given already complete res it will hang and not close socket and browser will load indefinitely as well
 create_sitemap return lastmod and other properties, also return array of objects instead of map
+
+don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
+  copy over wm1 changes to zextra scripts
+fix website index too tall when webbrowser is tall
+
+mongodb
+  try moving mongodb reverse proxy port to 27017 should work since mongod is only listening on that port for localhost so reverse proxy can listen on it for other ips
+  move wm1 proxy to 27017 as well
+  figure out why replica set necessary and fix
 
 add privacy policy
 add base64_url encoder/decoder
