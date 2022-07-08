@@ -56,10 +56,12 @@ module.exports = exports = {
           url: null,
           timestamp: new Date(),
           id: exports.vars.currentRequestID++,
+          doLog: null,
+          otherServer: null,
         };
         
         if ('host' in req.headers) {
-          if (/[a-z0-9-.]+/.test(req.headers.host))
+          if (/^[a-z0-9-.]+$/.test(req.headers.host))
             requestProps.host = req.headers.host;
           else
             requestProps.host = 'INVALID';
@@ -103,6 +105,8 @@ module.exports = exports = {
           url: null,
           timestamp: new Date(),
           id: exports.vars.currentRequestID++,
+          doLog: null,
+          otherServer: null,
         };
         
         let hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
@@ -141,6 +145,26 @@ module.exports = exports = {
     }
     
     requestProps.url.path = requestProps.url.href.slice(requestProps.url.origin.length);
+    
+    let otherServerHost = exports.constVars.otherServerHosts.get(requestProps.url.host);
+    let otherServerURLStartStr = exports.constVars.otherServerURLStartsArr.find(x => requestProps.url.pathname.startsWith(x));
+    let otherServerURLStart = otherServerURLStartStr ? exports.constVars.otherServerURLStarts.get(otherServerURLStartStr) : null;
+    
+    let otherServer = otherServerHost ?? otherServerURLStart;
+    
+    let slicedPath = otherServerURLStartStr ? '/' + requestProps.url.path.slice(otherServerURLStartStr.length) : requestProps.url.path;
+    
+    if (otherServer) requestProps.otherServer = {
+      host: otherServer[0],
+      port: otherServer[1],
+      slicedPath,
+    };
+    
+    requestProps.doLog = !requestProps.url.pathname.startsWith('/api/') &&
+      !(otherServer && (
+        exports.constVars.otherServerNoLogURLs.get(requestProps.otherServer.host).has(slicedPath) ||
+        exports.constVars.otherServerNoLogURLStarts.get(requestProps.otherServer.host).some(x => slicedPath.startsWith(x))
+      ));
     
     return requestProps;
   },
@@ -212,21 +236,31 @@ module.exports = exports = {
   },
   
   constVars: {
-    otherServerHosts: new Set(['old.coolguy284.com', 'old2.coolguy284.com', 'oldg.coolguy284.com', 'test.coolguy284.com']),
-    otherServerURLStarts: ['/old/', '/old2/', '/oldg/'],
-    otherServerHostsMap: new Map([
-      ['old.coolguy284.com', 'srv_web_old'],
-      ['old2.coolguy284.com', 'srv_web_old2'],
-      ['oldg.coolguy284.com', 'srv_web_oldg'],
-      ['test.coolguy284.com', 'srv_web_old'],
+    otherServerHosts: new Map([
+      ['old.coolguy284.com', ['srv_web_old', 8080]],
+      ['old2.coolguy284.com', ['srv_web_old2', 8080]],
+      ['oldg.coolguy284.com', ['srv_web_oldg', 8080]],
     ]),
-    otherServerURLStartsMap: new Map([
-      ['/old/', 'srv_web_old'],
-      ['/old2/', 'srv_web_old2'],
-      ['/oldg/', 'srv_web_oldg'],
+    otherServerURLStarts: new Map([
+      ['/old/', ['srv_web_old', 8080]],
+      ['/old2/', ['srv_web_old2', 8080]],
+      ['/oldg/', ['srv_web_oldg', 8080]],
     ]),
+    otherServerHostsSet: null,
+    otherServerURLStartsArr: null,
     
-    oldServerNoLogURLs: new Set(['/livechat.dat', '/liverchat.json', '/liveviews.dat', '/comms.json', '/colog.dat', '/cologd.dat', '/livechathere.dat', '/livechattyp.dat', '/livechatkick.dat', '/pkey.log', '/lat.log']),
-    oldServerNoLogURLStarts: ['/s?her=', '/s?typ=', '/m?cnl=', '/a?co=', '/a?cd=', '/a?ccp=', '/a?rc=', '/a?fstyp=', '/a?fsdir=', '/a?fstex='],
+    otherServerNoLogURLs: new Map([
+      ['srv_web_old', new Set(['/livechat.dat', '/liverchat.json', '/liveviews.dat', '/comms.json', '/colog.dat', '/cologd.dat', '/livechathere.dat', '/livechattyp.dat', '/livechatkick.dat', '/pkey.log', '/lat.log'])],
+      ['srv_web_old2', new Set([])],
+      ['srv_web_oldg', new Set([])],
+    ]),
+    otherServerNoLogURLStarts: new Map([
+      ['srv_web_old', ['/s?her=', '/s?typ=', '/m?cnl=', '/a?co=', '/a?cd=', '/a?ccp=', '/a?rc=', '/a?fstyp=', '/a?fsdir=', '/a?fstex=']],
+      ['srv_web_old2', []],
+      ['srv_web_oldg', []],
+    ]),
   },
 };
+
+exports.constVars.otherServerHostsSet = new Set(exports.constVars.otherServerHosts.keys());
+exports.constVars.otherServerURLStartsArr = Array.from(exports.constVars.otherServerURLStarts.keys());

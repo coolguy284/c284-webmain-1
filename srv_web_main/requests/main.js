@@ -24,18 +24,11 @@ module.exports = async function main(httpVersion, ...args) {
     
     var requestProps = common.getRequestProps(httpVersion, ...args, 'main');
     
-    if (!requestProps.url.pathname.startsWith('/api/') &&
-      !(requestProps.host == 'old.coolguy284.com' && (
-        common.constVars.oldServerNoLogURLs.has(requestProps.url.path) ||
-        common.constVars.oldServerNoLogURLStarts.some(x => requestProps.url.path.startsWith(x))
-      ) || requestProps.url.path.startsWith('/old') && (
-        common.constVars.oldServerNoLogURLs.has(requestProps.url.path.slice(4)) ||
-        common.constVars.oldServerNoLogURLStarts.some(x => requestProps.url.path.slice(4).startsWith(x))
-      )))
+    if (requestProps.doLog)
       logger.info(common.getReqLogStr(requestProps));
     
     // redirect main page to https
-    if (requestProps.proto == 'http' && !common.constVars.otherServerHosts.has(requestProps.host) || requestProps.host == 'www.coolguy284.com') {
+    if (requestProps.proto == 'http' && !requestProps.otherServer || requestProps.host == 'www.coolguy284.com') {
       let newURL = new URL(requestProps.url);
       if (requestProps.proto == 'http') newURL.protocol = 'https:';
       if (requestProps.host == 'www.coolguy284.com') newURL.host = 'coolguy284.com';
@@ -44,14 +37,10 @@ module.exports = async function main(httpVersion, ...args) {
       return;
     }
     
-    let isOldServerHost = common.constVars.otherServerHosts.has(requestProps.host),
-      oldServerURLStart = common.constVars.otherServerURLStarts.find(x => requestProps.url.pathname.startsWith(x));
-    let isOldServer = isOldServerHost || Boolean(oldServerURLStart);
     let isHttp2Connect = requestProps.httpVersion == 2 && requestProps.method == 'connect';
     
-    if (isOldServer && !isHttp2Connect) {
+    if (requestProps.otherServer && !isHttp2Connect) {
       // server proxying
-      let sendURL = isOldServerHost ? requestProps.url.path : '/' + requestProps.url.path.slice(oldServerURLStart.length);
       let sendHeaders = {
         ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
         ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
@@ -59,10 +48,10 @@ module.exports = async function main(httpVersion, ...args) {
         'x-forwarded-proto': 'https',
       };
       let srvReq = http.request({
-        host: isOldServerHost ? common.constVars.otherServerHostsMap.get(requestProps.host) : common.constVars.otherServerURLStartsMap.get(oldServerURLStart),
-        port: 8080,
+        host: requestProps.otherServer.host,
+        port: requestProps.otherServer.port,
         method: requestProps.method,
-        path: sendURL,
+        path: requestProps.otherServer.slicedPath,
         headers: sendHeaders,
         setHost: false,
         timeout: 10000,
@@ -78,7 +67,7 @@ module.exports = async function main(httpVersion, ...args) {
       resp.getStream(requestProps).pipe(srvReq);
     } else {
       // main server processing
-      if (!isOldServer) {
+      if (!requestProps.otherServer) {
         let potentialRedirect = redirects.followRedirects(requestProps.url);
         
         if (potentialRedirect[0]) {

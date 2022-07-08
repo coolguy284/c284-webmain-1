@@ -9,12 +9,8 @@ module.exports = async function connectMethod(requestProps) {
   // this is exclusively for http2
   if (requestProps.httpVersion == 1) return 1;
   
-  let isOldServerHost = common.constVars.otherServerHosts.has(requestProps.host),
-      oldServerURLStart = common.constVars.otherServerURLStarts.find(x => requestProps.url.pathname.startsWith(x));
-  
-  if (isOldServerHost || oldServerURLStart) {
+  if (requestProps.otherServer) {
     // old server proxying
-    let sendURL = isOldServerHost ? requestProps.url.path : '/' + requestProps.url.path.slice(oldServerURLStart.length);
     let sendHeaders = {
       ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
       ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
@@ -25,10 +21,10 @@ module.exports = async function connectMethod(requestProps) {
       'x-forwarded-proto': 'https',
     };
     let srvReq = http.request({
-      host: isOldServerHost ? common.constVars.otherServerHostsMap.get(requestProps.host) : common.constVars.otherServerURLStartsMap.get(oldServerURLStart),
-      port: 8080,
+      host: requestProps.otherServer.host,
+      port: requestProps.otherServer.host,
       method: requestProps.method,
-      path: sendURL,
+      path: requestProps.otherServer.slicedPath,
       headers: sendHeaders,
       setHost: false,
       timeout: 10000,

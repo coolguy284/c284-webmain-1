@@ -1,18 +1,17 @@
-make server proxying use port as well
-  also more generic non logged urls
+check all regexes to make sure ones that are supposed to match beginning and ending of string do so
+rework dockerfiles
+check for srv_web_old env before proxying connection
+
+setting for sending ::ffff: with the x-forwarded-for, per other server
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
 add html entity escaping to local sitemap gen since its xml
-rework dockerfiles
 etag or lastmod match should return 304 even if range request
-fix server undockered run (useful for quick purposes)
 
 use map and promise all for git log and others or for none of them
 
 make more lib/extern copied from node_modules in dockerfile
-
-check for srv_web_old env before proxying connection
 
 old sites
   make old and maybe old2 not use polling, probably use eventsource instead
@@ -28,6 +27,7 @@ fix all docker containers getting a sigint simultaneously when proc_main one doe
 http.coolguy284.com or insecure.coolguy284.com
   implement by adding a works with http flag that must be turned on for each page that works with http, otherwise a 404 is sent
   api endpoints also should be marked as working on insecure or not
+  also add unencrypted http2 upgrade
 
 add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
