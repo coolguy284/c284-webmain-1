@@ -152,13 +152,23 @@ module.exports = exports = {
     
     let otherServer = otherServerHost ?? otherServerURLStart;
     
-    let slicedPath = otherServerURLStartStr ? '/' + requestProps.url.path.slice(otherServerURLStartStr.length) : requestProps.url.path;
-    
-    if (otherServer) requestProps.otherServer = {
-      host: otherServer[0],
-      port: otherServer[1],
-      slicedPath,
-    };
+    let slicedPath;
+    if (otherServer) {
+      let isHost = Boolean(otherServerHost), isPrefix = Boolean(otherServerURLStartStr);
+      
+      slicedPath = isPrefix ? '/' + requestProps.url.path.slice(otherServerURLStartStr.length) : requestProps.url.path;
+      
+      requestProps.otherServer = {
+        type: isHost ? 'host' : 'prefix',
+        isHost,
+        isPrefix,
+        host: otherServer[0],
+        port: otherServer[1],
+        slicedPath,
+      };
+    } else {
+      slicedPath = requestProps.url.path;
+    }
     
     requestProps.doLog = !requestProps.url.pathname.startsWith('/api/') &&
       !(otherServer && (

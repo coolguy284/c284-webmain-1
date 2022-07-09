@@ -28,7 +28,7 @@ module.exports = async function main(httpVersion, ...args) {
       logger.info(common.getReqLogStr(requestProps));
     
     // redirect main page to https
-    if (requestProps.proto == 'http' && !requestProps.otherServer || requestProps.host == 'www.coolguy284.com') {
+    if (requestProps.proto == 'http' && !requestProps.otherServer?.isHost || requestProps.host == 'www.coolguy284.com') {
       let newURL = new URL(requestProps.url);
       if (requestProps.proto == 'http') newURL.protocol = 'https:';
       if (requestProps.host == 'www.coolguy284.com') newURL.host = 'coolguy284.com';
