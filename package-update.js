@@ -45,7 +45,11 @@ var https = require('https');
   for (packageName of packages) {
     console.log(`Getting package ${packageName}`);
     packageVersion[packageName] = await new Promise(r => {
-      https.get(`https://registry.npmjs.org/${packageName}`, res => {
+      https.get(`https://registry.npmjs.org/${packageName}`, {
+        headers: {
+          'accept': 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*',
+        },
+      }, res => {
         var chunks = [];
         res.on('data', c => chunks.push(c));
         res.on('end', () => r(JSON.parse(Buffer.concat(chunks).toString())['dist-tags'].latest));
