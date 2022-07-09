@@ -37,7 +37,7 @@ module.exports = function parseArgString(str) {
           
           case 2: // x escape sequence
           case 3:
-            if (/[0-9a-f]/.test(chr.toLowerCase())) escapechr += chr.toLowerCase();
+            if (/^[0-9a-f]$/.test(chr.toLowerCase())) escapechr += chr.toLowerCase();
             else escapechr += '0';
             if (escape != 3) escape++;
             else { part += String.fromCharCode(parseInt(escapechr, 16)); escapechr = ''; escape = 0; }
@@ -47,7 +47,7 @@ module.exports = function parseArgString(str) {
           case 5:
           case 6:
           case 7:
-            if (/[0-9a-f]/.test(chr.toLowerCase())) escapechr += chr.toLowerCase();
+            if (/^[0-9a-f]$/.test(chr.toLowerCase())) escapechr += chr.toLowerCase();
             else escapechr += '0';
             if (escape != 7) escape++;
             else { part += String.fromCharCode(parseInt(escapechr, 16)); escapechr = ''; escape = 0; }
@@ -75,7 +75,7 @@ module.exports = function parseArgString(str) {
           
           case 2: // x escape sequence
           case 3:
-            if (/[0-9a-f]/.test(chr.toLowerCase())) escapechr += chr.toLowerCase();
+            if (/^[0-9a-f]$/.test(chr.toLowerCase())) escapechr += chr.toLowerCase();
             else escapechr += '0';
             if (escape != 3) escape++;
             else { part += String.fromCharCode(parseInt(escapechr, 16)); escapechr = ''; escape = 0; }
@@ -85,7 +85,7 @@ module.exports = function parseArgString(str) {
           case 5:
           case 6:
           case 7:
-            if (/[0-9a-f]/.test(chr.toLowerCase())) escapechr += chr.toLowerCase();
+            if (/^[0-9a-f]$/.test(chr.toLowerCase())) escapechr += chr.toLowerCase();
             else escapechr += '0';
             if (escape != 7) escape++;
             else { part += String.fromCharCode(parseInt(escapechr, 16)); escapechr = ''; escape = 0; }

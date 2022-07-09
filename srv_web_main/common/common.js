@@ -111,7 +111,7 @@ module.exports = exports = {
         
         let hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
         if (hostHeader != null) {
-          if (/[a-z0-9-.]+/.test(hostHeader))
+          if (/^[a-z0-9-.]+$/.test(hostHeader))
             requestProps.host = hostHeader;
           else
             requestProps.host = 'INVALID';

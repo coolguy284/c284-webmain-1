@@ -1,8 +1,8 @@
-check all regexes to make sure ones that are supposed to match beginning and ending of string do so
+check regexs with | to make sure it is used properly, convert some to character classes
+change default requestProps.ip behavior to trim ::ffff:
+setting for sending ::ffff: with the x-forwarded-for, per other server
 rework dockerfiles
 check for srv_web_old env before proxying connection
-
-setting for sending ::ffff: with the x-forwarded-for, per other server
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
@@ -116,7 +116,8 @@ chat upgrades
   ability to see whether people can see livestream and what their latency to it is
 spaces
   universes, zones, simple objects and physical simulation regions
-add oldg, production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
+production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
+request explorer site where you can create arbitrary http requests to urls on the server, make and close http1.1 and http2 connections, http/https, and even send data through websocket connections
 
 extra:
 experiment with unsorted readdirs using fuse, if works potential necessity to sort c284-webmain-1 modtimes.json or maybe just sort it anyway
