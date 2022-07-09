@@ -210,26 +210,46 @@ module.exports = exports = {
             await exports.end(requestProps);
           } else {
             // everything is correct
-            await exports.headers(requestProps, 206, {
-              ...(mimeType ? { 'content-type': mimeType } : null),
-              'content-length': end - start + 1,
-              'content-range': `bytes ${start}-${end}/${size}`,
-              'last-modified': mtime.toUTCString(),
-              ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
-              'x-content-type-options': 'nosniff',
-              'strict-transport-security': 'max-age=31536000; preload',
-            });
             
-            if (headOnly) {
-              await exports.end(requestProps);
-            } else {
-              if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
-                await exports.end(requestProps, fileEntry.file.slice(start, end));
+            // check for etag or modified since and no statusCode var set
+            let modifiedSince = exports._fileModSinceCheck(requestProps, statusCode, shortPath, mtime);
+            
+            let flags = websiteData[filename.replace(/\\/g, '/').replace('websites/public/', '')];
+            
+            if (modifiedSince) {
+              // modified since
+              await exports.headers(requestProps, 206, {
+                ...(mimeType ? { 'content-type': mimeType } : null),
+                'content-length': end - start + 1,
+                'content-range': `bytes ${start}-${end}/${size}`,
+                'last-modified': mtime.toUTCString(),
+                ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
+                'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
+                'x-content-type-options': 'nosniff',
+                'strict-transport-security': 'max-age=31536000; preload',
+              });
+              
+              if (headOnly) {
+                await exports.end(requestProps);
               } else {
-                let readStream = fs.createReadStream(filename, { start, end });
-                await exports.stream(requestProps, readStream);
-                readStream.on('error', x => logger.error(x));
+                if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
+                  await exports.end(requestProps, fileEntry.file.slice(start, end));
+                } else {
+                  let readStream = fs.createReadStream(filename, { start, end });
+                  await exports.stream(requestProps, readStream);
+                  readStream.on('error', x => logger.error(x));
+                }
               }
+            } else {
+              // not modified since
+              
+              await exports.headers(requestProps, 304, {
+                ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
+                'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
+                'strict-transport-security': 'max-age=31536000; preload',
+                ...headers,
+              });
+              await exports.end(requestProps);
             }
           }
         }

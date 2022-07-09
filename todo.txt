@@ -1,3 +1,4 @@
+add force https option to each hosted server
 change default requestProps.ip behavior to trim ::ffff:
 setting for sending ::ffff: with the x-forwarded-for, per other server
 rework dockerfiles
@@ -5,7 +6,6 @@ rework dockerfiles
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
 add html entity escaping to local sitemap gen since its xml
-etag or lastmod match should return 304 even if range request
 allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
 
 use map and promise all for git log and others or for none of them
@@ -26,7 +26,7 @@ fix all docker containers getting a sigint simultaneously when proc_main one doe
 http.coolguy284.com or insecure.coolguy284.com
   implement by adding a works with http flag that must be turned on for each page that works with http, otherwise a 404 is sent
   api endpoints also should be marked as working on insecure or not
-  also add unencrypted http2 upgrade
+  also add unencrypted and encrypted http2 upgrade
 
 add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
@@ -54,7 +54,6 @@ mongodb
 add privacy policy
 add base64_url encoder/decoder
 fancier latency test and time syncer, less NaN
-websocket connection not using http2
 validation for meta description tags, to supplement validation for canonical urls
   also validator to make sure "to" urls in redirects.txt are the final form of the url for the most part
 add no javascript banner to all pages that use javascript in the slightest
@@ -90,6 +89,7 @@ add /unicode/random for link to random unicode character
   possibly live website_data.txt evaluating because of unicode characters pages, should be marked no crawl at first but will need to send that header
 experiment with wiki stuff
 add /misc/trail which is a page with status code 451, links to other stuff if bypassed (by setting ?location=space&admin=true), 1 layer deep it will say trail ends here for now until extended
+implement altsvc and http3 support
 
 hex editor
 english words searcher
