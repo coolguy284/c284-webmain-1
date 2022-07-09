@@ -1,7 +1,6 @@
 add force https option to each hosted server
 change default requestProps.ip behavior to trim ::ffff:
 setting for sending ::ffff: with the x-forwarded-for, per other server
-rework dockerfiles
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
