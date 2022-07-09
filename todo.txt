@@ -1,4 +1,3 @@
-check regexs with | to make sure it is used properly, convert some to character classes
 change default requestProps.ip behavior to trim ::ffff:
 setting for sending ::ffff: with the x-forwarded-for, per other server
 rework dockerfiles
@@ -8,6 +7,7 @@ split env into proc main and srv web main, move env files in _s into appropriate
 sitemap modtime should only be latest of sitemapped files
 add html entity escaping to local sitemap gen since its xml
 etag or lastmod match should return 304 even if range request
+allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
 
 use map and promise all for git log and others or for none of them
 
@@ -42,9 +42,10 @@ make proxies disconnect other end if one end closes, forward errors as well
 create_sitemap return lastmod and other properties, also return array of objects instead of map
 
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
-  copy over wm1 changes to zextra scripts
+copy over wm1 changes to zextra scripts
 fix website index too tall when webbrowser is tall
 copied over bson and other libs/extern should have version in title so webpages are guarenteed to request latest version instead of caching
+more advanced redirection logic so /misc/unicode redirects are bunched in with the rest of redirects.txt, not in the file but in the same http response
 
 mongodb
   try moving mongodb reverse proxy port to 27017 should work since mongod is only listening on that port for localhost so reverse proxy can listen on it for other ips

@@ -27,7 +27,7 @@ module.exports = {
       newPaths = (await Promise.all(
         newPaths.map(filePath => {
           if (filePath[1] == null) return [];
-          let matched = filePath[1].toString().match(/(?<=<a.*href\s*=\s*(?:'|")).*?(?=(?:'|")>)/g) ?? [];
+          let matched = filePath[1].toString().match(/(?<=<a.*href\s*=\s*['"]).*?(?=['"]>)/g) ?? [];
           return matched.map(subFilePath => {
             subFilePath = subFilePath.endsWith('/') ? subFilePath + 'index.html' : subFilePath;
             return subFilePath.startsWith('/') ? subFilePath : path.join(filePath[0], '../' + subFilePath).split(path.sep).join(path.posix.sep);
