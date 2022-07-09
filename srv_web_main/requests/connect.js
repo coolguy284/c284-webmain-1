@@ -9,7 +9,7 @@ module.exports = async function connectMethod(requestProps) {
   // this is exclusively for http2
   if (requestProps.httpVersion == 1) return 1;
   
-  if (requestProps.otherServer) {
+  if (requestProps.otherServerOnline) {
     // old server proxying
     let sendHeaders = {
       ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),

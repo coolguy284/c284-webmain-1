@@ -58,6 +58,7 @@ module.exports = exports = {
           id: exports.vars.currentRequestID++,
           doLog: null,
           otherServer: null,
+          otherServerOnline: null,
         };
         
         if ('host' in req.headers) {
@@ -107,6 +108,7 @@ module.exports = exports = {
           id: exports.vars.currentRequestID++,
           doLog: null,
           otherServer: null,
+          otherServerOnline: null,
         };
         
         let hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
@@ -166,6 +168,7 @@ module.exports = exports = {
         port: otherServer[1],
         slicedPath,
       };
+      requestProps.otherServerOnline = exports.toBool(process.env[requestProps.otherServer.host.toUpperCase() + '_ENABLED']);
     } else {
       slicedPath = requestProps.url.path;
     }

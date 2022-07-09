@@ -12,7 +12,7 @@ module.exports = function serverConnectFunc(req, socket, head) {
     if (requestProps.doLog)
       logger.info(common.getReqLogStr(requestProps));
     
-    if (requestProps.otherServer) {
+    if (requestProps.otherServerOnline) {
       // old server proxying
       let sendHeaders = {
         ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),

@@ -1,7 +1,8 @@
+fix last modified handling and invalid date in request header handling
+
 change default requestProps.ip behavior to trim ::ffff:
 setting for sending ::ffff: with the x-forwarded-for, per other server
 rework dockerfiles
-check for srv_web_old env before proxying connection
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files

@@ -39,7 +39,7 @@ module.exports = async function main(httpVersion, ...args) {
     
     let isHttp2Connect = requestProps.httpVersion == 2 && requestProps.method == 'connect';
     
-    if (requestProps.otherServer && !isHttp2Connect) {
+    if (requestProps.otherServerOnline && !isHttp2Connect) {
       // server proxying
       let sendHeaders = {
         ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
@@ -67,7 +67,15 @@ module.exports = async function main(httpVersion, ...args) {
       resp.getStream(requestProps).pipe(srvReq);
     } else {
       // main server processing
-      if (!requestProps.otherServer) {
+      
+      if (!requestProps.otherServerOnline) {
+        // if server is offline but a request is sent to it show an error message
+        if (requestProps.otherServer) {
+          await resp.s502_subsrv_offline(requestProps);
+          return;
+        }
+        
+        // follow redirects if request is not sent to a server
         let potentialRedirect = redirects.followRedirects(requestProps.url);
         
         if (potentialRedirect[0]) {
@@ -77,6 +85,7 @@ module.exports = async function main(httpVersion, ...args) {
         }
       }
       
+      // run appropriate method handler function if request not sent to a server or the request is a http2 connect request that will be proxied to a server
       let methodRun;
       if (requestProps.method in methods) methodRun = methods[requestProps.method](requestProps) != 1;
       if (!methodRun) {

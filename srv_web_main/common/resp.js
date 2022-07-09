@@ -144,7 +144,7 @@ module.exports = exports = {
       
       stats = fileEntry.stats;
       size = fileEntry.file.length;
-      mtime = new Date(modtimes[shortPath]) ?? fileEntry.stats.mtime;
+      mtime = modtimes[shortPath] ? new Date(modtimes[shortPath]) : fileEntry.stats.mtime;
     } else {
       stats = await fs.promises.stat(filename);
       
@@ -154,7 +154,7 @@ module.exports = exports = {
       }
       
       size = stats.size;
-      mtime = new Date(modtimes[shortPath]) ?? stats.mtime;
+      mtime = modtimes[shortPath] ? new Date(modtimes[shortPath]) : stats.mtime;
     }
     
     var mimeType = mime.getType(filename);
@@ -332,6 +332,19 @@ module.exports = exports = {
           await exports.end(requestProps);
         else
           await exports.end(requestProps, '500 Internal Server Error');
+      }
+    }
+  },
+  
+  s502_subsrv_offline: async requestProps => {
+    try {
+      await exports.file(requestProps, 'websites/public/misc/debug/templates/502_subsrv_offline.html', 502);
+    } catch (err) {
+      if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
+        logger.warn('http2 stream unexpectedly closed');
+      } else {
+        await exports.headers(requestProps, 502, { 'content-type': 'text/plain; charset=utf-8' });
+        await exports.end(requestProps, '502 Bad Gateway (Subserver Offline)');
       }
     }
   },
