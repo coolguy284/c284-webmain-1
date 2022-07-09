@@ -128,6 +128,24 @@ module.exports = exports = {
     });
   },
   
+  _fileModSinceCheck: (requestProps, statusCode, shortPath, mtime) => {
+    if (statusCode) return true;
+    
+    let noneMatchHeader = requestProps.headers['if-none-match'], pageEtag;
+    if (noneMatchHeader && (pageEtag = etags[shortPath]) != null)
+      return !noneMatchHeader.split(', ').some(x => x == pageEtag);
+    
+    let modifiedSinceHeader = requestProps.headers['if-modified-since'];
+    if (!modifiedSinceHeader) return true;
+    
+    let fileMtimeFloor = Math.floor(mtime.getTime() / 1000);
+    let headerMtimeFloor = Math.floor(new Date(modifiedSinceHeader).getTime() / 1000);
+    
+    if (Object.is(fileMtimeFloor, NaN) || Object.is(headerMtimeFloor, NaN)) return true;
+    
+    return fileMtimeFloor > headerMtimeFloor;
+  },
+  
   file: async (requestProps, filename, statusCode, headOnly, headers) => {
     var shortPath = filename.replace(/\\/g, '/').replace('websites/public/', '') || 'index.html';
     
@@ -226,10 +244,9 @@ module.exports = exports = {
       // normal request
       
       // check for etag or modified since and no statusCode var set
-      if (statusCode ||
-        (requestProps.headers['if-none-match'] && shortPath in etags ?
-          (!requestProps.headers['if-none-match'].split(', ').some(x => x == etags[shortPath])) :
-          (!requestProps.headers['if-modified-since'] || Math.floor(mtime.getTime() / 1000) > Math.floor(new Date(requestProps.headers['if-modified-since']).getTime() / 1000)))) {
+      let modifiedSince = exports._fileModSinceCheck(requestProps, statusCode, shortPath, mtime);
+      
+      if (modifiedSince) {
         // modified since
         let encodings;
         if (requestProps.headers['accept-encoding'])

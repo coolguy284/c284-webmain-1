@@ -1,5 +1,3 @@
-fix last modified handling and invalid date in request header handling
-
 change default requestProps.ip behavior to trim ::ffff:
 setting for sending ::ffff: with the x-forwarded-for, per other server
 rework dockerfiles
@@ -121,6 +119,7 @@ spaces
   universes, zones, simple objects and physical simulation regions
 production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
 request explorer site where you can create arbitrary http requests to urls on the server, make and close http1.1 and http2 connections, http/https, and even send data through websocket connections
+multipart range header support and support for reading and responding with multiparts in other circumstances as well
 
 extra:
 experiment with unsorted readdirs using fuse, if works potential necessity to sort c284-webmain-1 modtimes.json or maybe just sort it anyway
