@@ -1,3 +1,4 @@
+fix mongodb on ipv6
 hosts regex says invalid for regular ip addresses now
 
 split env into proc main and srv web main, move env files in _s into appropriate folder

@@ -51,7 +51,7 @@ module.exports = exports = {
           httpVersion: 1,
           type,
           req, res, headers: req.headers,
-          ip: exports.castIPv4to6(req.socket.remoteAddress),
+          ip: exports.uncastIPv6(req.socket.remoteAddress),
           ipv6Cast: req.socket.remoteAddress,
           port: req.socket.remotePort,
           proto: req.socket.encrypted ? 'https' : 'http',
