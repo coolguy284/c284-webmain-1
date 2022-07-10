@@ -40,31 +40,39 @@ module.exports = async function main(httpVersion, ...args) {
     let isHttp2Connect = requestProps.httpVersion == 2 && requestProps.method == 'connect';
     
     if (requestProps.otherServerOnline && !isHttp2Connect) {
-      // server proxying
-      let sendHeaders = {
-        ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
-        ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
-        'x-forwarded-for': requestProps.ip,
-        'x-forwarded-proto': 'https',
-      };
-      let srvReq = http.request({
-        host: requestProps.otherServer.host,
-        port: requestProps.otherServer.port,
-        method: requestProps.method,
-        path: requestProps.otherServer.slicedPath,
-        headers: sendHeaders,
-        setHost: false,
-        timeout: 10000,
-      }, async res => {
-        await resp.headers(requestProps, res.statusCode, {
-          ...Object.fromEntries(Object.entries(res.headers).filter(x => x[0].toLowerCase() != 'connection')),
+      if (requestProps.proto == 'http' && requestProps.otherServer.forceHttps) {
+        // redirect server request to https
+        let newURL = new URL(requestProps.url);
+        newURL.protocol = 'https:';
+        await resp.headers(requestProps, 307, { 'location': newURL.href });
+        await resp.end(requestProps);
+      } else {
+        // server proxying
+        let sendHeaders = {
+          ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
+          ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
+          'x-forwarded-for': requestProps.ip,
+          'x-forwarded-proto': 'https',
+        };
+        let srvReq = http.request({
+          host: requestProps.otherServer.host,
+          port: requestProps.otherServer.port,
+          method: requestProps.method,
+          path: requestProps.otherServer.slicedPath,
+          headers: sendHeaders,
+          setHost: false,
+          timeout: 10000,
+        }, async res => {
+          await resp.headers(requestProps, res.statusCode, {
+            ...Object.fromEntries(Object.entries(res.headers).filter(x => x[0].toLowerCase() != 'connection')),
+          });
+          await resp.stream(requestProps, res);
         });
-        await resp.stream(requestProps, res);
-      });
-      commonVars.httpServerProxyConns.add(srvReq);
-      srvReq.on('close', () => { commonVars.httpServerProxyConns.delete(srvReq); });
-      srvReq.on('error', x => logger.error(x));
-      resp.getStream(requestProps).pipe(srvReq);
+        commonVars.httpServerProxyConns.add(srvReq);
+        srvReq.on('close', () => { commonVars.httpServerProxyConns.delete(srvReq); });
+        srvReq.on('error', x => logger.error(x));
+        resp.getStream(requestProps).pipe(srvReq);
+      }
     } else {
       // main server processing
       

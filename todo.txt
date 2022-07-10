@@ -1,4 +1,3 @@
-add force https option to each hosted server
 change default requestProps.ip behavior to trim ::ffff:
 setting for sending ::ffff: with the x-forwarded-for, per other server
 
