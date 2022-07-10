@@ -1,10 +1,10 @@
-change default requestProps.ip behavior to trim ::ffff:
-setting for sending ::ffff: with the x-forwarded-for, per other server
+hosts regex says invalid for regular ip addresses now
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
 add html entity escaping to local sitemap gen since its xml
 allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
+api ipv6 error if ipv4, unless parameter usemapped is set to true
 
 use map and promise all for git log and others or for none of them
 

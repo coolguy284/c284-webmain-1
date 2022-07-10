@@ -17,7 +17,7 @@ module.exports = async function connectMethod(requestProps) {
       'sec-websocket-key': 'aaaaaaaaaaaaaaaaaaaaaa==',
       'connection': 'keep-alive, Upgrade',
       ...(':protocol' in requestProps.headers ? { upgrade: requestProps.headers[':protocol'] } : null),
-      'x-forwarded-for': requestProps.ip,
+      'x-forwarded-for': requestProps.otherServer.castIPv4to6 ? requestProps.ipv6Cast : requestProps.ip,
       'x-forwarded-proto': 'https',
     };
     let srvReq = http.request({

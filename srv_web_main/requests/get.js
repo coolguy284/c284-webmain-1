@@ -18,23 +18,22 @@ module.exports = async function getMethod(requestProps) {
       let sendPort = requestProps.url.searchParams.get('port');
       sendPort = sendPort && sendPort != 'false' && sendPort != '0';
       await resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
-      await resp.end(requestProps, sendPort ? common.mergeIPPort(requestProps.ip, requestProps.port) : requestProps.ip);
+      await resp.end(requestProps, sendPort ? common.mergeIPPort(requestProps.ipv6Cast, requestProps.port) : requestProps.ipv6Cast);
     }
     
     else if (requestProps.url.pathname == '/api/echo/ipv4') {
       let sendPort = common.toBool(requestProps.url.searchParams.get('port'));
       let form = requestProps.url.searchParams.get('form');
       
-      if (/^(?:::ffff:)?(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
-        let ip = requestProps.ip.replace('::ffff:', '');
+      if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
         switch (form) {
           case 'bytes':
             await resp.data(
               requestProps,
               200,
               sendPort ?
-                Buffer.from([ ...ip.split('.').map(x => Number(x)), Math.floor(requestProps.port / 256), requestProps.port % 256 ]) :
-                Buffer.from([ ...ip.split('.').map(x => Number(x)) ]),
+                Buffer.from([ ...requestProps.ip.split('.').map(x => Number(x)), Math.floor(requestProps.port / 256), requestProps.port % 256 ]) :
+                Buffer.from([ ...requestProps.ip.split('.').map(x => Number(x)) ]),
               { 'content-type': 'application/octet-stream' }
             );
             break;
@@ -44,8 +43,8 @@ module.exports = async function getMethod(requestProps) {
               requestProps,
               200,
               sendPort ?
-                ip.split('.').map(x => Number(x).toString(16).padStart(2, '0')).join('') + requestProps.port.toString(16).padStart(4, '0') :
-                ip.split('.').map(x => Number(x).toString(16).padStart(2, '0')).join('')
+                requestProps.ip.split('.').map(x => Number(x).toString(16).padStart(2, '0')).join('') + requestProps.port.toString(16).padStart(4, '0') :
+                requestProps.ip.split('.').map(x => Number(x).toString(16).padStart(2, '0')).join('')
             );
             break;
           
@@ -54,8 +53,8 @@ module.exports = async function getMethod(requestProps) {
               requestProps,
               200,
               sendPort ?
-                common.mergeIPPort(ip, requestProps.port) :
-                ip
+                common.mergeIPPort(requestProps.ip, requestProps.port) :
+                requestProps.ip
             );
             break;
         }
@@ -69,8 +68,8 @@ module.exports = async function getMethod(requestProps) {
       let form = requestProps.url.searchParams.get('form');
       
       let ip;
-      if (/^::ffff:?(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
-        ip = requestProps.ip.slice(7).split('.').map(x => Number(x));
+      if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
+        ip = requestProps.ip.split('.').map(x => Number(x));
         ip = '::ffff:' + (ip[0] * 256 + ip[1]).toString(16) + ':' + (ip[2] * 256 + ip[3]).toString(16);
       } else if (/^(?:[0-9a-f]{0,4}:){1,8}[0-9a-f]{0,4}$/.test(requestProps.ip)) {
         ip = requestProps.ip;
@@ -86,8 +85,8 @@ module.exports = async function getMethod(requestProps) {
               200,
               Buffer.from(
                 sendPort ?
-                  common.IPv6ToHex(requestProps.ip) + requestProps.port.toString(16).padStart(4, '0') :
-                  common.IPv6ToHex(requestProps.ip),
+                  common.IPv6ToHex(ip) + requestProps.port.toString(16).padStart(4, '0') :
+                  common.IPv6ToHex(ip),
                 'hex'
               ),
               { 'content-type': 'application/octet-stream' }
@@ -99,8 +98,8 @@ module.exports = async function getMethod(requestProps) {
               requestProps,
               200,
               sendPort ?
-                common.IPv6ToHex(requestProps.ip) + requestProps.port.toString(16).padStart(4, '0') :
-                common.IPv6ToHex(requestProps.ip)
+                common.IPv6ToHex(ip) + requestProps.port.toString(16).padStart(4, '0') :
+                common.IPv6ToHex(ip)
             );
             break;
           
@@ -109,8 +108,8 @@ module.exports = async function getMethod(requestProps) {
               requestProps,
               200,
               sendPort ?
-                common.mergeIPPort(requestProps.ip, requestProps.port) :
-                requestProps.ip
+                common.mergeIPPort(ip, requestProps.port) :
+                ip
             );
             break;
         }

@@ -30,6 +30,11 @@ module.exports = exports = {
     return ip.map(x => x.padStart(4, '0')).join('');
   },
   
+  uncastIPv6: ip => {
+    if (ip.startsWith('::ffff:')) return ip.slice(7);
+    else return ip;
+  },
+  
   isSubDir: (parent, dir) => {
     var relativePath = path.relative(parent, dir);
     return relativePath && relativePath != '..' && !relativePath.startsWith('..' + path.sep) && !path.isAbsolute(relativePath);
@@ -46,7 +51,8 @@ module.exports = exports = {
           httpVersion: 1,
           type,
           req, res, headers: req.headers,
-          ip: req.socket.remoteAddress,
+          ip: exports.castIPv4to6(req.socket.remoteAddress),
+          ipv6Cast: req.socket.remoteAddress,
           port: req.socket.remotePort,
           proto: req.socket.encrypted ? 'https' : 'http',
           host: null,
@@ -96,7 +102,8 @@ module.exports = exports = {
           httpVersion: 2,
           type,
           stream, headers, flags, rawHeaders,
-          ip: stream.session.socket.remoteAddress,
+          ip: exports.uncastIPv6(stream.session.socket.remoteAddress),
+          ipv6Cast: stream.session.socket.remoteAddress,
           port: stream.session.socket.remotePort,
           proto: 'http2',
           host: null,
@@ -171,6 +178,7 @@ module.exports = exports = {
         host: otherServerInfo.host,
         port: otherServerInfo.port,
         forceHttps: otherServerInfo.forceHttps,
+        castIPv4to6: otherServerInfo.castIPv4to6,
         noLogURLs: otherServerInfo.noLogURLs,
         noLogUrlStarts: otherServerInfo.noLogUrlStarts,
         slicedPath,
@@ -261,6 +269,7 @@ module.exports = exports = {
         host: 'srv_web_old',
         port: 8080,
         forceHttps: false,
+        castIPv4to6: true,
         noLogURLs: new Set(['/livechat.dat', '/liverchat.json', '/liveviews.dat', '/comms.json', '/colog.dat', '/cologd.dat', '/livechathere.dat', '/livechattyp.dat', '/livechatkick.dat', '/pkey.log', '/lat.log']),
         noLogUrlStarts: ['/s?her=', '/s?typ=', '/m?cnl=', '/a?co=', '/a?cd=', '/a?ccp=', '/a?rc=', '/a?fstyp=', '/a?fsdir=', '/a?fstex='],
       }],
@@ -268,6 +277,7 @@ module.exports = exports = {
         host: 'srv_web_old2',
         port: 8080,
         forceHttps: false,
+        castIPv4to6: true,
         noLogURLs: new Set(),
         noLogUrlStarts: [],
       }],
@@ -275,6 +285,7 @@ module.exports = exports = {
         host: 'srv_web_oldg',
         port: 8080,
         forceHttps: false,
+        castIPv4to6: false,
         noLogURLs: new Set(),
         noLogUrlStarts: [],
       }],
