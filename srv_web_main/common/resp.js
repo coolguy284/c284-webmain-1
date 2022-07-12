@@ -151,6 +151,12 @@ module.exports = exports = {
     
     var stats, size, mtime;
     
+    // throw enoent if path has extra slashes
+    if (/\/\/+/.test(filename)) {
+      let error = new Error('ENOENT'); error.code = 'ENOENT';
+      throw error;
+    }
+    
     // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
     if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
       if (!(filename in global.filesCache)) {

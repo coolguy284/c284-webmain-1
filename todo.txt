@@ -1,5 +1,4 @@
 make error code not set to enoent when error is eisdir in common resp and elsewhere
-make extra slashes at beginning of url not work
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
@@ -85,6 +84,7 @@ add /unicode/random for link to random unicode character
 experiment with wiki stuff
 add /misc/trail which is a page with status code 451, links to other stuff if bypassed (by setting ?location=space&admin=true), 1 layer deep it will say trail ends here for now until extended
 implement altsvc and http3 support
+when chrome supports level 4 media queries remove comment in encode_decode.html
 
 hex editor
 english words searcher

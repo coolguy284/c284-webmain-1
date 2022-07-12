@@ -1,3 +1,4 @@
+RPS //+                                      /
 RPS ^(.*)/index.html$                        $1/
 
 DPS /debug/                                  /misc/debug/

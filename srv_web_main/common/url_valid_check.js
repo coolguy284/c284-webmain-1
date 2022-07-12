@@ -15,7 +15,7 @@ var common = {
       pathName = decodeURI(pathName);
     } catch (err) { /* empty */ }
     
-    return path.join('websites/public', pathName);
+    return 'websites/public' + (pathName.startsWith('/') ? pathName : '/' + pathName);
   },
 };
 
@@ -23,6 +23,9 @@ module.exports = async function isValidUrl(url) {
   var publicPath = common.getPublicPath(url);
   
   if (!common.isSubDir('websites/public', publicPath))
+    return false;
+  
+  if (/\/\/+/.test(publicPath))
     return false;
   
   let match;

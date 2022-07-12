@@ -208,14 +208,14 @@ module.exports = exports = {
   getReqLogStr: requestProps => {
     if (requestProps.httpVersion == 1) {
       if (requestProps.type == 'main')
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost ?? 'NULL'} ${requestProps.method} ${requestProps.rawUrl}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost ?? 'NULL'} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
     } else {
       if (requestProps.method != 'connect')
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost ?? 'NULL'} ${requestProps.method} ${requestProps.rawUrl}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost ?? 'NULL'} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
     }
   },
   
@@ -227,7 +227,7 @@ module.exports = exports = {
       pathName = decodeURI(pathName);
     } catch (err) { /* empty */ }
     
-    return path.join('websites/public', pathName);
+    return 'websites/public' + (pathName.startsWith('/') ? pathName : '/' + pathName);
   },
   
   resp: require('./resp'),
