@@ -1,4 +1,3 @@
-split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
 add html entity escaping to local sitemap gen since its xml
 allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
