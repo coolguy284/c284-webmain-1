@@ -1,6 +1,8 @@
 var cp = require('child_process');
 var fs = require('fs');
 
+var crawler = require('../common/sitemap_crawler');
+
 // load environment variables from .dockerenv file
 fs.readFileSync('dockerenv.list').toString().split(/\r?\n/g).forEach(entry => {
   if (entry[0] == '#') return;
@@ -94,7 +96,12 @@ function getGitModDate(repoPath, filePath) {
   var pageModTimeValues = pageModTimeEntries.map(x => x[1]).filter(x => x);
   var latestModTime = pageModTimeValues.reduce((a, c) => c > a ? c : a, pageModTimeValues[0]);
   
-  pageModTimes['sitemap.xml'] = latestModTime;
+  var sites = await crawler.crawl('/index.html', crawler.fsGetterFuncGen('websites/public', new Set(['/sitemap.xml'])));
+  var validSites = new Set(Array.from(sites.keys()).map(x => x.slice(1)));
+  var crawledPageModTimeValues = pageModTimeEntries.filter(x => validSites.has(x[0])).map(x => x[1]).filter(x => x);
+  var latestSitemapModTime = crawledPageModTimeValues.reduce((a, c) => c > a ? c : a, crawledPageModTimeValues[0]);
+  
+  pageModTimes['sitemap.xml'] = latestSitemapModTime;
   pageModTimes['misc/debug/config/modtimes.json'] = latestModTime;
   pageModTimes['misc/debug/config/etags.json'] = latestModTime;
   
@@ -137,7 +144,7 @@ function getGitModDate(repoPath, filePath) {
   
   // create sitemap
   
-  await require('./create_sitemap')(null, pageModTimes);
+  await require('./create_sitemap')(sites, pageModTimes);
   
   
   // copy file in preperation for etag creation
