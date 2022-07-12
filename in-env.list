@@ -1,6 +1,7 @@
 PROC_MONGODB_ENABLED=true
 PROC_MONGODB_LOG_CONS=false
 
+SRV_WEB_MAIN_LOG_REQUESTS=true
 SRV_WEB_MAIN_LOG_DEBUG=true
 SRV_WEB_MAIN_TLS_KEY_FILE=cert/srv_web_main-key.pem
 SRV_WEB_MAIN_TLS_CERT_FILE=cert/srv_web_main-crt.pem
