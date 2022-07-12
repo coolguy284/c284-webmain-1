@@ -1,3 +1,5 @@
+var crypto = require('crypto');
+
 module.exports = exports = {
   ValidationError: require('./utils_common').ValidationError,
   
