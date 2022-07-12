@@ -43,115 +43,71 @@ module.exports = exports = {
   },
   
   getRequestProps: (httpVersion, ...args) => {
-    let requestProps;
+    let requestProps = {
+      httpVersion: null,
+      type: null,
+      req: null, res: null,
+      stream: null, flags: null, rawHeaders: null,
+      headers: null,
+      ip: null,
+      ipv6Cast: null,
+      port: null,
+      proto: null,
+      trueHost: null,
+      host: null,
+      method: null,
+      rawUrl: null,
+      urlString: null,
+      url: null,
+      timestamp: new Date(),
+      id: exports.vars.currentRequestID++,
+      doLog: null,
+      otherServer: null,
+      otherServerOnline: null,
+    };
     
     switch (httpVersion) {
       case 1: {
         let [ req, res, type ] = args;
         
-        requestProps = {
-          httpVersion: 1,
-          type,
-          req, res, headers: req.headers,
-          ip: exports.uncastIPv6(req.socket.remoteAddress),
-          ipv6Cast: req.socket.remoteAddress,
-          port: req.socket.remotePort,
-          proto: req.socket.encrypted ? 'https' : 'http',
-          trueHost: null,
-          host: null,
-          method: req.method.toLowerCase(),
-          rawUrl: req.url,
-          urlString: null,
-          url: null,
-          timestamp: new Date(),
-          id: exports.vars.currentRequestID++,
-          doLog: null,
-          otherServer: null,
-          otherServerOnline: null,
-        };
+        requestProps.httpVersion = 1;
+        requestProps.type = type;
+        requestProps.req = req;
+        requestProps.res = res;
+        requestProps.headers = req.headers;
+        requestProps.ip = exports.uncastIPv6(req.socket.remoteAddress);
+        requestProps.ipv6Cast = req.socket.remoteAddress;
+        requestProps.port = req.socket.remotePort;
+        requestProps.proto = req.socket.encrypted ? 'https' : 'http';
+        requestProps.method = req.method.toLowerCase();
+        requestProps.rawUrl = req.url;
         
-        if ('host' in req.headers) {
-          if (/^(?:[a-zA-Z0-9-.]+|(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}|\[(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}\]:[0-9]+)$/.test(req.headers.host))
-            requestProps.host = req.headers.host;
-          else
-            requestProps.host = 'INVALID';
-          requestProps.trueHost = req.headers.host;
-        } else {
-          requestProps.host = 'NULL';
-        }
+        if ('host' in req.headers)
+          requestProps.rawHost = req.headers.host;
         
-        requestProps.urlString = req.url.replace(/[@:]+/g, '');
-        
-        if (!requestProps.urlString.startsWith('/'))
-          requestProps.urlString = '/' + requestProps.urlString;
-        
-        try {
-          requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://${requestProps.host}${requestProps.urlString}`);
-        } catch (err) {
-          try {
-            requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://[${requestProps.host}]:${requestProps.proto == 'http' ? process.env.SRV_WEB_MAIN_HTTP_PORT : process.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
-          } catch (err2) {
-            logger.warn('Error parsing url');
-            logger.warn([requestProps.proto, requestProps.host, requestProps.urlString]);
-            logger.warn(err2);
-            requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://NULL/null`);
-          }
-        }
+        requestProps.urlString = req.url;
         break;
       }
       
       case 2: {
         let [ stream, headers, flags, rawHeaders, type ] = args;
         
-        requestProps = {
-          httpVersion: 2,
-          type,
-          stream, headers, flags, rawHeaders,
-          ip: exports.uncastIPv6(stream.session.socket.remoteAddress),
-          ipv6Cast: stream.session.socket.remoteAddress,
-          port: stream.session.socket.remotePort,
-          proto: 'http2',
-          trueHost: null,
-          host: null,
-          method: headers[':method'].toLowerCase(),
-          rawUrl: headers[':path'],
-          urlString: null,
-          url: null,
-          timestamp: new Date(),
-          id: exports.vars.currentRequestID++,
-          doLog: null,
-          otherServer: null,
-          otherServerOnline: null,
-        };
+        requestProps.httpVersion = 2;
+        requestProps.type = type;
+        requestProps.stream = stream;
+        requestProps.flags = flags;
+        requestProps.rawHeaders = rawHeaders;
+        requestProps.headers = headers;
+        requestProps.ip = exports.uncastIPv6(stream.session.socket.remoteAddress);
+        requestProps.ipv6Cast = stream.session.socket.remoteAddress;
+        requestProps.port = stream.session.socket.remotePort;
+        requestProps.proto = 'http2';
+        requestProps.method = headers[':method'].toLowerCase();
+        requestProps.rawUrl = headers[':path'];
         
-        let hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
-        if (hostHeader != null) {
-          if (/^(?:[a-zA-Z0-9-.]+|(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}|\[(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}\]:[0-9]+)$/.test(hostHeader))
-            requestProps.host = hostHeader;
-          else
-            requestProps.host = 'INVALID';
-          requestProps.trueHost = hostHeader;
-        } else {
-          requestProps.host = 'NULL';
-        }
+        requestProps.rawHost = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
         
-        requestProps.urlString = headers[':path'].replace(/[@:]+/g, '');
-        
-        if (!requestProps.urlString.startsWith('/'))
-          requestProps.urlString = '/' + requestProps.urlString;
-        
-        try {
-          requestProps.url = new URL(`https://${requestProps.host}${requestProps.urlString}`);
-        } catch (err) {
-          try {
-            requestProps.url = new URL(`https://[${requestProps.host}]:${process.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
-          } catch (err2) {
-            logger.warn('Error parsing url');
-            logger.warn([requestProps.proto, requestProps.host, requestProps.urlString]);
-            logger.warn(err2);
-            requestProps.url = new URL('https://NULL/null');
-          }
-        }
+        requestProps.urlString = headers[':path'];
         break;
       }
       
@@ -159,6 +115,34 @@ module.exports = exports = {
         logger.error('not possible');
         logger.error(httpVersion);
         throw new Error('NotPossibleError');
+    }
+    
+    if (requestProps.rawHost != null) {
+      if (/^(?:[a-zA-Z0-9-.]+|(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}|\[(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}\]:[0-9]+)$/.test(requestProps.rawHost))
+        requestProps.host = requestProps.rawHost;
+      else
+        requestProps.host = 'INVALID';
+    } else {
+      requestProps.host = 'NULL';
+    }
+    
+    requestProps.urlString = requestProps.urlString.replace(/[@:]+/g, '');
+    
+    if (!requestProps.urlString.startsWith('/'))
+      requestProps.urlString = '/' + requestProps.urlString;
+    
+    let urlProto = requestProps.proto == 'http' ? 'http' : 'https';
+    
+    try {
+      if (requestProps.host.includes(':'))
+        requestProps.url = new URL(`${urlProto}://[${requestProps.host}]:${requestProps.proto == 'http' ? process.env.SRV_WEB_MAIN_HTTP_PORT : process.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
+      else
+        requestProps.url = new URL(`${urlProto}://${requestProps.host}${requestProps.urlString}`);
+    } catch (err) {
+      logger.warn('Error parsing url');
+      logger.warn([requestProps.proto, requestProps.host, requestProps.urlString]);
+      logger.warn(err);
+      requestProps.url = new URL(`${urlProto}://NULL/null`);
     }
     
     requestProps.url.path = requestProps.url.href.slice(requestProps.url.origin.length);
@@ -208,14 +192,14 @@ module.exports = exports = {
   getReqLogStr: requestProps => {
     if (requestProps.httpVersion == 1) {
       if (requestProps.type == 'main')
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost ?? 'NULL'} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.rawHost ?? 'NULL'} ${requestProps.method} ${requestProps.rawUrl}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost ?? 'NULL'} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.rawHost ?? 'NULL'} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
     } else {
       if (requestProps.method != 'connect')
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost ?? 'NULL'} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.rawHost ?? 'NULL'} ${requestProps.method} ${requestProps.rawUrl}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost ?? 'NULL'} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.rawHost ?? 'NULL'} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
     }
   },
   
