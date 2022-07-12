@@ -1,5 +1,5 @@
-fix mongodb on ipv6
-hosts regex says invalid for regular ip addresses now
+make error code not set to enoent when error is eisdir in common resp and elsewhere
+make extra slashes at beginning of url not work
 
 split env into proc main and srv web main, move env files in _s into appropriate folder
 sitemap modtime should only be latest of sitemapped files
@@ -44,11 +44,7 @@ copy over wm1 changes to zextra scripts
 fix website index too tall when webbrowser is tall
 copied over bson and other libs/extern should have version in title so webpages are guarenteed to request latest version instead of caching
 more advanced redirection logic so /misc/unicode redirects are bunched in with the rest of redirects.txt, not in the file but in the same http response
-
-mongodb
-  try moving mongodb reverse proxy port to 27017 should work since mongod is only listening on that port for localhost so reverse proxy can listen on it for other ips
-  move wm1 proxy to 27017 as well
-  figure out why replica set necessary and fix
+mongodb figure out why replica set necessary and fix
 
 add privacy policy
 add base64_url encoder/decoder

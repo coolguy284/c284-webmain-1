@@ -1,3 +1,5 @@
+var logger = require('../log_utils')('common/common');
+
 var path = require('path');
 
 module.exports = exports = {
@@ -55,6 +57,7 @@ module.exports = exports = {
           ipv6Cast: req.socket.remoteAddress,
           port: req.socket.remotePort,
           proto: req.socket.encrypted ? 'https' : 'http',
+          trueHost: null,
           host: null,
           method: req.method.toLowerCase(),
           rawUrl: req.url,
@@ -68,10 +71,11 @@ module.exports = exports = {
         };
         
         if ('host' in req.headers) {
-          if (/^[a-z0-9-.]+$/.test(req.headers.host))
+          if (/^(?:[a-zA-Z0-9-.]+|(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}|\[(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}\]:[0-9]+)$/.test(req.headers.host))
             requestProps.host = req.headers.host;
           else
             requestProps.host = 'INVALID';
+          requestProps.trueHost = req.headers.host;
         } else {
           requestProps.host = 'NULL';
         }
@@ -87,8 +91,9 @@ module.exports = exports = {
           try {
             requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://[${requestProps.host}]:${requestProps.proto == 'http' ? process.env.SRV_WEB_MAIN_HTTP_PORT : process.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
           } catch (err2) {
-            console.error(err2);
-            console.log([requestProps.proto, requestProps.host, requestProps.urlString]);
+            logger.warn('Error parsing url');
+            logger.warn([requestProps.proto, requestProps.host, requestProps.urlString]);
+            logger.warn(err2);
             requestProps.url = new URL(`${requestProps.proto == 'http' ? 'http' : 'https'}://NULL/null`);
           }
         }
@@ -106,6 +111,7 @@ module.exports = exports = {
           ipv6Cast: stream.session.socket.remoteAddress,
           port: stream.session.socket.remotePort,
           proto: 'http2',
+          trueHost: null,
           host: null,
           method: headers[':method'].toLowerCase(),
           rawUrl: headers[':path'],
@@ -120,10 +126,11 @@ module.exports = exports = {
         
         let hostHeader = ':authority' in headers ? headers[':authority'] : 'host' in headers ? headers.host : null;
         if (hostHeader != null) {
-          if (/^[a-z0-9-.]+$/.test(hostHeader))
+          if (/^(?:[a-zA-Z0-9-.]+|(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}|\[(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}\]:[0-9]+)$/.test(hostHeader))
             requestProps.host = hostHeader;
           else
             requestProps.host = 'INVALID';
+          requestProps.trueHost = hostHeader;
         } else {
           requestProps.host = 'NULL';
         }
@@ -139,8 +146,9 @@ module.exports = exports = {
           try {
             requestProps.url = new URL(`https://[${requestProps.host}]:${process.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
           } catch (err2) {
-            console.error(err2);
-            console.log([requestProps.proto, requestProps.host, requestProps.urlString]);
+            logger.warn('Error parsing url');
+            logger.warn([requestProps.proto, requestProps.host, requestProps.urlString]);
+            logger.warn(err2);
             requestProps.url = new URL('https://NULL/null');
           }
         }
@@ -148,8 +156,8 @@ module.exports = exports = {
       }
       
       default:
-        console.log('not possible');
-        console.log(httpVersion);
+        logger.error('not possible');
+        logger.error(httpVersion);
         throw new Error('NotPossibleError');
     }
     
@@ -200,18 +208,18 @@ module.exports = exports = {
   getReqLogStr: requestProps => {
     if (requestProps.httpVersion == 1) {
       if (requestProps.type == 'main')
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost} ${requestProps.method} ${requestProps.rawUrl}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
     } else {
       if (requestProps.method != 'connect')
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost} ${requestProps.method} ${requestProps.rawUrl}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.host} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
+        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.trueHost} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
     }
   },
   
-  getPublicPath: (pathName) => {
+  getPublicPath: pathName => {
     if (pathName.endsWith('/') || !pathName)
       pathName += 'index.html';
     
