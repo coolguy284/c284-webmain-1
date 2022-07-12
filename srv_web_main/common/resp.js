@@ -62,7 +62,7 @@ module.exports = exports = {
         } break;
     }
   },
-
+  
   // http 1.1 only
   manual404: (req, socket) => {
     socket.write(`HTTP/${req.httpVersion} 404 Not Found\r\n\r\n`);

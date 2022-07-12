@@ -41,7 +41,7 @@ if (common.toBool(process.env.PROC_MONGODB_ENABLED)) {
       });
     });
     common.vars.mongoProxyServer.on('error', err => logger.error('Proxy ' + err.toString()));
-
+    
     common.vars.mongoProxyServer.listen(27017, () => logger.info('Mongodb proxy server listening'));
     
     // initalize mongo client

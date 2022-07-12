@@ -311,7 +311,7 @@ function chatWSFunc(ws, req, requestProps) {
         ws.close(4001, 'Error: invalid_chat_protocol_version: Chat version number must be 1.');
         break;
     }
-
+    
     if (Number(process.env.SRV_WEB_MAIN_CHAT_IDLE_TIMEOUT))
       ws.on('pong', function heartbeat() { this.isAlive = true; });
   } else {

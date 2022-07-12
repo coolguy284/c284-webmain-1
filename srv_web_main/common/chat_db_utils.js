@@ -18,7 +18,7 @@ module.exports = exports = {
       random: id.readUInt32BE(12),
     };
   },
-
+  
   serializeID: parsedObj => {
     var id = Buffer.alloc(16);
     
@@ -30,12 +30,12 @@ module.exports = exports = {
     
     return id;
   },
-
+  
   stringifyID: parsedObj => (Buffer.isBuffer(parsedObj) ? parsedObj : exports.serializeID(parsedObj)).toString('base64url'),
-
+  
   generateID: function generateID() {
     var id = Buffer.alloc(16), timestamp = BigInt(Date.now());
-
+    
     id.writeUInt8(1, 0);
     id.writeBigUInt64BE(timestamp, 1);
     id.writeUInt8(parseInt(process.env.SRV_WEB_MAIN_SERVER_ID), 9);
@@ -45,7 +45,7 @@ module.exports = exports = {
       exports.entityID++;
     id.writeUInt16BE(exports.entityID, 10);
     crypto.randomBytes(4).copy(id, 12);
-
+    
     return id;
   },
   

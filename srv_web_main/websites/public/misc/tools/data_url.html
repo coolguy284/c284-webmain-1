@@ -215,7 +215,7 @@
         
         try {
           let binaryString = TextAreaToText(text.value);
-
+          
           switch (text_encoding.value) {
             case 'utf8': binaryString = Utf8ToLatin1(binaryString); break;
             case 'utf16le': binaryString = Utf16LEToLatin1(binaryString); break;
