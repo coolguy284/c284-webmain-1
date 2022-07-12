@@ -46,7 +46,7 @@ module.exports = async function isValidUrl(url) {
     
     return true;
   } catch (err) {
-    if (err.code == 'ENOENT' || err.code == 'ENOTDIR')
+    if (err.code == 'ENOENT' || err.code == 'ENOTDIR' || err.code == 'EISDIR')
       return false;
     else
       throw err;
