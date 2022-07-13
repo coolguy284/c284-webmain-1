@@ -38,6 +38,7 @@ copy over wm1 changes to zextra scripts
 copied over bson and other libs/extern should have version in title so webpages are guaranteed to request latest version instead of caching
 more advanced redirection logic so /misc/unicode redirects are bunched in with the rest of redirects.txt, not in the file but in the same http response
 mongodb figure out why replica set necessary and fix
+replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70)
 
 add nested layers of indexes for unicode
 add /unicode/random for link to random unicode character
@@ -71,7 +72,6 @@ potentially put old sites in archive tab which links to a page with detailed exp
 use fs.promises and async for everything possible
 potentially add more multi page auto generated pages like unicode
 make misc index proper
-replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70)
 add top navbar to base64 site and other tools sites and rest of website
 add waveform gen and other repl sites to website
 possibly live website_data.txt evaluating because of unicode characters pages, should be marked no crawl at first but will need to send that header

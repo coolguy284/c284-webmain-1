@@ -1,10 +1,11 @@
 var projectFolders = ['proc_main', 'srv_web_main'];
+
 var filesToCheck = ['package.json', 'package-basic.json'];
 
 var fs = require('fs');
 var https = require('https');
 
-(async () => {
+async function processPackages(projectFolders) {
   var file, packageName, path;
   
   // get all files
@@ -72,4 +73,6 @@ var https = require('https');
     console.log(`Updating file ${path}`);
     fs.writeFileSync(path, files[path].text);
   }
-})();
+}
+
+processPackages(projectFolders);
