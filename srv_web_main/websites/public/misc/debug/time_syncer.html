@@ -52,7 +52,7 @@
         
         var completePercent = Math.min((beginRTTime - beginTestTime) / TEST_LENGTH * 100, 100);
         
-        if (completePercent >= 100) {        
+        if (completePercent >= 100) {
           var latencyDiff = avgRTT / 2;
           
           var [ avgDiff, minDiff, maxDiff ] = times.reduce(

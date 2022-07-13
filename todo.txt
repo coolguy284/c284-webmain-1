@@ -71,7 +71,7 @@ potentially put old sites in archive tab which links to a page with detailed exp
 use fs.promises and async for everything possible
 potentially add more multi page auto generated pages like unicode
 make misc index proper
-replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70) 
+replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70)
 add top navbar to base64 site and other tools sites and rest of website
 add waveform gen and other repl sites to website
 possibly live website_data.txt evaluating because of unicode characters pages, should be marked no crawl at first but will need to send that header

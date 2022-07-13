@@ -38,7 +38,7 @@ module.exports = async function getMethod(requestProps) {
             );
             break;
           
-          case 'hex':            
+          case 'hex':
             await resp.data(
               requestProps,
               200,

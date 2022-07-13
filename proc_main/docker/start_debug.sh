@@ -7,8 +7,8 @@ mkdir -p ../../c284-webmain-1_s/mongodb
 if [ ! -f "../../c284-webmain-1_s/env.list" ]; then touch ../../c284-webmain-1_s/env.list; fi
 
 NETWORK_NAME=c284-webmain-1_net
-if [ -z $(sudo docker network ls --filter name=^${NETWORK_NAME}$ --format="{{ .Name }}") ]; then 
-  sudo docker network create --ipv6 --subnet fd00:1110:0111::/48 ${NETWORK_NAME}; 
+if [ -z $(sudo docker network ls --filter name=^${NETWORK_NAME}$ --format="{{ .Name }}") ]; then
+  sudo docker network create --ipv6 --subnet fd00:1110:0111::/48 ${NETWORK_NAME};
 fi
 
 sudo docker run --rm -it --name c284-webmain-1_proc_main --network ${NETWORK_NAME} --network-alias proc_main \
