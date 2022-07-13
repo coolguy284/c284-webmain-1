@@ -4,11 +4,7 @@ var cp = require('child_process');
 var fs = require('fs');
 
 try {
-  fs.readFileSync(
-    process.platform == 'win32' ?
-      'D:/Data/c284-webmain-1_s/env.list' :
-      '/home/webmain/c284-webmain-1_s/env.list'
-  ).toString().split(/\r?\n/g).forEach(entry => {
+  fs.readFileSync('../c284-webmain-1_s/env.list').toString().split(/\r?\n/g).forEach(entry => {
     if (entry[0] == '#') return;
     let split = entry.split('=');
     if (split.length < 2) return;
