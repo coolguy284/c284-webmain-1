@@ -21,7 +21,7 @@ module.exports = exports = {
   },
   
   mergeIPPort: (ip, port) =>
-    ip.includes(':') ? `[${ip}]:${port}` : `${ip}:${port}`,
+    ip != null && ip.includes(':') ? `[${ip}]:${port}` : `${ip}:${port}`,
   
   IPv6ToHex: ip => {
     ip = ip.split(':');
