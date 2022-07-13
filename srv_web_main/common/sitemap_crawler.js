@@ -5,8 +5,8 @@ module.exports = {
   fsGetterFuncGen: function fsGetterFuncGen(rootPath, extraSites) {
     if (!extraSites) extraSites = new Set();
     return async filePath => {
-      let properFilePath = new URL('http:/e/' + (filePath.startsWith('/') ? filePath.slice(1) : filePath)).pathname;
-      let fullPath = path.join(rootPath, properFilePath);
+      let properFilePath = new URL('http:/e/' + encodeURI(filePath.startsWith('/') ? filePath.slice(1) : filePath)).pathname;
+      let fullPath = path.join(rootPath, decodeURI(properFilePath));
       if (path.sep == '\\') fullPath = fullPath.replaceAll('\\', '/');
       try {
         return await fs.promises.readFile(fullPath);
@@ -29,6 +29,7 @@ module.exports = {
           if (filePath[1] == null) return [];
           let matched = filePath[1].toString().match(/(?<=<a.*href\s*=\s*['"]).*?(?=['"]>)/g) ?? [];
           return matched.map(subFilePath => {
+            subFilePath = decodeURI(subFilePath);
             subFilePath = subFilePath.endsWith('/') ? subFilePath + 'index.html' : subFilePath;
             return subFilePath.startsWith('/') ? subFilePath : path.join(filePath[0], '../' + subFilePath).split(path.sep).join(path.posix.sep);
           });

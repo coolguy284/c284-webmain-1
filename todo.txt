@@ -1,8 +1,19 @@
-add html entity escaping to local sitemap gen since its xml
+env var for no logging
 allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
 api ipv6 error if ipv4, unless parameter usemapped is set to true
-
 use map and promise all for git log and others or for none of them
+add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
+
+fix website index too tall when webbrowser is tall
+potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
+update options method responses
+http2 websocket 404 strange behavior
+add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages
+  do the same in node srv, node srv new, c284 git io
+make proxies disconnect other end if one end closes, forward errors as well
+  make socketLink function in common that does all this to prevent code duplication
+  if http proxy res function is given already complete res it will hang and not close socket and browser will load indefinitely as well
+create_sitemap return lastmod and other properties, also return array of objects instead of map
 
 make more lib/extern copied from node_modules in dockerfile
 
@@ -22,22 +33,9 @@ http.coolguy284.com or insecure.coolguy284.com
   api endpoints also should be marked as working on insecure or not
   also add unencrypted and encrypted http2 upgrade
 
-add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
-
-potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
-update options method responses
-http2 websocket 404 strange behavior
-add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages
-  do the same in node srv, node srv new, c284 git io
-make proxies disconnect other end if one end closes, forward errors as well
-  make socketLink function in common that does all this to prevent code duplication
-  if http proxy res function is given already complete res it will hang and not close socket and browser will load indefinitely as well
-create_sitemap return lastmod and other properties, also return array of objects instead of map
-
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
 copy over wm1 changes to zextra scripts
-fix website index too tall when webbrowser is tall
-copied over bson and other libs/extern should have version in title so webpages are guarenteed to request latest version instead of caching
+copied over bson and other libs/extern should have version in title so webpages are guaranteed to request latest version instead of caching
 more advanced redirection logic so /misc/unicode redirects are bunched in with the rest of redirects.txt, not in the file but in the same http response
 mongodb figure out why replica set necessary and fix
 
@@ -82,6 +80,7 @@ add /misc/trail which is a page with status code 451, links to other stuff if by
   when location is set the page says location "location" is not valid, when not set it defaults to something
 implement altsvc and http3 support
 when chrome supports level 4 media queries remove comment in encode_decode.html
+way to live update server code during development without need for docker rebuild, either update and rerun inside docker or live patch while running, which would require everything to be made very modular
 
 hex editor
 english words searcher
@@ -119,3 +118,6 @@ experiment with unsorted readdirs using fuse, if works potential necessity to so
 problems:
 if there is a unicode url it can be redirected by the default redirect code and the unicode code one at a time
 proc_main index.js seems to stay running if one of sibling docker containers started by it is still running
+
+notes:
+srv_web_main/common/url_valid_check.js has hardcoded 2 functions from common (since it must be able to run independently)
