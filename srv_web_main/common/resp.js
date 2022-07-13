@@ -40,7 +40,8 @@ module.exports = exports = {
         WSServer.handleUpgrade(req, socket, head, ws => {
           WSServer.emit('connection', ws, req, requestProps);
         });
-        } break;
+        break;
+      }
       
       case 2: {
         let req = {
@@ -59,7 +60,8 @@ module.exports = exports = {
         WSServer.handleUpgrade(req, requestProps.stream, Buffer.alloc(0), ws => {
           WSServer.emit('connection', ws, req, requestProps);
         });
-        } break;
+        break;
+      }
     }
   },
   
@@ -297,8 +299,8 @@ module.exports = exports = {
         if (hasVal == 1) {
           if (encodings.has('gzip')) {
             if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
-            stat = global.filesCache[filename + '.gz'];
-            stat ? (size = stat.file.length, filename += '.gz') : hasVal++;
+              stat = global.filesCache[filename + '.gz'];
+              stat ? (size = stat.file.length, filename += '.gz') : hasVal++;
             } else {
               try {
                 stat = await fs.promises.stat(filename + '.gz');

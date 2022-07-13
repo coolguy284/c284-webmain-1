@@ -32,6 +32,7 @@
       "error",
       "always"
     ],
+    "no-trailing-spaces": ["error", { "skipBlankLines": true }],
     "no-unused-vars": 0,
     "no-cond-assign": 0
   },

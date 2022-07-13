@@ -223,7 +223,7 @@ common.vars.tickFunc = () => {
   if (process.env.SRV_WEB_MAIN_HTTPS_IP && common.vars.ticks % (300000 / common.vars.tickIntMs)) {
     for (i of common.vars.tlsSessionStore.keys()) {
       if (common.vars.tlsSessionStore.get(i)[1] < tlsSessionLimitTime)
-      common.vars.tlsSessionStore.delete(i);
+        common.vars.tlsSessionStore.delete(i);
     }
   }
   
