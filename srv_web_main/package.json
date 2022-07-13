@@ -7,11 +7,20 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
-    "node",
-    "server",
+    "nodejs",
+    "javascript",
     "http",
+    "website",
+    "node",
+    "web",
+    "server",
+    "js",
     "https",
-    "http2"
+    "http2",
+    "http-server",
+    "node-js",
+    "https-server",
+    "http2-server"
   ],
   "author": "coolguy284",
   "license": "MIT",
