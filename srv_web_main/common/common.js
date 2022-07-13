@@ -180,7 +180,8 @@ module.exports = exports = {
       slicedPath = requestProps.url.path;
     }
     
-    requestProps.doLog = !requestProps.url.pathname.startsWith('/api/') &&
+    requestProps.doLog = exports.toBool(process.env.SRV_WEB_MAIN_LOG_REQUESTS) &&
+      !requestProps.url.pathname.startsWith('/api/') &&
       !(otherServerBool && (
         otherServer.noLogURLs.has(slicedPath) ||
         otherServer.noLogUrlStarts.some(x => slicedPath.startsWith(x))

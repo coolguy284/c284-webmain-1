@@ -1,4 +1,4 @@
-env var for no logging
+cache process env
 allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
 api ipv6 error if ipv4, unless parameter usemapped is set to true
 use map and promise all for git log and others or for none of them
