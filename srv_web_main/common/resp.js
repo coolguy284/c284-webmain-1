@@ -1,10 +1,11 @@
+var logger = require('../log_utils')('common/resp');
+
 var fs = require('fs');
 var mime = require('mime');
+var env = require('./env').env;
 var websiteData = require('./website_data');
 var etags; try { etags = require('../websites/etags.json'); } catch (e) { etags = {}; }
 var modtimes; try { modtimes = require('../websites/modtimes.json'); } catch (e) { modtimes = {}; }
-
-var logger = require('../log_utils')('common/resp');
 
 module.exports = exports = {
   getBasicFileHeaders: (file, mimeType) => {
@@ -160,7 +161,7 @@ module.exports = exports = {
     }
     
     // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
-    if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
+    if (env.SRV_WEB_MAIN_CACHE_MODE == 1) {
       if (!(filename in global.filesCache)) {
         let error = new Error('ENOENT'); error.code = 'ENOENT';
         throw error;
@@ -240,7 +241,7 @@ module.exports = exports = {
               if (headOnly) {
                 await exports.end(requestProps);
               } else {
-                if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
+                if (env.SRV_WEB_MAIN_CACHE_MODE == 1) {
                   await exports.end(requestProps, fileEntry.file.slice(start, end));
                 } else {
                   let readStream = fs.createReadStream(filename, { start, end });
@@ -286,7 +287,7 @@ module.exports = exports = {
         
         let hasVal = 0, stat;
         if (encodings.has('br') || encodings.has('*')) {
-          if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
+          if (env.SRV_WEB_MAIN_CACHE_MODE == 1) {
             stat = global.filesCache[filename + '.br'];
             stat ? (size = stat.file.length, filename += '.br') : hasVal++;
           } else {
@@ -298,7 +299,7 @@ module.exports = exports = {
         } else hasVal++;
         if (hasVal == 1) {
           if (encodings.has('gzip')) {
-            if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
+            if (env.SRV_WEB_MAIN_CACHE_MODE == 1) {
               stat = global.filesCache[filename + '.gz'];
               stat ? (size = stat.file.length, filename += '.gz') : hasVal++;
             } else {
@@ -326,7 +327,7 @@ module.exports = exports = {
         if (headOnly) {
           await exports.end(requestProps);
         } else {
-          if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
+          if (env.SRV_WEB_MAIN_CACHE_MODE == 1) {
             await exports.end(requestProps, fileEntry.file);
           } else {
             let readStream = fs.createReadStream(filename);

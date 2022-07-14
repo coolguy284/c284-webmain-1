@@ -16,7 +16,7 @@ var ws = require('ws');
 var common = require('./common');
 
 
-if (common.toBool(process.env.PROC_MONGODB_ENABLED)) {
+if (common.env.PROC_MONGODB_ENABLED) {
   (async () => {
     // start reverse proxy
     common.vars.mongoProxyServerConns = new Set();
@@ -67,15 +67,15 @@ if (common.toBool(process.env.PROC_MONGODB_ENABLED)) {
 
 
 // servers
-if (process.env.SRV_WEB_MAIN_HTTP_IP) {
+if (common.env.SRV_WEB_MAIN_HTTP_IP) {
   common.vars.tcpServer = net.createServer(conn => {
     if (conn.destroyed) {
-      if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true')
+      if (common.env.SRV_WEB_MAIN_LOG_DEBUG)
         logger.debug(`TCP open-instaclose ${conn.remoteAddress}, ${conn.remotePort}`);
       return;
     }
     
-    if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true') {
+    if (common.env.SRV_WEB_MAIN_LOG_DEBUG) {
       logger.debug(`TCP open ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)}`);
       conn.on('close', hadError => {
         logger.debug(`TCP close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`);
@@ -87,8 +87,8 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP) {
     common.vars.httpServer.emit('connection', conn);
   });
   
-  common.vars.tcpServer.listen({ host: process.env.SRV_WEB_MAIN_HTTP_IP, port: process.env.SRV_WEB_MAIN_HTTP_PORT }, () => {
-    logger.info(`HTTP server listening on ${common.mergeIPPort(process.env.SRV_WEB_MAIN_HTTP_IP, process.env.SRV_WEB_MAIN_HTTP_PORT)}`);
+  common.vars.tcpServer.listen({ host: common.env.SRV_WEB_MAIN_HTTP_IP, port: common.env.SRV_WEB_MAIN_HTTP_PORT }, () => {
+    logger.info(`HTTP server listening on ${common.mergeIPPort(common.env.SRV_WEB_MAIN_HTTP_IP, common.env.SRV_WEB_MAIN_HTTP_PORT)}`);
   });
   
   common.vars.httpServerConns = new Set();
@@ -101,23 +101,23 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP) {
   common.vars.httpServer.on('connect', require('./requests/connect_http1'));
 }
 
-if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
+if (common.env.SRV_WEB_MAIN_HTTPS_IP) {
   common.vars.tlsServer = tls.createServer({
     secureOptions: crypto.constants.SSL_OP_NO_SSLv2 | crypto.constants.SSL_OP_NO_SSLv3 | crypto.constants.SSL_OP_NO_TLSv1 | crypto.constants.SSL_OP_NO_TLSv1_1,
     //ciphers: crypto.constants.defaultCoreCipherList + ':!TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256:!TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384:!TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA:!TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA:!TLS_RSA_WITH_AES_256_GCM_SHA384:!TLS_RSA_WITH_AES_256_CCM_8:!TLS_RSA_WITH_AES_256_CCM:!TLS_RSA_WITH_ARIA_256_GCM_SHA384:!TLS_RSA_WITH_AES_128_GCM_SHA256:!TLS_RSA_WITH_AES_128_CCM_8:!TLS_RSA_WITH_AES_128_CCM:!TLS_RSA_WITH_ARIA_128_GCM_SHA256:!TLS_RSA_WITH_AES_256_CBC_SHA256:!TLS_RSA_WITH_AES_128_CBC_SHA256:!TLS_RSA_WITH_AES_256_CBC_SHA:!TLS_RSA_WITH_AES_128_CBC_SHA:@STRENGTH',
     ciphers: 'TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256:TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256:TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384:TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256:TLS_ECDHE_RSA_WITH_ARIA_256_GCM_SHA384:TLS_ECDHE_RSA_WITH_ARIA_128_GCM_SHA256:@STRENGTH',
-    key: fs.readFileSync(process.env.SRV_WEB_MAIN_TLS_KEY_FILE),
-    cert: fs.readFileSync(process.env.SRV_WEB_MAIN_TLS_CERT_FILE) + fs.readFileSync(process.env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE),
+    key: fs.readFileSync(common.env.SRV_WEB_MAIN_TLS_KEY_FILE),
+    cert: fs.readFileSync(common.env.SRV_WEB_MAIN_TLS_CERT_FILE) + fs.readFileSync(common.env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE),
     
     ALPNProtocols: ['h2', 'http/1.1'],
   }, conn => {
     if (conn.destroyed) {
-      if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true')
+      if (common.env.SRV_WEB_MAIN_LOG_DEBUG)
         logger.debug(`TLS open-instaclose ${conn.remoteAddress}, ${conn.remotePort}`);
       return;
     }
     
-    if (process.env.SRV_WEB_MAIN_LOG_DEBUG == 'true') {
+    if (common.env.SRV_WEB_MAIN_LOG_DEBUG) {
       logger.debug(`TLS open ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${conn.servername} ${conn.alpnProtocol} ${conn.authorized}`);
       conn.on('close', hadError => {
         logger.debug(`TLS close ${common.mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`);
@@ -143,8 +143,8 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
     cb(null, common.vars.tlsSessionStore.get(id.toString('base64'))?.[0] || null);
   });
   
-  common.vars.tlsServer.listen({ host: process.env.SRV_WEB_MAIN_HTTPS_IP, port: process.env.SRV_WEB_MAIN_HTTPS_PORT }, () => {
-    logger.info(`HTTPS/H2 server listening on ${common.mergeIPPort(process.env.SRV_WEB_MAIN_HTTPS_IP, process.env.SRV_WEB_MAIN_HTTPS_PORT)}`);
+  common.vars.tlsServer.listen({ host: common.env.SRV_WEB_MAIN_HTTPS_IP, port: common.env.SRV_WEB_MAIN_HTTPS_PORT }, () => {
+    logger.info(`HTTPS/H2 server listening on ${common.mergeIPPort(common.env.SRV_WEB_MAIN_HTTPS_IP, common.env.SRV_WEB_MAIN_HTTPS_PORT)}`);
   });
   
   common.vars.httpsServerConns = new Set();
@@ -170,7 +170,7 @@ if (process.env.SRV_WEB_MAIN_HTTPS_IP) {
   common.vars.http2Server.on('stream', require('./requests/main').bind(null, 2));
 }
 
-if (process.env.SRV_WEB_MAIN_HTTP_IP || process.env.SRV_WEB_MAIN_HTTPS_IP) {
+if (common.env.SRV_WEB_MAIN_HTTP_IP || common.env.SRV_WEB_MAIN_HTTPS_IP) {
   common.vars.httpServerProxyConns = new Set();
   
   common.vars.echoWSServer = new ws.Server({ noServer: true, clientTracking: true, maxPayload: 2 ** 20 });
@@ -188,7 +188,7 @@ if (process.env.SRV_WEB_MAIN_HTTP_IP || process.env.SRV_WEB_MAIN_HTTPS_IP) {
 
 
 // website cache
-if (process.env.SRV_WEB_MAIN_CACHE_MODE == '1') {
+if (common.env.SRV_WEB_MAIN_CACHE_MODE == 1) {
   common.vars.filesCache = {};
   require('./common/recursive_readdir')('websites/public').forEach(filename => {
     filename = 'websites/public/' + filename;
@@ -213,14 +213,14 @@ process.on('unhandledRejection', err => {
 
 
 // server tick function
-common.vars.tickIntMs = Number(process.env.SRV_WEB_MAIN_TICK_INTERVAL) || 5000;
+common.vars.tickIntMs = common.env.SRV_WEB_MAIN_TICK_INTERVAL || 5000;
 common.vars.ticks = 0;
 common.vars.tickFunc = () => {
   var i;
   
   // for removing old cached TLS sessions
   let tlsSessionLimitTime = Date.now() - 300000;
-  if (process.env.SRV_WEB_MAIN_HTTPS_IP && common.vars.ticks % (300000 / common.vars.tickIntMs)) {
+  if (common.env.SRV_WEB_MAIN_HTTPS_IP && common.vars.ticks % (300000 / common.vars.tickIntMs)) {
     for (i of common.vars.tlsSessionStore.keys()) {
       if (common.vars.tlsSessionStore.get(i)[1] < tlsSessionLimitTime)
         common.vars.tlsSessionStore.delete(i);
@@ -235,7 +235,7 @@ common.vars.tickFunc = () => {
   }
   
   // for disconnecting chat members more quickly if their internet has cut out
-  let chatIdleTimeout = Number(process.env.SRV_WEB_MAIN_CHAT_IDLE_TIMEOUT);
+  let chatIdleTimeout = common.env.SRV_WEB_MAIN_CHAT_IDLE_TIMEOUT;
   if (chatIdleTimeout && common.vars.ticks % chatIdleTimeout == 0) {
     for (var ws2 of common.vars.chatWSServer.clients) {
       if (ws2.isAlive === false) return ws2.terminate();

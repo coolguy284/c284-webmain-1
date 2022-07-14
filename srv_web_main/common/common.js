@@ -3,12 +3,8 @@ var logger = require('../log_utils')('common/common');
 var path = require('path');
 
 module.exports = exports = {
-  toBool: (str, defaultBool) => {
-    if (str == null || str == '')
-      return defaultBool ?? false;
-    else
-      return str == 'false' || str == '0' ? false : true;
-  },
+  toBool: require('./env').toBool,
+  env: require('./env').env,
   
   formatIP: ip => {
     if (typeof ip != 'string') return '';
@@ -135,7 +131,7 @@ module.exports = exports = {
     
     try {
       if (requestProps.host.includes(':'))
-        requestProps.url = new URL(`${urlProto}://[${requestProps.host}]:${requestProps.proto == 'http' ? process.env.SRV_WEB_MAIN_HTTP_PORT : process.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
+        requestProps.url = new URL(`${urlProto}://[${requestProps.host}]:${requestProps.proto == 'http' ? exports.env.SRV_WEB_MAIN_HTTP_PORT : exports.env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
       else
         requestProps.url = new URL(`${urlProto}://${requestProps.host}${requestProps.urlString}`);
     } catch (err) {
@@ -175,12 +171,12 @@ module.exports = exports = {
         noLogUrlStarts: otherServerInfo.noLogUrlStarts,
         slicedPath,
       };
-      requestProps.otherServerOnline = exports.toBool(process.env[otherServerName.toUpperCase() + '_ENABLED']);
+      requestProps.otherServerOnline = exports.env[otherServerName.toUpperCase() + '_ENABLED'];
     } else {
       slicedPath = requestProps.url.path;
     }
     
-    requestProps.doLog = exports.toBool(process.env.SRV_WEB_MAIN_LOG_REQUESTS) &&
+    requestProps.doLog = exports.env.SRV_WEB_MAIN_LOG_REQUESTS &&
       !requestProps.url.pathname.startsWith('/api/') &&
       !(otherServerBool && (
         otherServer.noLogURLs.has(slicedPath) ||

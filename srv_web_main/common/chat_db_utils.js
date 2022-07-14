@@ -1,4 +1,5 @@
 var crypto = require('crypto');
+var env = require('./env').env;
 
 module.exports = exports = {
   ValidationError: require('./utils_common').ValidationError,
@@ -38,7 +39,7 @@ module.exports = exports = {
     
     id.writeUInt8(1, 0);
     id.writeBigUInt64BE(timestamp, 1);
-    id.writeUInt8(parseInt(process.env.SRV_WEB_MAIN_SERVER_ID), 9);
+    id.writeUInt8(env.SRV_WEB_MAIN_SERVER_ID, 9);
     if (timestamp > exports.entityTimestamp) {
       if (exports.entityID != 0) exports.entityID = 0;
     } else {

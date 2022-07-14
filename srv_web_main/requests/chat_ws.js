@@ -1,10 +1,10 @@
 var BSON = require('bson');
-var { toBool } = require('../common');
 var chatDBUilts = require('../common/chat_db_utils');
+var env = require('../common/env').env;
 var commonVars = require('../common').vars;
 
 function chatWSFunc(ws, req, requestProps) {
-  if (toBool(process.env.PROC_MONGODB_ENABLED)) {
+  if (env.PROC_MONGODB_ENABLED) {
     let wsInfo;
     switch (requestProps.url.searchParams.get('version')) {
       case '1':
@@ -312,7 +312,7 @@ function chatWSFunc(ws, req, requestProps) {
         break;
     }
     
-    if (Number(process.env.SRV_WEB_MAIN_CHAT_IDLE_TIMEOUT))
+    if (env.SRV_WEB_MAIN_CHAT_IDLE_TIMEOUT)
       ws.on('pong', function heartbeat() { this.isAlive = true; });
   } else {
     ws.close(4001, 'Error: mongodb_offline: MongoDB server is offline.');
@@ -376,7 +376,7 @@ function mongoClientOnConnect() {
 }
 
 function mongoClientOnClose() {
-  chatStream.close();
+  if (chatStream) chatStream.close();
 }
 
 module.exports = {
