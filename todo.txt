@@ -1,3 +1,5 @@
+tls debug log doesnt slice ip ::ffff:
+rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
 api ipv6 error if ipv4, unless parameter usemapped is set to true
 use map and promise all for git log and others or for none of them
@@ -12,6 +14,7 @@ add sitemap.xml, robots.txt, and others to debug pages, basically all currently 
 make proxies disconnect other end if one end closes, forward errors as well
   make socketLink function in common that does all this to prevent code duplication
   if http proxy res function is given already complete res it will hang and not close socket and browser will load indefinitely as well
+  add support for https proxying with ignoretlserrors
 create_sitemap return lastmod and other properties, also return array of objects instead of map
 
 make more lib/extern copied from node_modules in dockerfile
@@ -80,6 +83,7 @@ add /misc/trail which is a page with status code 451, links to other stuff if by
 implement altsvc and http3 support
 when chrome supports level 4 media queries remove comment in encode_decode.html
 way to live update server code during development without need for docker rebuild, either update and rerun inside docker or live patch while running, which would require everything to be made very modular
+/api/echo/headers subfolder support
 
 hex editor
 english words searcher

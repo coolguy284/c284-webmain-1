@@ -22,7 +22,7 @@ module.exports = function serverConnectFunc(req, socket, head) {
       };
       let srvReq = http.request({
         host: requestProps.otherServer.host,
-        port: requestProps.otherServer.host,
+        port: requestProps.otherServer.port,
         method: requestProps.method,
         path: requestProps.otherServer.slicedPath,
         headers: sendHeaders,
