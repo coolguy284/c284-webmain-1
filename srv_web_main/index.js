@@ -265,6 +265,7 @@ async function exitHandler() {
       logger.info('HTTP server closed');
     });
     common.vars.httpServer.close();
+    common.vars.httpServer.closeIdleConnections();
     setTimeout(() => {
       if (!common.vars.httpServerConns.size) return;
       logger.warn('Forcibly closing all HTTP connections');
@@ -278,6 +279,7 @@ async function exitHandler() {
       logger.info('HTTPS/H2 server closed');
     });
     common.vars.httpsServer.close();
+    common.vars.httpsServer.closeIdleConnections();
     common.vars.http2Server.close();
     for (var session of common.vars.http2ServerSessions) session.close();
     setTimeout(() => {
