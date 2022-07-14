@@ -22,6 +22,7 @@ var envTypeConverts = new Map([
   ['SRV_WEB_MAIN_CACHE_MODE', parseInt],
   ['SRV_WEB_MAIN_SERVER_ID', parseInt],
   ['SRV_WEB_MAIN_CHAT_IDLE_TIMEOUT', parseInt],
+  ['SRV_WEB_MAIN_HTTPS_ENFORCE', toBool],
   
   ['SRV_WEB_OLD_ENABLED', toBool],
   ['SRV_WEB_OLD2_ENABLED', toBool],

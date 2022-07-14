@@ -2,6 +2,7 @@ var logger = require('../log_utils')('requests/main');
 
 var http = require('http');
 var common = require('../common');
+var env = require('../common/env').env;
 var redirects = require('../common/redirects');
 var resp = require('../common/resp');
 var commonVars = require('../common').vars;
@@ -27,12 +28,25 @@ module.exports = async function main(httpVersion, ...args) {
     if (requestProps.doLog)
       logger.info(common.getReqLogStr(requestProps));
     
-    // redirect main page to https
-    if (requestProps.proto == 'http' && !requestProps.otherServer?.isHost || requestProps.host == 'www.coolguy284.com') {
-      let newURL = new URL(requestProps.url);
-      if (requestProps.proto == 'http') newURL.protocol = 'https:';
-      if (requestProps.host == 'www.coolguy284.com') newURL.host = 'coolguy284.com';
-      await resp.headers(requestProps, 307, { 'location': newURL.href });
+    // redirect http to https (if https enforce enabled) and www.coolguy284.com to coolguy284.com
+    let doPreRedirect = false, preRedirNewURL;
+    if (env.SRV_WEB_MAIN_HTTPS_ENFORCE) {
+      if (requestProps.proto == 'http' && !requestProps.otherServer?.isHost ||
+          requestProps.host == 'www.coolguy284.com') {
+        doPreRedirect = true;
+        preRedirNewURL = new URL(requestProps.url);
+        if (requestProps.proto == 'http') preRedirNewURL.protocol = 'https:';
+        if (requestProps.host == 'www.coolguy284.com') preRedirNewURL.host = 'coolguy284.com';
+      }
+    } else {
+      if (requestProps.host == 'www.coolguy284.com') {
+        doPreRedirect = true;
+        preRedirNewURL = new URL(requestProps.url);
+        if (requestProps.host == 'www.coolguy284.com') preRedirNewURL.host = 'coolguy284.com';
+      }
+    }
+    if (doPreRedirect) {
+      await resp.headers(requestProps, 307, { 'location': preRedirNewURL.href });
       await resp.end(requestProps);
       return;
     }
