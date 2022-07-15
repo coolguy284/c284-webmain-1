@@ -1,10 +1,32 @@
+add base64_url encoder/decoder
+add /unicode/random for link to random unicode character
+
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
-api ipv6 error if ipv4, unless parameter usemapped is set to true
 use map and promise all for git log and others or for none of them
 add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
+don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
+copied over bson and other libs/extern should have version in title so webpages are guaranteed to request latest version instead of caching
+more advanced redirection logic so /misc/unicode redirects are bunched in with the rest of redirects.txt, not in the file but in the same http response
+mongodb figure out why replica set necessary and fix
+replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70)
+proper websocket closure with server closure, echo and status ws should just close all connections immediately, chat ws should send chat exit packet (maybe statusws can do the same)
+http.coolguy284.com or insecure.coolguy284.com
+  implement by adding a works with http flag that must be turned on for each page that works with http, otherwise a 404 is sent
+  api endpoints also should be marked as working on insecure or not
+  also add unencrypted and encrypted http2 upgrade
+add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
+fix all docker containers getting a sigint simultaneously when proc_main one does
+make more lib/extern copied from node_modules in dockerfile
+old sites
+  make old and maybe old2 not use polling, probably use eventsource instead
+    dompurify to old node chat
+  bring back important
+  make wm1, ns, nsn work as subfolder on website, meaning change html and js files to not use absolute paths
+  maybe add coolguy284.github.io to site as well
+  update github repos description urls once hosted
 fix website index too tall when webbrowser is tall
 potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
 update options method responses
@@ -17,36 +39,8 @@ make proxies disconnect other end if one end closes, forward errors as well
   add support for https proxying with ignoretlserrors
 create_sitemap return lastmod and other properties, also return array of objects instead of map
 
-make more lib/extern copied from node_modules in dockerfile
-
-old sites
-  make old and maybe old2 not use polling, probably use eventsource instead
-    dompurify to old node chat
-  bring back important
-  make wm1, ns, nsn work as subfolder on website, meaning change html and js files to not use absolute paths
-  maybe add coolguy284.github.io to site as well
-  update github repos description urls once hosted
-
-add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
-fix all docker containers getting a sigint simultaneously when proc_main one does
-
-http.coolguy284.com or insecure.coolguy284.com
-  implement by adding a works with http flag that must be turned on for each page that works with http, otherwise a 404 is sent
-  api endpoints also should be marked as working on insecure or not
-  also add unencrypted and encrypted http2 upgrade
-
-don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
-copy over wm1 changes to zextra scripts
-copied over bson and other libs/extern should have version in title so webpages are guaranteed to request latest version instead of caching
-more advanced redirection logic so /misc/unicode redirects are bunched in with the rest of redirects.txt, not in the file but in the same http response
-mongodb figure out why replica set necessary and fix
-replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70)
-proper websocket closure with server closure, echo and status ws should just close all connections immediately, chat ws should send chat exit packet (maybe statusws can do the same)
-
 add nested layers of indexes for unicode
-add /unicode/random for link to random unicode character
 add privacy policy
-add base64_url encoder/decoder
 fancier latency test and time syncer, less NaN
 validation for meta description tags, to supplement validation for canonical urls
   also validator to make sure "to" urls in redirects.txt are the final form of the url for the most part
@@ -85,6 +79,9 @@ implement altsvc and http3 support
 when chrome supports level 4 media queries remove comment in encode_decode.html
 way to live update server code during development without need for docker rebuild, either update and rerun inside docker or live patch while running, which would require everything to be made very modular
 /api/echo/headers subfolder support
+api ipv6 error if ipv4, unless parameter usemapped is set to true
+add env vars for http, https, http2 enabled
+priv.coolguy284.com with no logging
 
 hex editor
 english words searcher
