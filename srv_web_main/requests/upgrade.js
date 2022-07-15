@@ -33,11 +33,19 @@ module.exports = function serverUpgradeFunc(req, socket, head) {
       srvReq.on('close', () => { commonVars.httpServerProxyConns.delete(srvReq); });
       srvReq.on('error', x => logger.error(x));
       srvReq.on('upgrade', (res, srvSocket, srvHead) => {
+        let rawHeaderLines = [];
+        for (var i = 0; i < res.rawHeaders.length / 2; i++)
+          rawHeaderLines.push(`${res.rawHeaders[i * 2]}: ${res.rawHeaders[i * 2 + 1]}`);
+        socket.write(
+          `HTTP/${req.httpVersion} 101 Switching Protocols\r\n` +
+          rawHeaderLines.join('\r\n') + '\r\n\r\n'
+        );
         srvSocket.write(head);
         socket.write(srvHead);
         socket.pipe(srvSocket);
         srvSocket.pipe(socket);
       });
+      srvReq.end();
     } else {
       // main server processing
       if (requestProps.headers.upgrade.toLowerCase() == 'websocket') {

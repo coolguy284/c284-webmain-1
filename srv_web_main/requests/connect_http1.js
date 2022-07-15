@@ -38,6 +38,7 @@ module.exports = function serverConnectFunc(req, socket, head) {
         socket.pipe(srvSocket);
         srvSocket.pipe(socket);
       });
+      srvReq.end();
     } else {
       // main server processing
       resp.manual404(req, socket);

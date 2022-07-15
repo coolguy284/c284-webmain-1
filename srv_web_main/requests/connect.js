@@ -23,7 +23,7 @@ module.exports = async function connectMethod(requestProps) {
     let srvReq = http.request({
       host: requestProps.otherServer.host,
       port: requestProps.otherServer.port,
-      method: requestProps.method,
+      method: 'get',
       path: requestProps.otherServer.slicedPath,
       headers: sendHeaders,
       setHost: false,
@@ -39,6 +39,16 @@ module.exports = async function connectMethod(requestProps) {
     srvReq.on('error', x => logger.error(x));
     srvReq.on('upgrade', (res, srvSocket, srvHead) => {
       let stream = resp.getStream(requestProps);
+      let rawHeaderLines = [];
+      for (var i = 0; i < res.rawHeaders.length / 2; i++)
+        rawHeaderLines.push([res.rawHeaders[i * 2], res.rawHeaders[i * 2 + 1]]);
+      let sendHeaders = Object.fromEntries(
+        rawHeaderLines.filter(x => !resp._wsInvalidHttp2Headers.has(x[0].toLowerCase()))
+      );
+      requestProps.stream.respond({
+        ':status': 200,
+        ...sendHeaders,
+      });
       stream.write(srvHead);
       stream.pipe(srvSocket);
       srvSocket.pipe(stream);
@@ -49,6 +59,7 @@ module.exports = async function connectMethod(requestProps) {
       stream.pipe(srvSocket);
       srvSocket.pipe(stream);
     });
+    srvReq.end();
   } else {
     // main server processing
     if (requestProps.headers[':protocol'] == 'websocket') {

@@ -32,6 +32,8 @@ module.exports = exports = {
     };
   },
   
+  _wsInvalidHttp2Headers: new Set(['upgrade', 'connection']),
+  
   // http1.1: (WSServer, requestProps, req, socket, head)
   // http2: (WSServer, requestProps)
   ws: (WSServer, requestProps, ...args) => {
@@ -51,8 +53,18 @@ module.exports = exports = {
         };
         
         let streamWrite = requestProps.stream.write;
-        requestProps.stream.write = v => {
-          requestProps.stream.respond({ ':status': 200 });
+        requestProps.stream.write = msg => {
+          let wsHeaders = Object.fromEntries(
+            msg
+              .split('\r\n')
+              .slice(1, -2)
+              .map(x => (/^([^:]*): (.*)$/.exec(x) ?? []).slice(1))
+              .filter(x => x.length > 0 && !exports._wsInvalidHttp2Headers.has(x[0].toLowerCase()))
+          );
+          requestProps.stream.respond({
+            ':status': 200,
+            ...wsHeaders,
+          });
           requestProps.stream.write = streamWrite;
         };
         
