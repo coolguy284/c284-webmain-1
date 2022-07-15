@@ -278,6 +278,14 @@ module.exports = exports = {
         noLogURLs: new Set(),
         noLogUrlStarts: [],
       }],
+      /*['srv_web_main', {
+        host: 'localhost',
+        port: 8080,
+        forceHttps: false,
+        castIPv4to6: false,
+        noLogURLs: new Set([]),
+        noLogUrlStarts: ['/api'],
+      }],*/
     ]),
     
     otherServerHosts: new Map([

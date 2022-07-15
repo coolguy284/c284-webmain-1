@@ -27,6 +27,7 @@ var envTypeConverts = new Map([
   ['SRV_WEB_OLD_ENABLED', toBool],
   ['SRV_WEB_OLD2_ENABLED', toBool],
   ['SRV_WEB_OLDG_ENABLED', toBool],
+  //['SRV_WEB_MAIN_ENABLED', toBool],
 ]);
 
 var env = Object.fromEntries(Array.from(envTypeConverts.entries()).map(([key, convertFunc]) => {
