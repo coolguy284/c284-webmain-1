@@ -409,7 +409,7 @@ module.exports = exports = {
     }
   },
   
-  _statErrorCodes: new Set(['ENOENT', 'ENOTDIR', 'EISDIR', 'ERR_INVALID_ARG_VALUE']);
+  _statErrorCodes: new Set(['ENOENT', 'ENOTDIR', 'EISDIR', 'ERR_INVALID_ARG_VALUE']),
   
   fileFull: async (requestProps, filename, headOnly, headers) => {
     try {
