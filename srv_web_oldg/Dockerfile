@@ -27,7 +27,7 @@ USER webmain
 
 RUN mkdir run data
 
-COPY usr_local_nginx_conf/nginx.conf /usr/local/nginx/conf/nginx.conf
+COPY --chown=webmain:webmain usr_local_nginx_conf/nginx.conf /usr/local/nginx/conf/nginx.conf
 
 # uses this CLEVER solution to invalidate cache when repo is updated (the comment):
 # https://stackoverflow.com/questions/27529191/how-to-update-code-from-git-to-a-docker-container/41361409#41361409
