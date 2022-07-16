@@ -19,7 +19,9 @@ var common = {
   },
 };
 
-module.exports = async function isValidUrl(url) {
+var _statErrorCodes = new Set(['ENOENT', 'ENOTDIR', 'EISDIR', 'ERR_INVALID_ARG_VALUE']);
+
+module.exports = exports = async function isValidUrl(url) {
   var publicPath = common.getPublicPath(url);
   
   if (!common.isSubDir('websites/public', publicPath))
@@ -46,9 +48,11 @@ module.exports = async function isValidUrl(url) {
     
     return true;
   } catch (err) {
-    if (err.code == 'ENOENT' || err.code == 'ENOTDIR' || err.code == 'EISDIR')
+    if (_statErrorCodes.has(err.code))
       return false;
     else
       throw err;
   }
 };
+
+exports._statErrorCodes = _statErrorCodes;

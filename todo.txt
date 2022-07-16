@@ -120,5 +120,5 @@ if there is a unicode url it can be redirected by the default redirect code and 
 proc_main index.js seems to stay running if one of sibling docker containers started by it is still running
 
 notes:
-srv_web_main/common/url_valid_check.js has hardcoded 2 functions from common (since it must be able to run independently)
+srv_web_main/common/url_valid_check.js has hardcoded 2 functions and 1 set from common (since it must be able to run independently)
 srv_web_main/log_utils.js has hardcoded 1 function from common (since it runs first)
