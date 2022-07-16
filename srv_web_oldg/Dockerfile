@@ -1,12 +1,12 @@
 FROM ubuntu:22.04
 STOPSIGNAL SIGINT
 
+RUN adduser webmain -u 2201
+WORKDIR /home/webmain
+
 RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install git nginx -y
-
-RUN adduser webmain -u 2201
-WORKDIR /home/webmain
 
 #WORKDIR /home/webmain/nginx
 #RUN curl -fsSL https://nginx.org/download/nginx-1.22.0.tar.gz | tar -xf -
