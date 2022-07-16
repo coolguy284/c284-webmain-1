@@ -25,7 +25,6 @@ old sites
     dompurify to old node chat
   bring back important
   make wm1, ns, nsn work as subfolder on website, meaning change html and js files to not use absolute paths
-  maybe add coolguy284.github.io to site as well
   update github repos description urls once hosted
 fix website index too tall when webbrowser is tall
 potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise

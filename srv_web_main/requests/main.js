@@ -78,7 +78,14 @@ module.exports = async function main(httpVersion, ...args) {
           timeout: 10000,
         }, async res => {
           await resp.headers(requestProps, res.statusCode, {
-            ...Object.fromEntries(Object.entries(res.headers).filter(x => x[0].toLowerCase() != 'connection')),
+            ...(
+              requestProps.httpVersion == 1 ?
+                res.headers :
+                Object.fromEntries(
+                  Object.entries(res.headers)
+                    .filter(x => !resp._httpInvalidHttp2Headers.has(x[0].toLowerCase()))
+                )
+            ),
           });
           await resp.stream(requestProps, res);
         });

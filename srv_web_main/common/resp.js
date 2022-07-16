@@ -84,6 +84,8 @@ module.exports = exports = {
     socket.end();
   },
   
+  _httpInvalidHttp2Headers: new Set(['connection', 'transfer-encoding']),
+  
   headers: async (requestProps, statusCode, headers) => {
     try {
       if (requestProps.httpVersion == 1)

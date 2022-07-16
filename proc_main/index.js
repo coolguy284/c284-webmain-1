@@ -117,6 +117,19 @@ if (toBool(process.env.SRV_WEB_OLD2_ENABLED)) {
 }
 
 
+// old github pages site
+if (toBool(process.env.SRV_WEB_OLDG_ENABLED)) {
+  var srv_web_oldg = cp.spawn('docker', [
+    'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_oldg', '--network', NETWORK_NAME, '--network-alias', 'srv_web_oldg',
+    '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/srv_web_oldg_data,target=/home/webmain/data',
+    'c284-webmain-1_srv_web_oldg'
+  ], { stdio: ['pipe', 'pipe', 'pipe'] });
+  
+  srv_web_oldg.stdout.pipe(ReadlineStream({})).on('data', msg => console.log(fancyServerLog('srv_web_oldg', msg.slice(0, -1))));
+  srv_web_oldg.stderr.pipe(ReadlineStream({})).on('data', msg => console.error(fancyServerLog('srv_web_oldg', msg.slice(0, -1))));
+}
+
+
 // main nodejs server for website
 var srv_web_main = cp.spawn('docker', [
   'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_main', '--network', NETWORK_NAME, '--network-alias', 'srv_web_main',
@@ -183,6 +196,7 @@ async function exitHandler() {
   
   processShutdownRoutine(srv_web_old, 'srv_web_old');
   processShutdownRoutine(srv_web_old2, 'srv_web_old2');
+  processShutdownRoutine(srv_web_oldg, 'srv_web_oldg');
   processShutdownRoutine(proc_mongodb, 'proc_mongodb');
 }
 
@@ -204,8 +218,8 @@ process.on('unhandledRejection', err => {
 var process_stdin = ReadlineStream({});
 process.stdin.pipe(process_stdin);
 
-var serverList = [srv_web_main, srv_web_old, srv_web_old2];
-var serverNameList = ['srv_web_main', 'srv_web_old', 'srv_web_old2'];
+var serverList = [srv_web_main, srv_web_old, srv_web_old2, srv_web_oldg];
+var serverNameList = ['srv_web_main', 'srv_web_old', 'srv_web_old2', 'srv_web_oldg'];
 var sendServerIndex = 0;
 process_stdin.on('data', input => {
   if (input == ':q\n') {

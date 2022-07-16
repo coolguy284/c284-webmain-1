@@ -14,6 +14,8 @@ RUN adduser webmain -u 2201
 USER webmain
 WORKDIR /home/webmain
 
+RUN touch .env && mkdir data
+
 # uses this CLEVER solution to invalidate cache when repo is updated (the comment):
 # https://stackoverflow.com/questions/27529191/how-to-update-code-from-git-to-a-docker-container/41361409#41361409
 ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/node-server-new/commits?per_page=1' node-server-new_latest_commit
@@ -23,7 +25,6 @@ RUN mv node-server-new/* ./ && mv node-server-new/.[^.]* ./ && rmdir node-server
 
 RUN npm install
 
-RUN touch .env && mkdir data
 RUN sed -i 's/terminal: true/terminal: false/' index.js && sed -i 's/preview: true/preview: false/' index.js
 
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "manager.js"]
