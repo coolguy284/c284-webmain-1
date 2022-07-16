@@ -8,15 +8,20 @@ RUN apt-get install git nginx -y
 RUN adduser webmain -u 2201
 WORKDIR /home/webmain
 
-#COPY nginx-install-helper.sh .
-#RUN chmod +x nginx-install-helper.sh && ./nginx-install-helper.sh
-#RUN rm nginx-install-helper.sh
+#WORKDIR /home/webmain/nginx
+#RUN curl -fsSL https://nginx.org/download/nginx-1.22.0.tar.gz | tar -xf -
+#./configure
+#make
+#make install
 
-#RUN chown webmain -R /etc/nginx /usr/share/nginx /usr/lib/nginx
+COPY nginx-install-helper.sh .
+RUN chmod +x nginx-install-helper.sh && ./nginx-install-helper.sh && rm nginx-install-helper.sh
 
-#USER webmain
+RUN chown webmain:webmain -R /etc/nginx /usr/lib/nginx /usr/share/nginx /var/lib/nginx /var/log/nginx
 
-RUN mkdir data
+USER webmain
+
+RUN mkdir run data
 
 COPY etc_nginx/nginx.conf /etc/nginx/nginx.conf
 COPY etc_nginx/sites-available/default /etc/nginx/sites-available/default
@@ -28,7 +33,4 @@ RUN rm coolguy284.github.io_latest_commit
 RUN git clone --depth 1 https://github.com/coolguy284/coolguy284.github.io.git
 RUN mv coolguy284.github.io site
 
-#USER root
-
-#ENTRYPOINT ["bash"]
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
