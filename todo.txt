@@ -81,6 +81,8 @@ way to live update server code during development without need for docker rebuil
 api ipv6 error if ipv4, unless parameter usemapped is set to true
 add env vars for http, https, http2 enabled
 priv.coolguy284.com with no logging
+word search solver use camera and english dictionary, support for spaces in middle of word
+click speed and press speed more obvious names, enable clicks or presses anywhere on page, nicer ui
 
 hex editor
 english words searcher
