@@ -1,4 +1,3 @@
-add base64_url encoder/decoder
 add /unicode/random for link to random unicode character
 
 tls debug log doesnt slice ip ::ffff:
@@ -83,6 +82,7 @@ add env vars for http, https, http2 enabled
 priv.coolguy284.com with no logging
 word search solver use camera and english dictionary, support for spaces in middle of word
 click speed and press speed more obvious names, enable clicks or presses anywhere on page, nicer ui
+add base64_url to encode_decode page
 
 hex editor
 english words searcher

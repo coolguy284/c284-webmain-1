@@ -1,0 +1,494 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Base64 Encoder and Decoder</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'Encode and decode Base64.'>
+    <meta name = 'keywords' content = 'Base64, encode, decode'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/misc/tools/base64.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Base64 Encoder and Decoder'>
+    <meta name = 'og:description' content = 'Encode and decode Base64.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/misc/tools/base64.html'>
+    
+    <link rel = 'stylesheet' href = '/libs/extern/bootstrap_5.0.0.min.css'>
+    <style>
+      textarea {
+        font-family: monospace;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class = 'container-fluid'>
+      <noscript>
+        <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
+          Note: This has obvious active components and thus requires JavaScript to function (JavaScript is disabled).
+        </div>
+      </noscript>
+      
+      <div class = 'row mt-3'>
+        <div class = 'col-auto d-flex mb-2'>
+          <label class = 'col-form-label flex-shrink-0' for = 'text_encoding'>Text Encoding:</label>
+          
+          <select class = 'form-select ms-2' id = 'text_encoding' oninput = 'GeneralUpdate(3);'>
+            <option value = 'utf8' selected>UTF-8</option>
+            <option value = 'utf16le'>UTF-16 LE</option>
+            <option value = 'utf16lenb'>UTF-16 LE (No BOM)</option>
+            <option value = 'utf16be'>UTF-16 BE</option>
+            <option value = 'utf16benb'>UTF-16 BE (No BOM)</option>
+            <option value = 'latin1'>Latin1</option>
+            <option value = 'base64'>Base64</option>
+            <option value = 'hex'>Hex</option>
+          </select>
+        </div>
+        
+        <div class = 'col-auto mb-2'>
+          <label class = 'btn btn-outline-primary' for = 'remove_equals'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'remove_equals' oninput = 'GeneralUpdate();' checked>Remove Equals</label>
+        </div>
+        
+        <div class = 'col-auto mb-2'>
+          <div class = 'btn-group' role = 'group'>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'TextUpdate(1);'>Encode Text</button>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'EncodedB64URLUpdate(1);'>Decode B64URL Text</button>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'EncodedB64Update(1);'>Decode B64 Text</button>
+          </div>
+        </div>
+        
+        <div class = 'col-auto mb-2'>
+          <label class = 'btn btn-outline-primary' for = 'auto_convert'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_convert' oninput = 'GeneralUpdate();' checked>Auto Convert</label>
+        </div>
+        
+        <div class = 'col-auto mb-2'>
+          <input type = 'file' id = 'file_to_load' style = 'display: none;' aria-hidden = 'true'>
+          
+          <div class = 'btn-group'>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'SetTextToFile();'>Set Text to File</button>
+            <button type = 'button' class = 'btn btn-outline-primary dropdown-toggle dropdown-toggle-split' data-bs-toggle = 'dropdown' aria-expanded = 'false'>
+              <span class = 'visually-hidden'>Toggle Set Text to File Extended Options</span>
+            </button>
+            <ul class = 'dropdown-menu'>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'SetTextToFile();'>Set Text to File</button></li>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'SetEncodedB64URLTextToFile();'>Set B64URL Text to File</button></li>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'SetEncodedB64TextToFile();'>Set B64 Text to File</button></li>
+            </ul>
+          </div>
+          
+          <div class = 'btn-group'>
+            <button type = 'button' class = 'btn btn-outline-primary' onclick = 'DownloadTextAsFile();'>Download Text as File</button>
+            <button type = 'button' class = 'btn btn-outline-primary dropdown-toggle dropdown-toggle-split' data-bs-toggle = 'dropdown' aria-expanded = 'false'>
+              <span class = 'visually-hidden'>Toggle Download Text as File Extended Options</span>
+            </button>
+            <ul class = 'dropdown-menu'>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'DownloadTextAsFile();'>Download Text as File</button></li>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'DownloadEncodedB64URLTextAsFile();'>Download B64URL Text as File</button></li>
+              <li><button type = 'button' class = 'dropdown-item' onclick = 'DownloadEncodedB64TextAsFile();'>Download B64 Text as File</button></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'text'>Text</label></h4>
+          <div class = 'alert alert-danger' id = 'text_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'text' placeholder = 'Regular text here. Or drag and drop a file here.' oninput = 'TextUpdate();'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'encoded_b64url'>Base64 URL</label></h4>
+          <div class = 'alert alert-danger' id = 'encoded_b64url_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'encoded_b64url' placeholder = 'Encoded base64 url text here.' spellcheck = 'false' oninput = 'EncodedB64URLUpdate();'></textarea>
+        </div>
+      </div>
+      
+      <div class = 'card'>
+        <div class = 'card-body'>
+          <h4 class = 'card-title' style = 'margin-top: -7px;'><label for = 'encoded_b64'>Base64</label></h4>
+          <div class = 'alert alert-danger' id = 'encoded_b64_warning' style = 'display: none; position: absolute; top: 0.4rem; right: 1rem; padding: 0.2rem 1rem 0.2rem; width: calc(100% - 8rem);'></div>
+          <textarea class = 'form-control' id = 'encoded_b64' placeholder = 'Encoded regular base64 text here.' spellcheck = 'false' oninput = 'EncodedB64Update();'></textarea>
+        </div>
+      </div>
+      
+      <br>
+    </div>
+    
+    <script src = '/libs/extern/bootstrap_5.0.0.bundle.min.js' async></script>
+    <script>
+      // next 2 funcs taken from mozilla, modified
+      function Utf8ToLatin1(str) {
+        return encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (match, p1) => String.fromCharCode('0x' + p1));
+      }
+      
+      function Latin1ToUtf8(str) {
+        return decodeURIComponent(Array.prototype.map.call(str, c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0')).join(''));
+      }
+      
+      function Utf16LEToLatin1(str) {
+        return Array.prototype.map.call('\ufeff' + str, c => { c = c.charCodeAt(0); return String.fromCharCode(c % 256, Math.floor(c / 256)); }).join('');
+      }
+      
+      function Latin1ToUtf16LE(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) + str.charCodeAt(i + 1) * 256));
+        arr = arr.join('');
+        return arr[0] == '\ufeff' ? arr.slice(1) : arr;
+      }
+      
+      function Utf16LENBToLatin1(str) {
+        return Array.prototype.map.call(str, c => { c = c.charCodeAt(0); return String.fromCharCode(c % 256, Math.floor(c / 256)); }).join('');
+      }
+      
+      function Latin1ToUtf16LENB(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) + str.charCodeAt(i + 1) * 256));
+        return arr.join('');
+      }
+      
+      function Utf16BEToLatin1(str) {
+        return Array.prototype.map.call('\ufeff' + str, c => { c = c.charCodeAt(0); return String.fromCharCode(Math.floor(c / 256), c % 256); }).join('');
+      }
+      
+      function Latin1ToUtf16BE(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) * 256 + str.charCodeAt(i + 1)));
+        arr = arr.join('');
+        return arr[0] == '\ufeff' ? arr.slice(1) : arr;
+      }
+      
+      function Utf16BENBToLatin1(str) {
+        return Array.prototype.map.call(str, c => { c = c.charCodeAt(0); return String.fromCharCode(Math.floor(c / 256), c % 256); }).join('');
+      }
+      
+      function Latin1ToUtf16BENB(str) {
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(str.charCodeAt(i) * 256 + str.charCodeAt(i + 1)));
+        return arr.join('');
+      }
+      
+      function BinaryStringToHex(str) {
+        return Array.prototype.map.call(str, c => c.charCodeAt(0).toString(16).padStart(2, '0')).join('');
+      }
+      
+      function HexToBinaryString(str) {
+        str = str.replace(/[^0-9A-Fa-f]/g, '');
+        let arr = [];
+        for (var i = 0; i < str.length; i += 2) arr.push(String.fromCharCode(parseInt(str.slice(i, i + 2), 16)));
+        return arr.join('');
+      }
+      
+      function BinaryStringToBase64URL(str) {
+        if (remove_equals.checked)
+          return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+        else
+          return btoa(str).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '.');
+      }
+      
+      function Base64URLToBinaryString(str) {
+        return atob(str.replace(/./g, '=').replace(/_/g, '/').replace(/-/g, '+'));
+      }
+      
+      // html and textarea don't support carriage returns in textareas, they get auto converted to newlines 🙃, so null byte followed by a newline will be counted as a carriage return instead (two null bytes in a row for an actual null byte)
+      function TextToTextArea(str) {
+        return str.replace(/\x00/g, '\x00\x00').replace(/\r/g, '\x00\n');
+      }
+      
+      // probably some advanced grammar reason why simple replace statements won't cut it here
+      function TextAreaToText(str) {
+        let result = '', i = 0;
+        for (; i < str.length - 1; i++) {
+          if (str.charCodeAt(i) == 0) {
+            if (str[i + 1] == '\x00') result += '\x00';
+            else if (str[i + 1] == '\n') result += '\r';
+            else result += '\x00' + str[i + 1];
+            i++;
+          } else result += str[i];
+        }
+        return result + (i < str.length ? str[str.length - 1] : '');
+        //return str.replace(/\x00\n/g, '\r').replace(/\x00\x00/g, '\x00');
+      }
+      
+      var lastUpdated = 1;
+      
+      function TextUpdate(mode) {
+        if (text.classList.contains('is-invalid')) {
+          text.classList.remove('is-invalid');
+          text_warning.style.display = 'none';
+          text_warning.innerText = '';
+        }
+        
+        if (mode == 2) return;
+        
+        lastUpdated = 1;
+        
+        if (!auto_convert.checked && !mode) return;
+        
+        try {
+          let binaryString = TextAreaToText(text.value);
+          
+          switch (text_encoding.value) {
+            case 'utf8': binaryString = Utf8ToLatin1(binaryString); break;
+            case 'utf16le': binaryString = Utf16LEToLatin1(binaryString); break;
+            case 'utf16lenb': binaryString = Utf16LENBToLatin1(binaryString); break;
+            case 'utf16be': binaryString = Utf16BEToLatin1(binaryString); break;
+            case 'utf16benb': binaryString = Utf16BENBToLatin1(binaryString); break;
+            case 'base64': binaryString = atob(binaryString); break;
+            case 'hex': binaryString = HexToBinaryString(binaryString); break;
+          }
+          
+          encoded_b64url.value = BinaryStringToBase64URL(binaryString);
+          encoded_b64.value = btoa(binaryString);
+          
+          EncodedB64URLUpdate(2);
+          EncodedB64Update(2);
+        } catch (e) {
+          if (!text.classList.contains('is-invalid')) text.classList.add('is-invalid');
+          text_warning.innerText = e instanceof DOMException ? 'Invalid Latin1 sequence' : (console.error(e), e.toString());
+          text_warning.style.display = '';
+        }
+      }
+      
+      function EncodedB64URLUpdate(mode) {
+        if (encoded_b64url.classList.contains('is-invalid')) {
+          encoded_b64url.classList.remove('is-invalid');
+          encoded_b64url_warning.style.display = 'none';
+          encoded_b64url_warning.innerText = '';
+        }
+        
+        if (mode == 2) return;
+        
+        lastUpdated = 2;
+        
+        if (!auto_convert.checked && !mode) return;
+        
+        try {
+          let binaryString = Base64URLToBinaryString(encoded_b64url.value);
+          
+          switch (text_encoding.value) {
+            case 'utf8': binaryString = Latin1ToUtf8(binaryString); break;
+            case 'utf16le': binaryString = Latin1ToUtf16LE(binaryString); break;
+            case 'utf16lenb': binaryString = Latin1ToUtf16LENB(binaryString); break;
+            case 'utf16be': binaryString = Latin1ToUtf16BE(binaryString); break;
+            case 'utf16benb': binaryString = Latin1ToUtf16BENB(binaryString); break;
+            case 'base64': binaryString = btoa(binaryString); break;
+            case 'hex': binaryString = BinaryStringToHex(binaryString); break;
+          }
+          
+          text.value = TextToTextArea(binaryString);
+          encoded_b64.value = btoa(binaryString);
+          
+          TextUpdate(2);
+          EncodedB64Update(2);
+        } catch (e) {
+          if (!encoded_b64url.classList.contains('is-invalid')) encoded_b64url.classList.add('is-invalid');
+          encoded_b64url_warning.innerText = e instanceof URIError ? 'Cannot decode as UTF8' : e instanceof DOMException ? 'Invalid Base64' : (console.error(e), e.toString());
+          encoded_b64url_warning.style.display = '';
+        }
+      }
+      
+      function EncodedB64Update(mode) {
+        if (encoded_b64.classList.contains('is-invalid')) {
+          encoded_b64.classList.remove('is-invalid');
+          encoded_b64_warning.style.display = 'none';
+          encoded_b64_warning.innerText = '';
+        }
+        
+        if (mode == 2) return;
+        
+        lastUpdated = 3;
+        
+        if (!auto_convert.checked && !mode) return;
+        
+        try {
+          let binaryString = atob(encoded_b64.value);
+          
+          switch (text_encoding.value) {
+            case 'utf8': binaryString = Latin1ToUtf8(binaryString); break;
+            case 'utf16le': binaryString = Latin1ToUtf16LE(binaryString); break;
+            case 'utf16lenb': binaryString = Latin1ToUtf16LENB(binaryString); break;
+            case 'utf16be': binaryString = Latin1ToUtf16BE(binaryString); break;
+            case 'utf16benb': binaryString = Latin1ToUtf16BENB(binaryString); break;
+            case 'base64': binaryString = btoa(binaryString); break;
+            case 'hex': binaryString = BinaryStringToHex(binaryString); break;
+          }
+          
+          text.value = TextToTextArea(binaryString);
+          encoded_b64url.value = BinaryStringToBase64URL(binaryString);
+          
+          TextUpdate(2);
+          EncodedB64URLUpdate(2);
+        } catch (e) {
+          if (!encoded_b64.classList.contains('is-invalid')) encoded_b64.classList.add('is-invalid');
+          encoded_b64_warning.innerText = e instanceof URIError ? 'Cannot decode as UTF8' : e instanceof DOMException ? 'Invalid Base64' : (console.error(e), e.toString());
+          encoded_b64_warning.style.display = '';
+        }
+      }
+      
+      function GeneralUpdate(v) {
+        if (lastUpdated == 1) TextUpdate();
+        else if (lastUpdated == 2) EncodedB64URLUpdate();
+        else if (lastUpdated == 3) EncodedB64Update();
+      }
+      
+      text.ondragover = evt => evt.preventDefault();
+      text.ondrop = evt => {
+        evt.preventDefault();
+        if (evt.dataTransfer && evt.dataTransfer.files.length) {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            text_encoding.value = 'latin1';
+            text.value = TextToTextArea(e.target.result);
+            TextUpdate();
+          };
+          
+          reader.readAsBinaryString(evt.dataTransfer.files[0]);
+        }
+      };
+      
+      encoded_b64url.ondragover = evt => evt.preventDefault();
+      encoded_b64url.ondrop = evt => {
+        evt.preventDefault();
+        if (evt.dataTransfer && evt.dataTransfer.files.length) {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            encoded_b64url.value = e.target.result;
+            EncodedB64URLUpdate();
+          };
+          
+          reader.readAsText(evt.dataTransfer.files[0]);
+        }
+      };
+      
+      encoded_b64.ondragover = evt => evt.preventDefault();
+      encoded_b64.ondrop = evt => {
+        evt.preventDefault();
+        if (evt.dataTransfer && evt.dataTransfer.files.length) {
+          let reader = new FileReader();
+          
+          reader.onload = e => {
+            encoded_b64.value = e.target.result;
+            EncodedB64Update();
+          };
+          
+          reader.readAsText(evt.dataTransfer.files[0]);
+        }
+      };
+      
+      var setTextType;
+      
+      file_to_load.oninput = evt => {
+        switch (setTextType) {
+          case 1: {
+            let reader = new FileReader();
+            
+            reader.onload = e => {
+              text_encoding.value = 'latin1';
+              text.value = TextToTextArea(e.target.result);
+              TextUpdate();
+            };
+            
+            reader.readAsBinaryString(evt.target.files[0]);
+            break;
+          }
+          
+          case 2: {
+            let reader = new FileReader();
+            
+            reader.onload = e => {
+              encoded_b64url.value = e.target.result;
+              EncodedB64URLUpdate();
+            };
+            
+            reader.readAsText(evt.target.files[0]);
+            break;
+          }
+          
+          case 3: {
+            let reader = new FileReader();
+            
+            reader.onload = e => {
+              encoded_b64.value = e.target.result;
+              EncodedB64Update();
+            };
+            
+            reader.readAsText(evt.target.files[0]);
+            break;
+          }
+        }
+      };
+      
+      function SetTextToFile() {
+        setTextType = 1;
+        file_to_load.click();
+      }
+      
+      function SetEncodedB64URLTextToFile() {
+        setTextType = 2;
+        file_to_load.click();
+      }
+      
+      function SetEncodedB64TextToFile() {
+        setTextType = 3;
+        file_to_load.click();
+      }
+      
+      function DownloadTextAsFile() {
+        let element = document.createElement('a');
+        
+        switch (text_encoding.value) {
+          case 'utf8': element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(TextAreaToText(text.value))); break;
+          case 'utf16le': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16LEToLatin1(TextAreaToText(text.value)))); break;
+          case 'utf16lenb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16LENBToLatin1(TextAreaToText(text.value)))); break;
+          case 'utf16be': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BEToLatin1(TextAreaToText(text.value)))); break;
+          case 'utf16benb': element.setAttribute('href', 'data:text/plain;base64,' + btoa(Utf16BENBToLatin1(TextAreaToText(text.value)))); break;
+          case 'latin1': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(TextAreaToText(text.value))); break;
+          case 'base64': element.setAttribute('href', 'data:application/octet-stream;base64,' + text.value); break;
+          case 'hex': element.setAttribute('href', 'data:application/octet-stream;base64,' + btoa(HexToBinaryString(text.value))); break;
+        }
+        
+        element.setAttribute('download', 'file.txt');
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+      
+      function DownloadEncodedB64URLTextAsFile() {
+        let element = document.createElement('a');
+        
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(encoded_b64url.value));
+        
+        element.setAttribute('download', 'file.txt');
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+      
+      function DownloadEncodedB64TextAsFile() {
+        let element = document.createElement('a');
+        
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(encoded_b64.value));
+        
+        element.setAttribute('download', 'file.txt');
+        
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
+    </script>
+  </body>
+</html>
