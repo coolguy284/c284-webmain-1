@@ -1,6 +1,6 @@
 var fs = require('fs');
 
-var unicodeMap, unicodeRanges;
+var unicodeMap, unicodeRanges, validNonRangeChars;
 
 if (fs.existsSync('websites/public/data/UnicodeData.txt')) {
   var fetchedUnicodeArr = fs.readFileSync('websites/public/data/UnicodeData.txt')
@@ -8,6 +8,7 @@ if (fs.existsSync('websites/public/data/UnicodeData.txt')) {
   
   unicodeMap = new Map();
   unicodeRanges = [];
+  validNonRangeChars = [];
   
   for (var i = 0; i < fetchedUnicodeArr.length; i++) {
     if (fetchedUnicodeArr[i][1].endsWith('First>')) {
@@ -19,12 +20,15 @@ if (fs.existsSync('websites/public/data/UnicodeData.txt')) {
       ]);
       i++;
     } else {
-      unicodeMap.set(parseInt(fetchedUnicodeArr[i][0], 16), fetchedUnicodeArr[i].slice(1));
+      let charIndex = parseInt(fetchedUnicodeArr[i][0], 16);
+      unicodeMap.set(charIndex, fetchedUnicodeArr[i].slice(1));
+      validNonRangeChars.push(charIndex);
     }
   }
 } else {
   unicodeMap = null;
   unicodeRanges = [];
+  validNonRangeChars = [];
 }
 
 function getEntry(codePoint) {
@@ -81,5 +85,6 @@ module.exports = {
   },
   unicodeMap,
   unicodeRanges,
+  validNonRangeChars,
   getEntry,
 };

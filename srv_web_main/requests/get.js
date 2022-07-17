@@ -200,9 +200,19 @@ module.exports = async function getMethod(requestProps) {
     common.vars.ownEyesCodes.set(code, Date.now());
   }
   
-  else if (requestProps.url.pathname.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/([Uu])\+((?:|0?[0-9A-Fa-f]|10)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
-    let fancyCodePoint = parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0');
-    if (match[1] == 'u' || fancyCodePoint != match[2]) {
+  else if (requestProps.url.pathname.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/(?:([Uu])\+((?:|0?[0-9A-Fa-f]|10)[0-9A-Fa-f]{4})|random)$/.exec(requestProps.url.pathname))) {
+    let fancyCodePoint;
+    if (match[1])
+      fancyCodePoint = parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0');
+    if (!match[1]) {
+      let codePoint = unicode.validNonRangeChars[Math.floor(Math.random() * unicode.validNonRangeChars.length)].toString(16).padStart(4, '0');
+      let newURL = new URL(requestProps.url);
+      newURL.pathname = '/misc/unicode/U+' + codePoint;
+      newURL = newURL.href;
+      
+      await resp.headers(requestProps, 307, { 'location': newURL });
+      await resp.end(requestProps);
+    } else if (match[1] == 'u' || fancyCodePoint != match[2]) {
       let newURL = new URL(requestProps.url);
       newURL.pathname = '/misc/unicode/U+' + fancyCodePoint;
       newURL = newURL.href;
