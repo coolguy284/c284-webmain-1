@@ -17,6 +17,7 @@ the files are laid out as follows for linux:
   mongodb  .   .   .   .   .   . mongodb database
   srv_web_old_data .   .   .   . srv_web_old mounted data dir
   srv_web_old2_data    .   .   . srv_web_old2 mounted data dir
+  srv_web_oldg_data    .   .   . srv_web_oldg mounted data dir
   env.list .   .   .   .   .   . environment variable file
   srv_web_old2.env.list    .   . srv_web_old2 environment variable file
 ```
@@ -32,6 +33,7 @@ D:/Data/c284-webmain-1_s/
   mongodb  .   .   .   .   .   . mongodb database
   srv_web_old_data .   .   .   . srv_web_old mounted data dir
   srv_web_old2_data    .   .   . srv_web_old2 mounted data dir
+  srv_web_oldg_data    .   .   . srv_web_oldg mounted data dir
   env.list .   .   .   .   .   . environment variable file
   srv_web_old2.env.list    .   . srv_web_old2 environment variable file
 ```
