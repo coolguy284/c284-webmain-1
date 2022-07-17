@@ -1,3 +1,4 @@
+var crypto = require('crypto');
 var fs = require('fs');
 var common = require('../common');
 var env = require('../common/env');
