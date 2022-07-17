@@ -73,7 +73,7 @@ function followRedirects(url) {
   }
   
   let match;
-  if (urlString.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/(?:([Uu])\+(0*(?:|[0-9A-Fa-f]|10)[0-9A-Fa-f]{0,4}))$/.exec(urlString))) {
+  if (urlString.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/(?:([Uu])\+(0{0,2}(?:0?[0-9A-Fa-f]|10)?[0-9A-Fa-f]{0,4}))$/.exec(urlString))) {
     let fancyCodePoint = match[2] ? parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0') : '0000';
     if (match[1] == 'u' || fancyCodePoint != match[2]) {
       didRedirect = true;

@@ -200,7 +200,7 @@ module.exports = async function getMethod(requestProps) {
     common.vars.ownEyesCodes.set(code, Date.now());
   }
   
-  else if (requestProps.url.pathname.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/(?:U\+((?:|[0-9A-F]|10)[0-9A-F]{4})|random)$/.exec(requestProps.url.pathname))) {
+  else if (requestProps.url.pathname.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/(?:U\+((?:[0-9A-F]|10)?[0-9A-F]{4})|random)$/.exec(requestProps.url.pathname))) {
     if (!match[1]) {
       let codePoint = unicode.validNonRangeChars[Math.floor(Math.random() * unicode.validNonRangeChars.length)].toString(16).toUpperCase().padStart(4, '0');
       let newURL = new URL(requestProps.url);

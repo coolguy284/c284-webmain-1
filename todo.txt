@@ -96,6 +96,7 @@ converter or smth w. encodings, textboxes, n other stuff and contenteditable div
 random number gens and testing suites
 optional service worker for caching and testing
 finish unicode viewer and link it
+  putting single char in shows that char as unicode entry first thing, insta search all substring, entry as tall as form box for room for enlarged unicode char, alternative view where each one is a cell
 opencloudhash and cloudhash (csprng based fake hash using database, with api for access), opencloudhash has hash entries visible, cloudhash does not
 xampp subfolder /x, wordpress subfolder /x/w
 user account system
