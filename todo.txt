@@ -1,12 +1,10 @@
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
-allow /misc/unicode/U+ urls with less digits than 4 (redirect to proper canonical version as usual)
 use map and promise all for git log and others or for none of them
 add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
 copied over bson and other libs/extern should have version in title so webpages are guaranteed to request latest version instead of caching
-more advanced redirection logic so /misc/unicode redirects are bunched in with the rest of redirects.txt, not in the file but in the same http response
 mongodb figure out why replica set necessary and fix
 replace string startswith checks followed by string slicing with regex matching (ex. srv_web_main/helpers/main.js lines 69-70)
 proper websocket closure with server closure, echo and status ws should just close all connections immediately, chat ws should send chat exit packet (maybe statusws can do the same)

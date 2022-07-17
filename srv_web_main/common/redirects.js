@@ -66,6 +66,22 @@ function followRedirects(url) {
     urlString = fileRedirect[0];
   }
   
+  if (urlString == '/misc/unicode/U+0NAN') {
+    didRedirect = true;
+    redirectStatus = 308;
+    urlString = '/misc/unicode/U+';
+  }
+  
+  let match;
+  if (urlString.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/(?:([Uu])\+(0*(?:|[0-9A-Fa-f]|10)[0-9A-Fa-f]{0,4}))$/.exec(urlString))) {
+    let fancyCodePoint = match[2] ? parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0') : '0000';
+    if (match[1] == 'u' || fancyCodePoint != match[2]) {
+      didRedirect = true;
+      redirectStatus = 308;
+      urlString = '/misc/unicode/U+' + fancyCodePoint;
+    }
+  }
+  
   // return appropriate url
   if (didRedirect) {
     if (urlString.startsWith('http://') || urlString.startsWith('https://')) {
