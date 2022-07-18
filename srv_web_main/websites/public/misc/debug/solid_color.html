@@ -242,7 +242,6 @@
       async function mainLoop() {
         // eslint-disable-next-line no-constant-condition
         while (true) {
-          console.log(1, Date.now());
           if (active.checked) {
             if (vm.colorItems.length == 0) {
               document.body.style.background = 'white';
@@ -270,7 +269,6 @@
               if (colorIndex >= vm.colorItems.length) colorIndex = 0;
             }
           }
-          console.log(2, Date.now());
         }
       }
       
