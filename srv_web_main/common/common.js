@@ -260,7 +260,7 @@ module.exports = exports = {
         forceHttps: false,
         castIPv4to6: false,
         noLogURLs: new Set(['/livechat.dat', '/liverchat.json', '/liveviews.dat', '/comms.json', '/colog.dat', '/cologd.dat', '/livechathere.dat', '/livechattyp.dat', '/livechatkick.dat', '/pkey.log', '/lat.log']),
-        noLogUrlStarts: ['/s?her=', '/s?typ=', '/m?cnl=', '/a?co=', '/a?cd=', '/a?ccp=', '/a?rc=', '/a?fstyp=', '/a?fsdir=', '/a?fstex='],
+        noLogUrlStarts: ['/s?her=', '/s?typ=', '/s?typnew=', '/m?cnl=', '/a?co=', '/a?cd=', '/a?ccp=', '/a?rc=', '/a?fstyp=', '/a?fsdir=', '/a?fstex='],
       }],
       ['srv_web_old2', {
         host: 'srv_web_old2',
