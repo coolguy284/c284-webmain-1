@@ -238,7 +238,7 @@ process_stdin.on('data', input => {
         console.log(`Server at index ${sMatchIndex} not run`);
       }
     } else {
-      console.log(`No such server at index ${sMatchIndex}`);
+      console.log(`No server at index ${sMatchIndex}`);
     }
     return;
   }
