@@ -29,6 +29,7 @@ FPS /libs/sha3_0.8.0.min.js                  /libs/extern/sha3_0.8.0.min.js
 FPS /libs/sha256_0.9.0.min.js                /libs/extern/sha256_0.9.0.min.js
 FPS /libs/sha512_0.8.0.min.js                /libs/extern/sha512_0.8.0.min.js
 FPS /strange/halloween.html                  /misc/strange/halloween.html
+FPS /misc/tools/aes-new.html                 /misc/tools/aes_new.html
 FPS /misc/tools/dataurl.html                 /misc/tools/data_url.html
 FPS /misc/tools/downloader.html              /misc/tools/file_downloader.html
 FPS /misc/tools/encodedecode.html            /misc/tools/encode_decode.html
@@ -38,6 +39,7 @@ FPS /misc/tools/html.html                    /misc/tools/html_escape.html
 FPS /misc/tools/htmlescape.html              /misc/tools/html_escape.html
 FPS /misc/tools/morsecode.html               /misc/tools/morse_code.html
 FPS /misc/tools/qrcode.html                  /misc/tools/qr_code.html
+FPS /misc/tools/rsa-new.html                 /misc/tools/rsa_new.html
 FPS /misc/tools/sha256.html                  /misc/tools/sha.html
 FPS /misc/tools/unitconv.html                /misc/tools/unit_converter.html
 FPS /misc/tools/uricomp.html                 /misc/tools/uri_comp.html
@@ -48,6 +50,7 @@ FPS /contact.html                            /misc/contact.html
 FPS /echows                                  /echo_ws
 FPS /encodedecode.html                       /misc/tools/encode_decode.html
 FPS /encodingdecoding.html                   /misc/tools/encode_decode.html
+FPS /feedback.html                           https://github.com/coolguy284/c284-webmain-1/issues
 FPS /indexredirect.html                      /r?u=%2F
 FPS /mchat.html                              /chat/
 FPS /no_source.css                           /misc/no_source.css
@@ -60,7 +63,8 @@ FPS /perr.html                               /misc/debug/templates/500.html
 FPS /rectangles.html                         /misc/rectangles.html
 FPS /redirecttemplate.html                   /misc/debug/templates/meta_redirect.html
 FPS /status.html                             /misc/status.html
-FPS /todo.html                               https://github.com/coolguy284/c284-webmain-1/issues
+FPS /suggestions.html                        https://github.com/coolguy284/c284-webmain-1/issues
+FPS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
 
 #FPS /debug/templates/404.html                /misc/debug/templates/404.html
 #FPS /debug/templates/500.html                /misc/debug/templates/500.html
