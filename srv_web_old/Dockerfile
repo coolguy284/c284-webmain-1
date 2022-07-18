@@ -24,6 +24,4 @@ RUN mv node-server/* ./ && mv node-server/.[^.]* ./ && rmdir node-server
 
 RUN npm install
 
-RUN sed -i 's/stdincons: false/stdincons: true/' datajs/feat.js
-
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]

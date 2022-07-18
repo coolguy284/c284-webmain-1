@@ -1,3 +1,4 @@
+make file for funcs in common and make file for data objs in common
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
