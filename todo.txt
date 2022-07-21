@@ -1,3 +1,5 @@
+change sitemap schema to https across all sites
+
 make file for funcs in common and make file for data objs in common
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
@@ -22,6 +24,7 @@ old sites
   bring back important
   make wm1, ns, nsn work as subfolder on website, meaning change html and js files to not use absolute paths
   update github repos description urls once hosted
+  check whether oldg really needs external links warning
 fix website index too tall when webbrowser is tall
 potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
 update options method responses
@@ -82,6 +85,8 @@ click speed and press speed more obvious names, enable clicks or presses anywher
 add base64_url to encode_decode page
 add keywords to repo for pages on website
 multiplayer snake game, circle game
+add external link icon for external link
+make pages for more of subtlecrypto api, like pbkdf, dh, ecdh, and future post quantum algs
 
 hex editor
 english words searcher
