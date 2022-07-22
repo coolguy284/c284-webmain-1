@@ -13,7 +13,7 @@ async function createSitemap(sites, siteModTimesObj) {
   await fs.promises.writeFile(
     'websites/public/sitemap.xml',
     '<?xml version = \'1.0\' encoding = \'utf-8\'?>\n' +
-    '<urlset xmlns = \'http://www.sitemaps.org/schemas/sitemap/0.9\'>\n' +
+    '<urlset xmlns = \'https://www.sitemaps.org/schemas/sitemap/0.9\'>\n' +
     (await Promise.all(
       Array.from(sites.entries()).map(async site => {
         let url = `https://coolguy284.com${site[0].endsWith('index.html') ? site[0].slice(0, -10) : site[0]}`;

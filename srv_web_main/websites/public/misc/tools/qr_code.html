@@ -215,7 +215,7 @@
           <h4 class = 'card-title' style = 'margin-top: -7px;'>Output</h4>
           
           <canvas class = 'mb-2' id = 'canvas' style = 'display: block;'></canvas>
-          <svg xmlns = 'http://www.w3.org/2000/svg' class = 'mb-2' id = 'svg' style = 'display: none;' stroke = 'none'>
+          <svg xmlns = 'https://www.w3.org/2000/svg' class = 'mb-2' id = 'svg' style = 'display: none;' stroke = 'none'>
 						<rect width = '100%' height = '100%' fill = '#fff'/>
 						<path d = '' fill = '#000'/>
 					</svg>
@@ -560,7 +560,7 @@
                     parts.push(`M${x + borderSize},${y + borderSize}h1v1h-1z`);
                 }
               }
-              svgCode = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 ${qr.size + borderSize * 2} ${qr.size + borderSize * 2}" stroke="none">\n  <rect width="100%" height="100%" fill="${background_color.value}"/>\n  <path d="${parts.join(' ')}" fill="${foreground_color.value}"/>\n</svg>`;
+              svgCode = `<svg xmlns="https://www.w3.org/2000/svg" version="1.1" viewBox="0 0 ${qr.size + borderSize * 2} ${qr.size + borderSize * 2}" stroke="none">\n  <rect width="100%" height="100%" fill="${background_color.value}"/>\n  <path d="${parts.join(' ')}" fill="${foreground_color.value}"/>\n</svg>`;
               
               let viewBox = / viewBox="([^"]*)"/.exec(svgCode)[1];
               let pathD = / d="([^"]*)"/.exec(svgCode)[1];
