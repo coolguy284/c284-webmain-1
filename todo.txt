@@ -1,9 +1,11 @@
+add some old sites like aprilfools directly from node server, update wm1 lower dir
 make file for funcs in common and make file for data objs in common
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
 add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
+enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
 copied over bson and other libs/extern should have version in title so webpages are guaranteed to request latest version instead of caching
 mongodb figure out why replica set necessary and fix
@@ -57,7 +59,6 @@ add alternate webpage access url /api/page?page=<url> or /api/page?page_b64=<b64
 add comments to wm1 code
 rework docs on wm1, make docs accessible as wm1 subpage, link to all docs from main doc or subdocs
 make sure each page in docs is fully up to date and add more pages as necessary
-enigma machine and other sites in tools and other from the old site
 auto sitemap generator (limit 1 query per website per ip every hour, and limit 20 queries per website per hour)
 add strange files page, with weird zips and wims and stuff
 status garden with api endpoints or regular endpoints for every http status code
