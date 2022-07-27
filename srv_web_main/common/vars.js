@@ -1,5 +1,7 @@
 module.exports = exports = {
   constVars: {
+    hstsHosts: new Set(['coolguy284.com']),
+    
     otherServers: new Map([
       ['srv_web_old', {
         host: 'srv_web_old',

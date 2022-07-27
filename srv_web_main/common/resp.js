@@ -4,6 +4,7 @@ var fs = require('fs');
 var mime = require('mime');
 var { env } = require('./env');
 var websiteData = require('./website_data');
+var { constVars: { hstsHosts } } = require('./vars');
 var etags; try { etags = require('../websites/etags.json'); } catch (e) { etags = {}; }
 var modtimes; try { modtimes = require('../websites/modtimes.json'); } catch (e) { modtimes = {}; }
 
@@ -16,7 +17,7 @@ module.exports = exports = {
       'cache-control': 'no-cache',
       'accept-ranges': 'none',
       'x-content-type-options': 'nosniff',
-      ...(requestProps.host == 'coolguy284.com' ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+      ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
     };
   },
   
@@ -28,7 +29,7 @@ module.exports = exports = {
       'cache-control': 'no-cache',
       'accept-ranges': 'none',
       'x-content-type-options': 'nosniff',
-      ...(requestProps.host == 'coolguy284.com' ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+      ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
     };
   },
   
@@ -249,7 +250,7 @@ module.exports = exports = {
                 ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
                 'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
                 'x-content-type-options': 'nosniff',
-                ...(requestProps.host == 'coolguy284.com' ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+                ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
                 ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
               });
               
@@ -270,7 +271,7 @@ module.exports = exports = {
               await exports.headers(requestProps, 304, {
                 ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
                 'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
-                ...(requestProps.host == 'coolguy284.com' ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+                ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
                 ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
                 ...headers,
               });
@@ -283,7 +284,7 @@ module.exports = exports = {
         
         await exports.headers(requestProps, 416, {
           'content-range': `*/${size}`,
-          ...(requestProps.host == 'coolguy284.com' ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+          ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
           ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
         });
         await exports.end(requestProps);
@@ -339,7 +340,7 @@ module.exports = exports = {
           'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
           'accept-ranges': 'bytes',
           'x-content-type-options': 'nosniff',
-          ...(requestProps.host == 'coolguy284.com' ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+          ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
           ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
           ...headers,
         });
@@ -362,7 +363,7 @@ module.exports = exports = {
         await exports.headers(requestProps, 304, {
           ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
           'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
-          ...(requestProps.host == 'coolguy284.com' ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+          ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
           ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
           ...headers,
         });
