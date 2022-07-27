@@ -5,6 +5,7 @@ format for srv_web_main/websites/website_data.txt:
       bits:
         1 - immutable
         2 - compressable
+        4 - send "x-robots-tag: noindex" header
     ),
   "#" : comment,
 ```

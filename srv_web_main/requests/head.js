@@ -50,7 +50,7 @@ module.exports = async function headMethod(requestProps) {
           .replaceAll('{alias}', unicodeChar[9] || 'N/A')
           .replaceAll('{name_alias}', unicodeChar[9] || unicodeChar[0] || 'N/A')
       ).length;
-      await resp.headers(requestProps, 200, resp.getBasicFileHeadersHead(fileLength, 'text/html; charset=utf-8'));
+      await resp.headers(requestProps, 200, resp.getBasicFileHeadersHead(requestProps, fileLength, 'text/html; charset=utf-8'));
       await resp.end(requestProps);
     }
   }

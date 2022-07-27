@@ -3,7 +3,6 @@ make file for funcs in common and make file for data objs in common
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
-add website flag for sending a x-robots-tag of noindex with the page, and set flag for /misc/debug/templates/
 
 enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
@@ -87,6 +86,7 @@ multiplayer snake game, circle game
 add external link icon for external link
 make pages for more of subtlecrypto api, like pbkdf, dh, ecdh, and future post quantum algs
 atmospheric pressure converter
+env var for strict transport security
 
 hex editor
 english words searcher

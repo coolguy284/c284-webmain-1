@@ -170,14 +170,14 @@ module.exports = async function getMethod(requestProps) {
   else if (requestProps.url.pathname == '/r') {
     if (requestProps.url.search.startsWith('?u=')) {
       let file = Buffer.from((env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/misc/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
-      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(requestProps, file, 'text/html; charset=utf-8'));
       await resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?uh=')) {
       await resp.headers(requestProps, 303, { 'location': decodeURIComponent(requestProps.url.search.slice(4)) });
       await resp.end(requestProps);
     } else if (requestProps.url.search.startsWith('?e=')) {
       let file = Buffer.from((env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/misc/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
-      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(requestProps, file, 'text/html; charset=utf-8'));
       await resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?eh=')) {
       await resp.headers(requestProps, 303, { 'location': Buffer.from(requestProps.url.search.slice(3), 'base64').toString() });
@@ -195,7 +195,7 @@ module.exports = async function getMethod(requestProps) {
   else if (requestProps.url.pathname == '/misc/own_eyes.html') {
     let code = crypto.randomBytes(16).toString('base64').replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
     let file = env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/misc/own_eyes.html'] : (await fs.promises.readFile('websites/public/misc/own_eyes.html')).toString().replace('{code}', code);
-    await resp.headers(requestProps, 200, resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+    await resp.headers(requestProps, 200, resp.getBasicFileHeaders(requestProps, file, 'text/html; charset=utf-8'));
     await resp.end(requestProps, file);
     common.vars.ownEyesCodes.set(code, Date.now());
   }
@@ -220,7 +220,7 @@ module.exports = async function getMethod(requestProps) {
           .replaceAll('{alias}', unicodeChar[9] || 'N/A')
           .replaceAll('{name_alias}', unicodeChar[9] || unicodeChar[0] || 'N/A')
       );
-      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(file, 'text/html; charset=utf-8'));
+      await resp.headers(requestProps, 200, resp.getBasicFileHeaders(requestProps, file, 'text/html; charset=utf-8'));
       await resp.end(requestProps, file);
     }
   }
