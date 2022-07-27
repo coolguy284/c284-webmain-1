@@ -25,7 +25,6 @@ old sites
   check whether oldg really needs external links warning
 fix website index too tall when webbrowser is tall
 potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
-update options method responses
 http2 websocket 404 strange behavior
 add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages
   do the same in node srv, node srv new, c284 git io

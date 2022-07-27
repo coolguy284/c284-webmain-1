@@ -30,13 +30,11 @@ module.exports = async function postMethod(requestProps) {
     }
     
     else {
-      await resp.headers(requestProps, 500, { 'content-type': 'text/plain; charset=utf-8' });
-      await resp.end(requestProps, 'Error: invalid API endpoint');
+      await resp.data(requestProps, 400, 'Error: invalid API endpoint');
     }
   }
   
   else {
-    await resp.headers(requestProps, 501);
-    await resp.end(requestProps);
+    await resp.s404(requestProps);
   }
 };

@@ -27,6 +27,16 @@ module.exports = async function optionsMethod(requestProps) {
       await resp.end(requestProps);
     }
     
+    else if (requestProps.url.pathname == '/api/echo/headers') {
+      await resp.headers(requestProps, 204, { 'allow': 'options, get' });
+      await resp.end(requestProps);
+    }
+    
+    else if (requestProps.url.pathname == '/api/query/current_time') {
+      await resp.headers(requestProps, 204, { 'allow': 'options, get' });
+      await resp.end(requestProps);
+    }
+    
     else if (requestProps.url.pathname == '/api/own_eyes/v1') {
       await resp.headers(requestProps, 204, { 'allow': 'options, get, post' });
       await resp.end(requestProps);
@@ -38,14 +48,17 @@ module.exports = async function optionsMethod(requestProps) {
     }
     
     else {
-      await resp.headers(requestProps, 204, { 'allow': 'options, get' });
+      await resp.headers(requestProps, 204, { 'allow': 'options' });
       await resp.end(requestProps);
     }
   }
   
   else if (requestProps.url.pathname == '/r') {
-    if (requestProps.url.search.startsWith('?u=') && requestProps.url.search.startsWith('?uh=') && requestProps.url.search.startsWith('?e=') && requestProps.url.search.startsWith('?eh=')) {
+    if (requestProps.url.search.startsWith('?u=') || requestProps.url.search.startsWith('?uh=') || requestProps.url.search.startsWith('?e=') || requestProps.url.search.startsWith('?eh=')) {
       await resp.headers(requestProps, 204, { 'allow': 'options, get' });
+      await resp.end(requestProps);
+    } else {
+      await resp.headers(requestProps, 204, { 'allow': 'options' });
       await resp.end(requestProps);
     }
   }

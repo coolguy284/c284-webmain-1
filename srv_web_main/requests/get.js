@@ -165,7 +165,7 @@ module.exports = async function getMethod(requestProps) {
     }
     
     else {
-      await resp.data(requestProps, 500, 'Error: invalid API endpoint');
+      await resp.data(requestProps, 400, 'Error: invalid API endpoint');
     }
   }
   
@@ -184,6 +184,8 @@ module.exports = async function getMethod(requestProps) {
     } else if (requestProps.url.search.startsWith('?eh=')) {
       await resp.headers(requestProps, 303, { 'location': Buffer.from(requestProps.url.search.slice(3), 'base64').toString() });
       await resp.end(requestProps);
+    } else {
+      await resp.data(requestProps, 400, 'Error: invalid API endpoint');
     }
   }
   

@@ -14,12 +14,25 @@ module.exports = async function headMethod(requestProps) {
     return;
   }
   
-  if (requestProps.url.pathname.startsWith('/api/') || requestProps.url.pathname == '/r') {
+  if (requestProps.url.pathname.startsWith('/api/')) {
     if (requestProps.url.pathname == '/api/null') {
       await resp.headers(requestProps, 204);
       await resp.end(requestProps);
     } else {
-      await resp.headers(requestProps, 501);
+      await resp.headers(requestProps, 400);
+      await resp.end(requestProps);
+    }
+  }
+  
+  else if (requestProps.url.pathname == '/r') {
+    if (requestProps.url.search.startsWith('?uh=')) {
+      await resp.headers(requestProps, 303, { 'location': decodeURIComponent(requestProps.url.search.slice(4)) });
+      await resp.end(requestProps);
+    } else if (requestProps.url.search.startsWith('?eh=')) {
+      await resp.headers(requestProps, 303, { 'location': Buffer.from(requestProps.url.search.slice(3), 'base64').toString() });
+      await resp.end(requestProps);
+    } else {
+      await resp.headers(requestProps, 400);
       await resp.end(requestProps);
     }
   }
