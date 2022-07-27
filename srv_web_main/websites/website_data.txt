@@ -2,7 +2,7 @@
 libs/extern/*: 1
 favicon.ico: 1
 
-# files to compress:
+# files to compress
 yiyo.dev: 2
 *.css: 2
 *.html: 2
@@ -13,7 +13,7 @@ yiyo.dev: 2
 *.txt: 2
 *.xml: 2
 
-# web crawler noindex files:
+# web crawler noindex files
 misc/debug/config/*: 4
 misc/debug/templates/*: 4
 misc/unicode/*: 4
