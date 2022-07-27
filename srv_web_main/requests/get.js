@@ -1,14 +1,16 @@
 var crypto = require('crypto');
 var fs = require('fs');
-var common = require('../common');
-var env = require('../common/env');
+var { toBool, env } = require('../common/env');
+var { getPublicPath } = require('../common/get_request_misc');
+var { mergeIPPort, ipv6ToHex, isSubDir } = require('../common/misc');
 var resp = require('../common/resp');
 var unicode = require('../common/unicode');
+var { ownEyesCodes } = require('../common/vars').vars;
 
 module.exports = async function getMethod(requestProps) {
-  var publicPath = common.getPublicPath(requestProps.url.pathname);
+  var publicPath = getPublicPath(requestProps.url.pathname);
   
-  if (!common.isSubDir('websites/public', publicPath)) {
+  if (!isSubDir('websites/public', publicPath)) {
     await resp.s404(requestProps);
     return;
   }
@@ -20,11 +22,11 @@ module.exports = async function getMethod(requestProps) {
       let sendPort = requestProps.url.searchParams.get('port');
       sendPort = sendPort && sendPort != 'false' && sendPort != '0';
       await resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
-      await resp.end(requestProps, sendPort ? common.mergeIPPort(requestProps.ipv6Cast, requestProps.port) : requestProps.ipv6Cast);
+      await resp.end(requestProps, sendPort ? mergeIPPort(requestProps.ipv6Cast, requestProps.port) : requestProps.ipv6Cast);
     }
     
     else if (requestProps.url.pathname == '/api/echo/ipv4') {
-      let sendPort = common.toBool(requestProps.url.searchParams.get('port'));
+      let sendPort = toBool(requestProps.url.searchParams.get('port'));
       let form = requestProps.url.searchParams.get('form');
       
       if (/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/.test(requestProps.ip)) {
@@ -55,7 +57,7 @@ module.exports = async function getMethod(requestProps) {
               requestProps,
               200,
               sendPort ?
-                common.mergeIPPort(requestProps.ip, requestProps.port) :
+                mergeIPPort(requestProps.ip, requestProps.port) :
                 requestProps.ip
             );
             break;
@@ -66,7 +68,7 @@ module.exports = async function getMethod(requestProps) {
     }
     
     else if (requestProps.url.pathname == '/api/echo/ipv6') {
-      let sendPort = common.toBool(requestProps.url.searchParams.get('port'));
+      let sendPort = toBool(requestProps.url.searchParams.get('port'));
       let form = requestProps.url.searchParams.get('form');
       
       let ip;
@@ -87,8 +89,8 @@ module.exports = async function getMethod(requestProps) {
               200,
               Buffer.from(
                 sendPort ?
-                  common.IPv6ToHex(ip) + requestProps.port.toString(16).padStart(4, '0') :
-                  common.IPv6ToHex(ip),
+                  ipv6ToHex(ip) + requestProps.port.toString(16).padStart(4, '0') :
+                  ipv6ToHex(ip),
                 'hex'
               ),
               { 'content-type': 'application/octet-stream' }
@@ -100,8 +102,8 @@ module.exports = async function getMethod(requestProps) {
               requestProps,
               200,
               sendPort ?
-                common.IPv6ToHex(ip) + requestProps.port.toString(16).padStart(4, '0') :
-                common.IPv6ToHex(ip)
+                ipv6ToHex(ip) + requestProps.port.toString(16).padStart(4, '0') :
+                ipv6ToHex(ip)
             );
             break;
           
@@ -110,7 +112,7 @@ module.exports = async function getMethod(requestProps) {
               requestProps,
               200,
               sendPort ?
-                common.mergeIPPort(ip, requestProps.port) :
+                mergeIPPort(ip, requestProps.port) :
                 ip
             );
             break;
@@ -197,7 +199,7 @@ module.exports = async function getMethod(requestProps) {
     let file = env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/misc/own_eyes.html'] : (await fs.promises.readFile('websites/public/misc/own_eyes.html')).toString().replace('{code}', code);
     await resp.headers(requestProps, 200, resp.getBasicFileHeaders(requestProps, file, 'text/html; charset=utf-8'));
     await resp.end(requestProps, file);
-    common.vars.ownEyesCodes.set(code, Date.now());
+    ownEyesCodes.set(code, Date.now());
   }
   
   else if (requestProps.url.pathname.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/(?:U\+((?:[0-9A-F]|10)?[0-9A-F]{4})|random)$/.exec(requestProps.url.pathname))) {

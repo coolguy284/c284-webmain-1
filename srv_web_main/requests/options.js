@@ -1,10 +1,11 @@
-var common = require('../common');
+var { getPublicPath } = require('../common/get_request_misc');
+var { isSubDir } = require('../common/misc');
 var resp = require('../common/resp');
 
 module.exports = async function optionsMethod(requestProps) {
-  var publicPath = common.getPublicPath(requestProps.url.pathname);
+  var publicPath = getPublicPath(requestProps.url.pathname);
   
-  if (!common.isSubDir('websites/public', publicPath)) {
+  if (!isSubDir('websites/public', publicPath)) {
     await resp.headers(requestProps, 204, { 'allow': 'options, get, head' });
     await resp.end(requestProps);
     return;

@@ -1,9 +1,8 @@
 var logger = require('../log_utils')('requests/connect');
 
 var http = require('http');
-var common = require('../common');
 var resp = require('../common/resp');
-var commonVars = require('../common').vars;
+var { vars: commonVars } = require('../common/vars');
 
 module.exports = async function connectMethod(requestProps) {
   // this is exclusively for http2

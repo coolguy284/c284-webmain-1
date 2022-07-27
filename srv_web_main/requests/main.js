@@ -1,11 +1,12 @@
 var logger = require('../log_utils')('requests/main');
 
 var http = require('http');
-var common = require('../common');
-var env = require('../common/env').env;
+var { env } = require('../common/env');
+var { getReqLogStr } = require('../common/get_request_misc');
+var getRequestProps = require('../common/get_request_props');
 var redirects = require('../common/redirects');
 var resp = require('../common/resp');
-var commonVars = require('../common').vars;
+var { vars: commonVars } = require('../common/vars');
 
 var methods = {
   options: require('./options'),
@@ -23,10 +24,10 @@ module.exports = async function main(httpVersion, ...args) {
       return;
     }
     
-    var requestProps = common.getRequestProps(httpVersion, ...args, 'main');
+    var requestProps = getRequestProps(httpVersion, ...args, 'main');
     
     if (requestProps.doLog)
-      logger.info(common.getReqLogStr(requestProps));
+      logger.info(getReqLogStr(requestProps));
     
     // redirect http to https (if https enforce enabled) and www.coolguy284.com to coolguy284.com
     let doPreRedirect = false, preRedirNewURL;

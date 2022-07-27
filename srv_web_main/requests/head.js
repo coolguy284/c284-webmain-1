@@ -1,14 +1,15 @@
 var fs = require('fs');
-var common = require('../common');
+var { getPublicPath } = require('../common/get_request_misc');
+var { isSubDir } = require('../common/misc');
 var resp = require('../common/resp');
 var unicode = require('../common/unicode');
 
 module.exports = async function headMethod(requestProps) {
-  var publicPath = common.getPublicPath(requestProps.url.pathname);
+  var publicPath = getPublicPath(requestProps.url.pathname);
   
   var match;
   
-  if (!common.isSubDir('websites/public', publicPath)) {
+  if (!isSubDir('websites/public', publicPath)) {
     await resp.s404(requestProps, true);
     return;
   }

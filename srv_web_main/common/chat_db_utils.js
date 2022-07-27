@@ -1,5 +1,5 @@
 var crypto = require('crypto');
-var env = require('./env').env;
+var { env } = require('./env');
 
 module.exports = exports = {
   ValidationError: require('./utils_common').ValidationError,

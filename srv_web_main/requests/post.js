@@ -1,10 +1,12 @@
-var common = require('../common');
+var { getPublicPath } = require('../common/get_request_misc');
+var { isSubDir } = require('../common/misc');
 var resp = require('../common/resp');
+var { ownEyesCodes } = require('../common/vars').vars;
 
 module.exports = async function postMethod(requestProps) {
-  var publicPath = common.getPublicPath(requestProps.url.pathname);
+  var publicPath = getPublicPath(requestProps.url.pathname);
   
-  if (!common.isSubDir('websites/public', publicPath)) {
+  if (!isSubDir('websites/public', publicPath)) {
     await resp.s404(requestProps);
     return;
   }
@@ -12,10 +14,10 @@ module.exports = async function postMethod(requestProps) {
   if (requestProps.url.pathname.startsWith('/api/')) {
     if (requestProps.url.pathname == '/api/own_eyes/v1') {
       let searchParams = new URL('https://null/?' + (await resp.getStreamBuffer(requestProps)).toString()).searchParams;
-      if (common.vars.ownEyesCodes.has(searchParams.get('code'))) {
+      if (ownEyesCodes.has(searchParams.get('code'))) {
         await resp.headers(requestProps, 200, { 'content-type': 'text/plain; charset=utf-8' });
         await resp.end(requestProps, '<span><span><span>ｈ</span><span>ｅ</span>ｌ</span>ｏ</span>');
-        common.vars.ownEyesCodes.delete(decodeURIComponent(searchParams.get('code')));
+        ownEyesCodes.delete(decodeURIComponent(searchParams.get('code')));
       } else {
         await resp.headers(requestProps, 404, { 'content-type': 'text/plain; charset=utf-8' });
         await resp.end(requestProps, '');

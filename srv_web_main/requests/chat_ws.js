@@ -1,7 +1,7 @@
 var BSON = require('bson');
 var chatDBUilts = require('../common/chat_db_utils');
-var env = require('../common/env').env;
-var commonVars = require('../common').vars;
+var { env } = require('../common/env');
+var { vars: commonVars } = require('../common/vars');
 
 function chatWSFunc(ws, req, requestProps) {
   if (env.PROC_MONGODB_ENABLED) {

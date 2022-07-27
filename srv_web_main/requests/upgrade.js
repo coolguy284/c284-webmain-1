@@ -1,16 +1,17 @@
 var logger = require('../log_utils')('requests/upgrade');
 
 var http = require('http');
-var common = require('../common');
+var { getReqLogStr } = require('../common/get_request_misc');
+var getRequestProps = require('../common/get_request_props');
 var resp = require('../common/resp');
-var commonVars = require('../common').vars;
+var { vars: commonVars } = require('../common/vars');
 
 module.exports = function serverUpgradeFunc(req, socket, head) {
   try {
-    var requestProps = common.getRequestProps(1, req, null, 'upgrade');
+    var requestProps = getRequestProps(1, req, null, 'upgrade');
     
     if (requestProps.doLog)
-      logger.info(common.getReqLogStr(requestProps));
+      logger.info(getReqLogStr(requestProps));
     
     if (requestProps.otherServerOnline) {
       // old server proxying
