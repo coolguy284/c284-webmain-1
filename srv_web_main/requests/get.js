@@ -5,7 +5,7 @@ var { getPublicPath } = require('../common/get_request_misc');
 var { mergeIPPort, ipv6ToHex, isSubDir } = require('../common/misc');
 var resp = require('../common/resp');
 var unicode = require('../common/unicode');
-var { ownEyesCodes } = require('../common/vars').vars;
+var { vars: { ownEyesCodes } } = require('../common/vars');
 
 module.exports = async function getMethod(requestProps) {
   var publicPath = getPublicPath(requestProps.url.pathname);

@@ -1,7 +1,7 @@
 var { getPublicPath } = require('../common/get_request_misc');
 var { isSubDir } = require('../common/misc');
 var resp = require('../common/resp');
-var { ownEyesCodes } = require('../common/vars').vars;
+var { vars: { ownEyesCodes } } = require('../common/vars');
 
 module.exports = async function postMethod(requestProps) {
   var publicPath = getPublicPath(requestProps.url.pathname);
