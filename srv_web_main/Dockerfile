@@ -50,10 +50,6 @@ COPY --chown=webmain:webmain srv_web_main/websites websites
 
 COPY --chown=webmain:webmain srv_web_main/websites/redirects.txt srv_web_main/websites/website_data.txt websites/public/misc/debug/config/
 
-RUN ln -s . srv_web_main
-
-RUN node helpers/main.js
-
-RUN rm srv_web_main
+RUN ln -s . srv_web_main && node helpers/main.js && rm srv_web_main
 
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]
