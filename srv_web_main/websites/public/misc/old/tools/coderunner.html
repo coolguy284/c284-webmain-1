@@ -1,0 +1,517 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset = 'utf-8'>
+    <meta name = 'viewport' content = 'width=device-width'>
+    <title>coolguy284.com: Multithreaded Code Runner</title>
+  </head>
+  <body>
+    <button onclick = 'SWorker()'>Start Worker</button>
+    <button onclick = 'TWorker()'>Terminate Worker</button>
+    <span id = 'statuss'>off</span>
+    <iframe src = '' style = 'float:left;width:98%;height:300px;' id = 'lifr'></iframe>
+    <input type = 'text' style = 'width:98%;float:bottom;font-family:monospace;' id = 'conc'>
+    <script id = 'workerscr' type = 'javascript/worker'>
+      try { util } catch (e) { util = {}; }
+      utila = (function () {
+        let defaultOptions = {
+          showHidden: false,
+          depth: 2,
+          colors: false,
+          customInspect: true,
+          maxArrayLength: 100,
+          breakLength: 60,
+          compact: true,
+          sorted: false,
+        };
+        let typedArrays = ['Int8Array', 'Uint8Array', 'Uint8ClampedArray', 'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array', 'BigInt64Array', 'BigUint64Array', 'Float32Array', 'Float64Array'];
+        let boxedPrimitives = ['Boolean', 'Number', 'BigInt', 'Symbol', 'String'];
+        let className = function(val) {
+          try { return val.constructor.name; } catch (e) { return '[Object: null prototype]';}
+        }
+        let objectToString = function(val) {
+          let tv = Object.prototype.toString.call(val);
+          return tv.substring(8, tv.length - 1);
+        }
+        let stringProp = function(val) {
+          if (typeof val == 'symbol') return '[' + inspect(val) + ']';
+          if ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$_'.indexOf(val[0]) < 0) return inspect(val);
+          for (let i in val) if ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_'.indexOf(val[i]) < 0) return inspect(val);
+          return val;
+        }
+        let inspect = function(val, opts) {
+          if (opts === undefined) opts = {};
+          if (opts.showHidden === undefined) opts.showHidden = defaultOptions.showHidden;
+          if (opts.depth === undefined) opts.depth = defaultOptions.depth;
+          if (opts.colors === undefined) opts.colors = defaultOptions.colors;
+          if (opts.customInspect === undefined) opts.customInspect = defaultOptions.customInspect;
+          if (opts.maxArrayLength === undefined) opts.maxArrayLength = defaultOptions.maxArrayLength;
+          if (opts.breakLength === undefined) opts.breakLength = defaultOptions.breakLength;
+          if (opts.compact === undefined) opts.compact = defaultOptions.compact;
+          if (opts.sorted === undefined) opts.sorted = defaultOptions.sorted;
+          opts.indentLvl = 0;
+          opts.objs = [];
+          return formatValue(val, opts);
+        }
+        let formatObject = function(val, opts, keys, ins) {
+          if (opts.depth < 0) return ins || '[Object]';
+          opts = Object.assign({}, opts);
+          opts.objs = [...opts.objs, val];
+          if (keys === undefined) {
+            if (opts.showHidden == true) keys = Reflect.ownKeys(val);
+            else keys = Object.keys(val);
+          }
+          if (opts.sorted == true) keys.sort();
+          else if (opts.sorted != false) keys.sort(opts.sorted);
+          let ba = keys.map(function (i) {
+            return stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2}));
+          });
+          let baj = ba.join(', ');
+          if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
+          if (baj == '') return ins || '{}';
+          else return '{ ' + (ins !== undefined ? ins + ' ' : '') + baj + ' }';
+        }
+        let formatArray = function(val, opts, bkeys) {
+          if (opts.depth < 0) return '[Array]';
+          opts = Object.assign({}, opts);
+          opts.objs = [...opts.objs, val];
+          let ba = [], ind = -1, exc = true, vkeys;
+          if (bkeys === undefined) {
+            if (opts.showHidden == true) bkeys = Reflect.ownKeys(val);
+            else bkeys = Object.keys(val);
+          }
+          keys = bkeys.filter(x => !(!isNaN(x) && Number.isInteger(Number(x)) && Number(x) >= 0) && x != 'length');
+          vkeys = bkeys.filter(x => (!isNaN(x) && Number.isInteger(Number(x)) && Number(x) >= 0) && x != 'length');
+          if (opts.sorted == true) keys.sort();
+          else if (opts.sorted != false) keys.sort(opts.sorted);
+          for (let iv in vkeys) {
+            let i = vkeys[iv];
+            if (ba.length + 1 > opts.maxArrayLength) {
+              let ia = val.length - i;
+              if (ia > 1) ba.push('... ' + ia + ' more items');
+              else ba.push('... 1 more item');
+              exc = false;
+              break;
+            }
+            if (i != ind + 1) {
+              let ia = i - ind - 1;
+              if (ia > 1) ba.push('<' + ia + ' empty items>');
+              else ba.push('<1 empty item>');
+            }
+            ba.push(formatValue(val[i], Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+            ind = parseInt(i);
+          }
+          if (val.length > ind + 1 && exc) {
+            let la = val.length - ind - 1;
+            if (la > 1) ba.push('... ' + la + ' more items');
+            else ba.push('... 1 more item');
+          }
+          keys.forEach(function (i) {
+            ba.push(stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          });
+          let baj = ba.join(', ');
+          if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
+          if (baj == '') return '[]';
+          else return '[ ' + baj + ' ]';
+        }
+        let formatMap = function(val, opts, keys) {
+          if (opts.depth < 0) return '[Map]';
+          opts = Object.assign({}, opts);
+          opts.objs = [...opts.objs, val];
+          let ba = Array.from(val);
+          if (opts.sorted == true) ba.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+          else if (opts.sorted != false) ba.sort((a, b) => opts.sorted(a[0], b[0]));
+          ba = ba.map(x => formatValue(x[0], Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})) + ' => ' + formatValue(x[1], Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          if (keys === undefined) {
+            if (opts.showHidden == true) keys = Reflect.ownKeys(val);
+            else keys = Object.keys(val);
+          }
+          if (opts.sorted == true) keys.sort();
+          else if (opts.sorted != false) keys.sort(opts.sorted);
+          keys.forEach(function (i) {
+            ba.push(stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          });
+          let baj = ba.join(', ');
+          if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
+          if (baj == '') return '{}';
+          else return '{ ' + baj + ' }';
+        }
+        let formatSet = function(val, opts, keys) {
+          if (opts.depth < 0) return '[Set]';
+          opts = Object.assign({}, opts);
+          opts.objs = [...opts.objs, val];
+          let ba = Array.from(val);
+          if (opts.sorted == true) ba.sort();
+          else if (opts.sorted != false) ba.sort(opts.sorted);
+          ba = ba.map(x => formatValue(x, Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          if (keys === undefined) {
+            if (opts.showHidden == true) keys = Reflect.ownKeys(val);
+            else keys = Object.keys(val);
+          }
+          if (opts.sorted == true) keys.sort();
+          else if (opts.sorted != false) keys.sort(opts.sorted);
+          keys.forEach(function (i) {
+            ba.push(stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          });
+          let baj = ba.join(', ');
+          if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
+          if (baj == '') return '{}';
+          else return '{ ' + baj + ' }';
+        }
+        let formatPropDes = function(val, opts) {
+          if (val.get && val.set) return '[Getter/Setter]';
+          else if (val.get) return '[Getter]';
+          else if (val.set) return '[Setter]';
+          return formatValue(val.value, opts);
+        }
+        let formatValue = function(val, opts) {
+          if (val === undefined) {
+            return 'undefined';
+          } else if (val === null) {
+            return 'null';
+          } else if (typeof val == 'boolean') {
+            return val.toString();
+          } else if (typeof val == 'number') {
+            if (Object.is(val, -0)) {
+              return '-0';
+            } else {
+              return val.toString();
+            }
+          } else if (typeof val == 'bigint') {
+            return val.toString() + 'n';
+          } else if (typeof val == 'symbol') {
+            return val.toString();
+          } else if (typeof val == 'string') {
+            let js = JSON.stringify(val);
+            return '\'' + js.substring(1, js.length - 1).replace(/'/g, '\\\'').replace(/\\"/g, '"') + '\'';
+          } else if (typeof val == 'function') {
+            let keys, fn, cn = className(val);
+            if (opts.showHidden) {
+              keys = Reflect.ownKeys(val).filter(x => x != 'prototype');
+            } else {
+              keys = Object.keys(val);
+            }
+            if (val.name == '') fn = '[' + cn + ']';
+            else fn = '[' + cn + ': ' + val.name + ']';
+            if (keys.length == 0) {
+              return fn;
+            } else {
+              let rs = formatObject(val, opts, keys, fn);
+              return rs;
+            }
+          } else {
+            if (opts.objs.indexOf(val) > -1) return '[Circular]';
+            if (opts.customInspect) {
+              try {
+                if (val[inspect.custom]) return val[inspect.custom]();
+                if (val.inspect) return val.inspect();
+              } catch (e) {}
+            }
+            let cn = className(val), objs = objectToString(val);
+            if (opts.depth < 0) {
+              if (cn == objs) return '[' + cn + ']';
+              else return cn + ' [' + objs + ']';
+            }
+            if (cn == 'Object') {
+              if (objs == 'Object') return formatObject(val, opts);
+              else return 'Object [' + objs + '] ' + formatObject(val, opts);
+            } else if (cn == 'Array') {
+              if (objs == 'Array') return formatArray(val, opts);
+              else return 'Array [' + objs + '] ' + formatArray(val, opts);
+            } else if (typedArrays.indexOf(cn) > -1) {
+              return cn + ' ' + formatArray(val, opts);
+            } else if (boxedPrimitives.indexOf(cn) > -1) {
+              let ov = '[' + cn + ': ' + inspect(val.valueOf()) + ']', keys;
+              if (opts.showHidden) {
+                keys = Reflect.ownKeys(val);
+              } else {
+                keys = Object.keys(val);
+              }
+              if (keys.length == 0) {
+                return ov;
+              } else {
+                let rs = formatObject(val, opts, keys, ov);
+                return rs;
+              }
+            } else if (val instanceof Error) {
+              return val.stack;
+            } else if (cn == 'WeakMap' || cn == 'WeakSet') {
+              return cn + '{ [items unknown] }';
+            } else if (cn == 'Map') {
+              if (objs == 'Map') return cn + ' ' + formatMap(val, opts);
+              else return 'Map [' + objs + '] ' + formatMap(val, opts);
+            } else if (cn == 'Set') {
+              if (objs == 'Set') return cn + ' ' + formatSet(val, opts);
+              else return 'Set [' + objs + '] ' + formatSet(val, opts);
+            } else if (cn == 'Date') {
+              return val.toISOString();
+            } else if (cn == objs || objs == 'Object') {
+              return cn + ' ' + formatObject(val, opts);
+            } else {
+              return cn + ' [' + objs + '] ' + formatObject(val, opts);
+            }
+          }
+        }
+        inspect.custom = Symbol('util.inspect.custom');
+        return {defaultOptions, typedArrays, boxedPrimitives, className, objectToString, stringProp, inspect, formatObject, formatArray, formatMap, formatSet, formatPropDes, formatValue};
+      })();
+      Object.assign(util, utila);
+      inspect = util.inspect;
+      try { util } catch (e) { util = {}; }
+      utila = (function () {
+        let format = function() {
+          let args = Array.from(arguments);
+          if (args.length == 0) return '';
+          else if (typeof args[0] != 'string') return args.map((x) => inspect(x)).join(' ');
+          else if (args.length == 1) return args[0];
+          let perc = false, str = args[0], argind = 1, bs = '';
+          while (str.length > 0) {
+            let si = str.search('%');
+            if (si < 0 || !str[si + 1]) {bs += str; break;}
+            bs += str.substr(0, si);
+            let i = si + 1;
+            if (argind < args.length) {
+              if (str[i] == 's') {
+                bs += String(args[argind]);
+                argind++;
+              } else if (str[i] == 'd') {
+                if (typeof args[argind] == 'bigint') bs += args[argind].toString() + 'n';
+                else bs += Number(args[argind]).toString();
+                argind++;
+              } else if (str[i] == 'i') {
+                if (typeof args[argind] == 'bigint') bs += args[argind].toString() + 'n';
+                else bs += Math.trunc(Number(args[argind])).toString();
+                argind++;
+              } else if (str[i] == 'f') {
+                bs += Number(args[argind]).toString();
+                argind++;
+              } else if (str[i] == 'j') {
+                try {bs += JSON.stringify(args[argind]);} catch (e) {bs += '[' + e.toString() + ']';}
+                argind++;
+              } else if (str[i] == 'o') {
+                bs += inspect(args[argind], {showHidden: true});
+                argind++;
+              } else if (str[i] == 'O') {
+                bs += inspect(args[argind]);
+                argind++;
+              } else {
+                bs += str[i] == '%' ? '%' : '%' + str[i];
+              }
+            } else {
+              bs += str[i] == '%' ? '%' : '%' + str[i];
+            }
+            str = str.substr(i + 1, Infinity);
+          }
+          if (argind < args.length) {
+            bs += ' ' + args.slice(argind, Infinity).map((x) => {if (typeof x == 'string') return x; return inspect(x)}).join(' ');
+          }
+          return bs;
+        }
+        return {format};
+      })();
+      Object.assign(util, utila);
+      format = util.format;
+      var olog = console.log;
+      var oinfo = console.info;
+      var odebug = console.debug;
+      var owarn = console.warn;
+      var oerror = console.error;
+      var oclear = console.clear;
+      function cologadd(value, temp, colog) {
+        if (value.search('\n') > -1) {
+          let sl = value.split('\n');
+          for (let i in sl) {
+            cologadd(sl[i], temp, colog);
+          }
+          return;
+        }
+        postMessage([value, temp || '{}']);
+      }
+      console.log = function log(value) {
+        if (typeof value != 'string') {
+          value = inspect(value);
+        }
+        if (arguments.length > 1) {
+          console.log(format.apply(null, arguments));
+          return;
+        }
+        cologadd(value);
+      };
+      console.info = function info(value) {
+        if (typeof value != 'string') {
+          value = inspect(value);
+        }
+        if (arguments.length > 1) {
+          console.info(format.apply(null, arguments));
+          return;
+        }
+        cologadd(value);
+      };
+      console.debug = function debug(value) {
+        if (typeof value != 'string') {
+          value = inspect(value);
+        }
+        if (arguments.length > 1) {
+          console.debug(format.apply(null, arguments));
+          return;
+        }
+        cologadd(value, '<span style = "color:#7f7f7f;">{}</span>');
+      };
+      console.warn = function warn(value) {
+        if (typeof value != 'string') {
+          value = inspect(value);
+        }
+        if (arguments.length > 1) {
+          console.warn(format.apply(null, arguments));
+          return;
+        }
+        cologadd(value, '<span style = "color:#3f3f00;background:#ffffcf;min-width:100%;float:left;">{}</span>');
+      };
+      console.error = function error(value) {
+        if (typeof value != 'string') {
+          value = inspect(value);
+        }
+        if (arguments.length > 1) {
+          console.error(format.apply(null, arguments));
+          return;
+        }
+        cologadd(value, '<span style = "color:#3f0000;background:#ffcfcf;min-width:100%;float:left;">{}</span>');
+      };
+      console.clear = function clear() {
+        postMessage('clear');
+      };
+      onmessage = function (req) {
+        if (req.data[0] == 'eval') {
+          try {
+            console.log('>> ' + req.data[1]);
+            resp = eval(req.data[1]);
+            if (resp !== undefined) {
+              console.log('<- ' + inspect(resp));
+            }
+          } catch (e) {
+            console.error('<- ' + e.toString());
+            console.error(e);
+          }
+        }
+      };
+    </script>
+    <script>
+      var escape = document.createElement('textarea');
+      function escapeHTML(html) {
+        escape.textContent = html;
+        return escape.innerHTML;
+      }
+      function unescapeHTML(html) {
+        escape.innerHTML = html;
+        return escape.textContent;
+      }
+      function absolute(base, relative) {
+        var stack = base.split('/'),
+            parts = relative.split('/');
+        stack.pop();
+        for (var i=0; i<parts.length; i++) {
+          if (parts[i] == '.') continue;
+          if (parts[i] == '..') stack.pop();
+          else stack.push(parts[i]);
+        }
+        return stack.join('/');
+      }
+      var conchist = [];
+      var histind = 0;
+      var currtext = '';
+      var colog = [];
+      var nullworker = {postMessage:function(){alert('worker off')}};
+      var worker = nullworker;
+      var workerCode, workerURL;
+      function forma(arra) {
+        arr = arra.slice(0, Infinity);
+        for (var i in arr) {
+          arr[i] = arr[i][1].replace('{}', escapeHTML(arr[i][0]));
+        }
+        return arr.join('<br>') + '<br><br>';
+      }
+      function SWorker() {
+        worker = new Worker(workerURL);
+        worker.onmessage = function (e) {cologadd(e.data);};
+        statuss.innerHTML = 'active';
+      }
+      function TWorker() {
+        worker.terminate();
+        colog = [];
+        while (colog.length < 100) {
+          colog.push(['', '{}']);
+        }
+        lifr.contentDocument.body.innerHTML = forma(colog);
+        worker = nullworker;
+        statuss.innerHTML = 'off';
+      }
+      function cologadd(value) {
+        if (value == 'clear') {
+          colog = [];
+          while (colog.length < 100) {
+            colog.push(['', '{}']);
+          }
+          lifr.contentDocument.body.innerHTML = forma(colog);
+        } else {
+          colog.push(value);
+          if (colog.length > 100) {
+            colog.splice(0, colog.length - 100);
+          }
+          lifr.contentDocument.body.innerHTML = forma(colog);
+        }
+      }
+      function Send() {
+        worker.postMessage(['eval', conc.value]);
+        if (conchist[conchist.length-1] != conc.value) {
+          conchist.push(conc.value);
+        }
+        if (conchist.length > 100) {
+          conchist.splice(0, conchist.length - 100);
+        }
+        conc.value = '';
+        histind = conchist.length;
+        currtext = '';
+      }
+      onload = function () {
+        workerCode = new Blob([workerscr.textContent], {type: 'text/javascript'});
+        workerURL = window.URL.createObjectURL(workerCode);
+        while (colog.length < 100) {
+          colog.push(['', '{}']);
+        }
+        lifr.contentDocument.body.style = 'font-family:monospace;white-space:pre;width:98%;';
+        lifr.contentDocument.body.innerHTML = forma(colog);
+      }
+      conc.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) {
+          Send();
+        } else if (e.keyCode === 38) {
+          if (histind > 0) {
+            histind -= 1;
+            conc.value = conchist[histind];
+          }
+          setTimeout(function(){ conc.selectionStart = conc.selectionEnd = 10000; }, 0);
+          SetEnd(conc);
+        } else if (e.keyCode === 40) {
+          if (histind < conchist.length - 1) {
+            histind += 1;
+            conc.value = conchist[histind];
+          } else if (histind == conchist.length - 1) {
+            histind = conchist.length;
+            conc.value = currtext;
+          }
+          setTimeout(function(){ conc.selectionStart = conc.selectionEnd = 10000; }, 0);
+          SetEnd(conc);
+        } else if (e.keyCode === 8) {
+          histind = conchist.length;
+          setTimeout(function() {currtext = conc.value;}, 0);
+        }
+      });
+      conc.addEventListener('keypress', function (e) {
+        //if ([37, 38, 39, 40, 16, 17, 18, 20, 91, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 27].indexOf(e.keyCode) != -1) {return;}
+        if (!e.charCode) {return;}
+        histind = conchist.length;
+        setTimeout(function() {currtext = conc.value;}, 0);
+      });
+    </script>
+  </body>
+</html>

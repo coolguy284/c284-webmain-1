@@ -2,6 +2,8 @@ add some old sites like aprilfools directly from node server, update wm1 lower d
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
+/misc/old/temp redirect pages need updating
+add slash to absolute path for entries in website_data.txt
 
 enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
@@ -33,6 +35,7 @@ make proxies disconnect other end if one end closes, forward errors as well
   if http proxy res function is given already complete res it will hang and not close socket and browser will load indefinitely as well
   add support for https proxying with ignoretlserrors
 create_sitemap return lastmod and other properties, also return array of objects instead of map
+nosniff and other headers of the same nature should appear everywhere
 
 add nested layers of indexes for unicode
 add privacy policy
@@ -85,6 +88,7 @@ add external link icon for external link
 make pages for more of subtlecrypto api, like pbkdf, dh, ecdh, and future post quantum algs
 atmospheric pressure converter
 env var for strict transport security
+support protocol relative paths in redirects file
 
 hex editor
 english words searcher

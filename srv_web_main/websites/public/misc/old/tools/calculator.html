@@ -1,0 +1,3446 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Calculator</title>
+    <style>
+      body {
+        width: calc(100% - 10px);
+        font-family: arial;
+      }
+      .mgn {
+        margin: 5px 0 5px;
+      }
+      .hsp {
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .cc {
+        background: #ddd;
+        font-family: monospace;
+      }
+      table, td, th {
+        border: 1px solid #777;
+      }
+      td {
+        padding: 0 5px 0;
+      }
+      code {
+        background: #ddd;
+        font-family: monospace;
+      }
+      #hinfo {
+        position: relative;
+        left: 50%;
+        width: 800px;
+        margin-left: -400px;
+      }
+      @media only screen and (max-width: 800px) {
+        #hinfo {
+          position: static;
+          width: 100%;
+          margin: 5px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id = 'calcres' style = 'width:100%;height:400px;overflow:auto;font-family:monospace;white-space:pre;'></div>
+    <input type = 'text' id = 'cinp' style = 'width:calc(100% - 110px);height:40px;font-size:36px;font-family:monospace;'>
+    <button onclick = 'HelpTogg()' style = 'position:relative;top:10px;padding:0;margin:0;'><img id = 'hdtog' style = 'width:40px;height:40px;'></button>
+    <button onclick = 'SettingsTogg()' style = 'position:relative;top:10px;padding:0;margin:0;'><img id = 'sdtog' style = 'width:40px;height:40px;'></button><br>
+    <select id = 'ccul' style = 'display:none;float:right;'>
+      <option value = 'cal'>Calculate</option>
+      <option value = 'cat'>Catculate</option>
+    </select>
+    <div id = 'helpdiv' style = 'display:none;'>
+      <button onclick = 'helpdiv.style = "display:none;";' style = 'position:fixed;right:20px;top:5px;margin:0;padding:0;'><img id = 'hdcls' style = 'width:40px;height:40px;'></button>
+      <div id = 'hinfo'><br>
+        <h2 class = 'mgn'>Overview</h2>
+        This is a calculator that has support for advanced operations such as bitwise operations, expression evaluation, and function evaluation. It is used like you would expect, just type in numbers and operations like you would on paper, then press enter.<br>
+        <details>
+          <summary class = 'hsp'>Operators</summary>
+          <p style = 'margin: 0 0 4px;'>The supported operators, in order of precedence, are:</p>
+          <table style = 'width:100%;'>
+            <tr><th>Precedence</th>     <th>Name</th>                     <th>Evaluation Order</th>          <th>Symbol</th></tr>
+            <tr><td>15</td>             <td>Parenthesis</td>              <td>n/a</td>                       <td class = 'cc'>( … )</td></tr>
+            <tr><td rowspan = 4>14</td> <td>Variable Resolution</td>      <td>n/a</td>                       <td class = 'cc'>…</td></tr>
+            <tr>                        <td>Property Access</td>          <td rowspan = 3>left to right</td> <td class = 'cc'>… . …</td></tr>
+            <tr>                        <td>Computed Property Access</td>                                    <td class = 'cc'>… [ … ]</td></tr>
+            <tr>                        <td>Function Call</td>                                               <td class = 'cc'>… ( … )</td></tr>
+            <tr><td rowspan = 7>13</td> <td>Logical Not</td>              <td rowspan = 7>right to left</td> <td class = 'cc'>! …</td></tr>
+            <tr>                        <td>Bitwise Not</td>                                                 <td class = 'cc'>~ …</td></tr>
+            <tr>                        <td>Unary Plus</td>                                                  <td class = 'cc'>+ …</td></tr>
+            <tr>                        <td>Unary Minus</td>                                                 <td class = 'cc'>- …</td></tr>
+            <tr>                        <td>Typeof</td>                                                      <td class = 'cc'>typeof …</td></tr>
+            <tr>                        <td>Void</td>                                                        <td class = 'cc'>void …</td></tr>
+            <tr>                        <td>Delete</td>                                                      <td class = 'cc'>del … or delete …</td></tr>
+            <tr><td>12</td>             <td>Exponentiation</td>           <td>right to left</td>             <td class = 'cc'>… ** … or … ^ …</td></tr>
+            <tr><td rowspan = 3>11</td> <td>Multiplication</td>           <td rowspan = 3>left to right</td> <td class = 'cc'>… * …</td></tr>
+            <tr>                        <td>Division</td>                                                    <td class = 'cc'>… / …</td></tr>
+            <tr>                        <td>Modulus</td>                                                     <td class = 'cc'>… % …</td></tr>
+            <tr><td rowspan = 2>10</td> <td>Addition</td>                 <td rowspan = 2>left to right</td> <td class = 'cc'>… + …</td></tr>
+            <tr>                        <td>Subtraction</td>                                                 <td class = 'cc'>… - …</td></tr>
+            <tr><td rowspan = 2>9</td>  <td>Bitwise Left Shift</td>       <td rowspan = 2>left to right</td> <td class = 'cc'>… &lt;&lt; …</td></tr>
+            <tr>                        <td>Bitwise Right Shift</td>                                         <td class = 'cc'>… &gt;&gt; …</td></tr>
+            <tr><td rowspan = 4>8</td>  <td>Greater Than</td>             <td rowspan = 4>left to right</td> <td class = 'cc'>… &gt; …</td></tr>
+            <tr>                        <td>Less Than</td>                                                   <td class = 'cc'>… &lt; …</td></tr>
+            <tr>                        <td>Greater Than or Equal</td>                                       <td class = 'cc'>… &gt;= …</td></tr>
+            <tr>                        <td>Less Than or Equal</td>                                          <td class = 'cc'>… &lt;= …</td></tr>
+            <tr><td rowspan = 3>7</td>  <td>Equality</td>                 <td rowspan = 3>left to right</td> <td class = 'cc'>… == …</td></tr>
+            <tr>                        <td>Inequality</td>                                                  <td class = 'cc'>… != …</td></tr>
+            <tr>                        <td>True Equality</td>                                               <td class = 'cc'>… is …</td></tr>
+            <tr><td>6</td>              <td>Bitwise And</td>              <td>left to right</td>             <td class = 'cc'>… & …</td></tr>
+            <tr><td>5</td>              <td>Bitwise Xor</td>              <td>left to right</td>             <td class = 'cc'>… # …</td></tr>
+            <tr><td>4</td>              <td>Bitwise Or</td>               <td>left to right</td>             <td class = 'cc'>… | …</td></tr>
+            <tr><td>3</td>              <td>Logical And</td>              <td>left to right</td>             <td class = 'cc'>… && …</td></tr>
+            <tr><td>2</td>              <td>Logical Or</td>               <td>left to right</td>             <td class = 'cc'>… || …</td></tr>
+            <tr><td>1</td>              <td>Assignment</td>               <td>right to left</td>             <td class = 'cc'>… = …</td></tr>
+          </table>
+        </details>
+        <details>
+          <summary class = 'hsp'>Builtin Objects and Functions</summary>
+          <h3 class = 'mgn'>Primitives and Numerical Constants</h3>
+          <table style = 'width:100%;'>
+            <tr><th>Variable</th>                <th>Value</th>                <th>Description</th></tr>
+            <tr><td>undefined, None</td>         <td></td>                     <td>Variable for undefined, can also use void operator</td></tr>
+            <tr><td>null</td>                    <td></td>                     <td>Variable for null</td></tr>
+            <tr><td>true, True</td>              <td></td>                     <td>Boolean true value</td></tr>
+            <tr><td>false, False</td>            <td></td>                     <td>Boolean false value</td></tr>
+            <tr><td>nan, NaN</td>                <td></td>                     <td>Numerical NaN value</td></tr>
+            <tr><td>inf, infinity, Infinity</td> <td></td>                     <td>Numerical Infinity value</td></tr>
+            <tr><td>i</td>                       <td></td>                     <td>Complex constant</td></tr>
+            <tr><td>w</td>                       <td></td>                     <td>Transfinite constant</td></tr>
+            <tr><td>pi</td>                      <td>3.141592653589793</td>    <td>Ratio of a circle's circumference to its diameter.</td></tr>
+            <tr><td>e</td>                       <td>2.718281828459045</td>    <td>Common mathematical constant.</td></tr>
+            <tr><td>deg</td>                     <td>0.017453292519943295</td> <td>Constant used to convert degree value to radians.</td></tr>
+            <tr><td>rad</td>                     <td>57.29577951308232</td>    <td>Constant used to convert radian value to degrees.</td></tr>
+            <tr><td>phi</td>                     <td>1.618033988749895</td>    <td>The Golden Ratio.</td></tr>
+            <tr><td>sqrt2</td>                   <td>1.4142135623730951</td>   <td>The square root of 2.</td></tr>
+            <tr><td>sqrt1_2</td>                 <td>0.7071067811865476</td>   <td>The square root of 0.5, or half of sqrt2.</td></tr>
+            <tr><td>ln2</td>                     <td>0.6931471805599453</td>   <td>The natural logarythm of 2.</td></tr>
+            <tr><td>ln10</td>                    <td>2.302585092994046</td>    <td>The natural logarythm of 10.</td></tr>
+          </table>
+          <h3 class = 'mgn'>Functions</h3>
+          <h4 class = 'mgn'>Constructors</h4>
+          The functions <code>Boolean</code>, <code>Number</code>, <code>BigInt</code>, <code>BigNum</code>, <code>String</code>, <code>Array</code>, <code>Object</code>, <code>Function</code>, <code>Complex</code>, <code>Matrix</code>, and <code>Surreal</code> create objects of their type.
+          <h4 class = 'mgn'>Namespace</h4>
+          <code>globals()</code> - returns global namespace object<br>
+          <code>locals()</code> - returns local namespace object
+          <h4 class = 'mgn'>Evaluation</h4>
+          <code>compileExpr(string)</code> - compile string as expression, and return runnable code object<br>
+          <code>evalExpr(obj)</code> - evaluate string or code object as expression, and return value<br>
+          <code>compile(string)</code> - compile string as many expressions, and return runnable code object<br>
+          <code>eval(obj)</code> - evaluate string or code object as many expressions, and return value
+          <h4 class = 'mgn'>Text</h4>
+          <code>repr(text)</code> - get text form of object<br>
+          <code>print(text)</code> - print text to string
+          <h4 class = 'mgn'>Simple Math</h4>
+          <code>sign(number)</code> - return sign of number<br>
+          <code>abs(number)</code> - return absolute value of number<br>
+          <code>max(*values)</code> - get maximum value from list of values<br>
+          <code>min(*values)</code> - get minimum value from list of values<br>
+          <code>constrain(number, max, min)</code> - constrains number between two values<br>
+          <code>floor(number)</code> - rounds number down<br>
+          <code>ceil(number)</code> - rounds number up<br>
+          <code>round(number)</code> - rounds number to closest integer<br>
+          <code>trunc(number)</code> - truncates decimal digits from number<br>
+          <code>hypot(*coords)</code> - gets distance to origin from coords<br>
+          <code>gcd(*values)</code> - calculates gcd of values<br>
+          <code>lcm(*values)</code> - calculates lcm of values<br>
+          <code>lerp(from, to, num)</code> - returns a number that is num of the way from "from" to "to"<br>
+          <code>map(number, from, to, resfrom, resto)</code> - maps a number from a range of from - to to resfrom - resto<br>
+          <code>norm(number, from, to)</code> - functions as map(number, from, to, 0, 1)
+          <code>dist(x1, y1, x2, y2)</code> - gets the distance between two coordinates
+          <h4 class = 'mgn'>Random</h4>
+          <code>random([[start], end])</code> - generates a random number, with optional start and end parameters<br>
+          <code>randint(start, end)</code> - generates a random integer between start and end<br>
+          <code>randintn(start, end)</code> - generates a random bigint between start and end<br>
+          <code>randgauss(mu, sigma)</code> - generates a random gaussian with mu and sigma parameters
+          <h4 class = 'mgn'>More Math</h4>
+          <code>sq(number)</code> - squares a number<br>
+          <code>cb(number)</code> - cubes a number<br>
+          <code>sqrt(number)</code> - gets the square root of a number<br>
+          <code>cbrt(number)</code> - gets the cube root of a number<br>
+          <code>exp(number)</code> - calculates e raised to the power of a number<br>
+          <code>pow(base, exponent)</code> - calculates base raised to the power of exponent<br>
+          <code>root(number, root)</code> - calculates nth root of a number<br>
+          <code>log(number[, base])</code> - calculates the logarythm of a number, with an optional base<br>
+          <code>log10(number)</code> - calculates the base 10 logarythm of a number<br>
+          <code>log2(number)</code> - calculates the base 2 logarythm of a number<br>
+          <code>tet(number, number)</code> - calculates the teteration of two numbers<br>
+          <code>sroot(number, number)</code> - calculates the super-root of two numbers<br>
+          <code>slog(number, number)</code> - calculates the super-logarythm of two numbers<br>
+          <code>fact(number)</code> - calculates the factorial of a number, decimals allowed<br>
+          <code>gamma(number)</code> - the gamma function
+          <h4 class = 'mgn'>Trigonometry</h4>
+          <code>degrees(number)</code> - converts number from radians to degrees<br>
+          <code>radians(number)</code> - converts number from degrees to radians<br>
+          <code>[sin, cos, tan](number)</code> - trigonometric functions<br>
+          <code>[csc, sec, cot](number)</code> - reciprocal trigonometric functions<br>
+          <code>[asin, acos, atan, atan2](number)</code> - inverse trigonometric functions<br>
+          <code>[acsc, asec, acot](number)</code> - inverse reciprocal trigonometric functions<br>
+          <code>[sinh, cosh, tanh](number)</code> - hyperbolic functions<br>
+          <code>[csch, sech, coth](number)</code> - reciprocal hyperbolic functions<br>
+          <code>[asinh, acosh, atanh](number)</code> - inverse hyperbolic functions<br>
+          <code>[acsch, asech, acoth](number)</code> - inverse reciprocal hyperbolic functions
+          <h4 class = 'mgn'>Number to Base</h4>
+          <code>[[tohexstr, tooctstr, tobinstr, todecstr](number), tobasestr(number, base)]</code> - converts a number to a string in bases [16, 8, 2, 10, any]<br>
+          <code>[[fromhexstr, fromhexstrn, fromoctstr, fromoctstrn, frombinstr, frombinstrn, fromdecstr, fromdecstrn](number), [frombasestr, frombasestrn](number, base)]</code> - converts a number to a string in bases [16, 8, 2, 10, any], with an n suffix for bigints instead
+        </details>
+        <details>
+          <summary class = 'hsp'>Regular JavaScript Evaluation</summary>
+          To evaluate regular javascript, put a ":" before text.
+        </details>
+        <br><br><br><br><br>
+      </div>
+    </div>
+    <div id = 'settins' style = 'display:none;'>
+      <button onclick = 'settins.style = "display:none;";' style = 'position:fixed;right:20px;top:5px;margin:0;padding:0;'><img id = 'stcls' style = 'width:40px;height:40px;'></button>
+      <table style = 'border:1px solid black;float:left;'>
+        <tr style = 'border:1px solid black;'>
+          <td style = 'border:1px solid black;width:150px;text-align:center;'>
+            <span>Large Operation Protection:</span><br>
+            <span>Off</span>
+            <input id = 'lrexp' type = 'range' min = 0 max = 1 value = 1 onchange = 'LrExp(lrexp.value);' style = 'width:30px;'>
+            <span>On</span>
+          </td>
+        </tr>
+      </table>
+      <details style = 'float:left;width:400px;margin:10px;'>
+        <summary>Special Settings</summary>
+        <table style = 'border:1px solid black;float:left;'>
+          <tr style = 'border:1px solid black;'>
+            <td style = 'border:1px solid black;width:150px;text-align:center;'>
+              <span>Allow Complex Catculations:</span><br>
+              <span>Off</span>
+              <input id = 'allcom' type = 'range' min = 0 max = 1 value = 0 onchange = 'AllComp(allcom.value);' style = 'width:30px;'>
+              <span>On</span>
+            </td>
+            <td style = 'border:1px solid black;width:150px;text-align:center;'>
+              <span>Enable Enhanced Calculating Experience:</span><br>
+              <span>Off</span>
+              <input id = 'enenh' type = 'range' min = 0 max = 1 value = 0 style = 'width:30px;'>
+              <span>On</span>
+            </td>
+          </tr>
+          <tr style = 'border:1px solid black;'>
+            <td style = 'border:1px solid black;width:150px;text-align:center;'>
+              <span>Realistic Mode:</span><br>
+              <span>Off</span>
+              <input id = 'realmode' type = 'range' min = 0 max = 1 value = 0 style = 'width:30px;'>
+              <span>On</span>
+            </td>
+            <td style = 'border:1px solid black;width:150px;text-align:center;'>
+              <span>Enable Settings Menu:</span><br>
+              <span>Off</span>
+              <input id = 'ensett' type = 'range' min = 0 max = 1 value = 1 onchange = 'ShowSett(ensett.value);' style = 'width:30px;'>
+              <span>On</span>
+            </td>
+          </tr>
+        </table>
+      </details>
+    </div>
+    <script>
+      hdtog.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARFSURBVGhD7ZpbSBRRGMd97h5dpB5yV6TrQxTRSw8FRb1UD5VYGV3oIcyIjCKC6MWKoIeImk0zkkzJLmTRxagslSjNNOghrLSLkXZXz7hruW6n79s9pjvzzeyZ2dnVh/3DD4fd73znf+ZcZ9akhBJKKH5K9agT3R413aWoh10e9QpcV7k87DkC15X4GX7nPsXWpJ1gE0SxoaGU4+1j3KfVHS6F1bkV9hcMcylCsTVYFnOIdPFXsAEe9SjcYRZm0AbQU53YU3FvkEvp2giVf6NMRQdrg7/rRTWx08xTX0fAECrWG3AWrAPrEtU6K3eBmgx3rJ6qOBbgnHN8QcCEMJReUxXGFEVtdKwx085+HxnPniComZTPhwk79gVdXEIkjy8KKxJ27Am6dgOZWIIFRV6+9baP767o5nuBrLs+vuSil6edpuMlsLeaTfF0jLWzxGaUefmDD37+iQVI6tr8fNeDbg6nALK8MazN1j4DhY/qk5lzsPo3byHMUxS+7LHcO3Bjjwh7csKWW92xM2/4SMNm7HvYTeYyAjx1WOoVPP9QicyoIIZTdYs/aDYHhlLZG/33DV96rQ8xhW0XNiMLWl5LJjFgXmGXzmTNZz+ffqY/Bg3fae7RxS0q8YblioiiPhU2zRU8ils5xQIrr+qHVe7j37o4nEPauHRYHLRx5rDA1Hw2Xtg1FgSn6wubgw3BoTWQLbD0auMOVOkbsuKyPi4ybLWwayxcGejC0VP+LnxoNbcH+KyCLjLWDPB4SNg1FgRe1hZ0gv2V3WGNQPIa/pCxkWGlwq6xYKJX04Xtswd2du3+givW7LPWe0NQKewaC1r7gihoG1x6tY1o/NnLF8NxhYqXQmENwq6xMIgsbIPV17y6Rrz60cuX25rgA5BpiJNDS3vmeguTe2lpFD3Rj8zQcmayzz+v3yR33rd2JDFGbrIfpgtbY911b1gjmn4Fwnb6qFDUXGHXWBBoeUOk2FYevtvfe99DxtkhVWGrhF1j4fZv9YhCMedcF18G86GPhcWOzA2ABSaf7Bwn7JoLCtToEwwRFPWJsBlZUCBbl8AGeI7Cw2MObIgz8ukY67AsYTOyxINVB51Ijs23fPxjZ/8cwaU4LY+OtUC7pQcrVLSHx9tN+mcP3CCpWGlkViutQr3CvpAJJSgnHqLwxQQVK4XCWtNO/Bgl7FkTPPJmkkklwDPWwEbUtvqjmicw1DOELXtyedgFKrEMm276uFL/Jzjh58JyTMVIUijs2FfysbbhkGgwl2NnXpmi8EUyTLRGopLY4uRL7D6F3sizZ2SFMQDrcrwRfcIfX2D1KKIqdphCx4aTmaCi9bDD4s9klAn7wBKb4lHXimriI7H748/QnaQpCwRPEbDZpeb/Gi3Sx1/YIDCTjYc5PJlqTRoDsaEyWYPaAEr4CIDPCnh3YZhcAh79/4cBuA59BnceYqSP4gkllJADSkr6Bwc6Q2MDge/WAAAAAElFTkSuQmCC';
+      sdtog.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMaSURBVGhD7do5qNRQGMXxURFBtLBwe4IgYiPa22hnZ2ullWBpoZULFqLYiiIWCmJjYy1urcsTURDUUhsLV1wKt8Ll/OUFQjxJvptkJkHmwA/ekvflzkzuvbk3bzTNNNNMNEvkljyscVM4drDZJr+Dtspgs1tco51dMtgcEddo55AMNufFNdo5J4MNndg12rkqE89eOSHr/37ns13eimu081xWSVnWyEnprC9tkV/CyX/Kddkh84Xw+wdSbGjEd7koKyXLJrkkP4Rjvsk6aZV5cl+KDcALuSy8OPf7FO/lgHC5ZW9a3hVplZThdNwazzuL5aW4on14JNnlnJRj4gr2aY8kZa18EVcsir7zVK7N4Wt3/ad4JUslHDqxKxTxUQ7KailmRpjROcb9bQRDcigbpek7d1vyQ2lZOOaOuBp1GI6XS204qGzIrULDFkk0HHtPXK0qr2WFhLJQTosr5HyQcPFc+GQ+iavp0Ncin/g/2SmfxRXNo080DX3G1czjctonTNCNs0EeizsBGJ3oxE3D31b1ySeyWTpJ1bvGidqGodnVBjerneWMuJPghrQNNVxtsMbpLBfEnQTjfiG8iZ2Fj9edBF1cWs/E1UZnS2I6Go11JwEddZydnYGGAadxGOoY8hj63Any2rxrkQ0LpgCmguQw6TD5uKIOk1rTCTEyT2VOCZN1KKyVuQ1wharcldRblFlxtapwP7dAasOGQORycngxVRsKWbgz5lhXow79aZmEwq2yKxLBLfphcQMAPzsqbW7jWWKEw+KFRYwrFMU7x7DKrgv4ump0imCxx6IvKSwrXbE+sfxODgt9FvyuYB/YCGFDpFHYgnFF+8DWVKuwOVYsyrXOZhqbau/mftbGG9kvZRt0rFhbrUUI25XZcMw2JtuZbGtmYVLjppLtz2ID6nyVs5Jfgxe3THlhbMt2Ej5WhmQmy7Iwf7AxXWxsGY6tWrZyruPCBvrEw6XhGu308lghGh7euEY7g37QE9lIyHS2zhhHeCjjGu0M+mFoyrwz6MfT/BMA62/3TwJ53HsN+h8Gppnm/8po9AckRYmDrypBaAAAAABJRU5ErkJggg==';
+      hdcls.src = stcls.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAALEwAACxMBAJqcGAAACdpJREFUeJztnX2slmUdxz+gIKJxQDkmgZwDHo8QpGWOMJ2VpuVWbbXelF7M1JXLpHT5QubJF0RMzTYzY1lLq7XZ5lo1V+JLisvNQZKFyRA0hAIOKBICcc7TH7/zuHMe7ue5X37X230/12f7/ne4r9/LxfXcL9fvd0EkEolEIpFIJBKJRCKRdmGUbwMsMxU4FugGjgEmA0cCE4BDgLFDf7cP2AvsBPqBrcBGYD3wIvCKS6NdUqUJMA04FXgvcBIwF5ho6NqvAn8DVgJPASuo8KQoC2OADwM/ANYCNcf6J3An8KEhWyIOGAWcCdwLbMd90pupH/gJcAbVWlWDYTJwFbAO/8lO01rgSuReI6KkB7gb2I3/xObVf4G7gJnGo9IGdCPL/H78J1Kr/wHLgOkmA1RVOoDvIY9kvhNnWnuAJcBbjEWrYnwe+A/+E2Vbm4FzDcWsEkwHHsJ/Ylzrd8i7i7bmc8Br+E+GL+0APq2OYgkZD9yH/wSEop8Ch6oiWiJ6gNX4D3poWgXMUMS1FJxOWG/wQtM25HtGJTmPaj7emdYeKnhf8FVgEP/BLYsGgIsKRTpAvoH/gJZVlxWId1B8Df9BLLu+kjvqgfBF4rJvQoPAgpyx985ZyEcQ38GrivYBH8iVAY/Mob3f7tnSDmBWjjx4oQM/27PaRWsI+GviKOC3+A9S1fVA1oS45uv4D067KLgngznAG/gPTLtoNzA7U2YccBDwDP6D0m76CzA6Q35acpD2AsDlyDN/xC3TkCeDpzUX0e5hPwZ4Hvm+H3HPLqAX2WZWCO0KcA/wLuU1srIZuB+51+hyNGZeVgC/B6Yg9Ye2GQt0Ag86GOsATsHd790a4OhhYy91OHZW3TnMviOBZx2NOwicnJAf6ywvYKyJ5Ne52dH4WXR7gn2TcTcJHkoY3yrvN2B0Fj1PcvLr3ODIjlZa2sK+ybjb/uZ0J9EfLTnRmPwpGWzpc2BLM92cwb5OpLTcti1/yGCLEU5w4EzW5Ne51oFNjbohh32dwHOW7RlEXshZ517LjqwjX/LrXGPZruHqK2DfUUhPAZt2LStgVy46kKpXm058SWHftyzbVkNWm6IssGzbLnJ+Lcz7KnEB9l/6HKz4t0uBK0wZksAi8i39jWh8y8JhWK47fBr7/8P+hZSHa1howa4rlTZNQ5pO2Y7fk0o7m9LlwPi6NqCvkrnUoD2XK22ZjrvuJoNYKjq9wpEDdb2MtHjTcAn6jakLlTZ0Ia3mXMZOa3Mijzp2oob8HPQo7b6Y4pPgUuXYM5DVzHXc/qS0+wAmIDtTXTtSQ/rx9Srt/zL5JsEgsnpomAm8lGNMk9qL3BAa46OeHKlrE/odsecjJVdZkn+xcqweZPXyGbNzlD6M4BbPztSQz8HabVBfoPUkGAQuVI7Ri7SZ9R2vm5R+jOCJAByqIT2EtK87F5DcfWwA3UsogOOR1cp3nGrAY0pf3mQ08obJt0N1bQHeofTps4ycBAPI6qBhNrJK+Y5PXTsx1LX0uACcadRW4ESlX59Cytf2o6+9mwP8G/9xaZSRjiMfD8CRJG1Dvx3tE8hqoGEusir5jkeSPqb0DXDzgaWotiOt4X1xArIa+Y5DM30zzYEsH4O6M/yNLyYhW9N87Il7J/AIsusnVFJ/ArJMgC4DhthkIvAwMM/hmCchEy/0juCpucsyAToNGGKbDuT153wHY52MTLgjHIylxUjuytCjv66dyJExtpiHVOP49jOrXjDhdNn6+r0OnGbC8QbmI2cH+fYvj7aacNz2FjBbk+B0E84PcQrl7Hryugnny3powy6kfkHLqchPi29/imhfmnNZbgLVJcieOAwz9wPzCbgtSwomqr9L2961z4TzQ7jccm5Su004X8bl77smHG9gUQB+5dUOE46H9IUrizTbttP4dgD+5dFGE07bLmkyqRtNOJyCjzK0onrWhMOPBeBIFhndAZPCdRb9MKnlJpz9ZQCOpGmxCUdz0lfQVpe6L82JLI94GzL8jU+WIHfprukDrvcwbh7Wm7jIhfifyc20ROnbLPS7ja9PsCsUafc4AvImzLcjSbpF6dcs5AlnM7KZU8ON+I9Hkt6j9AuQohDfjjSqVVuWLBzPyMdbE5PgJvzFI0mDwOFKn97EdW1bK92q9KXZ1u1N6CfB4oTr+tJapS8j+EUADtWQg6U19NJ63/4m9GVooXQv+7nSjxFcEoBDtyl96EXqDNPGMTEJQqik0pa3jWCOZ2eS+vDl4TiyJb8uEwWpvptZan/ODsBXseMdSrt7KFar9woycTTcWmBcE3pRaXciP/bgiK/km5wEtynGL6ofKm1O5BzHTnxfae+xmFm1NqJvUnG7ATvy6INKexMZA/Q7cmB44+UizERazJiyx8QkuMOgPa20BUM7gZK4x4ED2kORTCff5CT4jQW7GnWX0saWzHPgwPkK+2Zgty2LtmfRBRZtq8t6raTtFuipnzCbYDv5wydB0e5lv7Js28qCduXiIstO1IDv5LSpG7fduIpMAhet7S/IaVMhxiGtWmw7k7Unbzd+WrHl6WPo4pPxZuQIGSe42hy5KMWOLvwkf/gkmJliY58jW65KscMoE3D3SNhst08XbnrvaibBdY5s2ILhvoBZuNqA4Vl1dcPY0wnrE/VLHDgJXO4e1vYyLsR43H4fWIwcJHEaYSW/rpeBM5GzFF1+A1iP3Jd54bwMBkbZ1SdTs2SZx/EfhHbVwxny0xITjQR7kZdD3pahNuUNpGHmOs1FTHw06Ed6CFj5AhVpyjXIMbVBMBr4M/6XxHbRcgy1gTXJdMrVQKms2gZMzZgT53wE/REtUc01AJydORsZML1x4AXk5+B9hq8bEa4FfubbiDRGAb/G//+Wqun+PEnwzThgBf6DVhU9jsMvfaaYhP3NI+2glUgr3FJyFLAG/0Esq/5B2N3IM/FWYDX+g1k2/ZVyNOrOxBG4OXe4KnoK+QmtFOOBB/Ef3ND1AHBowRgHz2ikxNt3kEPVEgJ8xWuDzxDWUXS+tRM5wKqtmA2swn/wfesZ9KXopWUssn0qy5m+VdN+ZMkfo45iBZhHez0qrgLebSRyFWIMcs5d2Y5lyaPtwGXAwYZiVkk6kQrXsp5TkKQ9SMl76MfMBUUXsIxyT4Q9wI+QreKRgkxBWq+V6fSyfqRx5NEW4tG2jENO+X6UMHcdDSB79c4FDrEUg8gQU4GFwJP4PdVsP/AEcmP3NqseW6IKrx0nAWcBZyBlY2/Hnl814O/IxHsEOa72VUtjOaEKE6CRicCJSNHEXKRocwZyI5Z1ad6L1PptQOoQn0PeU6ym5AlvpIoToBWHI49iHchkqE+IvUN6DbmB2+XFukgkEolEIpFIJBKJROzyf6SVeep93LB8AAAAAElFTkSuQmCC';
+      try { util } catch (e) { util = {}; }
+      utila = (function () {
+        let defaultOptions = {
+          showHidden: false,
+          depth: 2,
+          colors: false,
+          customInspect: true,
+          maxArrayLength: 100,
+          breakLength: 60,
+          compact: true,
+          sorted: false,
+        };
+        let typedArrays = ['Int8Array', 'Uint8Array', 'Uint8ClampedArray', 'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array', 'BigInt64Array', 'BigUint64Array', 'Float32Array', 'Float64Array'];
+        let boxedPrimitives = ['Boolean', 'Number', 'BigInt', 'String', 'Symbol'];
+        let className = function(val) {
+          try { return val.constructor.name; } catch (e) { return '[Object: null prototype]';}
+        };
+        let objectToString = function(val) {
+          let tv = Object.prototype.toString.call(val);
+          return tv.substring(8, tv.length - 1);
+        };
+        let stringProp = function(val) {
+          if (typeof val == 'symbol') return '[' + inspect(val) + ']';
+          if ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$_'.indexOf(val[0]) < 0) return inspect(val);
+          for (let i in val) if ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_'.indexOf(val[i]) < 0) return inspect(val);
+          return val;
+        };
+        let inspect = function(val, opts) {
+          if (opts === undefined) opts = {};
+          if (opts.showHidden === undefined) opts.showHidden = defaultOptions.showHidden;
+          if (opts.depth === undefined) opts.depth = defaultOptions.depth;
+          if (opts.colors === undefined) opts.colors = defaultOptions.colors;
+          if (opts.customInspect === undefined) opts.customInspect = defaultOptions.customInspect;
+          if (opts.maxArrayLength === undefined) opts.maxArrayLength = defaultOptions.maxArrayLength;
+          if (opts.breakLength === undefined) opts.breakLength = defaultOptions.breakLength;
+          if (opts.compact === undefined) opts.compact = defaultOptions.compact;
+          if (opts.sorted === undefined) opts.sorted = defaultOptions.sorted;
+          opts.indentLvl = 0;
+          opts.objs = [];
+          return formatValue(val, opts);
+        };
+        let formatObject = function(val, opts, keys, ins) {
+          if (opts.depth < 0) return ins || '[Object]';
+          opts = Object.assign({}, opts);
+          opts.objs = [...opts.objs, val];
+          if (keys === undefined) {
+            if (opts.showHidden == true) keys = Reflect.ownKeys(val);
+            else keys = Object.keys(val);
+          }
+          if (opts.sorted == true) keys.sort();
+          else if (opts.sorted != false) keys.sort(opts.sorted);
+          let ba = keys.map(function (i) {
+            return stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2}));
+          });
+          let baj = ba.join(', ');
+          if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
+          if (baj == '') return ins || '{}';
+          else return '{ ' + (ins !== undefined ? ins + ' ' : '') + baj + ' }';
+        };
+        let formatArray = function(val, opts, bkeys) {
+          if (opts.depth < 0) return '[Array]';
+          opts = Object.assign({}, opts);
+          opts.objs = [...opts.objs, val];
+          let ba = [], ind = -1, exc = true, vkeys;
+          if (bkeys === undefined) {
+            if (opts.showHidden == true) bkeys = Reflect.ownKeys(val);
+            else bkeys = Object.keys(val);
+          }
+          keys = bkeys.filter(x => !(!isNaN(x) && Number.isInteger(Number(x)) && Number(x) >= 0) && x != 'length');
+          vkeys = bkeys.filter(x => (!isNaN(x) && Number.isInteger(Number(x)) && Number(x) >= 0) && x != 'length');
+          if (opts.sorted == true) keys.sort();
+          else if (opts.sorted != false) keys.sort(opts.sorted);
+          for (let iv in vkeys) {
+            let i = vkeys[iv];
+            if (ba.length + 1 > opts.maxArrayLength) {
+              let ia = val.length - i;
+              if (ia > 1) ba.push('... ' + ia + ' more items');
+              else ba.push('... 1 more item');
+              exc = false;
+              break;
+            }
+            if (i != ind + 1) {
+              let ia = i - ind - 1;
+              if (ia > 1) ba.push('<' + ia + ' empty items>');
+              else ba.push('<1 empty item>');
+            }
+            ba.push(formatValue(val[i], Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+            ind = parseInt(i);
+          }
+          if (val.length > ind + 1 && exc) {
+            let la = val.length - ind - 1;
+            if (la > 1) ba.push('... ' + la + ' more items');
+            else ba.push('... 1 more item');
+          }
+          keys.forEach(function (i) {
+            ba.push(stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          });
+          let baj = ba.join(', ');
+          if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
+          if (baj == '') return '[]';
+          else return '[ ' + baj + ' ]';
+        };
+        let formatMap = function(val, opts, keys) {
+          if (opts.depth < 0) return '[Map]';
+          opts = Object.assign({}, opts);
+          opts.objs = [...opts.objs, val];
+          let ba = Array.from(val);
+          if (opts.sorted == true) ba.sort((a, b) => (a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0));
+          else if (opts.sorted != false) ba.sort((a, b) => opts.sorted(a[0], b[0]));
+          ba = ba.map(x => formatValue(x[0], Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})) + ' => ' + formatValue(x[1], Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          if (keys === undefined) {
+            if (opts.showHidden == true) keys = Reflect.ownKeys(val);
+            else keys = Object.keys(val);
+          }
+          if (opts.sorted == true) keys.sort();
+          else if (opts.sorted != false) keys.sort(opts.sorted);
+          keys.forEach(function (i) {
+            ba.push(stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          });
+          let baj = ba.join(', ');
+          if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
+          if (baj == '') return '{}';
+          else return '{ ' + baj + ' }';
+        };
+        let formatSet = function(val, opts, keys) {
+          if (opts.depth < 0) return '[Set]';
+          opts = Object.assign({}, opts);
+          opts.objs = [...opts.objs, val];
+          let ba = Array.from(val);
+          if (opts.sorted == true) ba.sort();
+          else if (opts.sorted != false) ba.sort(opts.sorted);
+          ba = ba.map(x => formatValue(x, Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          if (keys === undefined) {
+            if (opts.showHidden == true) keys = Reflect.ownKeys(val);
+            else keys = Object.keys(val);
+          }
+          if (opts.sorted == true) keys.sort();
+          else if (opts.sorted != false) keys.sort(opts.sorted);
+          keys.forEach(function (i) {
+            ba.push(stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
+          });
+          let baj = ba.join(', ');
+          if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
+          if (baj == '') return '{}';
+          else return '{ ' + baj + ' }';
+        };
+        let formatPropDes = function(val, opts) {
+          if (val.get && val.set) return '[Getter/Setter]';
+          else if (val.get) return '[Getter]';
+          else if (val.set) return '[Setter]';
+          return formatValue(val.value, opts);
+        };
+        let formatValue = function(val, opts) {
+          if (val === undefined) return 'undefined';
+          else if (val === null) return 'null';
+          else if (typeof val == 'boolean') return val.toString();
+          else if (typeof val == 'number') {
+            if (Object.is(val, -0)) {
+              return '-0';
+            } else {
+              return val.toString();
+            }
+          } else if (typeof val == 'bigint') return val.toString() + 'n';
+          else if (typeof val == 'symbol') return val.toString();
+          else if (typeof val == 'string') {
+            let js = JSON.stringify(val);
+            return '\'' + js.substring(1, js.length - 1).replace(/'/g, '\\\'').replace(/\\"/g, '"') + '\'';
+          } else if (typeof val == 'function') {
+            let keys, fn, cn = className(val);
+            if (opts.showHidden) {
+              keys = Reflect.ownKeys(val).filter(x => x != 'prototype');
+            } else {
+              keys = Object.keys(val);
+            }
+            if (val.name == '') fn = '[' + cn + ']';
+            else fn = '[' + cn + ': ' + val.name + ']';
+            if (keys.length == 0) {
+              return fn;
+            } else {
+              let rs = formatObject(val, opts, keys, fn);
+              return rs;
+            }
+          } else {
+            if (opts.objs.indexOf(val) > -1) return '[Circular]';
+            if (opts.customInspect) {
+              try {
+                if (val[inspect.custom]) return val[inspect.custom]();
+                if (val.inspect) return val.inspect();
+              } catch (e) {}
+            }
+            let cn = className(val), objs = objectToString(val);
+            if (opts.depth < 0) {
+              if (cn == objs) return '[' + cn + ']';
+              else return cn + ' [' + objs + ']';
+            }
+            if (cn == 'Object') {
+              if (objs == 'Object') return formatObject(val, opts);
+              else return 'Object [' + objs + '] ' + formatObject(val, opts);
+            } else if (cn == 'Array') {
+              if (objs == 'Array') return formatArray(val, opts);
+              else return 'Array [' + objs + '] ' + formatArray(val, opts);
+            } else if (typedArrays.indexOf(cn) > -1) {
+              return cn + ' ' + formatArray(val, opts);
+            } else if (boxedPrimitives.indexOf(cn) > -1) {
+              let ov = '[' + cn + ': ' + inspect(val.valueOf()) + ']', keys;
+              if (opts.showHidden) {
+                keys = Reflect.ownKeys(val);
+              } else {
+                keys = Object.keys(val);
+              }
+              if (keys.length == 0) {
+                return ov;
+              } else {
+                let rs = formatObject(val, opts, keys, ov);
+                return rs;
+              }
+            } else if (val instanceof Error) {
+              return val.stack;
+            } else if (cn == 'WeakMap' || cn == 'WeakSet') {
+              return cn + '{ [items unknown] }';
+            } else if (cn == 'Map') {
+              if (objs == 'Map') return cn + ' ' + formatMap(val, opts);
+              else return 'Map [' + objs + '] ' + formatMap(val, opts);
+            } else if (cn == 'Set') {
+              if (objs == 'Set') return cn + ' ' + formatSet(val, opts);
+              else return 'Set [' + objs + '] ' + formatSet(val, opts);
+            } else if (cn == 'Date') {
+              return val.toISOString();
+            } else if (cn == objs || objs == 'Object') {
+              return cn + ' ' + formatObject(val, opts);
+            } else {
+              return cn + ' [' + objs + '] ' + formatObject(val, opts);
+            }
+          }
+        };
+        inspect.custom = Symbol('util.inspect.custom');
+        return { defaultOptions, typedArrays, boxedPrimitives, className, objectToString, stringProp, inspect, formatObject, formatArray, formatMap, formatSet, formatPropDes, formatValue };
+      })();
+      Object.assign(util, utila);
+      delete utila;
+      inspect = util.inspect;
+      var PARR = {p: ')', a: ']', o: '}'};
+      var OPS = '.!~+-*/%^|&#><=';
+      var OPSA = {'!':'=', '~':'=',
+              '+':'=', '-':'=',
+              '*':'*=', '/':'=', '%':'=',
+              '**' : '=', '^^' : '=', '^':'^=',
+              '|':'|=', '&':'&=', '#':'=',
+              '>>': '=', '<<': '=',
+              '>':'>=', '<':'<=', '=':'='};
+      var OPSL = ['.', '!', '~', 'typeof', 'void', 'del', 'delete', '**', '^', '*', '/', '%', '+', '-', '<<', '>>', '>', '<', '>=', '<=', '==', '!=', 'is', '&', '#', '|', '&&', '||', '='];
+      var OPSKW = ['typeof', 'void', 'del', 'delete', 'is'];
+      var OPSNVF = ['=', '+=', '-=', '*=', '/=', '%=', '**=', '^=', '>>=', '<<=', '|=', '&=', '#='];
+      var OPSNVB = ['del', 'delete'];
+      var NUM = '0123456789';
+      var NUMA = '0123456789.';
+      var NUME = '0123456789+-';
+      var STR = '\'"';
+      var VAR = '0123456789!~+-*/%^|&#><=()[]{}\\/,@;:\'"` \n\r\t';
+      var VARN = '0123456789_nd!~+-*/%^|&#><=()[]{}\\/,@;:\'"` \n\r\t';
+      var BIGLIMIT = {digit: 1000, strlen: 100000};
+      var VARRESCLS = function (arr, i) {
+        return !(arr[i - 1] && arr[i - 1].type == 'op' && arr[i - 1].val == '.') && ((arr[i + 1] && arr[i + 1].type == 'op' && arr[i + 1].val == '.') || (arr[i + 1] && arr[i + 1].type == 'funccall') || (!(arr[i - 1] && arr[i - 1].type == 'op' && OPSNVB.indexOf(arr[i - 1].val) > -1) && !(arr[i + 1] && arr[i + 1].type == 'op' && OPSNVF.indexOf(arr[i + 1].val) > -1)));
+      };
+      var PROPACCCLS = function (arr, i) {
+        return (arr[i + 1] && arr[i + 1].type == 'op' && arr[i + 1].val == '.') && (!((arr[i - 1] && arr[i - 1].type == 'op' && OPSNVB.indexOf(arr[i - 1].val) > -1) || (arr[i + 3] && arr[i + 3].type == 'op' && OPSNVF.indexOf(arr[i + 3].val) > -1)) || (arr[i + 3] && arr[i + 3].type == 'op' && arr[i + 3].val == '.'));
+      };
+      function ExpUndefined() {
+        this.type = 'undefined';
+        this.val = undefined;
+      }
+      function ExpNull() {
+        this.type = 'null';
+        this.val = null;
+      }
+      function ExpBool(val) {
+        this.type = 'bool';
+        this.val = Boolean(val);
+      }
+      function ExpNumber(val) {
+        this.type = 'number';
+        this.val = Number(val);
+      }
+      function ExpBigInt(val) {
+        this.type = 'bigint';
+        this.val = BigInt(val);
+      }
+      function ExpBigNum(val) {
+        this.type = 'bignum';
+        this.val = math.bignumber(val);
+      }
+      function ExpString(val) {
+        this.type = 'string';
+        this.val = String(val);
+      }
+      function ExpVariable(val) {
+        this.type = 'variable';
+        this.val = val;
+      }
+      function ExpComplex(a, b) {
+        this.type = 'complex';
+        if (typeof a == 'string') {
+          let ra = [], bs = '', em = false;
+          for (iv in a) {
+            let i = a[iv];
+            if (i == '-' && em == false) {
+              if (ra.length != 0 || bs != '') ra.push(bs);
+              bs = '-';
+            } else if (i == '+' && em == false) {
+              ra.push(bs);
+              bs = '';
+            } else if (i != 'i') {
+              if (em == true) em = false;
+              if (i == 'e') em = true;
+              bs += i;
+            }
+          }
+          ra.push(bs);
+          a = GetNumber(ra[0]);
+          b = GetNumber(ra[1]);
+        }
+        this.a = a;
+        this.b = b;
+      }
+      function ExpMatrix(val, val2) {
+        this.type = 'matrix';
+        if (typeof val == 'number' && typeof val2 == 'number') {
+          this.w = val2;
+          this.h = val;
+          this.val = [];
+          this.val.w = this.w;
+          this.val.h = this.h;
+          for (let y = 0; y < this.h; y++) {
+            let ta = [];
+            for (let x = 0; x < this.w; x++) ta.push(0);
+            this.val.push(ta);
+          }
+        } else if ('val' in val) {
+          this.w = val.val[0].val.length;
+          this.h = val.val.length;
+          this.val = [];
+          this.val.w = this.w;
+          this.val.h = this.h;
+          for (let y = 0; y < this.h; y++) {
+            let ta = [];
+            for (let x = 0; x < this.w; x++) ta.push(val.val[y].val[x]);
+            this.val.push(ta);
+          }
+        } else {
+          this.w = val[0].length;
+          this.h = val.length;
+          this.val = val;
+          this.val.w = this.w;
+          this.val.h = this.h;
+        }
+      }
+      function ExpSurreal(val) {
+        this.type = 'surreal';
+        if (typeof val == 'object') {
+          this.valarr = val;
+        } else if (typeof val == 'string') {
+          this.valarr = ExpSurrToValArr(val);
+        } else {
+          this.valarr = [val, 0];
+        }
+      }
+      function ExpArray(val) {
+        this.type = 'array';
+        this.val = val;
+      }
+      function ExpObject(val) {
+        this.type = 'object';
+        this.val = val;
+      }
+      function ExpTArray(val) {
+        this.type = 'tarray';
+        this.val = val;
+      }
+      function ExpTObject(val) {
+        this.type = 'tobject';
+        this.val = val;
+      }
+      function ExpOperator(val) {
+        this.type = 'op';
+        this.val = val;
+      }
+      function ExpFuncCall(val) {
+        this.type = 'funccall';
+        this.val = val;
+      }
+      function ExpFunc(val, ftype, args, source) {
+        if (ftype === undefined) ftype = 'js';
+        this.type = 'func';
+        this.val = val;
+        this.ftype = ftype;
+        this.args = args;
+        this.source = source;
+      }
+      function ExpJSObj(val) {
+        this.type = 'jsobj';
+        this.val = val;
+      }
+      ExpString.prototype = {
+        get length() {
+          return GetNumber(this.val.length);
+        }
+      };
+      ExpArray.prototype = {
+        get length() {
+          return GetNumber(this.val.length);
+        }
+      };
+      ExpFunc.prototype = {
+        toString: function () {
+          if (this.ftype == 'js') return GetString(this.val.toString());
+          else return GetString(this.source);
+        },
+        get length() {
+          return this.args !== undefined ? GetNumber(this.args.length) : GetNumber(0);
+        }
+      };
+      var CL_UNDEFINED = new ExpUndefined();
+      var CL_NULL = new ExpNull();
+      var CL_TRUE = new ExpBool(true);
+      var CL_FALSE = new ExpBool(false);
+      var CL_INFINITY = new ExpNumber(Infinity);
+      var CL_NINFINITY = new ExpNumber(-Infinity);
+      var CL_NAN = new ExpNumber(NaN);
+      var CL_INFINITYD, CL_NINFINITYD, CL_NAND;
+      var CL_NZERO = new ExpNumber(-0);
+      var CL_NUMS = [];
+      for (var i = -5; i < 257; i++) CL_NUMS.push(new ExpNumber(i));
+      var CL_BIGINTS = [];
+      try { for (var i = -5; i < 257; i++) CL_BIGINTS.push(new ExpBigInt(i)); } catch(e) {}
+      var CL_OPS = {};
+      for (var i in OPSL) CL_OPS[OPSL[i]] = new ExpOperator(OPSL[i]);
+      function GetUndefined() {
+        return CL_UNDEFINED;
+      }
+      function GetNull() {
+        return CL_NULL;
+      }
+      function GetBool(val) {
+        if (val) return CL_TRUE;
+        else return CL_FALSE;
+      }
+      function GetNumber(val) {
+        var v = Number(val);
+        if (v == Infinity) return CL_INFINITY;
+        if (v == -Infinity) return CL_NINFINITY;
+        if (Object.is(v, NaN)) return CL_NAN;
+        if (Object.is(v, -0)) return CL_NZERO;
+        if (Number.isInteger(v) && v > -6 && v < 257) return CL_NUMS[v + 5];
+        return new ExpNumber(v);
+      }
+      function GetBigInt(val) {
+        if (CL_BIGINTS.length == 0) throw new Error('bigints unsupported by browser');
+        var v = BigInt(val);
+        if (v > -6 && v < 257) return CL_BIGINTS[Number(v) + 5];
+        return new ExpBigInt(v);
+      }
+      function GetBigNum(val) {
+        if (window.math === undefined) throw new Error('math.js not loaded');
+        var v = math.bignumber(val);
+        if (math.equal(v, Infinity)) return CL_INFINITYD;
+        if (math.equal(v, -Infinity)) return CL_NINFINITYD;
+        if (math.isNaN(v)) return CL_NAND;
+        return new ExpBigNum(val);
+      }
+      function GetString(val) {
+        var v = String(val);
+        return new ExpString(v);
+      }
+      function GetComplex(a, b) {
+        return new ExpComplex(a, b);
+      }
+      function GetMatrix(val, val2) {
+        return new ExpMatrix(val, val2);
+      }
+      function GetSurreal(val) {
+        return new ExpSurreal(val);
+      }
+      function GetOperator(val) {
+        if (val in CL_OPS) return CL_OPS[val];
+        return new ExpOperator(val);
+      }
+      
+      function onload_typessupp() {
+        try { CL_INFINITYD = new ExpBigNum(Infinity); CL_NINFINITYD = new ExpBigNum(-Infinity); CL_NAND = new ExpBigNum(NaN); } catch (e) {}
+      }
+      function ExpPropAcc(val1, val2) {
+        if (val1.type == 'string') return val1.val.hasOwnProperty(val2.val) ? GetString(val1.val[val2.val]) : GetUndefined();
+        var rv = val1.val.hasOwnProperty(val2.val) ? val1.val[val2.val] : undefined;
+        if (rv !== undefined) return rv;
+        if (val2.val == 'val' || val2.val == 'type') return GetUndefined();
+        else if (val2.val in val1) {
+          if (typeof val1[val2.val] == 'function') return new ExpFunc(args => val1[val2.val].apply(val1, args));
+          else return GetUndefined();
+        }
+        return GetUndefined();
+      }
+      function ExpTypeof(val) {
+        return GetString(val.type);
+      }
+      function ExpLogicalNot(val) {
+        return GetBool(!val.val);
+      }
+      function ExpBitwiseNot(val) {
+        if (val.type == 'number') return GetNumber(~val.val);
+        else if (val.type == 'bigint') return GetBigInt(~val.val);
+        else throw new Error('bad operand type(s) for unary ~: \'' + val.type + '\'');
+      }
+      function ExpUnaryPlus(val) {
+        if (val.type == 'number' || val.type == 'string') return GetNumber(+val.val);
+        else if (val.type == 'bigint') return GetBigInt(+val.val);
+        else if (val.type == 'bignum') return GetBigNum(math.unaryPlus(val.val));
+        else {
+          if (val.__pos__) {
+            let rv = val.__pos__();
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('bad operand type(s) for unary +: \'' + val.type + '\'');
+        }
+      }
+      function ExpUnaryMinus(val) {
+        if (val.type == 'number' || val.type == 'string') return GetNumber(-val.val);
+        else if (val.type == 'bigint') return GetBigInt(-val.val);
+        else if (val.type == 'bignum') return GetBigNum(math.unaryMinus(val.val));
+        else {
+          if (val.__neg__) {
+            let rv = val.__neg__();
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('bad operand type(s) for unary -: \'' + val.type + '\'');
+        }
+      }
+      function ExpExponentiate(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val ** val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          if (val1.val.toString().length * Number(val2.val) > BIGLIMIT.digit) throw new Error('large exponentation attempted, to disable warning turn off in settings.');
+          return GetBigInt(val1.val ** val2.val);
+        } else if (val1.type == 'bignum' && val2.type == 'bignum') {
+          return GetBigNum(math.pow(val1.val, val2.val));
+        } else {
+          if (val1.__pow__) {
+            let rv = val1.__pow__(val2);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for **: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpMultiply(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val * val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          if (val1.val.toString().length + val2.val.toString().length > BIGLIMIT.digit) throw new Error('large multiplication attempted, to disable warning turn off in settings.');
+          return GetBigInt(val1.val * val2.val);
+        } else if (val1.type == 'bignum' && val2.type == 'bignum') {
+          return GetBigNum(math.multiply(val1.val, val2.val));
+        } else if (val1.type == 'string' && val2.type == 'number') {
+          if (val1.val.length * val2.val > BIGLIMIT.strlen) throw new Error('large string repeat attempted, to disable warning turn off in settings.');
+          return GetString(val1.val.repeat(val2.val));
+        } else if (val1.type == 'number' && val2.type == 'string') {
+          if (val2.val.length * val1.val > BIGLIMIT.strlen) throw new Error('large string repeat attempted, to disable warning turn off in settings.');
+          return GetString(val2.val.repeat(val1.val));
+        } else {
+          if (val1.__mul__) {
+            let rv = val1.__mul__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__rmul__) {
+            let rv = val2.__rmul__(val1);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for *: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpDivide(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val / val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val / val2.val);
+        } else if (val1.type == 'bignum' && val2.type == 'bignum') {
+          return GetBigNum(math.divide(val1.val, val2.val));
+        } else {
+          if (val1.__div__) {
+            let rv = val1.__div__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__rdiv__) {
+            let rv = val2.__rdiv__(val1);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for /: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpRemainder(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val % val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val % val2.val);
+        } else if (val1.type == 'bignum' && val2.type == 'bignum') {
+          return GetBigNum(math.mod(val1.val, val2.val));
+        } else {
+          throw new Error('unsupported operand type(s) for %: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpAdd(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val + val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val + val2.val);
+        } else if (val1.type == 'bignum' && val2.type == 'bignum') {
+          return GetBigNum(math.add(val1.val, val2.val));
+        } else if (val1.type == 'string' && val2.type == 'string') {
+          return GetString(val1.val + val2.val);
+        } else {
+          if (val1.__add__) {
+            let rv = val1.__add__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__radd__) {
+            let rv = val2.__radd__(val1);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for +: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpSubtract(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val - val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val - val2.val);
+        } else if (val1.type == 'bignum' && val2.type == 'bignum') {
+          return GetBigNum(math.subtract(val1.val, val2.val));
+        } else {
+          if (val1.__sub__) {
+            let rv = val1.__sub__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__rsub__) {
+            let rv = val2.__rsub__(val1);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for -: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpBitwiseLeftShift(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val << val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val << val2.val);
+        } else {
+          throw new Error('unsupported operand type(s) for <<: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpBitwiseRightShift(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val >> val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val >> val2.val);
+        } else {
+          throw new Error('unsupported operand type(s) for >>: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpGreaterThan(val1, val2) {
+        if ((val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string') && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string')) {
+          return GetBool(val1.val > val2.val);
+        } else if (val1.type == 'bignum' && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string' || val2.type == 'bignum') || val2.type == 'bignum' && (val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string')) {
+          return GetBool(math.larger(val1.val, val2.val));
+        } else {
+          if (val1.__gt__) {
+            let rv = val1.__gt__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__le__) {
+            let rv = val2.__le__(val1);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for >: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpLessThan(val1, val2) {
+        if ((val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string') && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string')) {
+          return GetBool(val1.val < val2.val);
+        } else if (val1.type == 'bignum' && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string' || val2.type == 'bignum') || val2.type == 'bignum' && (val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string')) {
+          return GetBool(math.smaller(val1.val, val2.val));
+        } else {
+          if (val1.__lt__) {
+            let rv = val1.__lt__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__ge__) {
+            let rv = val2.__ge__(val1);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for <: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpGreaterThanEqual(val1, val2) {
+        if ((val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string') && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string')) {
+          return GetBool(val1.val >= val2.val);
+        } else if (val1.type == 'bignum' && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string' || val2.type == 'bignum') || val2.type == 'bignum' && (val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string')) {
+          return GetBool(math.largerEq(val1.val, val2.val));
+        } else {
+          if (val1.__ge__) {
+            let rv = val1.__ge__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__lt__) {
+            let rv = val2.__lt__(val1);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for >=: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpLessThanEqual(val1, val2) {
+        if ((val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string') && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string')) {
+          return GetBool(val1.val <= val2.val);
+        } else if (val1.type == 'bignum' && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string' || val2.type == 'bignum') || val2.type == 'bignum' && (val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string')) {
+          return GetBool(math.smallerEq(val1.val, val2.val));
+        } else {
+          if (val1.__le__) {
+            let rv = val1.__le__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__gt__) {
+            let rv = val2.__gt__(val1);
+            if (rv !== undefined) return rv;
+          }
+          throw new Error('unsupported operand type(s) for <=: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpEqual(val1, val2) {
+        if ((val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string') && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string')) {
+          return GetBool(val1.val === val2.val);
+        } else if (val1.type == 'bignum' && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string' || val2.type == 'bignum') || val2.type == 'bignum' && (val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string')) {
+          return GetBool(math.equal(val1.val, val2.val));
+        } else {
+          if (val1.__eq__) {
+            let rv = val1.__eq__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__eq__) {
+            let rv = val2.__eq__(val1);
+            if (rv !== undefined) return rv;
+          }
+          return ExpIs(val1, val2);
+        }
+      }
+      function ExpNotEqual(val1, val2) {
+        if ((val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string') && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string')) {
+          return GetBool(val1.val !== val2.val);
+        } else if (val1.type == 'bignum' && (val2.type == 'number' || val2.type == 'bigint' || val2.type == 'string' || val2.type == 'bignum') || val2.type == 'bignum' && (val1.type == 'number' || val1.type == 'bigint' || val1.type == 'string')) {
+          return GetBool(math.unequal(val1.val, val2.val));
+        } else {
+          if (val1.__ne__) {
+            let rv = val1.__ne__(val2);
+            if (rv !== undefined) return rv;
+          }
+          if (val2.__ne__) {
+            let rv = val2.__ne__(val1);
+            if (rv !== undefined) return rv;
+          }
+          return ExpLogicalNot(ExpIs(val1, val2));
+        }
+      }
+      function ExpIs(val1, val2) {
+        return GetBool(Object.is(val1, val2));
+      }
+      function ExpBitwiseAnd(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val & val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val & val2.val);
+        } else {
+          throw new Error('unsupported operand type(s) for &: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpBitwiseXor(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val ^ val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val ^ val2.val);
+        } else {
+          throw new Error('unsupported operand type(s) for #: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpBitwiseOr(val1, val2) {
+        if (val1.type == 'number' && val2.type == 'number') {
+          return GetNumber(val1.val | val2.val);
+        } else if (val1.type == 'bigint' && val2.type == 'bigint') {
+          return GetBigInt(val1.val | val2.val);
+        } else {
+          throw new Error('unsupported operand type(s) for |: \'' + val1.type + '\' and \'' + val2.type + '\'');
+        }
+      }
+      function ExpLogicalAnd(val1, val2) {
+        return GetBool(val1.val && val2.val);
+      }
+      function ExpLogicalOr(val1, val2) {
+        return GetBool(val1.val || val2.val);
+      }
+      ExpComplex.prototype = {
+        real: function () {
+          return this.a;
+        },
+        imag: function () {
+          return this.b;
+        },
+        __pos__: function () {
+          return GetComplex(ExpUnaryPlus(this.a), ExpUnaryPlus(this.b));
+        },
+        __neg__: function () {
+          return GetComplex(ExpUnaryMinus(this.a), ExpUnaryMinus(this.b));
+        },
+        __add__: function (that) {
+          if (that.type == 'complex') {
+            return GetComplex(ExpAdd(this.a, that.a), ExpAdd(this.b, that.b));
+          } else {
+            return GetComplex(ExpAdd(this.a, that), ExpUnaryPlus(this.b));
+          }
+        },
+        __radd__: function (that) {
+          return GetComplex(ExpAdd(that, this.a), ExpUnaryPlus(this.b));
+        },
+        __sub__: function (that) {
+          if (that.type == 'complex') {
+            return GetComplex(ExpSubtract(this.a, that.a), ExpSubtract(this.b, that.b));
+          } else {
+            return GetComplex(ExpSubtract(this.a, that), ExpUnaryPlus(this.b));
+          }
+        },
+        __rsub__: function (that) {
+          return GetComplex(ExpSubtract(that, this.a), ExpUnaryMinus(this.b));
+        },
+        __mul__: function (that) {
+          if (that.type == 'complex') {
+            return GetComplex(
+              ExpSubtract(ExpMultiply(this.a, that.a), ExpMultiply(this.b, that.b)),
+              ExpAdd(ExpMultiply(this.a, that.b), ExpMultiply(this.b, that.a))
+            )
+          } else {
+            return GetComplex(ExpMultiply(this.a, that), ExpMultiply(this.b, that));
+          }
+        },
+        __rmul__: function (that) {
+          return GetComplex(ExpMultiply(that, this.a), ExpMultiply(that, this.b));
+        },
+        __div__: function (that) {
+          if (that.type == 'complex') {
+            return GetComplex(
+              ExpDivide(
+                ExpAdd(ExpMultiply(this.a, that.a), ExpMultiply(this.b, that.b)),
+                ExpAdd(ExpExponentiate(that.a, GetNumber(2)), ExpExponentiate(that.b, GetNumber(2)))
+              ),
+              ExpDivide(
+                ExpSubtract(ExpMultiply(this.a, that.a), ExpMultiply(this.b, that.b)),
+                ExpAdd(ExpExponentiate(that.a, GetNumber(2)), ExpExponentiate(that.b, GetNumber(2)))
+              )
+            );
+          } else {
+            return GetComplex(ExpDivide(this.a, that), ExpDivide(this.b, that));
+          }
+        },
+        __pow__: function (that) {
+          if (that.type == 'complex') return;
+          let dist = ((this.a.val ** 2 + this.b.val ** 2) ** 0.5) ** that.val;
+          let ang = (Math.atan2(this.b.val, this.a.val) * that.val) % (Math.PI * 2);
+          return GetComplex(GetNumber(Math.cos(ang) * dist), GetNumber(Math.sin(ang) * dist));
+        },
+        conjug: function (that) {
+          return GetComplex(ExpUnaryPlus(this.a), ExpUnaryMinus(this.b));
+        },
+      };
+      ExpMatrix.prototype = {
+        __pos__: function () {
+          let rm = GetMatrix(this.h, this.w);
+          for (let y = 0; y < this.h; y++) {
+            for (let x = 0; x < this.h; x++) {
+              rm.val[y][x] = ExpUnaryPlus(this.val[y][x]);
+            }
+          }
+          return rm;
+        },
+        __neg__: function () {
+          let rm = GetMatrix(this.h, this.w);
+          for (let y = 0; y < this.h; y++) {
+            for (let x = 0; x < this.h; x++) {
+              rm.val[y][x] = ExpUnaryMinus(this.val[y][x]);
+            }
+          }
+          return rm;
+        },
+        __add__: function (that) {
+          if (that.type != 'matrix') return;
+          if (this.w != that.w || this.h != that.h) throw new Error('mismatching matrix sizes');
+          let rm = GetMatrix(this.h, this.w);
+          for (let y = 0; y < this.h; y++) {
+            for (let x = 0; x < this.h; x++) {
+              rm.val[y][x] = ExpAdd(this.val[y][x], that.val[y][x]);
+            }
+          }
+          return rm;
+        },
+        __sub__: function (that) {
+          if (that.type != 'matrix') return;
+          if (this.w != that.w || this.h != that.h) throw new Error('mismatching matrix sizes');
+          let rm = GetMatrix(this.h, this.w);
+          for (let y = 0; y < this.h; y++) {
+            for (let x = 0; x < this.h; x++) {
+              rm.val[y][x] = ExpSubtract(this.val[y][x], that.val[y][x]);
+            }
+          }
+          return rm;
+        },
+        __mul__: function (that) {
+          if (that.type == 'number') {
+            let rm = GetMatrix(this.h, this.w);
+            for (let y = 0; y < this.h; y++)
+              for (let x = 0; x < this.h; x++)
+                rm.val[y][x] = ExpMultiply(this.val[y][x], that);
+            return rm;
+          } else if (that.type == 'matrix') {
+            let rm = GetMatrix(this.h, that.w);
+            for (let y = 0; y < rm.h; y++) {
+              for (let x = 0; x < rm.w; x++) {
+                let s = GetNumber(0);
+                for (let i = 0; i < this.w; i++) s = ExpAdd(s, ExpMultiply(this.get(y, i), that.get(i, x)));
+                rm.set(y, x, s);
+              }
+            }
+            return rm;
+          }
+        },
+        __rmul__: function (that) {
+          if (that.type == 'number') {
+            let rm = GetMatrix(this.h, this.w);
+            for (let y = 0; y < this.h; y++)
+              for (let x = 0; x < this.h; x++)
+                rm.val[y][x] = ExpMultiply(that, this.val[y][x]);
+            return rm;
+          }
+        },
+        get: function (y, x) {
+          return this.val[y][x];
+        },
+        set: function (y, x, val) {
+          this.val[y][x] = val;
+        },
+        getrow: function(y) {
+          let ar = [];
+          for (var x = 0; x < this.w; x++) ar.push(this.get(y, x));
+        },
+        getcol: function(x) {
+          let ar = [];
+          for (var y = 0; y < this.h; y++) ar.push(this.get(y, x));
+        },
+        submat: function(y, x) {
+          let rm = GetMatrix(this.h - 1, this.w - 1);
+          let jval = 0;
+          for (let j = 0; j < this.h; j++) {
+            if (j != y) {
+              let ival = 0;
+              for (let i = 0; i < this.w; i++) {
+                if (i != x) {
+                  rm.set(jval, ival, this.get(j, i));
+                  ival += 1;
+                }
+              }
+              jval += 1;
+            }
+          }
+          return rm;
+        },
+        transp: function () {
+          let rm = GetMatrix(this.w, this.h);
+          for (let j = 0; j < this.h; j++)
+            for (let i = 0; i < this.w; i++)
+              rm.set(i, j, this.get(j, i));
+          return rm;
+        },
+        det: function () {
+          if (this.w != this.h) throw new Error('cannot calculate the determinant of a non square matrix');
+          if (this.w == 1) return this.val[0][0];
+          else if (this.w == 2) return ExpSubtract(ExpMultiply(this.val[0][0], this.val[1][1]), ExpMultiply(this.val[0][1], this.val[1][0]));
+          else {
+            let ds = GetNumber(0);
+            for (let i = 0; i < this.w; i++) {
+              ds = ExpAdd(ds, ExpMultiply(GetNumber((-1) ** i), ExpMultiply(this.get(0, i), this.submat(0, i).det())));
+            }
+            return ds;
+          }
+        },
+        adj: function () {
+          if (this.w != this.h) throw new Error('cannot calculate the adjuglate of a non-square matrix');
+          if (this.w == 1) return Matrix([[GetNumber(1)]]);
+          else if (this.w == 2) {
+            return GetMatrix([
+              [this.get(1, 1), ExpUnaryMinus(this.get(0, 1))],
+              [ExpUnaryMinus(this.get(1, 0)), this.get(0, 0)]
+            ]);
+          } else if (this.w == 3) {
+            let rm = this.transp();
+            let rm2 = GetMatrix(this.w, this.h);
+            for (let j = 0; j < rm.h; j++) {
+              for (let i = 0; i < rm.w; i++) {
+                rm2.set(j, i, ExpMultiply(GetNumber((-1) ** (j + i)), rm.submat(j, i).det()));
+              }
+            }
+            return rm2;
+          }
+        },
+        inv: function () {
+          if (this.w != this.h) throw new Error('cannot calculate the inverse of a non-square matrix');
+          return ExpMultiply(ExpDivide(GetNumber(1), this.det()), this.adj());
+        }
+      };
+      ExpSurreal.prototype = {
+        __pos__: function() {
+          let rs = GetSurreal(this.valarr.map(x => x.map(y => ExpUnaryPlus(y))));
+          for (let i in rs.valarr) {
+            rs.valarr[i][0] = ExpUnaryPlus(rs.valarr[i][0]);
+            rs.valarr[i][1] = ExpUnaryPlus(rs.valarr[i][1]);
+          }
+          return rs;
+        },
+        __neg__: function() {
+          let rs = GetSurreal(this.valarr.map(x => x.map(y => ExpUnaryPlus(y))));
+          for (let i in rs.valarr) {
+            rs.valarr[i][0] = ExpUnaryMinus(rs.valarr[i][0]);
+            rs.valarr[i][1] = ExpUnaryPlus(rs.valarr[i][1]);
+          }
+          return rs;
+        },
+        __add__: function(that) {
+          if (that.type != 'surreal') {
+            let rs = ExpUnaryPlus(this);
+            ExpSurrAddTerm(rs.valarr, GetNumber(0), that);
+            rs.valarr = ExpSurrSimpArr(rs.valarr);
+            return rs;
+          } else {
+            let rs = ExpUnaryPlus(this);
+            for (let iv in that.valarr) {
+              let i = that.valarr[iv];
+              ExpSurrAddTerm(rs.valarr, i[1], i[0]);
+            }
+            rs.valarr = ExpSurrSimpArr(rs.valarr);
+            return rs;
+          }
+        },
+        __radd__: function (that) {
+          let rs = ExpUnaryPlus(this);
+          ExpSurrAddTerm(rs.valarr, GetNumber(0), that);
+          rs.valarr = ExpSurrSimpArr(rs.valarr);
+          return rs;
+        },
+        __sub__: function (that) {
+          if (that.type != 'surreal') {
+            let rs = ExpUnaryPlus(this);
+            ExpSurrAddTerm(rs.valarr, GetNumber(0), ExpUnaryMinus(that));
+            rs.valarr = ExpSurrSimpArr(rs.valarr);
+            return rs;
+          } else {
+            let rs = ExpUnaryPlus(this);
+            for (let iv in that.valarr) {
+              let i = that.valarr[iv];
+              ExpSurrAddTerm(rs.valarr, i[1], ExpUnaryMinus(i[0]));
+            }
+            rs.valarr = ExpSurrSimpArr(rs.valarr);
+            return rs;
+          }
+        },
+        __rsub__: function (that) {
+          let rs = ExpUnaryMinus(this);
+          ExpSurrAddTerm(rs.valarr, GetNumber(0), that);
+          rs.valarr = ExpSurrSimpArr(rs.valarr);
+          return rs;
+        },
+        __mul__: function (that) {
+          if (that.type != 'surreal') {
+            let rs = GetSurreal([[GetNumber(0), GetNumber(0)]]);
+            for (let iv in this.valarr) {
+              let i = this.valarr[iv];
+              ExpSurrAddTerm(rs.valarr, i[1], ExpMultiply(i[0], that));
+            }
+            rs.valarr = ExpSurrSimpArr(rs.valarr);
+            return rs;
+          } else {
+            let rs = GetSurreal([[GetNumber(0), GetNumber(0)]]);
+            for (let iv in that.valarr) {
+              let i = that.valarr[iv];
+              for (let jv in this.valarr) {
+                let j = this.valarr[jv];
+                ExpSurrAddTerm(rs.valarr, ExpAdd(j[1], i[1]), ExpMultiply(j[0], i[0]));
+              }
+            }
+            rs.valarr = ExpSurrSimpArr(rs.valarr);
+            return rs;
+          }
+        },
+        __rmul__: function (that) {
+          let rs = GetSurreal([[GetNumber(0), GetNumber(0)]]);
+          for (let iv in this.valarr) {
+            let i = this.valarr[iv];
+            ExpSurrAddTerm(rs.valarr, i[1], ExpMultiply(that, i[0]));
+          }
+          rs.valarr = ExpSurrSimpArr(rs.valarr);
+          return rs;
+        },
+        __div__: function (that) {
+          return this.__mul__(ExpDivide(GetNumber(1), that));
+        },
+        __rdiv__: function (that) {
+          return this.recip().__mul__(that);
+        },
+        __pow__: function (that) {
+          if (self.valarr.length == 1) {
+            return GetSurreal([[ExpExponentiate(this.valarr[0][0], that), ExpMultiply(this.valarr[0][1], that)]]);
+          }
+        },
+        __gt__: function (that) {
+          return GetBool(ExpSurrCompare(this, that) > 0);
+        },
+        __lt__: function (that) {
+          return GetBool(ExpSurrCompare(this, that) < 0);
+        },
+        __ge__: function (that) {
+          return GetBool(ExpSurrCompare(this, that) >= 0);
+        },
+        __le__: function (that) {
+          return GetBool(ExpSurrCompare(this, that) <= 0);
+        },
+        __eq__: function (that) {
+          return GetBool(ExpSurrCompare(this, that) == 0);
+        },
+        __ne__: function (that) {
+          return GetBool(ExpSurrCompare(this, that) != 0);
+        },
+        recip: function () {
+          return GetSurreal([[ExpDivide(GetNumber(1), this.valarr[0][0]), ExpUnaryMinus(this.valarr[0][1])]]);
+        },
+        to_float: function() {
+          for (let iv in this.valarr) {
+            let i = this.valarr[iv];
+            if (ExpGreaterThan(i[1], GetNumber(0)).val) {
+              if (ExpGreaterThan(i[0], GetNumber(0)).val) {
+                return GetNumber(Infinity);
+              } else {
+                return GetNumber(-Infinity);
+              }
+            } else if (ExpEqual(i[1], GetNumber(0)).val) {
+              return ExpUnaryPlus(i[0]);
+            } else if (ExpLessThan(i[1], GetNumber(0)).val) {
+              if (ExpGreaterThanEqual(i[0], GetNumber(0)).val) {
+                return GetNumber(0);
+              } else {
+                return GetNumber(-0);
+              }
+            }
+          }
+        }
+      };
+      function ExpSurrAddTerm(valarr, term, val) {
+        let ind = ExpSurrHasTerm(valarr, term);
+        if (ind > -1) valarr[ind][0] = ExpAdd(valarr[ind][0], val);
+        else {
+          valarr.push([val, term]);
+          valarr = ExpSurrSortArr(valarr);
+        }
+      }
+      function ExpSurrHasTerm(valarr, term) {
+        for (let i in valarr) if (valarr[i][1].val == term.val) return parseInt(i);
+        return -1;
+      }
+      function ExpSurrCompareP(va1, va2) {
+        if (va1[0].val >= 0 && va2[0].val >= 0) {
+          if (va1[1].val > va2[1].val) return 1;
+          else if (va2[1].val > va1[1].val) return -1;
+          else return 0;
+        } else if (va1[0].val >= 0 && va2[0].val < 0) {
+          return 1;
+        } else if (va2[0].val >= 0 && va1[0].val < 0) {
+          return -1;
+        } else if (va1[0].val < 0 && va2[0].val < 0) {
+          if (va1[1].val > va2[1].val) return -1;
+          else if (va2[1].val > va1[1].val) return 1;
+          else return 0;
+        }
+      }
+      function ExpSurrCompare(self, other) {
+        if (other.type == 'surreal' && self.type != 'surreal') return ExpUnaryMinus(ExpSurrCompare(other, self));
+        if (self.type != 'surreal' && other.type != 'surreal') {
+          if (self.val > other.val) return 1;
+          else if (self.val == other.val) return 0;
+          else if (self.val < other.val) return -1;
+          return 0;
+        }
+        if (other.type == 'surreal') {
+          for (let i in self.valarr) {
+            cv = ExpSurrCompareP(self.valarr[i], other.valarr[i]);
+            if (cv > 0) return 1;
+            else if (cv < 0) return -1;
+            else if (cv == 0) {
+              if (self.valarr[i][0] > other.valarr[i][0]) return 1;
+              else if (other.valarr[i][0] > self.valarr[i][0]) return -1;
+            }
+          }
+          return 0;
+        } else {
+          for (iv in self.valarr) {
+            let i = self.valarr[iv].map(x => x.val);
+            if (i[1] > 0) {
+              if (i[0] > 0) return 1;
+              else return -1;
+            } else if (i[1] == 0) {
+              if (i[0] > other.val) return 1;
+              else if (i[0] == other.val) return 0;
+              else if (i[0] < other.val) return -1;
+            } else if (i[1] < 0) {
+              if (other.val > 0) return -1;
+              else if (other.val < 0) return 1;
+              else if (i[0] > 0) return 1;
+              else if (i[0] < 0) return -1;
+              else return 0;
+            }
+          }
+          return 0;
+        }
+      }
+      function ExpSurrToValArr(val) {
+        valarr = [];
+        valstr = '';
+        valexp = '';
+        valmode = 'num';
+        valbegin = true;
+        for (var i = 0; i < val.length; i++) {
+          if (valmode == 'num') {
+            if (val[i] == '-' && valbegin) {
+              valstr += '-';
+              valbegin = false;
+            } else if ('0123456789.e'.indexOf(val[i]) > -1) {
+              valstr += val[i];
+            } else if (val[i] == 'w') {
+              if (valstr == '') valstr = '1';
+              else if (valstr == '-') valstr = '-1';
+              valexp = '';
+              valmode = 'numtexp';
+            } else if ('+-'.indexOf(val[i]) > -1) {
+              valarr.push([GetNumber(valstr), GetNumber(0)]);
+              if (val[i] == '-') valstr = '-';
+              else valstr = '';
+              valmode = 'num';
+              valbegin = true;
+            }
+            if (valbegin) valbegin = false;
+          } else if (valmode == 'numtexp') {
+            if (val[i] == '^') {
+              valmode = 'exp';
+              valbegin = true;
+            } else if ('+-'.indexOf(val[i]) > -1) {
+              valarr.push([GetNumber(valstr), GetNumber(1)])
+              if (val[i] == '-') valstr = '-';
+              else valstr = '';
+              valexp = '';
+              valmode = 'num';
+              valbegin = true;
+            } else {
+              valarr.push([GetNumber(valstr), GetNumber(valexp)]);
+              valexp = '';
+              valmode = 'num';
+              valbegin = true;
+            }
+          } else if (valmode == 'exp') {
+            if (val[i] == '-' && valbegin) valexp = '-';
+            else if ('0123456789.e'.indexOf(val[i]) > -1) valexp += val[i];
+            else if ('+-'.indexOf(val[i]) > -1) {
+              valarr.push([GetNumber(valstr), GetNumber(valexp)]);
+              if (val[i] == '-') valstr = '-';
+              else valstr = '';
+              valexp = '';
+              valmode = 'num';
+              valbegin = true;
+            }
+            if (valbegin) valbegin = false;
+          }
+        }
+        if (valmode == 'numtexp') {
+          valarr.push([GetNumber(valstr), GetNumber(1.0)]);
+        } else {
+          if (valstr.length > 0) {
+            if (valexp.length > 0) valarr.push([GetNumber(valstr), GetNumber(valexp)]);
+            else valarr.push([GetNumber(valstr), GetNumber(0)]);
+          }
+        }
+        return valarr;
+      }
+      function ExpSurrToStr(valarr) {
+        let valstr = '';
+        for (i in valarr) {
+          if (valarr[i][0].val >= 0 && i != 0) valstr += '+';
+          if (valarr[i][0].val == -1 && valarr[i][1].val != 0) valstr += '-';
+          else if (valarr[i][0].val != 1 || valarr[i][1].val == 0) {
+            valstr += valarr[i][0].val;
+          }
+          if (valarr[i][1].val != 0) {
+            if (valarr[i][1].val == 1) valstr += 'w';
+            else {
+              valstr += 'w^' + valarr[i][1].val;
+            }
+          }
+        }
+        return valstr;
+      }
+      function ExpSurrSortArr(valarr) {
+        let ra = new Array(valarr);
+        return valarr.sort(function (a, b) {
+          if (a[1].val > b[1].val) return -1;
+          else if (a[1].val < b[1].val) return 1;
+          else if (a[1].val == b[1].val) return 0;
+        });
+      }
+      function ExpSurrSimpArr(valarr) {
+        valarr = ExpSurrSortArr(valarr);
+        let ra = [];
+        for (let i in valarr) if (valarr[i][0].val != 0.0) ExpSurrAddTerm(ra, valarr[i][1], valarr[i][0]);
+        if (ra.length == 0) return [[GetNumber(0), GetNumber(0)]];
+        return ra;
+      }
+      function FuncCall(nam, val) {
+        /*nam = nam[0].val;
+        if (nam == 'mat') return GetMatrix(val);
+        else*/
+        return new ExpFuncCall(val);
+      }
+      function FuncCallProp(func, val, globals, locals) {
+        if (func.type != 'func') throw new Error('variable not a function');
+        if (func.ftype == 'js') return func.val(val, globals, locals);
+        else if (func.ftype == 'comp') {
+          var ld = {args: val};
+          for (let i in func.args) {
+            if (i < val.length) ld[func.args[i]] = val[i];
+            else ld[func.args[i]] == GetUndefined();
+          }
+          return ParseStmtArr(func.val, globals, ld)[0][0];
+        }
+      }
+      function Mod1(x) {
+        if (x >= 0) return x % 1;
+        else return (1 - (-x % 1)) % 1;
+      }
+      function pow(b, x) {
+        return Math.pow(b, x);
+      }
+      function log(v, b) {
+        if (b == 2) return Math.log2(v);
+        else if (b == 10) return Math.log10(v);
+        else if (b === undefined) return Math.log(v);
+        return Math.log(v) / Math.log(b);
+      }
+      function tet(b, x) {
+        let val;
+        if (x < -1) {
+          val = tet(b, Mod1(x)-1);
+          while (x <= -1) {
+            if (isNaN(val)) break;
+            val = log(val, b);
+            x++;
+          }
+        } else if (x <= 0) {
+          if (x == -1) {
+            val = 0;
+          } else {
+            val = 1 + ((2 * log(b)) / (1 + log(b))) * x - ((1 - log(b)) / (1 + log(b))) * pow(x, 2);
+          }
+        } else if (x > 0) {
+          val = tet(b, Mod1(x)-1);
+          while (x >= 0) {
+            if (val == Infinity) break;
+            val = pow(b, val);
+            x--;
+          }
+        }
+        return val;
+      }
+      function sroot(v, x) {
+      	let xv = 2;
+      	let min = 1;
+      	let max = 1e12;
+      	let ct = 1000;
+      	while (Math.abs(max - min) > 1e-12) {
+      	  let val = tet(xv, x);
+      	  if (val > v) {
+      	    max = xv;
+      	    xv = (min + xv) / 2;
+      	  } else if (val < v) {
+      	    min = xv;
+      	    xv = (xv + max) / 2;
+      	  } else {
+      	    break;
+      	  }
+      	  if (!--ct) break;
+      	}
+      	return xv;
+      }
+      function slog(v, b) {
+      	if (v < 0) {
+          try {
+            return slog(pow(b, v), b) - 1;
+          } catch (e) {
+            return -Infinity;
+          }
+      	} else if (v <= 1) {
+      		return -1 + ((2 * log(b)) / (1 + log(b))) * v + ((1 - log(b)) / (1 + log(b))) * pow(v, 2);
+      	} else if (v > 1) {
+          try {
+            return slog(log(v, b), b) + 1;
+          } catch (e) {
+            return Infinity;
+          }
+      	}
+      }
+      function mod1math(v) {
+        return math.mod(v, 1);
+      }
+      function powmath(b, x) {
+        return math.pow(b, x);
+      }
+      function logmath(v, b) {
+        if (math.equal(b, 2)) return math.log2(v);
+        else if (math.equal(b, 10)) return math.log10(v);
+        else if (b === undefined) return math.log(v);
+        return math.log(v, b);
+      }
+      function tetmath(b, x) {
+        let val;
+        if (math.smaller(x, math.bignumber('-1'))) {
+          val = tetmath(b, math.subtract(mod1math(x), math.bignumber('1')));
+          while (math.smallerEq(x, math.bignumber('-1'))) {
+            if (math.isNaN(val)) break;
+            val = logmath(val, b);
+            x = math.add(x, math.bignumber('1'));
+          }
+        } else if (math.smallerEq(x, math.bignumber('0'))) {
+          if (math.equal(x, math.bignumber('-1'))) {
+            val = math.bignumber('0');
+          } else {
+            val = math.add(math.bignumber('1'), 
+              math.subtract(
+                math.multiply(
+                  math.divide(
+                    math.multiply(math.bignumber('2'), logmath(b)),
+                    math.add(math.bignumber('1'), logmath(b))
+                  ),
+                  x
+                ),
+                math.multiply(
+                  math.divide(
+                    math.subtract(math.bignumber('1'), logmath(b)),
+                    math.add(math.bignumber('1'), logmath(b))
+                  ),
+                  powmath(x, math.bignumber('2'))
+                )
+              )
+            );
+          }
+        } else if (math.larger(x, math.bignumber('0'))) {
+          val = tetmath(b, math.subtract(mod1math(x), math.bignumber('1')));
+          while (math.largerEq(x, math.bignumber('0'))) {
+            if (math.equal(val, math.bignumber('Infinity'))) break;
+            val = powmath(b, val);
+            x = math.subtract(x, 1);
+          }
+        }
+        return val;
+      }
+      function srootmath(v, x) {
+      	let xv = math.bignumber('2');
+      	let min = math.bignumber('1');
+      	let max = math.bignumber('1e12');
+      	let ct = 1000;
+      	while (math.larger(math.abs(math.subtract(max, min)), math.bignumber('1e-64'))) {
+      	  let val = tetmath(xv, x);
+      	  if (math.larger(val, v)) {
+      	    max = xv;
+      	    xv = math.divide(math.add(min, xv), math.bignumber('2'));
+      	  } else if (math.smaller(val, v)) {
+      	    min = xv;
+      	    xv = math.divide(math.add(xv, max), math.bignumber('2'));
+      	  } else {
+      	    break;
+      	  }
+      	  if (!--ct) break;
+      	}
+      	return xv;
+      }
+      function slogmath(v, b) {
+      	if (math.smaller(v, math.bignumber('0'))) {
+          try {
+            return math.subtract(slogmath(powmath(b, v), b), math.bignumber('1'));
+          } catch (e) {
+            return math.bignumber('-Infinity');
+          }
+      	} else if (math.smallerEq(v, math.bignumber('1'))) {
+      		return math.add(
+            math.add(
+              math.bignumber('-1'),
+              math.multiply(
+                math.divide(
+                  math.multiply(math.bignumber('2'), logmath(b)),
+                  math.add(math.bignumber('1'), logmath(b))
+                ),
+                v
+              )
+            ),
+            math.multiply(
+              math.divide(
+                math.subtract(math.bignumber('1'), logmath(b)),
+                math.add(math.bignumber('1'), logmath(b))
+              ),
+              math.pow(v, math.bignumber('2'))
+            )
+          );
+      	} else if (math.larger(v, math.bignumber('1'))) {
+          try {
+            return math.add(slogmath(logmath(v, b), b), math.bignumber('1'));
+          } catch (e) {
+            return math.bignumber('Infinity');
+          }
+      	}
+      }
+      function wtn(b, x) {
+        return pow(b, pow(b, (x - 1)));
+      }
+      function wpn(b, x) {
+        let val = b;
+        for (let i = 0; i < x - 1; i++) val = tet(val, b);
+        return val;
+      }
+      function g(a, b, c) {
+        if (a > 3) return g(a-1,g(a-1,b,c),c);
+        if (a == 0) return c + b;
+        else if (a == 1) return c * b;
+        else if (a == 2) return pow(c, b);
+        else if (a == 3) return tet(c, b);
+      }
+      function gamma(n) {
+        let g = 7,
+            p = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059, 12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+        if (n < 0.5) {
+          return Math.PI / Math.sin(n * Math.PI) / gamma(1 - n);
+        } else {
+          n--;
+          let x = p[0];
+          for (let i = 1; i < g + 2; i++) x += p[i] / (n + i);
+          let t = n + g + 0.5;
+          return Math.sqrt(2 * Math.PI) * Math.pow(t, (n + 0.5)) * Math.exp(-t) * x;
+        }
+      }
+      function randBigInt32() {
+        return BigInt(Math.floor(Math.random() * 4294967296));
+      }
+      function gaussianBoxMuller() {
+        let u = Math.random();
+        let v = Math.random();
+        return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+      }
+      var varns = {
+        undefined: GetUndefined(),
+        None: GetUndefined(),
+        null: GetNull(),
+        true: GetBool(true),
+        True: GetBool(true),
+        false: GetBool(false),
+        False: GetBool(false),
+        NaN: GetNumber(NaN),
+        nan: GetNumber(NaN),
+        Infinity: GetNumber(Infinity),
+        infinity: GetNumber(Infinity),
+        inf: GetNumber(Infinity),
+        Infinityd: GetUndefined(),
+        infinityd: GetUndefined(),
+        infd: GetUndefined(),
+        NaNd: GetUndefined(),
+        nand: GetUndefined(), 
+        i: GetComplex('0+1i'),
+        w: GetSurreal('w'),
+        pi: GetNumber(Math.PI),
+        deg: GetNumber(Math.PI / 180),
+        rad: GetNumber(180 / Math.PI),
+        e: GetNumber(Math.E),
+        phi: GetNumber((1 + 5 ** 0.5) / 2),
+        sqrt2: GetNumber(Math.SQRT2),
+        sqrt1_2: GetNumber(Math.SQRT1_2),
+        ln2: GetNumber(Math.LN2),
+        ln10: GetNumber(Math.LN10),
+        pid: GetUndefined(),
+        degd: GetUndefined(),
+        radd: GetUndefined(),
+        ed: GetUndefined(),
+        phid: GetUndefined(),
+        sqrt2d: GetUndefined(),
+        sqrt1_2d: GetUndefined(),
+        ln2d: GetUndefined(),
+        ln10d: GetUndefined(),
+        Boolean: new ExpFunc(function (args) {
+          return GetBool(args[0].val);
+        }),
+        Number: new ExpFunc(function (args) {
+          return GetNumber(args[0].val);
+        }),
+        BigInt: new ExpFunc(function (args) {
+          return GetBigInt(args[0].val);
+        }),
+        BigNum: new ExpFunc(function (args) {
+          if (args[0].type == 'bigint') return GetBigNum(args[0].val.toString());
+          else return GetBigNum(args[0].val);
+        }),
+        String: new ExpFunc(function (args) {
+          return GetString(args[0].val);
+        }),
+        Array: new ExpFunc(function (args) {
+          if (args.length == 0) {
+            return new ExpArray([]);
+          } else if (args.length == 1) {
+            return new ExpArray(args[0].val);
+          } else {
+            return new ExpArray(args);
+          }
+        }),
+        Object: new ExpFunc(function (args) {
+          if (args.length == 0) return new ExpObject({});
+        }),
+        Function: new ExpFunc(function (args) {
+          if (args.length == 1) {
+            if (args[0].type == 'string') return new ExpFunc(ToStmtArr(args[0].val), 'comp', [], args[0].val);
+          } else if (args.length == 2) {
+            return new ExpFunc(ToStmtArr(args[1].val), 'comp', args[0].val.map(x => x.val), args[1].val);
+          }
+        }),
+        Complex: new ExpFunc(function (args) {
+          if (args[0].type == 'string') return GetComplex(args[0].val);
+          else if (args.length == 1) return GetComplex(args[0], GetNumber(0));
+          else return GetComplex(args[0], args[1]);
+        }),
+        Matrix: new ExpFunc(function (args) {
+          if (args.length == 1) return GetMatrix(args[0]);
+          else return GetMatrix(args[0].val, args[1].val);
+        }),
+        Surreal: new ExpFunc(function (args) {
+          if (args[0].type == 'array') {
+            return GetSurreal(args[0].val.map(x => x.val));
+          } else if (args[0].type == 'string') {
+            return GetSurreal(args[0].val);
+          } else if (args[0].type == 'number') {
+            return GetSurreal([[args[0].val, GetNumber(0)]]);
+          }
+        }),
+        globals: new ExpFunc(function (args, globals, locals) {
+          return globals;
+        }),
+        locals: new ExpFunc(function (args, globals, locals) {
+          return locals;
+        }),
+        compileExpr: new ExpFunc(function (args) {
+          if (args[0].type == 'string') return new ExpJSObj(ToExpArr(args[0].val));
+        }),
+        evalExpr: new ExpFunc(function (args, globals, locals) {
+          let ca;
+          if (args[0].type == 'string') {
+            ca = ToExpArr(args[0].val);
+          } else if (args[0].type == 'jsobj') {
+            ca = args[0].val;
+          }
+          if (args.length == 1) return ParseExpArr(ca, globals, locals)[0][0];
+          else if (args.length == 2) return ParseExpArr(ca, args[1].val, args[1].val)[0][0];
+          else return ParseExpArr(ca, args[1].val, args[2].val)[0][0];
+        }),
+        compile: new ExpFunc(function (args) {
+          if (args[0].type == 'string') return new ExpJSObj(ToStmtArr(args[0].val));
+        }),
+        eval: new ExpFunc(function (args, globals, locals) {
+          let ca;
+          if (args[0].type == 'string') {
+            ca = ToStmtArr(args[0].val);
+          } else if (args[0].type == 'jsobj') {
+            ca = args[0].val;
+          }
+          if (args.length == 1) return ParseStmtArr(ca, globals, locals)[0][0];
+          else if (args.length == 2) return ParseStmtArr(ca, args[1].val, args[1].val)[0][0];
+          else return ParseStmtArr(ca, args[1].val, args[2].val)[0][0];
+        }),
+        repr: new ExpFunc(function (args) {
+          return GetString(ObjToText(args[0]));
+        }),
+        print: new ExpFunc(function (args) {
+          if (args[0].type == 'string') calcarr.push(args[0].val);
+          else calcarr.push(ObjToText(args[0]));
+          CalcArrRefresh();
+          return GetUndefined();
+        }),
+        sign: new ExpFunc(function (args) {
+          if (args[0].val > 0) return 1;
+          else if (args[0].val < 0) return -1;
+          else if (args[0].val == 0) return 0;
+          else return NaN;
+        }),
+        abs: new ExpFunc(function (args) {
+          if (args[0].type == 'number') {
+            if (args[0].val < 0 || Object.is(args[0].val, -0)) return GetNumber(-args[0].val);
+            else return GetNumber(args[0].val);
+          } else if (args[0].type == 'bigint') {
+            if (args[0].val < 0) return GetBigInt(-args[0].val);
+            else return GetBigInt(args[0].val);
+          } else if (args[0].type == 'bignum') {
+            return GetBigNum(math.abs(args[0]));
+          } else if (args[0].type == 'complex') {
+            return ExpExponentiate(ExpAdd(ExpExponentiate(args[0].a, GetNumber(2)), ExpExponentiate(args[0].b, GetNumber(2))), GetNumber(0.5));
+          }
+        }),
+        max: new ExpFunc(function (args) {
+          let mv = GetNumber(-Infinity);
+          for (let i in args) if (ExpGreaterThan(args[i], mv)) mv = args[i];
+          return mv;
+        }),
+        min: new ExpFunc(function (args) {
+          let mv = Infinity;
+          for (let i in args) if (ExpLessThan(args[i], mv)) mv = args[i];
+          return mv;
+        }),
+        floor: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.floor(args[0].val));
+          else if (args[0].type == 'bigint') return GetBigInt(args[0].val);
+          else if (args[0].type == 'bignum') return GetBigNum(math.floor(args[0].val));
+        }),
+        ceil: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.ceil(args[0].val));
+          else if (args[0].type == 'bigint') return GetBigInt(args[0].val);
+          else if (args[0].type == 'bignum') return GetBigNum(math.ceil(args[0].val));
+        }),
+        round: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.round(args[0].val));
+          else if (args[0].type == 'bigint') return GetBigInt(args[0].val);
+          else if (args[0].type == 'bignum') return GetBigNum(math.round(args[0].val));
+        }),
+        trunc: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.trunc(args[0].val));
+          else if (args[0].type == 'bigint') return GetBigInt(args[0].val);
+        }),
+        gcd: new ExpFunc(function (args) {
+          if (args.length == 1) return args[0];
+          else if (args.length == 2) {
+            for (var i = 0; i < 1e6; i++) {
+              if (ExpEqual(args[0], GetNumber(0))) break;
+              let b = ExpRemainder(args[0], args[1]);
+              args[0] = args[1];
+              args[b] = b;
+            }
+            return args[0];
+          } else {
+            while (args.length > 1) args.splice(0, 2, varns.gcd.val(args[0], args[1]));
+            return args[0];
+          }
+        }),
+        lcm: new ExpFunc(function (args) {
+          if (args.length == 1) return args[0];
+          else if (args.length == 2) {
+            return ExpDivide(ExpMultiply(args[0], args[1]), varns.gcd.val(args));
+          } else {
+            while (args.length > 1) args.splice(0, 2, varns.lcm.val(args[0], args[1]));
+            return args[0];
+          }
+        }),
+        constrain: new ExpFunc(function (args) {
+          return varns.min.val([varns.max.val([args[0], args[1]]), args[2]]);
+        }),
+        lerp: new ExpFunc(function (args) {
+          let dif = ExpSubtract(args[1].val, args[0].val);
+          return ExpAdd(ExpMultiply(dif, args[2]), args[0]);
+        }),
+        map: new ExpFunc(function (args) {
+          let dif1 = ExpSubtract(args[2], args[1]);
+          let dif2 = ExpSubtract(args[4], args[3]);
+          return ExpAdd(ExpMultiply(ExpDivide(ExpSubtract(args[0], args[1]), dif1), dif2), args[3]);
+        }),
+        norm: new ExpFunc(function (args) {
+          let dif1 = ExpSubtract(args[2], args[1]);
+          return ExpDivide(ExpSubtract(args[0], args[1]), dif1);
+        }),
+        dist: new ExpFunc(function (args) {
+          let hl = args.length / 2;
+          let ap1 = args.slice(0, hl);
+          let ap2 = args.slice(h1, Infinity);
+          return GetNumber(Math.hypot.apply(ap1.map((x, i) => ap2[i].val - x.val)));
+        }),
+        random: new ExpFunc(function (args) {
+          if (args.length == 0) {
+            return GetNumber(Math.random());
+          } else if (args.length == 1) {
+            return GetNumber(Math.random() * args[0].val);
+          } else if (args.length == 2) {
+            let dif = args[1].val - args[0].val;
+            return GetNumber(Math.random() * dif + args[0].val);
+          }
+        }),
+        randint: new ExpFunc(function (args) {
+          if (args.length == 0) {
+            return GetNumber(Math.round(Math.random()));
+          } else if (args.length == 1) {
+            return GetNumber(Math.floor(Math.random() * args[0].val));
+          } else if (args.length == 2) {
+            let dif = args[1].val - args[0].val;
+            return GetNumber(Math.floor(Math.random() * dif + args[0].val));
+          }
+        }),
+        randintn: new ExpFunc(function (args) {
+          if (args.length == 0) {
+            return GetBigInt(Math.round(Math.random()));
+          } else if (args.length == 1) {
+            if (args[0].val < 0) return varns.randintn.val([new ExpBigNum(-args[0].val)]);
+            if (args[0].val < BigInt(4294967296)) {
+              return ExpDivide(GetBigInt(randBigInt32()), ExpDivide(args[0], GetBigInt(4294967296)));
+            }
+          } else if (args.length == 2) {
+            let dif = args[1].val - args[0].val;
+            return ExpAdd(BigInt(dif), varns.randintn.val([GetBigInt(dif)]));
+          }
+        }),
+        randgauss: new ExpFunc(function (args) {
+          if (args.length == 0) return GetNumber(gaussianBoxMuller());
+          else if (args.length == 1) return GetNumber(gaussianBoxMuller() + args[0].val);
+          else if (args.length == 2) return GetNumber(gaussianBoxMuller() * args[1].val + args[0].val);
+        }),
+        sq: new ExpFunc(function (args) {
+          return ExpMultiply(args[0], args[0]);
+        }),
+        cb: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return ExpExponentiate(args[0], GetNumber(3));
+          else if (args[0].type == 'bigint') return ExpExponentiate(args[0], GetBigInt(3));
+          else if (args[0].type == 'bignum') return ExpExponentiate(args[0], GetBigNum(3));
+        }),
+        sqrt: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.sqrt(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.sqrt(args[0].val));
+        }),
+        cbrt: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.cbrt(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.cbrt(args[0].val));
+        }),
+        hypot: new ExpFunc(function (args) {
+          if (args.every(x => x.type == 'number')) return GetNumber(Math.hypot.apply(Math, args.map(x => x.val)));
+          else if (args.every(x => x.type == 'bignum')) return GetBigNum(math.hypot.apply(math, args.map(x => x.val)));
+        }),
+        exp: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.exp(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.exp(args[0].val));
+        }),
+        pow: new ExpFunc(function (args) {
+          return ExpExponentiate(args[0], args[1]);
+        }),
+        root: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return ExpExponentiate(args[0], ExpDivide(GetNumber(1), args[1]));
+          else if (args[0].type == 'bignum') return ExpExponentiate(args[0], ExpDivide(GetBigNum(1), args[1]));
+        }),
+        log: new ExpFunc(function (args) {
+          let val;
+          if (args[0].type == 'number') {
+            if (args[1]) {
+              if (args[1].val == 2) val = Math.log2(args[0].val);
+              else if (args[1].val == 10) val = Math.log10(args[0].val);
+              else val = Math.log(args[0].val) / Math.log(args[1].val);
+            } else val = Math.log(args[0].val);
+            return GetNumber(val);
+          } else if (args[0].type == 'bigint') {
+            if (args[1]) {
+              if (args[1].val == 10) val = varns.log10.val(args[0]).val;
+              else val = varns.log10.val(args[0]).val * varns.ln10.val;
+            } else val = varns.log10.val(args[0]).val * varns.ln10.val;
+            return GetNumber(val);
+          } else if (args[0].type == 'bignum') {
+            if (args[1]) {
+              if (math.equal(args[1].val, 2)) val = math.log2(args[0].val);
+              else if (math.equal(args[1].val, 10)) val = math.log10(args[0].val);
+              else val = math.log(args[0].val, args[1].val);
+            } else val = math.log(args[0].val);
+            return GetBigNum(val);
+          }
+        }),
+        log10: new ExpFunc(function (args) {
+          if (args[0].type == 'number') {
+            return GetNumber(Math.log10(args[0].val));
+          } else if (args[0].type == 'bigint') {
+            let es = args[0].val.toString();
+            let tv = Math.log10(Number(es.substr(0, 12)));
+            return GetNumber((tv - Math.floor(tv)) - 1 + es.length);
+          } else if (args[0].type == 'bignum') {
+            return GetBigNum(math.log10(args[0].val));
+          }
+        }),
+        log2: new ExpFunc(function (args) {
+          if (args[0].type == 'number') {
+            return GetNumber(Math.log2(args[0].val));
+          } else if (args[0].type == 'bigint') {
+            return GetNumber(varns.log10.val(args[0]).val * varns.ln10.val / varns.ln2.val);
+          } else if (args[0].type == 'bignum') {
+            return GetBigNum(math.log2(args[0].val));
+          }
+        }),
+        tet: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(tet(args[0].val, args[1].val));
+          else if (args[0].type == 'bignum') return GetBigNum(tetmath(args[0].val, args[1].val));
+        }),
+        sroot: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(sroot(args[0].val, args[1].val));
+          else if (args[0].type == 'bignum') return GetBigNum(srootmath(args[0].val, args[1].val));
+        }),
+        slog: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(slog(args[0].val, args[1].val));
+          else if (args[0].type == 'bignum') return GetBigNum(slogmath(args[0].val, args[1].val));
+        }),
+        fact: new ExpFunc(function (args) {
+          if (args[0].type == 'number') {
+            let fv = args[0].val;
+            if (Number.isInteger(fv)) {
+              if (fv >= 0) {
+                let bv = 1;
+                for (; fv > 0 && bv < Infinity; fv--) bv *= fv;
+                return GetNumber(bv);
+              } else if (fv < 0) {
+                return GetNumber(NaN);
+              }
+            } else {
+              return GetNumber(gamma(fv + 1));
+            }
+          } else if (args[0].type == 'bigint') {
+            if (fv >= 0) {
+              for (let bv = BigInt(1); fv > 0 && bv < Infinity; fv--) bv *= fv;
+              return GetBigInt(bv);
+            } else if (fv < 0) {
+              return GetNumber(NaN);
+            }
+          } else if (args[0].type == 'bignum') {
+            return GetBigNum(math.gamma(math.add(args[0].val, 1)));
+          }
+        }),
+        gamma: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(gamma(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.gamma(args[0].val));
+        }),
+        degrees: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(args[0].val / Math.PI * 180);
+          else if (args[0].type == 'bignum') return GetBigNum(math.multiply(math.divide(args[0].val, math.pi), 180));
+        }),
+        radians: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(args[0].val / 180 * Math.PI);
+          else if (args[0].type == 'bignum') return GetBigNum(math.multiply(math.divide(args[0].val, 180), math.pi));
+        }),
+        sin: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.sin(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.sin(args[0].val));
+        }),
+        cos: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.cos(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.cos(args[0].val));
+        }),
+        tan: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.tan(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.tan(args[0].val));
+        }),
+        csc: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(1 / Math.sin(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.csc(args[0].val));
+        }),
+        sec: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(1 / Math.cos(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.sec(args[0].val));
+        }),
+        cot: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(1 / Math.tan(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.cot(args[0].val));
+        }),
+        asin: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.asin(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.asin(args[0].val));
+        }),
+        acos: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.acos(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.acos(args[0].val));
+        }),
+        atan: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.atan(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.atan(args[0].val));
+        }),
+        atan2: new ExpFunc(function (args) {
+          if (args[0].type == 'number' && args[0].type == 'number') return GetNumber(Math.atan2(args[0].val, args[1].val));
+          else if (args[0].type == 'bignum' && args[1].type == 'number' || args[0].type == 'number' && args[1].type == 'bignum' || args[0].type == 'bignum' && args[1].type == 'bignum') return GetBigNum(math.atan2(args[0].val, args[1].val));
+        }),
+        acsc: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.asin(1 / args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.acsc(args[0].val));
+        }),
+        asec: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.acos(1 / args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.asec(args[0].val));
+        }),
+        acot: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.atan(1 / args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.acot(args[0].val));
+        }),
+        sinh: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.sinh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.sinh(args[0].val));
+        }),
+        cosh: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.cosh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.cosh(args[0].val));
+        }),
+        tanh: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.tanh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.tanh(args[0].val));
+        }),
+        csch: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(1 / Math.sinh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.csch(args[0].val));
+        }),
+        sech: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(1 / Math.cosh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.sech(args[0].val));
+        }),
+        coth: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(1 / Math.tanh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.coth(args[0].val));
+        }),
+        asinh: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.asinh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.asinh(args[0].val));
+        }),
+        acosh: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.acosh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.acosh(args[0].val));
+        }),
+        atanh: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.atanh(args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.atanh(args[0].val));
+        }),
+        acsch: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.asinh(1 / args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.acsch(args[0].val));
+        }),
+        asech: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.acosh(1 / args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.asech(args[0].val));
+        }),
+        acoth: new ExpFunc(function (args) {
+          if (args[0].type == 'number') return GetNumber(Math.atanh(1 / args[0].val));
+          else if (args[0].type == 'bignum') return GetBigNum(math.acoth(args[0].val));
+        }),
+        tohexstr: new ExpFunc(function (args) {
+          return GetString(args[0].val.toString(16));
+        }),
+        tooctstr: new ExpFunc(function (args) {
+          return GetString(args[0].val.toString(8));
+        }),
+        tobinstr: new ExpFunc(function (args) {
+          return GetString(args[0].val.toString(2));
+        }),
+        todecstr: new ExpFunc(function (args) {
+          return GetString(args[0].val.toString(10));
+        }),
+        tobasestr: new ExpFunc(function (args) {
+          return GetString(args[0].val.toString(args[1].val));
+        }),
+        fromhexstr: new ExpFunc(function (args) {
+          return GetNumber(parseInt(args[0].val, 16));
+        }),
+        fromhexstrn: new ExpFunc(function (args) {
+          let bi = BigInt(0), str = args[0].val;
+          for (let i = str.length - 1, em = BigInt(0); i >= 0; i--, em++) {
+            bi += BigInt(parseInt(str[i], 16)) * (BigInt(16) ** em);
+          }
+          return GetBigInt(bi);
+        }),
+        fromoctstr: new ExpFunc(function (args) {
+          return GetNumber(parseInt(args[0].val, 8));
+        }),
+        fromoctstrn: new ExpFunc(function (args) {
+          let bi = BigInt(0), str = args[0].val;
+          for (let i = str.length - 1, em = BigInt(0); i >= 0; i--, em++) {
+            bi += BigInt(parseInt(str[i], 8)) * (BigInt(8) ** em);
+          }
+          return GetBigInt(bi);
+        }),
+        frombinstr: new ExpFunc(function (args) {
+          return GetNumber(parseInt(args[0].val, 2));
+        }),
+        frombinstrn: new ExpFunc(function (args) {
+          let bi = BigInt(0), str = args[0].val;
+          for (let i = str.length - 1, em = BigInt(0); i >= 0; i--, em++) {
+            bi += BigInt(parseInt(str[i], 2)) * (BigInt(2) ** em);
+          }
+          return GetBigInt(bi);
+        }),
+        fromdecstr: new ExpFunc(function (args) {
+          return GetNumber(parseInt(args[0].val, 10));
+        }),
+        fromdecstrn: new ExpFunc(function (args) {
+          return GetBigInt(args[0].val);
+        }),
+        frombasestr: new ExpFunc(function (args) {
+          return GetNumber(parseInt(args[0].val, args[1].val));
+        }),
+        frombasestrn: new ExpFunc(function (args) {
+          let bi = BigInt(0), str = args[0].val;
+          for (let i = str.length - 1, em = BigInt(0); i >= 0; i--, em++) {
+            bi += BigInt(parseInt(str[i], args[1].val)) * (BigInt(args[1].val) ** em);
+          }
+          return GetBigInt(bi);
+        }),
+        clear: new ExpFunc(function (args) {
+          calcarr.splice(0, Infinity);
+          CalcArrRefresh();
+          return 'console cleared';
+        }),
+        reset: new ExpFunc(function (args) {
+          globalns = CreateNSCopy(varns);
+          localns = CreateNS({});
+          calcarr.splice(0, Infinity);
+          CalcArrRefresh();
+          return 'variables reset and console cleared';
+        }),
+        vn: new ExpObject({e: GetString('val')}),
+      };
+      
+      varns.Number.val.MAX_SAFE_INT = varns.Number.val.MAX_SAFE_INTEGER = GetNumber(Number.MAX_SAFE_INTEGER);
+      varns.Number.val.MIN_SAFE_INT = varns.Number.val.MIN_SAFE_INTEGER = GetNumber(Number.MIN_SAFE_INTEGER);
+      varns.Number.val.MAX_VALUE = GetNumber(Number.MAX_VALUE);
+      varns.Number.val.MIN_VALUE = GetNumber(Number.MIN_VALUE);
+      varns.Matrix.val.ident = new ExpFunc(function (args) {
+        if (args[0].type == 'number') {
+          let mat = GetMatrix(args[0].val, args[0].val);
+          for (let i = 0; i < args[0].val; i++) mat.set(i, i, GetNumber(1));
+          return mat;
+        }
+      });
+      function onload_namespace() {
+        if (window.math !== undefined) {
+          varns.Infinityd = GetBigNum(Infinity);
+          varns.infinityd = GetBigNum(Infinity);
+          varns.infd = GetBigNum(Infinity);
+          varns.NaNd = GetBigNum(NaN);
+          varns.nand = GetBigNum(NaN);
+          varns.pid = GetBigNum('3.141592653589793238462643383279502884197169399375105820974944592');
+          varns.degd = GetBigNum(math.divide(varns.pid.val, math.bignumber('180')));
+          varns.radd = GetBigNum(math.divide(math.bignumber('180'), varns.pid.val));
+          varns.ed = GetBigNum(math.exp(math.bignumber('1')));
+          varns.phid = GetBigNum(math.divide(math.add(math.bignumber('1'), math.sqrt(math.bignumber('5'))), math.bignumber('2')));
+          varns.sqrt2d = GetBigNum(math.sqrt(math.bignumber('2')));
+          varns.sqrt1_2d = GetBigNum(math.sqrt(math.bignumber('0.5')));
+          varns.ln2d = GetBigNum(math.log(math.bignumber('2')));
+          varns.ln10d = GetBigNum(math.log(math.bignumber('10')));
+          globalns = CreateNSCopy(varns);
+          varns.BigNum.val.MAX_VALUE = GetBigNum('9.999999999999999999999999999999999999999999999999999999999999999e9000000000000000');
+          varns.BigNum.val.MIN_VALUE = GetBigNum('1e-9000000000000000');
+        }
+      }
+      varns.vn.val.v = varns.vn;
+      
+      function CreateNS(obj) {
+        return new ExpObject(obj);
+      }
+      function CreateNSCopy(obj) {
+        return new ExpObject(Object.assign({}, obj));
+      }
+      function ExpArrString(val, p) {
+        if (p.bas[1] && p.bas[2] == 0) {
+          if (val == '\\') {
+            p.bs += '\\';
+            p.bas[1] = false;
+          } else if (val == 'n') {
+            p.bs += '\n';
+            p.bas[1] = false;
+          } else if (val == 't') {
+            p.bs += '\t';
+            p.bas[1] = false;
+          } else if (val == 'x') {
+            p.bas[2] = 1;
+          } else if (val == 'u') {
+            p.bas[2] = 3;
+          } else if (val == 'U') {
+            p.bas[2] = 8;
+          } else {
+            p.bs += val;
+            p.bas[1] = false;
+          }
+        } else if (p.bas[1] && p.bas[2] == 1) {
+          p.bas[3] += val;
+          p.bas[2] = 2;
+        } else if (p.bas[1] && p.bas[2] == 2) {
+          p.bas[3] += val;
+          p.bs += String.fromCharCode(parseInt(p.bas[3], 16));
+          p.bas[1] = false;
+          p.bas[2] = 0;
+          p.bas[3] = '';
+        } else if (p.bas[1] && p.bas[2] == 3) {
+          if (val != '{') {
+            p.bas[3] += val;
+            p.bas[2] = 4;
+          } else {
+            p.bas[2] = 7;
+          }
+        } else if (p.bas[1] && p.bas[2] <= 5) {
+          p.bas[3] += val;
+          p.bas[2]++;
+        } else if (p.bas[1] && p.bas[2] == 6) {
+          p.bas[3] += val;
+          p.bs += String.fromCharCode(parseInt(p.bas[3], 16));
+          p.bas[1] = false;
+          p.bas[2] = 0;
+          p.bas[3] = '';
+        } else if (p.bas[1] && p.bas[2] == 7) {
+          if (val != '}') {
+            p.bas[3] += val;
+          } else {
+            let nm = parseInt(p.bas[3], 16)
+            p.bs += nm > 65535 ? String.fromCodePoint(nm) : String.fromCharCode(nm);
+            p.bas[1] = false;
+            p.bas[2] = 0;
+            p.bas[3] = '';
+          }
+        } else if (p.bas[1] && p.bas[2] <= 14) {
+          p.bas[3] += val;
+          p.bas[2]++;
+        } else if (p.bas[1] && p.bas[2] == 15) {
+          p.bas[3] += val;
+          let nm = parseInt(p.bas[3], 16)
+          p.bs += nm > 65535 ? String.fromCodePoint(nm) : String.fromCharCode(nm);
+          p.bas[1] = false;
+          p.bas[2] = 0;
+          p.bas[3] = '';
+        } else {
+          if (val == p.bas[0]) {
+            p.ra.push(GetString(p.bs));
+            p.bs = '';
+            p.bt = 'bigint';
+            p.bas.splice(0, Infinity);
+          } else if (val == '\\') {
+            p.bas[1] = true;
+          } else {
+            p.bs += val;
+          }
+        }
+      }
+      function ToExpArr(val) {
+        let p = {ra: [], bs: '', objn: '', emod: false, ba: [], bas: [], bt: '', pl: []};
+        for (let i in val) {
+          if (p.bt == '') {
+            if (NUM.indexOf(val[i]) > -1) {
+              p.bs += val[i];
+              p.bt = 'number';
+            } else if (STR.indexOf(val[i]) > -1) {
+              p.bt = 'string';
+              p.bas.push(val[i], false, 0, '');
+            } else if (OPS.indexOf(val[i]) > -1) {
+              let li = p.ra[p.ra.length - 1];
+              if (li && li.type == 'op') {
+                if (OPSA[li.val] && OPSA[li.val].indexOf(val[i]) > -1) {
+                  p.ra[p.ra.length - 1] = GetOperator(li.val + val[i]);
+                } else {
+                  p.ra.push(GetOperator(val[i]));
+                }
+              } else {
+                p.ra.push(GetOperator(val[i]));
+              }
+            } else if (val[i] == '(') {
+              if (p.ra[p.ra.length - 1] && p.ra[p.ra.length - 1].type == 'funccall' || Object.prototype.toString.call(p.ra[p.ra.length - 1]) == '[object Array]') {
+                p.ba.push('');
+                p.pl.push('p');
+                p.bt = 'funccall';
+              } else {
+                if (p.ra[p.ra.length - 1] && p.ra[p.ra.length - 1].type != 'op') p.ra.push(GetOperator('*'));
+                p.bt = 'paren';
+                p.pl.push('p');
+              }
+            } else if (val[i] == '[') {
+              if (p.ra.length > 0 && p.ra[p.ra.length - 1].type == 'funccall') {
+                p.bt = 'propacc';
+                p.ra.push(GetOperator('.'));
+                p.pl.push('a');
+                p.bs = '';
+              } else {
+                p.ba = new ExpTArray([]);
+                p.bt = 'array';
+                p.pl.push('a');
+              }
+            } else if (val[i] == '{') {
+              p.ba = new ExpTObject({});
+              p.bt = 'object';
+              p.pl.push('o');
+            } else if (VAR.indexOf(val[i]) < 0) {
+              p.bs += val[i];
+              p.bt = 'var';
+            }
+          } else if (p.bt == 'number') {
+            if (p.emod) {
+              if (NUME.indexOf(val[i]) < 0) {
+                p.ra.push(GetNumber(p.bs.slice(0, -1)), GetOperator('*'), new ExpVariable('e'));
+                if (val[i] == 'd') {
+                  p.ra.push(GetBigNum(p.bs));
+                  p.bs = '';
+                  p.bt = 'bigint';
+                } else if (OPS.indexOf(val[i]) > -1) {
+                  p.ra.push(GetOperator(val[i]));
+                  p.bs = '';
+                  p.bt = '';
+                } else if (val[i] == '(') {
+                  p.ba.push('e');
+                  p.pl.push('p');
+                  p.bs = '';
+                  p.bt = 'funccall';
+                }
+              } else {
+                p.bs += val[i];
+              }
+              p.emod = false;
+            } else {
+              if (val[i] == 'e') {p.bs += 'e'; p.emod = true; continue;}
+              if (NUMA.indexOf(val[i]) > -1) {
+                p.bs += val[i];
+              } else if (VARN.indexOf(val[i]) < 0) {
+                p.ra.push(GetNumber(p.bs));
+                p.ra.push(GetOperator('*'));
+                p.bs = val[i];
+                p.bt = 'var';
+              } else if (val[i] == 'n') {
+                p.ra.push(GetBigInt(p.bs));
+                p.bt = 'bigint';
+              } else if (val[i] == 'd') {
+                p.ra.push(GetBigNum(p.bs));
+                p.bt = 'bigint';
+              } else if (OPS.indexOf(val[i]) > -1) {
+                p.ra.push(GetNumber(p.bs));
+                p.ra.push(GetOperator(val[i]));
+                p.bs = '';
+                p.bt = '';
+              } else if (val[i] == '(') {
+                p.ra.push(GetNumber(p.bs));
+                p.ra.push(GetOperator('*'));
+                p.bs = '';
+                p.bt = 'paren';
+                p.pl.push('p');
+              } else if (val[i] == ' ') {
+                p.ra.push(GetNumber(p.bs));
+                p.bs = '';
+                p.bt = '';
+              }
+            }
+          } else if (p.bt == 'bigint') {
+            if (VAR.indexOf(val[i]) < 0) {
+              p.ra.push(GetOperator('*'));
+              p.bs = val[i];
+              p.bt = 'var';
+            } else if (OPS.indexOf(val[i]) > -1) {
+              p.ra.push(GetOperator(val[i]));
+              p.bs = '';
+              p.bt = '';
+            } else if (val[i] == '(') {
+              p.ra.push(GetOperator('*'));
+              p.bs = '';
+              p.bt = 'paren';
+              p.pl.push('p');
+            } else if (val[i] == '[') {
+              p.ra.push(GetOperator('.'));
+              p.bt = 'propacc';
+              p.pl.push('a');
+              p.bs = '';
+            } else if (val[i] == ' ') {
+              p.bs = '';
+              p.bt = '';
+            }
+          } else if (p.bt == 'string') {
+            ExpArrString(val[i], p);
+          } else if (p.bt == 'var') {
+            if (OPS.indexOf(val[i]) > -1) {
+              p.ra.push(new ExpVariable(p.bs));
+              p.ra.push(GetOperator(val[i]));
+              p.bs = '';
+              p.bt = '';
+            } else if (val[i] == ' ') {
+              p.ra.push(new ExpVariable(p.bs));
+              p.bs = '';
+              p.bt = '';
+            } else if (val[i] == '(') {
+              p.ra.push(new ExpVariable(p.bs));
+              p.ba.push(p.bs);
+              p.pl.push('p');
+              p.bs = '';
+              p.bt = 'funccall';
+            } else if (val[i] == '[') {
+              p.bt = 'propacc';
+              p.ra.push(new ExpVariable(p.bs));
+              p.ra.push(GetOperator('.'));
+              p.pl.push('a');
+              p.bs = '';
+            } else {
+              p.bs += val[i];
+            }
+          } else if (p.bt == 'vars') {
+            if (OPS.indexOf(val[i]) > -1) {
+              p.ra.push(GetOperator(val[i]));
+              p.bs = '';
+              p.bt = '';
+            } else if (val[i] == ' ') {
+              p.bs = '';
+              p.bt = '';
+            } else if (val[i] == '(') {
+              p.ba.push('');
+              p.pl.push('p');
+              p.bs = '';
+              p.bt = 'funccall';
+            } else if (val[i] == '[') {
+              p.bt = 'propacc';
+              p.ra.push(GetOperator('.'));
+              p.pl.push('a');
+              p.bs = '';
+            } else {
+              p.bs += val[i];
+            }
+          } else if (p.bt == 'funccall') {
+            if (p.pl[p.pl.length - 1] != 's') {
+              if (val[i] == '(') {
+                p.pl.push('p');
+              } else if (val[i] == ')') {
+                if (p.pl[p.pl.length - 1] == 'p') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == '[') {
+                p.pl.push('a');
+              } else if (val[i] == ']') {
+                if (p.pl[p.pl.length - 1] == 'a') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == '{') {
+                p.pl.push('o');
+              } else if (val[i] == '}') {
+                if (p.pl[p.pl.length - 1] == 'o') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == ',' && p.pl.length == 1) {
+                p.ba.push(p.bs);
+                p.bs = '';
+              } else if (STR.indexOf(val[i]) > -1) {
+                p.pl.push('s');
+                p.bas.push(val[i], false, 0, '');
+              }
+              if (p.pl.length == 0) {
+                if (p.bs != '') p.ba.push(p.bs);
+                for (let i in p.ba) p.ba[i] = ToExpArr(p.ba[i]);
+                p.ra.push(FuncCall(p.ba[0], p.ba.slice(1, Infinity)));
+                p.bs = '';
+                p.bt = '';
+                p.ba = [];
+              } else {
+                p.bs += val[i];
+              }
+            } else {
+              let pobj = {ra:[],bs:'',bas:p.bas,bt:'string'};
+              ExpArrString(val[i], pobj);
+              if (pobj.bt == '') p.pl.pop();
+              p.bs += val[i];
+            }
+          } else if (p.bt == 'propacc') {
+            if (p.pl[p.pl.length - 1] != 's') {
+              if (val[i] == '[') {
+                p.pl.push('a');
+              } else if (val[i] == ']') {
+                if (p.pl[p.pl.length - 1] == 'a') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (STR.indexOf(val[i]) > -1) {
+                p.pl.push('s');
+                p.bas.push(val[i], false, 0, '');
+              }
+              if (p.pl.length == 0) {
+                p.ra.push(ToExpArr(p.bs));
+                p.bs = '';
+                p.bt = 'vars';
+              } else {
+                p.bs += val[i];
+              }
+            } else {
+              let pobj = {ra:[],bs:'',bas:p.bas,bt:'string'};
+              ExpArrString(val[i], pobj);
+              if (pobj.bt == '') p.pl.pop();
+              p.bs += val[i];
+            }
+          } else if (p.bt == 'paren') {
+            if (p.pl[p.pl.length - 1] != 's') {
+              if (val[i] == '(') {
+                p.pl.push('p');
+              } else if (val[i] == ')') {
+                if (p.pl[p.pl.length - 1] == 'p') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (STR.indexOf(val[i]) > -1) {
+                p.pl.push('s');
+                p.bas.push(val[i], false, 0, '');
+              }
+              if (p.pl.length == 0) {
+                p.ra.push(ToExpArr(p.bs));
+                p.bs = '';
+                p.bt = '';
+              } else {
+                p.bs += val[i];
+              }
+            } else {
+              let pobj = {ra:[],bs:'',bas:p.bas,bt:'string'};
+              ExpArrString(val[i], pobj);
+              if (pobj.bt == '') p.pl.pop();
+              p.bs += val[i];
+            }
+          } else if (p.bt == 'array') {
+            if (p.pl[p.pl.length - 1] != 's') {
+              if (val[i] == '(') {
+                p.pl.push('p');
+              } else if (val[i] == ')') {
+                if (p.pl[p.pl.length - 1] == 'p') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == '[') {
+                p.pl.push('a');
+              } else if (val[i] == ']') {
+                if (p.pl[p.pl.length - 1] == 'a') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == '{') {
+                p.pl.push('o');
+              } else if (val[i] == '}') {
+                if (p.pl[p.pl.length - 1] == 'o') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == ',' && p.pl.length == 1) {
+                p.ba.val.push(ToExpArr(p.bs));
+                p.bs = '';
+              } else if (STR.indexOf(val[i]) > -1) {
+                p.pl.push('s');
+                p.bas.push(val[i], false, 0, '');
+              }
+              if (p.pl.length == 0) {
+                if (p.bs != '') {
+                  p.ba.val.push(ToExpArr(p.bs));
+                  p.bs = '';
+                }
+                p.ra.push(p.ba);
+                p.ba = [];
+                p.bt = '';
+              } else {
+                p.bs += val[i];
+              }
+            } else {
+              let pobj = {ra:[],bs:'',bas:p.bas,bt:'string'};
+              ExpArrString(val[i], pobj);
+              if (pobj.bt == '') p.pl.pop();
+              p.bs += val[i];
+            }
+          } else if (p.bt == 'object') {
+            if (p.pl[p.pl.length - 1] != 's') {
+              if (val[i] == '(') {
+                p.pl.push('p');
+              } else if (val[i] == ')') {
+                if (p.pl[p.pl.length - 1] == 'p') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == '[') {
+                p.pl.push('a');
+              } else if (val[i] == ']') {
+                if (p.pl[p.pl.length - 1] == 'a') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == '{') {
+                p.pl.push('o');
+              } else if (val[i] == '}') {
+                if (p.pl[p.pl.length - 1] == 'o') p.pl.pop();
+                else throw new SyntaxError('expected ' + PARR[p.pl[p.pl.length - 1]] + ' got ' + val[i]);
+              } else if (val[i] == ':' && p.pl.length == 1) {
+                p.objn = ToExpArr(p.bs)[0].val;
+                p.bs = '';
+              } else if (val[i] == ',' && p.pl.length == 1) {
+                p.ba.val[p.objn] = ToExpArr(p.bs);
+                p.bs = '';
+                p.objn = '';
+              } else if (STR.indexOf(val[i]) > -1) {
+                p.pl.push('s');
+                p.bas.push(val[i], false, 0, '');
+              }
+              if (p.pl.length == 0) {
+                if (p.bs != '') {
+                  p.ba.val[p.objn] = ToExpArr(p.bs);
+                  p.bs = '';
+                }
+                p.ra.push(p.ba);
+                p.ba = [];
+                p.bt = '';
+              } else {
+                p.bs += val[i];
+              }
+            } else {
+              let pobj = {ra:[],bs:'',bas:p.bas,bt:'string'};
+              ExpArrString(val[i], pobj);
+              if (pobj.bt == '') p.pl.pop();
+              p.bs += val[i];
+            }
+          }
+        }
+        if (p.bt == 'number') {
+          p.ra.push(GetNumber(p.bs));
+          p.bs = '';
+          p.bt = '';
+        } else if (p.bt == 'var') {
+          p.ra.push(new ExpVariable(p.bs));
+          p.bs = '';
+          p.bt = '';
+        } else if (p.bt == 'paren' || p.bt == 'funccall' || p.bt == 'array' || p.bt == 'object' || p.bt == 'string') {
+          throw new SyntaxError('parenthesis, bracket, or object mismatch');
+        }
+        for (var i in p.ra) if (p.ra[i].type == 'variable' && OPSKW.indexOf(p.ra[i].val) > -1) p.ra[i] = GetOperator(p.ra[i].val);
+        return p.ra;
+      }
+      function ParseExpArr(arr, globals, locals) {
+        arr = arr.slice();
+        let exp = [], op = [], dov;
+        // parenthesis
+        for (let i = 0; i < arr.length; i++) {
+          if (Object.prototype.toString.call(arr[i]) == '[object Array]') arr[i] = ParseExpArr(arr[i], globals, locals)[0][0];
+        }
+        // variable, property access, function call
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].type == 'variable' && VARRESCLS(arr, i)) {
+            if (arr[i].val in locals.val) arr[i] = locals.val[arr[i].val];
+            else if (arr[i].val in globals.val) arr[i] = globals.val[arr[i].val];
+            else throw new Error('variable ' + arr[i].val + ' nonexistent');
+          } else if (arr[i].type == 'tarray') {
+            for (let j in arr[i].val) arr[i].val[j] = ParseExpArr(arr[i].val[j], globals, locals)[0][0];
+            arr[i] = new ExpArray(arr[i].val);
+          } else if (arr[i].type == 'tobject') {
+            for (let j in arr[i].val) arr[i].val[j] = ParseExpArr(arr[i].val[j], globals, locals)[0][0];
+            arr[i] = new ExpObject(arr[i].val);
+          }
+          let clss = true;
+          while (clss) {
+            clss = false;
+            while (PROPACCCLS(arr, i)) {
+              arr.splice(i, 3, ExpPropAcc(arr[i], arr[i + 2]));
+              clss = true;
+            }
+            if (arr[i + 1] && arr[i + 1].type == 'funccall') {
+              let ar = arr[i + 1].val.slice();
+              for (let j in ar) ar[j] = ParseExpArr(ar[j], globals, locals)[0][0];
+              let fcres = FuncCallProp(arr[i], ar, globals, locals);
+              if (fcres === undefined) throw new Error('function returned undefined');
+              arr.splice(i, 2, fcres);
+              clss = true;
+            }
+          }
+        }
+        // logical not, bitwise not, unary plus, unary minus, typeof, void, delete : right > left
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = arr.length - 1; i >= 0; i--) {
+            if (arr[i].type == 'op') {
+              if (arr[i].val == '!') {
+                arr.splice(i, 2, ExpLogicalNot(arr[i + 1]));
+                nb = true;
+                break;
+              } else if (arr[i].val == '~') {
+                arr.splice(i, 2, ExpBitwiseNot(arr[i + 1]));
+                nb = true;
+                break;
+              } else if (arr[i].val == '+') {
+                if (arr[i - 1] && arr[i - 1].type != 'op') continue;
+                arr.splice(i, 2, ExpUnaryPlus(arr[i + 1]));
+                nb = true;
+                break;
+              } else if (arr[i].val == '-') {
+                if (arr[i - 1] && arr[i - 1].type != 'op') continue;
+                arr.splice(i, 2, ExpUnaryMinus(arr[i + 1]));
+                nb = true;
+                break;
+              } else if (arr[i].val == 'typeof') {
+                arr.splice(i, 2, ExpTypeof(arr[i + 1]));
+              } else if (arr[i].val == 'void') {
+                arr.splice(i, 2, GetUndefined());
+              } else if (arr[i].val == 'del' || arr[i].val == 'delete') {
+                if (arr[i + 2] && arr[i + 2].type == 'op' && arr[i + 2].val == '.') {
+                  let nam = arr[i + 3].val;
+                  delete arr[i + 1].val[nam];
+                  arr.splice(i, 4, GetBool(true));
+                } else {
+                  let varn = arr[i + 1];
+                  if (varn.type != 'variable') throw new Error('delete: unexpected token');
+                  varn = varn.val;
+                  if (varn in locals.val) {
+                    arr.splice(i, 2, GetBool(true));
+                    delete locals.val[varn];
+                  } else {
+                    arr.splice(i, 2, GetBool(false));
+                  }
+                }
+              }
+            }
+          }
+          dov = nb;
+        }
+        // split up into exp and op
+        for (let i = 0; i < arr.length; i++) {
+          if (i % 2 == 0) exp.push(arr[i]);
+          else op.push(arr[i].val);
+        }
+        // exponents : right > left
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = op.length - 1; i >= 0; i--) {
+            if (op[i] == '**' || op[i] == '^') {
+              exp.splice(parseInt(i), 2, ExpExponentiate(exp[i], exp[parseInt(i) + 1]));
+              op.splice(parseInt(i), 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // multiply, divide, remainder : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '*') {
+              exp.splice(parseInt(i), 2, ExpMultiply(exp[i], exp[parseInt(i) + 1]));
+              op.splice(parseInt(i), 1);
+              nb = true;
+              break;
+            } else if (op[i] == '/') {
+              exp.splice(parseInt(i), 2, ExpDivide(exp[i], exp[parseInt(i) + 1]));
+              op.splice(parseInt(i), 1);
+              nb = true;
+              break;
+            } else if (op[i] == '%') {
+              exp.splice(parseInt(i), 2, ExpRemainder(exp[i], exp[parseInt(i) + 1]));
+              op.splice(parseInt(i), 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // addition, subtraction : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '+') {
+              exp.splice(parseInt(i), 2, ExpAdd(exp[i], exp[parseInt(i) + 1]));
+              op.splice(parseInt(i), 1);
+              nb = true;
+              break;
+            } else if (op[i] == '-') {
+              exp.splice(parseInt(i), 2, ExpSubtract(exp[i], exp[parseInt(i) + 1]));
+              op.splice(parseInt(i), 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // bitwise left shift, bitwise right shift : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '<<') {
+              exp.splice(parseInt(i), 2, ExpBitwiseLeftShift(exp[i], exp[parseInt(i) + 1]));
+              op.splice(parseInt(i), 1);
+              nb = true;
+              break;
+            } else if (op[i] == '>>') {
+              exp.splice(parseInt(i), 2, ExpBitwiseRightShift(exp[i], exp[parseInt(i) + 1]));
+              op.splice(parseInt(i), 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // greater than, less than, greater than or equal, less than or equal : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '>') {
+              exp.splice(i, 2, ExpGreaterThan(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            } else if (op[i] == '<') {
+              exp.splice(i, 2, ExpLessThan(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            } else if (op[i] == '>=') {
+              exp.splice(i, 2, ExpGreaterThanEqual(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            } else if (op[i] == '<=') {
+              exp.splice(i, 2, ExpLessThanEqual(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // equality, inequality, true equality : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '==') {
+              exp.splice(i, 2, ExpEqual(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            } else if (op[i] == '!=') {
+              exp.splice(i, 2, ExpNotEqual(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            } else if (op[i] == 'is') {
+              exp.splice(i, 2, ExpIs(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // bitwise and : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '&') {
+              exp.splice(i, 2, ExpBitwiseAnd(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // bitwise xor : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '#') {
+              exp.splice(i, 2, ExpBitwiseXor(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // bitwise or : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '|') {
+              exp.splice(i, 2, ExpBitwiseOr(exp[i], exp[parseInt(i) + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // logical and : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '&&') {
+              exp.splice(i, 2, ExpLogicalAnd(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // logical or : left > right
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = 0; i < op.length; i++) {
+            if (op[i] == '||') {
+              exp.splice(i, 2, ExpLogicalOr(exp[i], exp[i + 1]));
+              op.splice(i, 1);
+              nb = true;
+              break;
+            }
+          }
+          dov = nb;
+        }
+        // assignment : right > left
+        dov = true;
+        while (dov) {
+          let nb = false;
+          for (let i = op.length - 1; i >= 0; i--) {
+            if (op[i] == '=') {
+              if (op[i - 1] && op[i - 1] == '.') {
+                let nam = exp[i].val, val = exp[i + 1];
+                exp[i - 1].val[nam] = val;
+                exp.splice(i - 1, 3, val);
+                op.splice(i - 1, 2);
+                nb = true;
+                break;
+              } else {
+                if (exp[i].type != 'variable') throw new Error('invalid left-hand side in assignment');
+                let nam = exp[i].val, val = exp[i + 1];
+                locals.val[nam] = val;
+                exp.splice(i, 2, val);
+                op.splice(i, 1);
+                nb = true;
+                break;
+              }
+            }
+          }
+          dov = nb;
+        }
+        if (exp.length == 0) exp.push(GetUndefined());
+        return [exp, op];
+      }
+      function ToStmtArr(val) {
+        let p = {ra: [], bs: '', exp: false, com: 0};
+        for (let i in val) {
+          if (p.exp == false) {
+            if (p.com == 0) {
+              if (val[i] == '\\') {
+                p.exp = true;
+              } else if (val[i] == '/') {
+                p.com == 1;
+              } else if (val[i] == '\n' || val[i] == '\r') {
+                p.ra.push(ToExpArr(p.bs));
+                p.bs = '';
+              } else {
+                p.bs += val[i];
+              }
+            } else if (p.com == 1) {
+              if (val[i] == '/') {
+                p.com = 2;
+                p.ra.push(ToExpArr(p.bs));
+                p.bs = '';
+              } else if (val[i] == '*') {
+                p.com = 3;
+              } else if (val[i] == '\n' || val[i] == '\r') {
+                p.com = 0;
+                p.bs += '/';
+                p.ra.push(ToExpArr(p.bs));
+                p.bs = '';
+              } else {
+                p.com = 0;
+                p.bs += '/';
+              }
+            } else if (p.com == 2) {
+              if (val[i] == '/n' || val[i] == '/r') {
+                p.com = 0;
+              }
+            } else if (p.com == 3) {
+              if (val[i] == '*') {
+                p.com = 4;
+              }
+            } else if (p.com == 4) {
+              if (val[i] == '/') {
+                p.com = 0;
+              } else {
+                p.com = 3;
+              }
+            }
+          } else {
+            if (val[i] != '\n' && val[i] != '\r') {
+              p.esc = false;
+            } else {
+              p.bs += val[i];
+              p.esc = false;
+            }
+          }
+        }
+        if (p.bs != '') p.ra.push(ToExpArr(p.bs));
+        return p.ra;
+      }
+      function ParseStmtArr(val, globals, locals) {
+        let rv;
+        for (let i in val) rv = ParseExpArr(val[i], globals, locals);
+        return rv;
+      }
+      var calcarr = [], cinphist = [], histind = 0, currtext = '';
+      var globalns = CreateNSCopy(varns), localns = CreateNS({});
+      function HelpTogg() {
+        if (helpdiv.style.cssText == 'display: none;') {
+          helpdiv.style = 'position:fixed;top:2px;width:calc(100% - 10px);height:400px;background:#ffffffff;overflow:scroll;word-break:break-word;';
+        } else {
+          helpdiv.style = 'display:none;';
+        }
+      };
+      var SettingsTogg = function SettingsTogg() {
+        if (settins.style.cssText == 'display: none;') {
+          settins.style = 'position:fixed;top:2px;width:calc(100% - 10px);height:400px;background:white;';
+        } else {
+          settins.style = 'display:none;';
+        }
+      };
+      function LrExp(v) {
+        if (parseInt(v) == 1) {
+          BIGLIMIT.digit = 1000;
+          BIGLIMIT.strlen = 1000;
+        } else {
+          BIGLIMIT.digit = Infinity;
+          BIGLIMIT.strlen = Infinity;
+        }
+      }
+      function AllComp(v) {
+        if (parseInt(v) == 1) {
+          ccul.style = '';
+        } else {
+          ccul.style = 'display:none;';
+          ccul.value = 'cal';
+        }
+      }
+      function ShowSett(v) {
+        if (parseInt(v) == 1) {
+          SettingsTogg = ASettingsTogg;
+          delete ASettingsTogg;
+        } else {
+          settins.style = 'display:none;';
+          ASettingsTogg = SettingsTogg;
+          SettingsTogg = function () {};
+        }
+      }
+      function ObjToText(val, va) {
+        if (va === undefined) va = [];
+        va = Array.from(va);
+        if (val.type == 'undefined') {
+          return 'undefined';
+        } else if (val.type == 'null') {
+          return 'null';
+        } else if (val.type == 'bool') {
+          return '' + val.val;
+        } else if (val.type == 'number') {
+          if (Object.is(val.val, -0)) return '-0';
+          else return '' + val.val;
+        } else if (val.type == 'bigint') {
+          return '' + val.val + 'n';
+        } else if (val.type == 'bignum') {
+          return '' + val.val.toString() + 'd';
+        } else if (val.type == 'string') {
+          return inspect(val.val);
+        } else if (val.type == 'array') {
+          if (va.indexOf(val) >= 0) return '[Circular]';
+          va.push(val);
+          if (val.val.length == 0) return '[]';
+          return '[ ' + val.val.map(x=>ObjToText(x, va)).join(', ') + ' ]';
+        } else if (val.type == 'object') {
+          if (va.indexOf(val) >= 0) return '[Circular]';
+          va.push(val);
+          let ka = Object.keys(val.val), ba = [];
+          if (ka.length == 0) return '{}';
+          for (let i in ka) ba.push(inspect(ka[i]) + ': ' + ObjToText(val.val[ka[i]], va));
+          return '{ ' + ba.join(', ') + ' }';
+        } else if (val.type == 'func') {
+          if (val.ftype == 'js') return '[Native Function]';
+          else return '[Function: ' + inspect(val.source) + ']';
+        } else if (val.type == 'complex') {
+          return '(' + ObjToText(val.a) + (ExpGreaterThanEqual(val.b, GetNumber(0)).val ? ('+' + ObjToText(val.b)) : ObjToText(val.b)) + 'i)';
+        } else if (val.type == 'matrix') {
+          if (va.indexOf(val) >= 0) return '[Circular]';
+          va.push(val);
+          return 'Matrix([' + val.val.map(x => '[' + x.map(y => ObjToText(y, va)).join(', ') + ']').join(',\n           ') + '])';
+        } else if (val.type == 'surreal') {
+          return ExpSurrToStr(val.valarr);
+        } else if (val.type == 'jsobj') {
+          return 'JSObj { ' + inspect(val.val) + ' }';
+        } else if (val.toString !== undefined) {
+          return val.toString();
+        } else {
+          return inspect(val);
+        }
+      }
+      function ParseText(val) {
+        let rval;
+        try {
+          if (val[0] == ':') rval = inspect(eval(val.substr(1, Infinity)));
+          else rval = ObjToText(ParseExpArr(ToExpArr(val), globalns, localns)[0][0]);
+        } catch (e) {
+          rval = e.toString() + '\n' + e.stack.replace(/\n$/, '');
+        }
+        if (realmode.value == 1) {
+          let rv = Math.random(), rm;
+          if (rval == 'true') {
+            if (rv < 0.77) rm = 0;
+            else if (rv < 0.97) rm = 1;
+            else rm = 2;
+          } else if (rval == 'false') {
+            if (rv > 0.77) rm = 0;
+            else if (rv > 0.57) rm = 1;
+            else rm = 2;
+          } else if (rval == 'NaN') {
+            rm = 6;
+          } else if (rval == '0') {
+            rm = 7;
+          } else if (rval == '-0') {
+            rm = 8;
+          } else if (rval == 'Infinity') {
+            rm = 9;
+          } else if (rval == '-Infinity') {
+            rm = 10;
+          } else {
+            if (rv < 0.75) rm = 3;
+            else if (rv < 0.95) rm = 4;
+            else rm = 5;
+          }
+          if (rm == 0) rval = '7';
+          else if (rm == 1) rval = '21';
+          else if (rm == 2) {
+            rval = '<a href = "' + pds + '/r?e=aHR0cHM6Ly91cGxvYWQud2lraW1lZGlhLm9yZy93aWtpcGVkaWEvY29tbW9ucy90aHVtYi8yLzI3L0hpbGxhcnlfQ2xpbnRvbl9vZmZpY2lhbF9TZWNyZXRhcnlfb2ZfU3RhdGVfcG9ydHJhaXRfY3JvcC5qcGcvODAwcHgtSGlsbGFyeV9DbGludG9uX29mZmljaWFsX1NlY3JldGFyeV9vZl9TdGF0ZV9wb3J0cmFpdF9jcm9wLmpwZw==">The Answer</a>';
+          } else if (rm == 3) rval = 'yes';
+          else if (rm == 4) rval = 'no';
+          else if (rm == 5) rval = '<a href = "https://en.wikipedia.org/wiki/Dentistry">The Answer</a>';
+          else if (rm == 6) rval = 'NaCl';
+          else if (rm == 7) rval = 'zero\'s the hero';
+          else if (rm == 8) rval = 'negative zero?';
+          else if (rm == 9) rval = 'Did you mean: <a href = "https://en.wikipedia.org/wiki/Ordinal_number"><i>א‎<sub>0</sub></i></a>';
+          else if (rm == 10) rval = 'Did you mean: <a href = "https://en.wikipedia.org/wiki/Infinity"><i>Infinity</i></a>';
+        }
+        if (ccul.value == 'cat') rval += ' cats';
+        if (rval !== undefined) rval = rval.replace(/\n/g, '<br>');
+        if (parseInt(enenh.value) == 1) {
+          document.write('<body style = "background:#e8e8ff;"><div style = "text-align:center;padding:40px;"><p style = "font-family:monospace;font-size:48px;">The answer is:</p><p style = "font-family:monospace;font-size:72px;">' + rval + '</p><p style = "font-family:monospace;font-size:48px;">Thank you for using my calculator!</p></div></body>');
+        }
+        return rval;
+      }
+      function CalcArrRefresh() {
+        if (calcarr.length > 100) calcarr.splice(0, calcarr.length - 100);
+        calcres.innerHTML = calcarr.join('<br>');
+        calcres.scrollTop = calcres.scrollHeight;
+      }
+      onload = function () {
+        onload_typessupp();
+        onload_namespace();
+        let cd = new Date();
+        if (cd.getMonth() == 3 && cd.getDate() == 1) {
+          realmode.value = 1;
+          calcarr.push('Realmode is turned on (not possibly connected to the date), go to Settings/Special Settings to turn off.');
+          CalcArrRefresh();
+        }
+      };
+      cinp.addEventListener('keydown', function (e) {
+        if (e.keyCode == 13) {
+          calcarr.push('>> ' + cinp.value);
+          let pv = ParseText(cinp.value);
+          if (pv !== undefined) calcarr.push('<- ' + pv);
+          CalcArrRefresh();
+          if (cinphist[cinphist.length-1] != cinp.value) cinphist.push(cinp.value);
+          if (cinphist.length > 100) cinphist.splice(0, cinphist.length - 100);
+          cinp.value = '';
+          histind = cinphist.length;
+          currtext = '';
+        } else if (e.keyCode === 38) {
+          if (histind > 0) {
+            histind -= 1;
+            cinp.value = cinphist[histind];
+          }
+          setTimeout(function () { cinp.selectionStart = cinp.selectionEnd = 10000; }, 0);
+        } else if (e.keyCode === 40) {
+          if (histind < cinphist.length - 1) {
+            histind += 1;
+            cinp.value = cinphist[histind];
+          } else if (histind == cinphist.length - 1) {
+            histind = cinphist.length;
+            cinp.value = currtext;
+          }
+          setTimeout(function () { cinp.selectionStart = cinp.selectionEnd = 10000; }, 0);
+        } else if (e.keyCode === 8) {
+          histind = cinphist.length;
+          setTimeout(function () {currtext = cinp.value;}, 0);
+        }
+      });
+      cinp.addEventListener('keypress', function (e) {
+        if (!e.charCode) {return;}
+        histind = cinphist.length;
+        setTimeout(function () {currtext = cinp.value;}, 0);
+      });
+    </script>
+    <script src = '../js/math-5.10.3.min.js' integrity = 'sha384-d1Hwkp6yS5/5wx+7N1JJGcXznjb7sSujpGdE6028s1QFCw8dhwG9iM9DBDrG22bV' crossorigin = 'anonymous'></script>
+  </body>
+</html>

@@ -1,0 +1,796 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset = 'utf-8'>
+    <meta name = 'viewport' content = 'width=device-width'>
+    <title>coolguy284.com: Advanced Time</title>
+    <style>
+      .mono {
+        margin: 0;
+        padding: 0;
+        font-family: monospace;
+        font-size: 14px;
+      }
+      .monos {
+        position: relative;
+        left: 1px;
+        margin: 0;
+        padding: 0;
+        font-family: monospace;
+        font-size: 14px;
+      }
+      .inl {
+        display: inline;
+        margin: 0;
+        padding: 0;
+      }
+      input[type=checkbox], input[type=range] {
+        margin:0;
+        padding:0;
+      }
+      td {
+        border: 1px solid black;
+      }
+    </style>
+  </head>
+  <body style = 'font-family:arial;'>
+    <details>
+      <summary style = 'font-size:24px;'>Settings</summary>
+      <table>
+        <tr>
+          <td colspan = 3>
+            <h3 class = 'inl'>Countdown Settings</h3>
+          </td>
+        </tr>
+        <tr>
+          <td colspan = 3>
+            <table>
+              <tr>
+                <td>
+                  <h4 class = 'inl'>Mode: </h4> Strips <input type = 'range' id = 'countmod' value = 0 min = 0 max = 1 onchange = 'StriTogg(countmod.value)' style = 'width:50px;'> Continuous
+                </td>
+                <td>
+                  <h4 class = 'inl'>Time Render: </h4> (d, h, m, s) <input type = 'range' id = 'timrend' value = 0 min = 0 max = 1 onchange = 'countd.trmod = Boolean(parseInt(timrend.value))' style = 'width:50px;'> (:::.)
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr id = 'strs'>
+          <td>
+            <h4 class = 'inl'>Day Span</h4>
+            <p class = 'mono'>Time Format:</p>
+            <p class = 'monos'>YYYY-MM-DD</p>
+            <input class = 'mono' type = 'text' id = 'endvald' style = 'width: 8em;'><br>
+            <select id = 'optd' onchange = 'SetMod();Setf(1)'>
+              <option value = 'today'>Today</option>
+              <option value = 'valentine'>Valentine's Day</option>
+              <option value = 'begindst'>Beginning of DST</option>
+              <option value = 'mothersday'>Mother's Day</option>
+              <option value = 'memorialday'>Memorial Day</option>
+              <option value = 'beginsummer'>Beginning of Summer</option>
+              <option value = 'fathersday'>Father's Day</option>
+              <option value = 'fourthjuly'>Fourth of July</option>
+              <option value = 'endsummer'>End of Summer</option>
+              <option value = 'laborday'>Labor Day</option>
+              <option value = 'halloween'>Halloween</option>
+              <option value = 'enddst'>End of DST</option>
+              <option value = 'thanksgiving'>Thanksgiving</option>
+              <option value = 'christmas'>Christmas</option>
+              <option value = 'newyear'>New Year's Day</option>
+              <option value = 'custom'>Custom</option>
+            </select>
+            <button onclick = 'Setf()'>Set</button>
+          </td>
+          <td>
+            <h4 class = 'inl'>Week Span</h4>
+            <table>
+              <tr style = 'font-family:monospace;'>
+                <td>S</td><td>M</td><td>T</td><td>W</td><td>T</td><td>F</td><td>S</td>
+              </tr>
+              <tr>
+                <td><input type = 'checkbox' id = 'daysun' onchange = 'Setf()' checked = true></td>
+                <td><input type = 'checkbox' id = 'daymon' onchange = 'Setf()' checked = true></td>
+                <td><input type = 'checkbox' id = 'daytue' onchange = 'Setf()' checked = true></td>
+                <td><input type = 'checkbox' id = 'daywed' onchange = 'Setf()' checked = true></td>
+                <td><input type = 'checkbox' id = 'daythu' onchange = 'Setf()' checked = true></td>
+                <td><input type = 'checkbox' id = 'dayfri' onchange = 'Setf()' checked = true></td>
+                <td><input type = 'checkbox' id = 'daysat' onchange = 'Setf()' checked = true></td>
+              </tr>
+            </table>
+            <select id = 'optp' onchange = 'SetMod();Setf(1)'>
+              <option value = 'everyday' selected>Every Day</option>
+              <option value = 'workdays'>Work Days</option>
+              <option value = 'custom'>Custom</option>
+            </select>
+            <button onclick = 'Setf()'>Set</button>
+          </td>
+          <td>
+            <h4 class = 'inl'>Time Span</h4>
+            <p class = 'mono'>Time Format:</p>
+            <p class = 'monos'>HH:MM:SS.LLL</p>
+            <input class = 'mono' type = 'text' id = 'startvalt' style = 'width: 8em;'><br>
+            <input class = 'mono' type = 'text' id = 'endvalt' style = 'width: 8em;'><br>
+            <select id = 'optt' onchange = 'SetMod();Setf(1)'>
+              <option value = 'fullday' selected>Full Day</option>
+              <option value = 'school'>School Hours</option>
+              <option value = 'custom'>Custom</option>
+            </select>
+            <button onclick = 'Setf()'>Set</button>
+          </td>
+        </tr>
+        <tr id = 'conts' style = 'display:none;'>
+          <td>
+            <h4 class = 'inl'>Time Span</h4>
+            <p class = 'mono'>Time Format:</p>
+            <p class = 'monos'>YYYY-MM-DDTHH:MM:SS.LLLZ</p>
+            <input class = 'mono' type = 'text' id = 'startvalc' style = 'width: 14.5em;'><br>
+            <input class = 'mono' type = 'text' id = 'endvalc' style = 'width: 14.5em;'><br>
+            <select id = 'optc' onchange = 'SetModc();Setfc(1)'>
+              <option value = 'minute'>Minute</option>
+              <option value = 'hour'>Hour</option>
+              <option value = 'day' selected>Day</option>
+              <option value = 'week'>Week</option>
+              <option value = 'month'>Month</option>
+              <option value = 'year'>Year</option>
+              <option value = 'custom'>Custom</option>
+            </select>
+            <button onclick = 'Setfc()'>Set</button>
+          </td>
+        </tr>
+      </table>
+    </details>
+    <p class = 'mono' align = 'center'>
+      <canvas id = 'mycanvas'></canvas>
+      <p id = 'lapc' class = 'mono' style = 'display:none;'>
+        Laps:<br>
+        <span id = 'laps'></span>
+      </p>
+    </p>
+    <script src = '../js/processing-1.4.8.min.js' integrity = 'sha384-IFMQ3jsa1T5/PsytPaLGxwQ6Z0c2fEjduoYZoD9BWJBFcdGpqX+tqdMYIDGS8yWY' crossorigin = 'anonymous'></script>
+    <script>
+      function StriTogg(v) {
+        if (parseInt(v) == 1) {
+          countd.contd = true;
+          strs.style = 'display:none;';
+          conts.style = '';
+        } else {
+          countd.contd = false;
+          strs.style = '';
+          conts.style = 'display:none;';
+        }
+      }
+      var widthe = 600, heighte = 400, tab = 'clock', cd = new Date(), pdate = -1, arial, monospace;
+      var mouseon = false, mousebutton = [0, 0, 0];
+      var stopw = {
+        state: 0,
+        runt: 0,
+        pt: new Date().getTime(),
+        laps: [],
+      };
+      var countd = {
+        contd: false,
+        trmod: false,
+        ed: undefined,
+        fro: undefined,
+        to: undefined,
+        ddur: undefined,
+        pdur: undefined,
+        froc: undefined,
+        toc: undefined,
+        dur: undefined,
+        ta: {
+          ed: undefined,
+          pd: {
+            everyday: [true, true, true, true, true, true, true],
+            workdays: [false, true, true, true, true, true, false],
+          },
+          td: {
+            fullday: {
+              fro: '00:00:00.000',
+              to: '24:00:00.000'
+            },
+            school: {
+              fro: '08:00:00.000',
+              to: '14:25:00.000'
+            }
+          },
+          tdc: undefined,
+          edr: {
+            today: 'Today',
+            valentine: 'Valentine\'s Day',
+            begindst: 'Beginning of DST',
+            mothersday: 'Mother\'s Day',
+            memorialday: 'Memorial Day',
+            beginsummer: 'Beginning of Summer',
+            fathersday: 'Fathers\'s Day',
+            fourthjuly: 'Fourth of July',
+            endsummer: 'End of Summer',
+            laborday: 'Labor Day',
+            halloween: 'Halloween',
+            enddst: 'End of DST',
+            thanksgiving: 'Thanksgiving',
+            christmas: 'Christmas',
+            newyear: 'New Year\'s Day',
+            get custom() {return FromDateNum(countd.ed)}
+          },
+          edrc: {
+            minute: 'Minute',
+            hour: 'Hour',
+            day: 'Day',
+            week: 'Week',
+            month: 'Month',
+            year: 'Year',
+            get custom() {return FromDateTimeNum(countd.toc)}
+          },
+        }
+      };
+      function Upd() {
+        countd.ta.ed = {
+          today: FromDateNum(cd),
+          valentine: cd.getFullYear() + '-02-14',
+          begindst: FromDateNum(GetDateByDay(cd.getFullYear(), 2, 2, 0)),
+          mothersday: FromDateNum(GetDateByDay(cd.getFullYear(), 4, 2, 0)),
+          memorialday: FromDateNum(GetDateByDay(cd.getFullYear(), 5, 0, 1)),
+          beginsummer: cd.getFullYear() + '-06-02',
+          fathersday: FromDateNum(GetDateByDay(cd.getFullYear(), 5, 3, 0)),
+          fourthjuly: cd.getFullYear() + '-07-04',
+          endsummer: cd.getFullYear() + '-08-26',
+          laborday: FromDateNum(GetDateByDay(cd.getFullYear(), 8, 1, 1)),
+          halloween: cd.getFullYear() + '-10-31',
+          enddst: FromDateNum(GetDateByDay(cd.getFullYear(), 10, 1, 0)),
+          thanksgiving: FromDateNum(GetDateByDay(cd.getFullYear(), 10, 4, 4)),
+          christmas: cd.getFullYear() + '-12-25',
+          newyear: cd.getFullYear() + 1 + '-01-01',
+        };
+        countd.ta.tdc = {
+          minute: {
+            fro: cd.getFullYear() + '-' + zf2(cd.getMonth() + 1) + '-' + zf2(cd.getDate()) + 'T' + zf2(cd.getHours()) + ':' + zf2(cd.getMinutes()) + ':00.000Z',
+            to: cd.getFullYear() + '-' + zf2(cd.getMonth() + 1) + '-' + zf2(cd.getDate()) + 'T' + zf2(cd.getHours()) + ':' + zf2(cd.getMinutes() + 1) + ':00.000Z',
+          },
+          hour: {
+            fro: cd.getFullYear() + '-' + zf2(cd.getMonth() + 1) + '-' + zf2(cd.getDate()) + 'T' + zf2(cd.getHours()) + ':00:00.000Z',
+            to: cd.getFullYear() + '-' + zf2(cd.getMonth() + 1) + '-' + zf2(cd.getDate()) + 'T' + zf2(cd.getHours() + 1) + ':00:00.000Z',
+          },
+          day: {
+            fro: cd.getFullYear() + '-' + zf2(cd.getMonth() + 1) + '-' + zf2(cd.getDate()) + 'T00:00:00.000Z',
+            to: cd.getFullYear() + '-' + zf2(cd.getMonth() + 1) + '-' + zf2(cd.getDate() + 1) + 'T00:00:00.000Z',
+          },
+          week: {
+            fro: FromDateTimeNum(getMonday(cd)),
+            to: FromDateTimeNum(getNextMonday(cd)),
+          },
+          month: {
+            fro: cd.getFullYear() + '-' + zf2(cd.getMonth() + 1) + '-01T00:00:00.000Z',
+            to: cd.getFullYear() + '-' + zf2(cd.getMonth() + 2) + '-01T00:00:00.000Z',
+          },
+          year: {
+            fro: cd.getFullYear() + '-01-01T00:00:00.000Z',
+            to: (cd.getFullYear() + 1) + '-01-01T00:00:00.000Z',
+          },
+        };
+      }
+      function arrayEqual(a, b) {
+        if (a === b) return true;
+        if (a == null || b == null) return false;
+        if (a.length != b.length) return false;
+        for (var i = 0; i < a.length; ++i) if (a[i] !== b[i]) return false;
+        return true;
+      }
+      function ToNum(str) {
+        var strs = str.split('.');
+        var stra = strs[0].split(':');
+        return Number(stra[0]) * 3600000 + Number(stra[1]) * 60000 + Number(stra[2] || 0) * 1000 + Number(strs[1] || 0);
+      }
+      function FromNum(num) {
+        return String(Math.floor(num / 3600000 % 60)).padStart(2, '0') + ':' + String(Math.floor(num / 60000 % 60)).padStart(2, '0') + ':' + String(Math.floor(num / 1000 % 60)).padStart(2, '0') + '.' + String(Math.floor(num % 1000)).padStart(3, '0');
+      }
+      function ToDateNum(str) {
+        var strs = str.split('-');
+        return new Date(strs[0], strs[1] - 1, strs[2]).getTime();
+      }
+      function ToDateTimeNum(str) {
+        var strt = str.split('Z')[0].split('T');
+        var strs = strt[0].split('-');
+        var strtm = strt[1].split(':');
+        var strtm2 = strtm[2].split('.');
+        return new Date(strs[0], strs[1] - 1, strs[2], strtm[0], strtm[1], strtm2[0], strtm2[1]).getTime();
+      }
+      function FromDateNum(num) {
+        var dto = new Date(num);
+        return dto.getFullYear() + '-' + String(dto.getMonth() + 1).padStart(2, '0') + '-' + String(dto.getDate()).padStart(2, '0');
+      }
+      function FromDateTimeNum(num) {
+        var dto = new Date(num);
+        return dto.getFullYear() + '-' + String(dto.getMonth() + 1).padStart(2, '0') + '-' + String(dto.getDate()).padStart(2, '0') + 'T' + String(dto.getHours()).padStart(2, '0') + ':' + String(dto.getMinutes()).padStart(2, '0') + ':' + String(dto.getSeconds()).padStart(2, '0') + '.' + String(dto.getMilliseconds()).padStart(3, '0');
+      }
+      function GetDateNum(date) {
+        return date.getHours() * 3600000 + date.getMinutes() * 60000 + date.getSeconds() * 1000 + date.getMilliseconds();
+      }
+      function GetDateByDay(year, month, week, day) {
+        var fd = new Date(year, month, 1).getDay();
+        if (day < fd) fd = day - fd + 7;
+        else fd = day - fd;
+        return new Date(year, month, fd + week * 7 - 6);
+      }
+      function GetPeriodArr() {
+        return [daysun.checked, daymon.checked, daytue.checked, daywed.checked, daythu.checked, dayfri.checked, daysat.checked];
+      }
+      function SetPeriodArr(arr) {
+        daysun.checked = arr[0];
+        daymon.checked = arr[1];
+        daytue.checked = arr[2];
+        daywed.checked = arr[3];
+        daythu.checked = arr[4];
+        dayfri.checked = arr[5];
+        daysat.checked = arr[6];
+      }
+      function Setf(nm) {
+        countd.ed = ToDateNum(endvald.value);
+        countd.fro = ToNum(startvalt.value);
+        countd.to = ToNum(endvalt.value);
+        countd.ddur = countd.to - countd.fro;
+        countd.pdur = GetPeriodArr().reduce((a, b) => a + b, 0);
+        endvald.value = FromDateNum(countd.ed);
+        startvalt.value = FromNum(countd.fro);
+        endvalt.value = FromNum(countd.to);
+        console.log('Set End Date To: ' + FromDateNum(countd.ed) + ', Start To: ' + FromNum(countd.fro) + ', End To: ' + FromNum(countd.to));
+        if (!nm) GetMod();
+      }
+      function Setfc(nm) {
+        countd.froc = ToDateTimeNum(startvalc.value);
+        countd.toc = ToDateTimeNum(endvalc.value);
+        countd.dur = countd.toc - countd.froc;
+        console.log('Set Alternate Start To: ' + FromDateTimeNum(countd.froc) + ', Alternate End To: ' + FromDateTimeNum(countd.toc));
+        if (!nm) GetModc();
+      }
+      function SetMod() {
+        if (optd.value != 'custom') {
+          endvald.value = countd.ta.ed[optd.value];
+        }
+        if (optp.value != 'custom') {
+          SetPeriodArr(countd.ta.pd[optp.value]);
+        }
+        if (optt.value != 'custom') {
+          startvalt.value = countd.ta.td[optt.value].fro;
+          endvalt.value = countd.ta.td[optt.value].to;
+        }
+      }
+      function SetModc() {
+        if (optc.value != 'custom') {
+          startvalc.value = countd.ta.tdc[optc.value].fro;
+          endvalc.value = countd.ta.tdc[optc.value].to;
+        }
+      }
+      function GetMod() {
+        let cus;
+        cus = true;
+        for (var i in countd.ta.ed) {
+          if (countd.ta.ed[i] == endvald.value) {
+            optd.value = i;
+            cus = false;
+            break;
+          }
+        }
+        if (cus) optd.value = 'custom';
+        cus = true;
+        for (var i in countd.ta.pd) {
+          if (arrayEqual(countd.ta.pd[i], GetPeriodArr())) {
+            optp.value = i;
+            cus = false;
+            break;
+          }
+        }
+        if (cus) optp.value = 'custom';
+        cus = true;
+        for (var i in countd.ta.td) {
+          if (countd.ta.td[i].fro == startvalt.value && countd.ta.td[i].to == endvalt.value) {
+            optt.value = i;
+            cus = false;
+            break;
+          }
+        }
+        if (cus) optt.value = 'custom';
+      }
+      function GetModc() {
+        let cus;
+        cus = true;
+        for (var i in countd.ta.tdc) {
+          if (countd.ta.tdc[i].fro == startvalc.value && countd.ta.tdc[i].to == endvalc.value) {
+            optc.value = i;
+            cus = false;
+            break;
+          }
+        }
+        if (cus) optc.value = 'custom';
+      }
+      function getMonday(d) {
+        d = new Date(d);
+        var day = d.getDay(),
+            diff = d.getDate() - day + (day == 0 ? -6:1);
+        return new Date(d.setDate(diff));
+      }
+      function getNextMonday(d) {
+        d = new Date(d);
+        var day = d.getDay(),
+            diff = d.getDate() - day + (day == 0 ? -6:1) + 7;
+        return new Date(d.setDate(diff));
+      }
+      function WeeksBetween(date1, date2) {
+        var db = (date2.getTime() - date1.getTime()) / 86400000;
+        return (Math.floor(db) - (6 - date1.getDay()) - date2.getDay()) / 7;
+      }
+      function DaysBefore(day) {
+        var ds = 0;
+        for (var d = day + 1; d < 7; d++) {
+          if (GetPeriodArr()[d]) ds += 1;
+        }
+        return ds;
+      }
+      function DaysAfter(day) {
+        var ds = 0;
+        for (var d = 0; d < day; d++) {
+          if (GetPeriodArr()[d]) ds += 1;
+        }
+        return ds;
+      }
+      function DaysWeek(day1, day2) {
+        if (day1 == day2) return -1;
+        if (day2 - day1 < 1) return -2 - DaysWeek(day2, day1);
+        var ds = 0;
+        for (var d = day1 + 1; d < day2; d++) {
+          if (GetPeriodArr()[d]) ds += 1;
+        }
+        return ds;
+      }
+      function SameWeek(date1, date2) {
+        var td = Math.floor(date2.getTime() / 86400000) - Math.floor(date1.getTime() / 86400000);
+        if (Math.abs(td) > 7) return false;
+        if (td >= 0) return date2.getDay() >= date1.getDay();
+        if (td < 0) return date2.getDay() < date1.getDay();
+      }
+      function drawtop() {
+        p.strokeWeight(1);
+        p.stroke(255);
+        p.fill(0);
+        p.rect(0, 0, 50, 50);
+        p.rect(50, 0, 50, 50);
+        p.rect(100, 0, 50, 50);
+        p.rect(150, 0, 500, 50);
+        p.strokeWeight(5);
+        p.ellipse(25, 25, 40, 40);
+        p.line(25, 25, 25, 12);
+        p.line(25, 25, 38, 25);
+        p.ellipse(75, 30, 30, 30);
+        p.line(64, 18, 62, 15);
+        //p.line(62, 9, 56, 15);
+        p.line(75, 12, 75, 8);
+        p.line(71, 6, 79, 6);
+        p.line(86, 18, 88, 15);
+        //p.line(88, 9, 94, 15);
+        p.fill(255);
+        p.textSize(9);
+        p.textAlign(3, 3);
+        p.text('Countdown', 125, 20);
+        p.text('hh:mm:ss', 125, 30);
+        p.strokeWeight(1);
+      }
+      function drawline(x, y, ang, srad, erad, col, wid) {
+        p.stroke(col);
+        p.strokeWeight(wid);
+        p.line(srad == 0 ? x : Math.cos(ang) * srad + x, srad == 0 ? y : Math.sin(ang) * srad + y, Math.cos(ang) * erad + x, Math.sin(ang) * erad + y);
+      }
+      function mousein(x1, y1, x2, y2) {
+        return (p.mouseX >= x1) && (p.mouseY >= y1) && (p.mouseX < x2) && (p.mouseY < y2);
+      }
+      function zf2(s) {
+        return ('' + s).padStart(2, '0');
+      }
+      function zf3(s) {
+        return ('' + s).padStart(3, '0');
+      }
+      function formt(t) {
+        if (t < 0) return '-' + formt(-t);
+        return zf3(Math.floor(t/86400000)) + ':' + zf2(Math.floor(t/3600000%24)) + ':' + zf2(Math.floor(t/60000%60)) + ':' + zf2(Math.floor(t/1000%60)) + '.' + zf3(Math.floor(t%1000));
+      }
+      function formts(t) {
+        if (t < 0) return '-' + formts(-t);
+        return zf3(Math.floor(t/86400000)) + 'd ' + zf2(Math.floor(t/3600000%24)) + 'h ' + zf2(Math.floor(t/60000%60)) + 'm ' + zf2(Math.floor(t/1000%60)) + 's';
+      }
+      var sketchProc = function(p) {
+        p.size(widthe, heighte, 1);
+        p.keyPressed = function() {
+          if (tab == 'stopwatch') {
+            if (p.keyCode == 32) stopw.state = !stopw.state;
+            else if (p.keyCode == 8) {
+              stopw.state = 0;
+              stopw.runt = 0;
+              lapc.style = 'display:none;';
+              laps.innerHTML = '';
+              stopw.laps.splice(0, Infinity);
+            } else if (p.keyCode == 10) {
+              stopw.laps.unshift(String(stopw.laps.length + 1).padStart(2, '0') + ' ' + formt(stopw.runt));
+              lapc.style = 'position:relative;left:50%;width:250px;height:400px;margin-left:-125px;overflow:scroll;font-size:18px;text-align:center;';
+              laps.innerHTML = stopw.laps.join('<br>') + '<br>';
+            }
+            //console.log(p.keyCode);
+          }
+        };
+        p.mouseOver = function() {
+          mouseon = true;
+        };
+        p.mouseOut = function() {
+          mouseon = false;
+        };
+        p.mousePressed = function() {
+          if (p.mouseButton == 37) {
+            mousebutton[0] = 1;
+          } else if (p.mouseButton == 3) {
+            mousebutton[1] = 1;
+          } else if (p.mouseButton == 39) {
+            mousebutton[2] = 1;
+          }
+          if (tab == 'stopwatch') {
+            if (mousein(167, 263, 242, 338) && mousebutton[0]) stopw.state = !stopw.state;
+            if (mousein(262, 263, 338, 338) && mousebutton[0]) {
+              stopw.state = 0;
+              stopw.runt = 0;
+              lapc.style = 'display:none;';
+              laps.innerHTML = '';
+              stopw.laps.splice(0, Infinity);
+            }
+            if (mousein(358, 263, 433, 338) && mousebutton[0]) {
+              stopw.laps.unshift(String(stopw.laps.length + 1).padStart(2, '0') + ' ' + formt(stopw.runt));
+              lapc.style = 'position:relative;left:50%;width:250px;height:400px;margin-left:-125px;overflow:scroll;font-size:18px;text-align:center;';
+              laps.innerHTML = stopw.laps.join('<br>') + '<br>';
+            }
+          }
+          if (mousein(0, 0, 50, 50) && mousebutton[0]) tab = 'clock';
+          if (mousein(50, 0, 100, 50) && mousebutton[0]) tab = 'stopwatch';
+          else if (mousein(100, 0, 150, 50) && mousebutton[0]) tab = 'countdown';
+        };
+        p.mouseReleased = function() {
+          if (p.mouseButton == 37) {
+            mousebutton[0] = 0;
+          } else if (p.mouseButton == 3) {
+            mousebutton[1] = 0;
+          } else if (p.mouseButton == 39) {
+            mousebutton[2] = 0;
+          }
+        };
+        arial = p.createFont('arial');
+        monospace = p.createFont('monospace');
+        p.draw = function() {
+          cd = new Date();
+          if (pdate != cd.getMinutes()) {
+            Upd();
+            pdate = cd.getMinutes();
+          }
+          p.background(0);
+          drawtop();
+          p.textSize(12);
+          p.textAlign(37, 102);
+          if (mousein(0, 0, 50, 50) && mouseon) {
+            p.fill(0);
+            p.stroke(255);
+            p.rect(p.mouseX, p.mouseY-18, 36, 16);
+            p.fill(255);
+            p.text('Clock', p.mouseX+3, p.mouseY-3);
+          } else if (mousein(50, 0, 100, 50) && mouseon) {
+            p.fill(0);
+            p.stroke(255);
+            p.rect(p.mouseX, p.mouseY-18, 62, 16);
+            p.fill(255);
+            p.text('Stopwatch', p.mouseX+3, p.mouseY-3);
+          } else if (mousein(100, 0, 150, 50) && mouseon) {
+            p.fill(0);
+            p.stroke(255);
+            p.rect(p.mouseX, p.mouseY-18, 85, 16);
+            p.fill(255);
+            p.text('Countdown/up', p.mouseX+3, p.mouseY-3);
+          }
+          if (tab == 'clock') {
+            p.fill(0);
+            p.stroke(255);
+            p.strokeWeight(10);
+            p.ellipse(300, 210, 300, 300);
+            p.fill(255);
+            p.textSize(25);
+            p.textAlign(3, 3);
+            p.strokeWeight(2);
+            for (var i = 0; i < 12; i += 0.2) {
+              if (i % 1 != 0) drawline(300, 210, (i - 3) * Math.PI / 6, 140, 145, p.color(255), 2);
+            }
+            p.strokeWeight(10);
+            for (var i = 0; i < 12; i += 1) {
+              var ang = (i - 3) * Math.PI / 6;
+              drawline(300, 210, ang, 140, 145, p.color(255), 10);
+              p.text(i == 0 ? 12 : i, Math.cos(ang) * 120 + 300, Math.sin(ang) * 120 + 210);
+            }
+            drawline(300, 210, ((cd.getHours() + cd.getMinutes() / 60 + cd.getSeconds() / 3600) - 3) * Math.PI / 6, 0, 70, p.color(255), 3);
+            drawline(300, 210, ((cd.getMinutes() + cd.getSeconds() / 60) - 15) * Math.PI / 30, 0, 120, p.color(255), 3);
+            drawline(300, 210, (cd.getSeconds() - 15) * Math.PI / 30, 0, 120, p.color(255, 0, 0), 2);
+            p.fill(255);
+            p.noStroke();
+            p.ellipse(300, 210, 10, 10);
+            p.fill(255);
+            var hr, apm;
+            if (cd.getHours() > 12) {hr = cd.getHours() - 12; apm = 'P.M.';}
+            else if (cd.getHours() == 0) {hr = 12; apm = 'A.M.';}
+            else {hr = cd.getHours(); apm = 'A.M.';}
+            p.textFont(monospace);
+            p.textSize(30);
+            p.text(String(cd.getFullYear()).padStart(4, '0') + '-' + zf2(cd.getMonth() + 1) + '-' + zf2(cd.getDate()) + ' ' + zf2(hr) + ':' + zf2(cd.getMinutes()) + ':' + zf2(cd.getSeconds()) + '.' + zf3(cd.getMilliseconds()) + ' ' + apm, 300, 380);
+            p.textFont(arial);
+          } else if (tab == 'stopwatch') {
+            t2 = new Date().getTime();
+            diff = t2 - stopw.pt;
+            stopw.pt = new Date().getTime();
+            if (stopw.state) {
+              stopw.runt += diff;
+            }
+            p.fill(255);
+            p.textAlign(3, 3);
+            p.textSize(40);
+            p.text('Stopwatch:', 300, 130);
+            p.textSize(50);
+            p.text(formt(stopw.runt), 300, 200);
+            p.fill(0);
+            p.rect(167, 263, 75, 75);
+            p.rect(262.5, 263, 75, 75);
+            p.rect(358, 263, 75, 75);
+            p.fill(255);
+            p.noStroke();
+            if (stopw.state) {
+              p.rect(177, 273, 20, 55);
+              p.rect(212, 273, 20, 55);
+            } else {
+              p.triangle(177, 273, 232, 300.5, 177, 328);
+            }
+            p.noFill();
+            p.stroke(255);
+            p.strokeWeight(5);
+            p.arc(301, 300.5, 50, 50, 0.7, 5.6);
+            p.line(312, 287, 322, 287);
+            p.line(322, 276, 322, 286);
+            p.textSize(30);
+            p.text('Lap', 395.5, 300.5);
+          } else if (tab == 'countdown') {
+            p.fill(255);
+            p.textSize(35);
+            p.textAlign(3, 3);
+            if (countd.contd) {
+              var tn = countd.ta.edrc[optc.value];
+              if (tn.length > 15) p.textSize(30);
+              p.text('Time Left Until ' + tn + ':', 300, 130);
+            } else {
+              var tn = countd.ta.edr[optd.value];
+              if (tn.length > 15) p.textSize(30);
+              p.text('Time Left Until ' + tn + ':', 300, 130);
+            }
+            var td = 0, sw = false, db = 0, wt = 0, da = 0;
+            if (countd.contd) {
+              td = countd.toc - cd.getTime();
+            } else {
+              if (SameWeek(new Date(countd.ed), cd)) {
+                db = DaysWeek(cd.getDay(), new Date(countd.ed).getDay());
+                td = (GetPeriodArr()[cd.getDay()] ? Math.min(Math.max(countd.to - GetDateNum(cd), 0), countd.ddur) : 0) + db * 86400000;
+                sw = true;
+              } else {
+                wt = WeeksBetween(cd, new Date(countd.ed));
+                db = DaysBefore(cd.getDay());
+                da = DaysAfter(new Date(countd.ed).getDay());
+                td = (GetPeriodArr()[cd.getDay()] ? Math.min(Math.max(countd.to - GetDateNum(cd), 0), countd.ddur) : 0) + (wt * countd.pdur + db + da) * 86400000;
+                sw = false;
+              }
+            }
+            if (countd.trmod) {
+              p.textSize(50);
+              p.text(formt(td), 300, 200);
+            } else {
+              p.textSize(50);
+              p.text(formts(td), 300, 200);
+            }
+            if (!countd.contd && !sw && (wt * 7 + db + da) > 7) {
+              p.textSize(30);
+              p.text((db == 1 ? '1 day, ' : db + ' days, ') + (wt == 1 ? '1 proper week, ' : wt + ' proper weeks, ') + (da == 1 ? '1 day' : da + ' days'), 300, 240);
+            }
+            p.textSize(35);
+            p.text('Current Time:', 300, 280);
+            p.textSize(20);
+            p.text(cd.toString(), 300, 330);
+          }
+        };
+      };
+      var p = new Processing(mycanvas, sketchProc);
+      onload = function() {
+        Upd();
+        var ta = String(localStorage.attab);
+        var ctd = String(localStorage.atcontd);
+        var trm = String(localStorage.attrmod);
+        var evd = String(localStorage.atendvald);
+        var epd = String(localStorage.atper);
+        var svt = String(localStorage.atstartvalt);
+        var evt = String(localStorage.atendvalt);
+        var froc = String(localStorage.atfroc);
+        var toc = String(localStorage.attoc);
+        if (ta == '' || ta == 'undefined') {
+          tab = 'stopwatch';
+        } else tab = ta;
+        if (ctd == '' || ctd == 'undefined') {
+          countd.contd = false;
+        } else if (ctd == 'true') {
+          countd.contd = true;
+          strs.style = 'display:none;';
+          conts.style = '';
+          countmod.value = 1;
+        } else if (ctd == 'false') {
+          countd.contd = false;
+          strs.style = '';
+          conts.style = 'display:none;';
+          countmod.value = 0;
+        }
+        if (trm == '' || trm == 'undefined') {
+          countd.trmod = false;
+        } else if (trm == 'true') {
+          countd.trmod = true;
+          timrend.value = 1;
+        } else if (trm == 'false') {
+          countd.trmod = false;
+          timrend.value = 0;
+        }
+        if (evd == '' || evd == 'undefined') {
+          evd = countd.ta.ed[optd.value];
+        }
+        if (epd == '' || epd == 'undefined') {
+          epd = countd.ta.pd[optp.value];
+        }
+        if (svt == '' || evt == '' || svt == 'undefined' || evt == 'undefined') {
+          svt = countd.ta.td[optt.value].fro;
+          evt = countd.ta.td[optt.value].to;
+        }
+        if (froc == '' || toc == '' || froc == 'undefined' || toc == 'undefined') {
+          froc = countd.ta.tdc[optc.value].fro;
+          toc = countd.ta.tdc[optc.value].to;
+        }
+        endvald.value = evd;
+        try {SetPeriodArr(JSON.parse(epd));} catch (e) {console.error(e)}
+        startvalt.value = svt;
+        endvalt.value = evt;
+        startvalc.value = froc;
+        endvalc.value = toc;
+        GetMod();
+        GetModc();
+        Setf(1);
+        Setfc();
+      };
+      onunload = onbeforeunload = function() {
+        localStorage.attab = tab;
+        localStorage.atcontd = countd.contd;
+        localStorage.attrmod = countd.trmod;
+        localStorage.atendvald = endvald.value;
+        localStorage.atper = JSON.stringify(GetPeriodArr());
+        localStorage.atstartvalt = startvalt.value;
+        localStorage.atendvalt = endvalt.value;
+        localStorage.atfroc = startvalc.value;
+        localStorage.attoc = endvalc.value;
+        onunload = function () {};
+      };
+      endvald.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) Setf();
+      });
+      startvalt.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) Setf();
+      });
+      endvalt.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) Setf();
+      });
+      startvalc.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) Setfc();
+      });
+      endvalc.addEventListener('keydown', function (e) {
+        if (e.keyCode === 13) Setfc();
+      });
+    </script>
+  </body>
+</html>

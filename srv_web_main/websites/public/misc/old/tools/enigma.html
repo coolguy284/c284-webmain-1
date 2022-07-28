@@ -1,0 +1,112 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset = 'utf-8'>
+    <meta name = 'viewport' content = 'width=device-width'>
+    <title>coolguy284.com: Enigma Machine</title>
+    <style>
+      body, input[type=text] {
+        font-family: monospace;
+      }
+      #rots {
+        width: 26em;
+        height: 5em;
+      }
+      #npos {
+        width: 5em;
+      }
+      #ncom {
+        width: 8em;
+      }
+      #ctxt, #ccip {
+        width: 100%;
+        height: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    Dial Substitution Positions:<br>
+    <span style = 'margin-left:3px;'>ABCDEFGHIJKLMNOPQRSTUVWXYZ</span><br>
+    <textarea id = 'rots'></textarea><br>
+    Generate random positions: <input type = 'number' id = 'npos'>
+    <button onclick = 'GenRandom()'>Generate</button><br>
+    Dial Combination: <input type = 'text' id = 'ncom'><br>
+    <button onclick = 'Cipher()'>Process Text</button>
+    <fieldset>
+      <legend>Text</legend>
+      <textarea id = 'ctxt'></textarea>
+    </fieldset>
+    <fieldset>
+      <legend>Cyphertext</legend>
+      <textarea id = 'ccip'></textarea>
+    </fieldset>
+    <script>
+      let alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+          rlph = 'NOPQRSTUVWXYZABCDEFGHIJKLM';
+      function shufstr(str) {
+        let bstr = '', ind;
+        while (str.length > 0) {
+          ind = Math.floor(Math.random() * str.length);
+          bstr += str[ind];
+          str = str.substring(0, ind) + str.substring(ind + 1, str.length);
+        }
+        return bstr;
+      }
+      function GenRandom() {
+        let poss = parseInt(npos.value), arr = [];
+        for (var i = 0; i < poss; i++) {
+          arr.push(shufstr(alph));
+        }
+        rots.value = arr.join('\n');
+      }
+      function rot(str, amt) {
+        amt %= str.length;
+        if (amt == 0) return str;
+        if (amt > 0) {
+          return str.substr(str.length - amt, amt) + str.substr(0, str.length - amt);
+        } else {
+          return str.substr(-amt, str.length + amt) + str.substr(0, -amt);
+        }
+      }
+      function Cipher() {
+        let cip = rots.value.split('\n');
+        let cipp = [];
+        for (let i = 0; i < ncom.value.length; i++) {
+          cipp.push(alph.indexOf(ncom.value[i]));
+        }
+        ctxt.value = ctxt.value.toUpperCase();
+        ccip.value = '';
+        for (let i = 0; i < ctxt.value.length; i++) {
+          if (alph.indexOf(ctxt.value[i]) > -1) {
+            let chr = ctxt.value[i];
+            for (let j = cip.length - 1; j > -1; j--) {
+              chr = alph[rot(cip[j], cipp[j]).indexOf(chr)];
+            }
+            chr = alph[rlph.indexOf(chr)];
+            for (let j = 0; j < cip.length; j++) {
+              chr = rot(cip[j], cipp[j])[alph.indexOf(chr)];
+            }
+            ccip.value += chr;
+            cipp[cipp.length - 1] += 1;
+            for (let j = cipp.length - 1; j > -1; j--) {
+              if (j > 0) {
+                if (cipp[j] >= alph.length) {
+                  cipp[j] = cipp[j] - alph.length;
+                  cipp[j - 1] += 1;
+                }
+              } else {
+                if (cipp[j] >= alph.length) {
+                  let k;
+                  for (k in cipp) cipp[k] = 0;
+                  break;
+                }
+              }
+            }
+          } else {
+            ccip.value += ctxt.value[i];
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

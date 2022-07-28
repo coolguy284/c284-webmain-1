@@ -5,6 +5,86 @@ RPS //+                                      /
 RPS ^(.*)/index.html$                        $1/
 
 
+# redirects to old server stash
+FPS /js/math-5.10.3.min.js                   /misc/old/js/math-5.10.3.min.js
+FPS /js/processing-1.4.8.min.js              /misc/old/js/processing-1.4.8.min.js
+FPS /tools/advancedtime.html                 /misc/old/tools/advancedtime.html
+FPS /tools/calculator.html                   /misc/old/tools/calculator.html
+FPS /tools/coderunner.html                   /misc/old/tools/coderunner.html
+FPS /tools/enigma.html                       /misc/old/tools/enigma.html
+FPS /tools/systemdata.html                   /misc/old/tools/systemdata.html
+
+# redirects from lower dir pages
+FPS /misc/tools/code_runner.html             /misc/old/tools/coderunner.html
+FPS /misc/tools/system_data.html             /misc/old/tools/systemdata.html
+
+# redirects to old server
+FTS /debug/aprilfools/index-old.html         /old/debug/aprilfools/index-old.html
+FTS /debug/aprilfools/index-old.js           /old/debug/aprilfools/index-old.js
+FTS /debug/aprilfools/index.html             /old/debug/aprilfools/index.html
+FTS /debug/aprilfools/index.js               /old/debug/aprilfools/index.js
+FTS /debug/dial/index.html                   /old/debug/dial/index.html
+FTS /debug/dial/index.js                     /old/debug/dial/index.js
+FTS /debug/prep/alphabet.html                /old/debug/prep/alphabet.html
+FTS /debug/prep/index.html                   /old/debug/prep/index.html
+FTS /debug/acetest.html                      /old/debug/acetest.html
+FTS /debug/chatview.html                     /old/debug/chatview.html
+FTS /debug/commrun.html                      /old/debug/commrun.html
+FTS /debug/evtsrc.html                       /old/debug/evtsrc.html
+FTS /debug/hecc.html                         /old/debug/hecc.html
+FTS /debug/htmleditor.html                   /old/debug/htmleditor.html
+FTS /debug/malloc.html                       /old/debug/malloc.html
+FTS /debug/notiftest.html                    /old/debug/notiftest.html
+FTS /debug/sdstor.html                       /old/debug/sdstor.html
+FTS /debug/sha256coll.html                   /old/debug/sha256coll.html
+FTS /debug/unleaveable.html                  /old/debug/unleaveable.html
+FTS /old/mover.html                          /old/old/mover.html
+FTS /old/p404.html                           /old/old/p404.html
+FTS /old/perr.html                           /old/old/perr.html
+FTS /path_ee/index.html                      /old/path_ee/index.html
+FTS /temp/link.html                          /old/temp/link.html
+FTS /temp/linkh.html                         /old/temp/linkh.html
+FTS /tools/calculator/compopsjs              /old/tools/calculator/compopsjs
+FTS /tools/calculator/constants.js           /old/tools/calculator/constants.js
+FTS /tools/calculator/exprconvert.js         /old/tools/calculator/exprconvert.js
+FTS /tools/calculator/exprparser.js          /old/tools/calculator/exprparser.js
+FTS /tools/calculator/funccall.js            /old/tools/calculator/funccall.js
+FTS /tools/calculator/images_port.js         /old/tools/calculator/images_port.js
+FTS /tools/calculator/images.js              /old/tools/calculator/images.js
+FTS /tools/calculator/index.css              /old/tools/calculator/index.css
+FTS /tools/calculator/index.html             /old/tools/calculator/index.html
+FTS /tools/calculator/index.js               /old/tools/calculator/index.js
+FTS /tools/calculator/matrixops.js           /old/tools/calculator/matrixops.js
+FTS /tools/calculator/namespace.js           /old/tools/calculator/namespace.js
+FTS /tools/calculator/operators.js           /old/tools/calculator/operators.js
+FTS /tools/calculator/stmtconvert.js         /old/tools/calculator/stmtconvert.js
+FTS /tools/calculator/stmtparser.js          /old/tools/calculator/stmtparser.js
+FTS /tools/calculator/surrops.js             /old/tools/calculator/surrops.js
+FTS /tools/calculator/types.js               /old/tools/calculator/types.js
+FTS /tools/calculator/typessupp.js           /old/tools/calculator/typessupp.js
+FTS /tools/science/atmosphere.html           /old/tools/science/atmosphere.html
+FTS /tools/science/atmosphere.js             /old/tools/science/atmosphere.js
+FTS /tools/systemdata/conc.js                /old/tools/systemdata/conc.js
+FTS /tools/systemdata/consoleedit.js         /old/tools/systemdata/consoleedit.js
+FTS /tools/systemdata/index.html             /old/tools/systemdata/index.html
+FTS /tools/systemdata/systemdata.js          /old/tools/systemdata/systemdata.js
+FTS /tools/god.html                          /old/tools/god.html
+FTS /tools/unicode.html                      /old/tools/unicode.html
+FTS /admin-fs.html                           /old/admin-fs.html
+FTS /admin.html                              /old/admin.html
+FTS /chathid.html                            /old/chathid.html
+FTS /ftx.txt                                 /old/ftx.txt
+FTS /google97334ac69929371e.html             /old/google97334ac69929371e.html
+FTS /mchat.html                              /old/mchat.html
+FTS /perrmsg.html                            /old/perrmsg.html
+FTS /uploader.html                           /old/uploader.html
+FTS /views.html                              /old/views.html
+FTS /wysiwyg-html.html                       /old/wysiwyg-html.html
+FTS /wysiwyg-html-2.html                     /old/wysiwyg-html-2.html
+
+DTS /js/                                     /old/js/
+
+
 DPS /debug/                                  /misc/debug/
 DPS /strange/                                /misc/strange/
 DPS /tools/                                  /misc/tools/
@@ -52,14 +132,12 @@ FPS /misc/tools/unitconv.html                /misc/tools/unit_converter.html
 FPS /misc/tools/uricomp.html                 /misc/tools/uri_comp.html
 FPS /misc/tools/widelatin.html               /misc/tools/wide_latin.html
 FPS /chat.html                               /chat/
-FPS /chathid.html                            /chat/
 FPS /contact.html                            /misc/contact.html
 FPS /echows                                  /echo_ws
 FPS /encodedecode.html                       /misc/tools/encode_decode.html
 FPS /encodingdecoding.html                   /misc/tools/encode_decode.html
 FTS /feedback.html                           https://github.com/coolguy284/c284-webmain-1/issues
 FPS /indexredirect.html                      /r?u=%2F
-FPS /mchat.html                              /chat/
 FPS /no_source.css                           /misc/no_source.css
 FPS /no_source.html                          /misc/no_source.html
 FPS /own_eyes.html                           /misc/own_eyes.html
@@ -72,38 +150,6 @@ FPS /redirecttemplate.html                   /misc/debug/templates/meta_redirect
 FPS /status.html                             /misc/status.html
 FTS /suggestions.html                        https://github.com/coolguy284/c284-webmain-1/issues
 FTS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
-
-#FPS /debug/templates/404.html                /misc/debug/templates/404.html
-#FPS /debug/templates/500.html                /misc/debug/templates/500.html
-#FPS /debug/templates/meta_redirect.html      /misc/debug/templates/meta_redirect.html
-#FPS /debug/templates/unicode.html            /misc/debug/templates/unicode.html
-#FPS /debug/big_scroll_area.html              /misc/debug/big_scroll_area.html
-#FPS /debug/latency_test.html                 /misc/debug/latency_test.html
-#FPS /debug/localstorage_editor.html          /misc/debug/localstorage_editor.html
-#FPS /debug/screen_resolutions.html           /misc/debug/screen_resolutions.html
-#FPS /debug/simple_page.html                  /misc/debug/simple_page.html
-#FPS /debug/solid_color.html                  /misc/debug/solid_color.html
-#FPS /debug/space_lengths.html                /misc/debug/space_lengths.html
-#FPS /debug/time_syncer.html                  /misc/debug/time_syncer.html
-#FPS /debug/useful_characters.html            /misc/debug/useful_characters.html
-#FPS /debug/                                  /misc/debug/
-#FPS /tools/aes-new.html                      /misc/tools/aes-new.html
-#FPS /tools/aes.html                          /misc/tools/aes.html
-#FPS /tools/base64.html                       /misc/tools/base64.html
-#FPS /tools/data_url.html                     /misc/tools/data_url.html
-#FPS /tools/encode_decode.html                /misc/tools/encode_decode.html
-#FPS /tools/file_downloader.html              /misc/tools/file_downloader.html
-#FPS /tools/hex.html                          /misc/tools/hex.html
-#FPS /tools/morse_code.html                   /misc/tools/morse_code.html
-#FPS /tools/qr_code.html                      /misc/tools/qr_code_gen.html
-#FPS /tools/rsa-new.html                      /misc/tools/rsa-new.html
-#FPS /tools/rsa.html                          /misc/tools/rsa.html
-#FPS /tools/sha.html                          /misc/tools/sha.html
-#FPS /tools/unit_converter.html               /misc/tools/unit_converter.html
-#FPS /tools/uri.html                          /misc/tools/uri.html
-#FPS /tools/wide_latin.html                   /misc/tools/wide_latin.html
-#FPS /tools/                                  /misc/tools/
-#FPS /unicode/                                /misc/unicode/
 
 
 # /misc/unicode redirect (custom code)

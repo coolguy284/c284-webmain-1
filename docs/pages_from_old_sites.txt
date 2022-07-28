@@ -1,0 +1,106 @@
+Key:
+❌ = not included, ✅ = included or newer version included, ➡️ = redirect to /oldX, ⛔ = in /misc/oldX
+
+node-server:
+➡️ /debug/aprilfools/index-old.html
+➡️ /debug/aprilfools/index-old.js
+➡️ /debug/aprilfools/index.html
+➡️ /debug/aprilfools/index.js
+➡️ /debug/dial/index.html
+➡️ /debug/dial/index.js
+➡️ /debug/prep/alphabet.html
+➡️ /debug/prep/index.html
+➡️ /debug/acetest.html
+✅ /debug/char.html (/misc/debug/useful_characters.html)
+➡️ /debug/chatview.html
+➡️ /debug/commrun.html
+➡️ /debug/evtsrc.html
+➡️ /debug/hecc.html
+➡️ /debug/htmleditor.html
+✅ /debug/index.html (/misc/debug/index.html)
+✅ /debug/latency.html (/misc/debug/latency_test.html)
+✅ /debug/localstorage.html (/misc/debug/localstorage_editor.html)
+➡️ /debug/malloc.html
+➡️ /debug/notiftest.html
+✅ /debug/owneyes.html (/misc/own_eyes.html)
+➡️ /debug/sdstor.html
+➡️ /debug/sha256coll.html
+➡️ /debug/unleaveable.html
+➡️ /old/mover.html
+➡️ /old/p404.html
+➡️ /old/perr.html
+➡️ /path_ee/index.html
+➡️ /temp/link.html
+➡️ /temp/linkh.html
+➡️ /tools/calculator/compopsjs
+➡️ /tools/calculator/constants.js
+➡️ /tools/calculator/exprconvert.js
+➡️ /tools/calculator/exprparser.js
+➡️ /tools/calculator/funccall.js
+➡️ /tools/calculator/images_port.js
+➡️ /tools/calculator/images.js
+➡️ /tools/calculator/index.css
+➡️ /tools/calculator/index.html
+➡️ /tools/calculator/index.js
+➡️ /tools/calculator/matrixops.js
+➡️ /tools/calculator/namespace.js
+➡️ /tools/calculator/operators.js
+➡️ /tools/calculator/stmtconvert.js
+➡️ /tools/calculator/stmtparser.js
+➡️ /tools/calculator/surrops.js
+➡️ /tools/calculator/types.js
+➡️ /tools/calculator/typessupp.js
+➡️ /tools/science/atmosphere.html
+➡️ /tools/science/atmosphere.js
+➡️ /tools/systemdata/conc.js
+➡️ /tools/systemdata/consoleedit.js
+➡️ /tools/systemdata/index.html
+➡️ /tools/systemdata/systemdata.js
+⛔ /tools/advancedtime.html
+✅ /tools/aes.html (/misc/tools/aes.html)
+✅ /tools/base64.html (/misc/tools/base64.html)
+⛔ /tools/calculator.html
+⛔ /tools/coderunner.html
+✅ /tools/dataurl.html (/misc/tools/data_url.html)
+✅ /tools/downloader.html (/misc/tools/file_downloader.html)
+⛔ /tools/enigma.html
+➡️ /tools/god.html
+✅ /tools/halloween.html (/misc/strange/halloween_name_gen.html)
+✅ /tools/html.html (/misc/tools/html_escape.html)
+✅ /tools/index.html (/misc/tools/index.html)
+✅ /tools/morsecode.html (/misc/tools/morse_code.html)
+✅ /tools/qrcode.html (/misc/tools/qr_code_gen.html)
+✅ /tools/rsa.html (/misc/tools/rsa.html)
+✅ /tools/sha256.html (/misc/tools/sha.html)
+⛔ /tools/systemdata.html
+➡️ /tools/unicode.html
+✅ /tools/unitconv.html (/misc/tools/unit_converter.html)
+✅ /tools/uri.html (/misc/tools/uri.html)
+✅ /tools/uricomp.html (/misc/tools/uri_comp.html)
+✅ /tools/widelatin.html (/misc/tools/wide_latin.html)
+✅ /user/login.html
+❌ /user/logout.html
+❌ /user/signedout.html
+➡️ /admin-fs.html
+➡️ /admin.html
+✅ /chat.html (/chat/)
+➡️ /chathid.html
+✅ /favicon.ico
+➡️ /ftx.txt
+➡️ /google97334ac69929371e.html
+✅ /heck.html
+✅ /index.html
+✅ /indexredirect.html (/r?u=%2F)
+➡️ /mchat.html
+✅ /p404.html (/misc/debug/templates/404.html)
+✅ /perr.html (/misc/debug/templates/500.html)
+➡️ /perrmsg.html
+✅ /rectangles.html (/misc/rectangles.html)
+✅ /redirecttemplate.html (/misc/debug/templates/meta_redirect.html)
+✅ /robots.txt
+✅ /sitemap.xml
+✅ /todo.html (https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt)
+➡️ /uploader.html
+➡️ /views.html
+➡️ /wysiwyg-html.html
+➡️ /wysiwyg-html-2.html
