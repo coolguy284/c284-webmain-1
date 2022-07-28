@@ -121,7 +121,6 @@ extra:
 experiment with unsorted readdirs using fuse, if works potential necessity to sort c284-webmain-1 modtimes.json or maybe just sort it anyway
 
 problems:
-if there is a unicode url it can be redirected by the default redirect code and the unicode code one at a time
 proc_main index.js seems to stay running if one of sibling docker containers started by it is still running
 
 notes:
