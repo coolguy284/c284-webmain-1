@@ -1,10 +1,15 @@
+# collapse consecutive slashes
 RPS //+                                      /
+
+# remove trailing "index.html"
 RPS ^(.*)/index.html$                        $1/
+
 
 DPS /debug/                                  /misc/debug/
 DPS /strange/                                /misc/strange/
 DPS /tools/                                  /misc/tools/
 DPS /unicode/                                /misc/unicode/
+
 
 FPS /chat/chat.html                          /chat/
 FPS /misc/debug/char.html                    /misc/debug/useful_characters.html
@@ -97,3 +102,7 @@ FPS /todo.html                               https://github.com/coolguy284/c284-
 #FPS /tools/wide_latin.html                   /misc/tools/wide_latin.html
 #FPS /tools/                                  /misc/tools/
 #FPS /unicode/                                /misc/unicode/
+
+
+# /misc/unicode redirect (custom code)
+CPS unicode
