@@ -57,7 +57,7 @@ FPS /contact.html                            /misc/contact.html
 FPS /echows                                  /echo_ws
 FPS /encodedecode.html                       /misc/tools/encode_decode.html
 FPS /encodingdecoding.html                   /misc/tools/encode_decode.html
-FPS /feedback.html                           https://github.com/coolguy284/c284-webmain-1/issues
+FTS /feedback.html                           https://github.com/coolguy284/c284-webmain-1/issues
 FPS /indexredirect.html                      /r?u=%2F
 FPS /mchat.html                              /chat/
 FPS /no_source.css                           /misc/no_source.css
@@ -70,8 +70,8 @@ FPS /perr.html                               /misc/debug/templates/500.html
 FPS /rectangles.html                         /misc/rectangles.html
 FPS /redirecttemplate.html                   /misc/debug/templates/meta_redirect.html
 FPS /status.html                             /misc/status.html
-FPS /suggestions.html                        https://github.com/coolguy284/c284-webmain-1/issues
-FPS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
+FTS /suggestions.html                        https://github.com/coolguy284/c284-webmain-1/issues
+FTS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
 
 #FPS /debug/templates/404.html                /misc/debug/templates/404.html
 #FPS /debug/templates/500.html                /misc/debug/templates/500.html
