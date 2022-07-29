@@ -1,4 +1,3 @@
-add some old sites like aprilfools directly from node server, update wm1 lower dir
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
