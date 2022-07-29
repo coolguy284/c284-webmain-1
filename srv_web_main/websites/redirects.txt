@@ -77,8 +77,6 @@ FPS /technical.html                          /misc/debug/
 FTS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
 
 # redirects to old server stash
-FPS /js/math-5.10.3.min.js                   /misc/old/js/math-5.10.3.min.js
-FPS /js/processing-1.4.8.min.js              /misc/old/js/processing-1.4.8.min.js
 FPS /tools/advancedtime.html                 /misc/old/tools/advancedtime.html
 FPS /tools/calculator.html                   /misc/old/tools/calculator.html
 FPS /tools/coderunner.html                   /misc/old/tools/coderunner.html
