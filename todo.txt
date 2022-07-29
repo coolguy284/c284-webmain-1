@@ -88,6 +88,7 @@ make pages for more of subtlecrypto api, like pbkdf, dh, ecdh, and future post q
 atmospheric pressure converter
 env var for strict transport security
 support protocol relative paths in redirects file
+add content security policy header to site
 
 hex editor
 english words searcher
