@@ -1,1 +1,1 @@
-sudo docker build --no-cache -t c284-webmain-1_proc_mongodb "${0%/*}/.."
+sudo docker build --build-arg NODE_VERSION=18.7.0 --no-cache -t c284-webmain-1_proc_mongodb "${0%/*}/.."

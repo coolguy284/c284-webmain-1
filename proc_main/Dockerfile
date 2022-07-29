@@ -12,6 +12,7 @@ RUN apt-get update
 RUN apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
 
 # install node.js
+ARG NODE_VERSION
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install nodejs -y
 RUN npm install -g npm

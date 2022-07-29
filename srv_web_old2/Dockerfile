@@ -9,6 +9,7 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install curl git -y
 
 # install node.js
+ARG NODE_VERSION
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
 RUN apt-get install nodejs -y
 RUN npm install -g npm
