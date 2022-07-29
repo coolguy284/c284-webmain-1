@@ -10,6 +10,7 @@ module.exports = function parseWebsiteData() {
   entries.forEach(entry => {
     let [ path, val ] = entry.split(':').map(part => part.trim()); val = parseInt(val);
     if (!val) return;
+    if (path.startsWith('/')) path = path.slice(1);
     
     let match;
     if (match = /^(.*)\/\*$/.exec(path)) {
