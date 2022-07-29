@@ -1,5 +1,5 @@
 Key:
-❌ = not included, ✅ = included or newer version included, ➡️ = redirect to /oldX, ⛔ = in /misc/oldX
+- = won't be included for now, ❌ = not included, ✅ = included or newer version included, ⛔ = in /misc/oldX, ➡️ = redirect to /oldX
 
 node-server:
 ➡️ /debug/aprilfools/index-old.html
@@ -89,7 +89,7 @@ node-server:
 ➡️ /ftx.txt
 ➡️ /google97334ac69929371e.html
 ✅ /heck.html
-✅ /index.html
+✅ /index.html (/)
 ✅ /indexredirect.html (/r?u=%2F)
 ➡️ /mchat.html
 ✅ /p404.html (/misc/debug/templates/404.html)
@@ -104,3 +104,111 @@ node-server:
 ➡️ /views.html
 ➡️ /wysiwyg-html.html
 ➡️ /wysiwyg-html-2.html
+
+node-server-new:
+✅ /user/login.html
+✅ /chat.html (/chat/)
+✅ /favicon.ico
+✅ /index.html (/)
+✅ /page_404.html (/misc/debug/templates/404.html)
+✅ /page_500.html (/misc/debug/templates/500.html)
+✅ /robots.txt
+✅ /sitemap.xml
+
+coolguy284.github.io:
+➡️ /clickspeed/index.html
+➡️ /countdown/index.html
+➡️ /countdown1/index.html
+➡️ /countdown2/index.html
+➡️ /countdownb/index.html
+➡️ /grapher/index.html
+✅ /htmleditor/index.html (/old/debug/htmleditor.html)
+➡️ /infloop/index.html
+✅ /localstorage/index.html (/misc/debug/localstorage_editor.html)
+➡️ /noise/index.html 
+➡️ /note/index.html
+➡️ /pressspeed/index.html
+✅ /spacetypes/index.html (/misc/debug/space_lengths.html)
+➡️ /texteditor/index.html
+➡️ /wordsearchsolver/index.html
+➡️ /bellringlog-2017-2018.html
+➡️ /bellringlog-2018-2019.html
+✅ /favicon.ico
+✅ /robots.txt
+✅ /simple.html (/misc/debug/simple_page.html)
+✅ /sitemap.xml
+✅ /technical.html (/misc/debug/)
+
+repls:
+- old/Apps/Universe
+- old/Apps/Electricity
+- old/Apps/C++ Multitool
+- old/Apps/Collatz Tester
+- old/Apps/Function Executor
+- old/Apps/Thread Stuff
+- old/Apps/Event Based Python
+- old/Apps/Display
+- old/google code-in/code-in powers-of-2
+- old/google code-in/code-in makefile
+❌ old/Html-Apps/Geometries
+❌ old/Html-Apps/Waveforms and Fourier Transforms
+✅ old/Html-Apps/Calculator (/misc/old/tools/calculator.html)
+❌ old/Html-Apps/April Fools 2 (potential add)
+❌ old/Html-Apps/Special Relativity
+✅ old/Html-Apps/Morse Code (/misc/tools/morse_code.html)
+✅ old/Html-Apps/Enigma (/misc/old/tools/enigma.html)
+❌ old/Html-Apps/Table Data
+❌ old/Html-Apps/Planck Blackbody Thing
+❌ old/Html-Apps/Lightning
+✅ old/Html-Apps/Multithreaded Code Runner (/misc/old/tools/coderunner.html)
+✅ old/Html-Apps/System Data (/misc/old/tools/systemdata.html)
+❌ old/Html-Apps/April Fools Result
+✅ old/Html-Apps/April Fools (/old/debug/aprilfools/index.html)
+❌ old/Html-Apps/Air Simulator
+✅ old/Html-Apps/Word Search Solver (/oldg/wordsearchsolver/index.html)
+✅ old/Html-Apps/Advanced Time (/misc/old/tools/advancedtime.html)
+❌ old/Html-Apps/Relativistic Gravity
+✅ old/Html-Apps/Note Taker (/oldg/note/index.html)
+✅ old/Html-Apps/Localstorage Editor (/misc/debug/localstorage_editor.html)
+✅ old/Html-Apps/Countdown 1 (/oldg/countdown/index.html)
+✅ old/Html-Apps/Countdown 2 (/oldg/countdown2/index.html)
+- old/Libraries/Sympy Experiments
+- old/Libraries/Bash Commands
+- old/Libraries/fs-xattr test
+- old/Libraries/Crypto Experiments
+- old/Libraries/VFS
+- old/Libraries/Weird Circular References
+- old/Libraries/exjson2
+- old/Libraries/RSA
+- old/Libraries/utilinspect
+- old/Libraries/Javascript Collections
+❌ old/Servers/DNS Server
+❌ old/Servers/Server WebAssembly Compiler
+❌ old/Servers/Java-Serv
+❌ old/Servers/Py Serv
+❌ old/Servers/Net Serv
+❌ old/Embed Maker
+- old/Haskell Test
+- old/Test C Sharp
+- old/Python Math Collections
+- old/Quantum Computing
+- old/CyanAdoredNamebinding
+- old/Experiments with Raymarching
+- old/Java Collections
+❌ old/Newspaper Thing
+- old/CPU2-cpp
+- old/CPU Speed Tester
+- old/Floating Point
+- old/Processor
+- old/JS
+❌ old/closet-coolguy284fork
+- old/Python Collections 2
+❌ old/htmltest
+❌ old/nodetest
+✅ old/Server (/old/)
+- old/Javascript Collections 2
+- old/Python Collections
+- Figenbaum Constant
+❌ Particle Simulation V2
+❌ Liquid / Gas Simulation
+- c284_algebra
