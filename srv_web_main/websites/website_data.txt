@@ -1,5 +1,6 @@
 # immutable files
 /libs/extern/*: 1
+/libs/extern/README_original_urls.txt: -1
 /favicon.ico: 1
 
 # files to compress
