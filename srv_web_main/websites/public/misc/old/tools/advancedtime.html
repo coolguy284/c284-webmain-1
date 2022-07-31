@@ -147,6 +147,7 @@
         <span id = 'laps'></span>
       </p>
     </p>
+    <!-- original source of next script: https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js -->
     <script src = '../js/processing-1.4.8.min.js' integrity = 'sha384-IFMQ3jsa1T5/PsytPaLGxwQ6Z0c2fEjduoYZoD9BWJBFcdGpqX+tqdMYIDGS8yWY' crossorigin = 'anonymous'></script>
     <script>
       function StriTogg(v) {
@@ -232,7 +233,7 @@
           begindst: FromDateNum(GetDateByDay(cd.getFullYear(), 2, 2, 0)),
           mothersday: FromDateNum(GetDateByDay(cd.getFullYear(), 4, 2, 0)),
           memorialday: FromDateNum(GetDateByDay(cd.getFullYear(), 5, 0, 1)),
-          beginsummer: cd.getFullYear() + '-06-02',
+          beginsummer: cd.getFullYear() + '-05-23',
           fathersday: FromDateNum(GetDateByDay(cd.getFullYear(), 5, 3, 0)),
           fourthjuly: cd.getFullYear() + '-07-04',
           endsummer: cd.getFullYear() + '-08-26',
@@ -617,6 +618,7 @@
             var hr, apm;
             if (cd.getHours() > 12) {hr = cd.getHours() - 12; apm = 'P.M.';}
             else if (cd.getHours() == 0) {hr = 12; apm = 'A.M.';}
+            else if (cd.getHours() == 12) {hr = 12; apm = 'P.M.';}
             else {hr = cd.getHours(); apm = 'A.M.';}
             p.textFont(monospace);
             p.textSize(30);

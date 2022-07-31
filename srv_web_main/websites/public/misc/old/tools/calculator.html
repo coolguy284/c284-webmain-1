@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Calculator</title>
+    <title>coolguy284.com: Calculator</title>
     <style>
       body {
         width: calc(100% - 10px);
@@ -479,7 +479,7 @@
             }
           }
         };
-        inspect.custom = Symbol('util.inspect.custom');
+        inspect.custom = Symbol.for('nodejs.util.inspect.custom');
         return { defaultOptions, typedArrays, boxedPrimitives, className, objectToString, stringProp, inspect, formatObject, formatArray, formatMap, formatSet, formatPropDes, formatValue };
       })();
       Object.assign(util, utila);
@@ -3441,6 +3441,7 @@
         setTimeout(function () {currtext = cinp.value;}, 0);
       });
     </script>
+    <!-- original source of next script: https://cdnjs.cloudflare.com/ajax/libs/mathjs/5.10.3/math.min.js -->
     <script src = '../js/math-5.10.3.min.js' integrity = 'sha384-d1Hwkp6yS5/5wx+7N1JJGcXznjb7sSujpGdE6028s1QFCw8dhwG9iM9DBDrG22bV' crossorigin = 'anonymous'></script>
   </body>
 </html>

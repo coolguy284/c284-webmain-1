@@ -45,6 +45,7 @@
     </details>
     <details id = 'batt'>
       <summary>Battery</summary>
+      <span id = 'batterr'></span>
       Charging: <span id = 'battcharging'></span><br>
       Time to 100%: <span id = 'batt100'></span><br>
       Time to 0%: <span id = 'batt0'></span><br>
@@ -86,6 +87,10 @@
     <details>
       <summary>JS Textbox</summary>
       <textarea id = 'jstext'></textarea>
+    </details>
+    <details>
+      <summary>JS Div</summary>
+      <div id = 'jsdiv'></div>
     </details>
     <script>
       /**
@@ -196,20 +201,20 @@
           sorted: false,
         };
         let typedArrays = ['Int8Array', 'Uint8Array', 'Uint8ClampedArray', 'Int16Array', 'Uint16Array', 'Int32Array', 'Uint32Array', 'BigInt64Array', 'BigUint64Array', 'Float32Array', 'Float64Array'];
-        let boxedPrimitives = ['Boolean', 'Number', 'BigInt', 'Symbol', 'String'];
+        let boxedPrimitives = ['Boolean', 'Number', 'BigInt', 'String', 'Symbol'];
         let className = function(val) {
           try { return val.constructor.name; } catch (e) { return '[Object: null prototype]';}
-        }
+        };
         let objectToString = function(val) {
           let tv = Object.prototype.toString.call(val);
           return tv.substring(8, tv.length - 1);
-        }
+        };
         let stringProp = function(val) {
           if (typeof val == 'symbol') return '[' + inspect(val) + ']';
           if ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz$_'.indexOf(val[0]) < 0) return inspect(val);
           for (let i in val) if ('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789$_'.indexOf(val[i]) < 0) return inspect(val);
           return val;
-        }
+        };
         let inspect = function(val, opts) {
           if (opts === undefined) opts = {};
           if (opts.showHidden === undefined) opts.showHidden = defaultOptions.showHidden;
@@ -223,7 +228,7 @@
           opts.indentLvl = 0;
           opts.objs = [];
           return formatValue(val, opts);
-        }
+        };
         let formatObject = function(val, opts, keys, ins) {
           if (opts.depth < 0) return ins || '[Object]';
           opts = Object.assign({}, opts);
@@ -241,12 +246,12 @@
           if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
           if (baj == '') return ins || '{}';
           else return '{ ' + (ins !== undefined ? ins + ' ' : '') + baj + ' }';
-        }
+        };
         let formatArray = function(val, opts, bkeys) {
           if (opts.depth < 0) return '[Array]';
           opts = Object.assign({}, opts);
           opts.objs = [...opts.objs, val];
-          let ba = [], ind = -1, vkeys;
+          let ba = [], ind = -1, exc = true, vkeys;
           if (bkeys === undefined) {
             if (opts.showHidden == true) bkeys = Reflect.ownKeys(val);
             else bkeys = Object.keys(val);
@@ -258,7 +263,10 @@
           for (let iv in vkeys) {
             let i = vkeys[iv];
             if (ba.length + 1 > opts.maxArrayLength) {
-              ba.push('... ' + (val.length - i) + ' more items');
+              let ia = val.length - i;
+              if (ia > 1) ba.push('... ' + ia + ' more items');
+              else ba.push('... 1 more item');
+              exc = false;
               break;
             }
             if (i != ind + 1) {
@@ -269,6 +277,11 @@
             ba.push(formatValue(val[i], Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
             ind = parseInt(i);
           }
+          if (val.length > ind + 1 && exc) {
+            let la = val.length - ind - 1;
+            if (la > 1) ba.push('... ' + la + ' more items');
+            else ba.push('... 1 more item');
+          }
           keys.forEach(function (i) {
             ba.push(stringProp(i) + ': ' + formatPropDes(Object.getOwnPropertyDescriptor(val, i), Object.assign(Object.assign({}, opts), {depth:opts.depth-1,indentLvl:opts.indentLvl+2})));
           });
@@ -276,7 +289,7 @@
           if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
           if (baj == '') return '[]';
           else return '[ ' + baj + ' ]';
-        }
+        };
         let formatMap = function(val, opts, keys) {
           if (opts.depth < 0) return '[Map]';
           opts = Object.assign({}, opts);
@@ -298,7 +311,7 @@
           if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
           if (baj == '') return '{}';
           else return '{ ' + baj + ' }';
-        }
+        };
         let formatSet = function(val, opts, keys) {
           if (opts.depth < 0) return '[Set]';
           opts = Object.assign({}, opts);
@@ -320,31 +333,26 @@
           if (baj.length > opts.breakLength) baj = ba.join(',\n' + ' '.repeat(opts.indentLvl + 2));
           if (baj == '') return '{}';
           else return '{ ' + baj + ' }';
-        }
+        };
         let formatPropDes = function(val, opts) {
           if (val.get && val.set) return '[Getter/Setter]';
           else if (val.get) return '[Getter]';
           else if (val.set) return '[Setter]';
           return formatValue(val.value, opts);
-        }
+        };
         let formatValue = function(val, opts) {
-          if (val === undefined) {
-            return 'undefined';
-          } else if (val === null) {
-            return 'null';
-          } else if (typeof val == 'boolean') {
-            return val.toString();
-          } else if (typeof val == 'number') {
+          if (val === undefined) return 'undefined';
+          else if (val === null) return 'null';
+          else if (typeof val == 'boolean') return val.toString();
+          else if (typeof val == 'number') {
             if (Object.is(val, -0)) {
               return '-0';
             } else {
               return val.toString();
             }
-          } else if (typeof val == 'bigint') {
-            return val.toString() + 'n';
-          } else if (typeof val == 'symbol') {
-            return val.toString();
-          } else if (typeof val == 'string') {
+          } else if (typeof val == 'bigint') return val.toString() + 'n';
+          else if (typeof val == 'symbol') return val.toString();
+          else if (typeof val == 'string') {
             let js = JSON.stringify(val);
             return '\'' + js.substring(1, js.length - 1).replace(/'/g, '\\\'').replace(/\\"/g, '"') + '\'';
           } else if (typeof val == 'function') {
@@ -414,11 +422,12 @@
               return cn + ' [' + objs + '] ' + formatObject(val, opts);
             }
           }
-        }
-        inspect.custom = Symbol('util.inspect.custom');
-        return {defaultOptions, typedArrays, boxedPrimitives, className, objectToString, stringProp, inspect, formatObject, formatArray, formatMap, formatSet, formatPropDes, formatValue};
+        };
+        inspect.custom = Symbol.for('nodejs.util.inspect.custom');
+        return { defaultOptions, typedArrays, boxedPrimitives, className, objectToString, stringProp, inspect, formatObject, formatArray, formatMap, formatSet, formatPropDes, formatValue };
       })();
       Object.assign(util, utila);
+      delete utila;
       inspect = util.inspect;
       try { util } catch (e) { util = {}; }
       utila = (function () {
@@ -430,7 +439,7 @@
           let perc = false, str = args[0], argind = 1, bs = '';
           while (str.length > 0) {
             let si = str.search('%');
-            if (si < 0 || !str[si + 1]) {bs += str; break;}
+            if (si < 0 || !str[si + 1]) { bs += str; break; }
             bs += str.substr(0, si);
             let i = si + 1;
             if (argind < args.length) {
@@ -469,10 +478,11 @@
             bs += ' ' + args.slice(argind, Infinity).map((x) => {if (typeof x == 'string') return x; return inspect(x)}).join(' ');
           }
           return bs;
-        }
-        return {format};
+        };
+        return { format };
       })();
       Object.assign(util, utila);
+      delete utila;
       format = util.format;
       function pad(num, size) {
         var s = num+"";
@@ -496,7 +506,7 @@
         basicjava.innerHTML = navigator.javaEnabled();
       }
       function battfunc() {
-        if (navigator.getBattery)
+        try {
           navigator.getBattery().then(function(battery) {
             battcharging.innerHTML = battery.charging;
             batt100.innerHTML = modf(battery.chargingTime);
@@ -515,6 +525,14 @@
               battlevel.innerHTML = battery.level;
             });*/
           });
+        } catch (e) {
+          batterr.innerHTML = 'Error! Unable to acquire battery data.<br>';
+          battcharging.innerHTML = 'N/A';
+          batt100.innerHTML = 'N/A';
+          batt0.innerHTML = 'N/A';
+          battlevel.innerHTML = 'N/A';
+          clearInterval(bfint);
+        }
       }
       function geofunc() {
         navigator.geolocation.getCurrentPosition(function(position) {
@@ -564,7 +582,7 @@
       onload = function() {
         setTimeout(basicfunc, 0);
         setTimeout(battfunc, 0);
-        setInterval(battfunc, 1000);
+        bfint = setInterval(battfunc, 1000);
         window.addEventListener('devicelight', function(e) {
           illlux.innerHTML = e.value;
         });
