@@ -1,3 +1,5 @@
+general: make advanced time requestanimframe on node-server, local recopying on node-server, log reworking, user acc system
+
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
@@ -17,8 +19,7 @@ add validator for canonical urls and meta urls, printing if they exist but do no
 fix all docker containers getting a sigint simultaneously when proc_main one does
 make more lib/extern copied from node_modules in dockerfile
 old sites
-  make old and maybe old2 not use polling, probably use eventsource instead
-    dompurify to old node chat
+  dompurify to old node chat
   bring back important
   make wm1, ns, nsn work as subfolder on website, meaning change html and js files to not use absolute paths
   update github repos description urls once hosted
@@ -88,6 +89,13 @@ atmospheric pressure converter
 env var for strict transport security
 support protocol relative paths in redirects file
 add content security policy header to site
+proper todo list html page
+  eventually add suggestions page and suggestions db maybe email notif or some other form of notif
+  maybe suggestions page linked from todo or just part of todo or maybe just by itself
+  add wm pages for all current github redirects in redirects.txt
+mongodb reverse proxy upgrades
+  take in nodejs ipc comm instead and calls mongo client funcs to abstract away perms, but still add users and perms to mongodb anyway and use them
+  maybe seperate proc_mongodbpass w. reverse proxy for password db
 
 hex editor
 english words searcher
@@ -107,6 +115,9 @@ finish unicode viewer and link it
 opencloudhash and cloudhash (csprng based fake hash using database, with api for access), opencloudhash has hash entries visible, cloudhash does not
 xampp subfolder /x, wordpress subfolder /x/w
 user account system
+  user flags int, first bit is admin flag
+  maybe gives access to precise viewshist
+  also standard admin console as well
 add open declaration of password security and data handling (when its time)
 chat upgrades
   option to send as markdown, bbcode, or html
@@ -114,6 +125,10 @@ chat upgrades
   arbitrary kv pairs on msgs, user, channel, member, server, etc
   colored server mutes
   ability to see whether people can see livestream and what their latency to it is
+  ability to mute or cutoff video on livestream
+  same for audio
+  mute just hides but cutoff stops recieving traffic
+  but for convenience mute can do that too unless disabled in client setting
 spaces
   universes, zones, simple objects and physical simulation regions
 production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately

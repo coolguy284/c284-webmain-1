@@ -22,7 +22,7 @@ module.exports = exports = {
       ['srv_web_oldg', {
         host: 'srv_web_oldg',
         port: 8080,
-        forceHttps: true,
+        forceHttps: false,
         castIPv4to6: false,
         noLogURLs: new Set(),
         noLogUrlStarts: [],
