@@ -1,4 +1,4 @@
-general: make advanced time requestanimframe on node-server, local recopying on node-server, log reworking, user acc system
+general: local recopying on node-server, log reworking, user acc system
 
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt

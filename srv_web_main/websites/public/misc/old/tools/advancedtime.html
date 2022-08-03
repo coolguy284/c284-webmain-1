@@ -138,6 +138,22 @@
             <button onclick = 'Setfc()'>Set</button>
           </td>
         </tr>
+        <tr>
+          <td colspan = 3>
+            <table>
+              <tr>
+                <td style = 'padding: 5px;'>
+                  <input type = 'checkbox' id = 'smooth'>
+                  <label for = 'smooth'>Smooth Clock</label>
+                </td>
+                <td style = 'padding: 5px;'>
+                  <input type = 'checkbox' id = 'uncapfps'>
+                  <label for = 'uncapfps'>Uncapped Framerate</label>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
       </table>
     </details>
     <p class = 'mono' align = 'center'>
@@ -498,6 +514,7 @@
         if (t < 0) return '-' + formts(-t);
         return zf3(Math.floor(t/86400000)) + 'd ' + zf2(Math.floor(t/3600000%24)) + 'h ' + zf2(Math.floor(t/60000%60)) + 'm ' + zf2(Math.floor(t/1000%60)) + 's';
       }
+      var draw;
       var sketchProc = function(p) {
         p.size(widthe, heighte, 1);
         p.keyPressed = function() {
@@ -561,7 +578,7 @@
         };
         arial = p.createFont('arial');
         monospace = p.createFont('monospace');
-        p.draw = function() {
+        draw = function() {
           cd = new Date();
           if (pdate != cd.getMinutes()) {
             Upd();
@@ -608,9 +625,15 @@
               drawline(300, 210, ang, 140, 145, p.color(255), 10);
               p.text(i == 0 ? 12 : i, Math.cos(ang) * 120 + 300, Math.sin(ang) * 120 + 210);
             }
-            drawline(300, 210, ((cd.getHours() + cd.getMinutes() / 60 + cd.getSeconds() / 3600) - 3) * Math.PI / 6, 0, 70, p.color(255), 3);
-            drawline(300, 210, ((cd.getMinutes() + cd.getSeconds() / 60) - 15) * Math.PI / 30, 0, 120, p.color(255), 3);
-            drawline(300, 210, (cd.getSeconds() - 15) * Math.PI / 30, 0, 120, p.color(255, 0, 0), 2);
+            if (smooth.checked) {
+              drawline(300, 210, ((cd.getHours() + cd.getMinutes() / 60 + cd.getSeconds() / 3600 + cd.getMilliseconds() / 3600000) - 3) * Math.PI / 6, 0, 70, p.color(255), 3);
+              drawline(300, 210, ((cd.getMinutes() + cd.getSeconds() / 60 + cd.getMilliseconds() / 60000) - 15) * Math.PI / 30, 0, 120, p.color(255), 3);
+              drawline(300, 210, ((cd.getSeconds() + cd.getMilliseconds() / 1000) - 15) * Math.PI / 30, 0, 120, p.color(255, 0, 0), 2);
+            } else {
+              drawline(300, 210, ((cd.getHours() + cd.getMinutes() / 60 + cd.getSeconds() / 3600) - 3) * Math.PI / 6, 0, 70, p.color(255), 3);
+              drawline(300, 210, ((cd.getMinutes() + cd.getSeconds() / 60) - 15) * Math.PI / 30, 0, 120, p.color(255), 3);
+              drawline(300, 210, (cd.getSeconds() - 15) * Math.PI / 30, 0, 120, p.color(255, 0, 0), 2);
+            }
             p.fill(255);
             p.noStroke();
             p.ellipse(300, 210, 10, 10);
@@ -703,8 +726,13 @@
             p.text(cd.toString(), 300, 330);
           }
         };
+        p.draw = function () { if (!uncapfps.checked) draw(); };
       };
       var p = new Processing(mycanvas, sketchProc);
+      function callDraw() {
+        draw();
+        if (uncapfps.checked) requestAnimationFrame(callDraw);
+      }
       onload = function() {
         Upd();
         var ta = String(localStorage.attab);
@@ -716,8 +744,10 @@
         var evt = String(localStorage.atendvalt);
         var froc = String(localStorage.atfroc);
         var toc = String(localStorage.attoc);
+        var smoothc = localStorage.atsmooth == 'true';
+        var uncapfpsc = localStorage.atuncapfps == 'true';
         if (ta == '' || ta == 'undefined') {
-          tab = 'stopwatch';
+          tab = 'clock';
         } else tab = ta;
         if (ctd == '' || ctd == 'undefined') {
           countd.contd = false;
@@ -761,10 +791,13 @@
         endvalt.value = evt;
         startvalc.value = froc;
         endvalc.value = toc;
+        smooth.checked = smoothc;
+        uncapfps.checked = uncapfpsc;
         GetMod();
         GetModc();
         Setf(1);
         Setfc();
+        if (uncapfps.checked) callDraw();
       };
       onunload = onbeforeunload = function() {
         localStorage.attab = tab;
@@ -776,6 +809,8 @@
         localStorage.atendvalt = endvalt.value;
         localStorage.atfroc = startvalc.value;
         localStorage.attoc = endvalc.value;
+        localStorage.atsmooth = smooth.checked ? 'true' : 'false';
+        localStorage.atuncapfps = uncapfps.checked ? 'true' : 'false';
         onunload = function () {};
       };
       endvald.addEventListener('keydown', function (e) {
@@ -792,6 +827,9 @@
       });
       endvalc.addEventListener('keydown', function (e) {
         if (e.keyCode === 13) Setfc();
+      });
+      uncapfps.addEventListener('click', function (e) {
+        if (uncapfps.checked) callDraw();
       });
     </script>
   </body>
