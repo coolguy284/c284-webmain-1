@@ -105,6 +105,7 @@ add /api/help endpoint that explains api endpoints
   explains /chat/ws and future chat endpoints as well, or points to a /chat/docs endpoint that explains the same
 logs reform, make all logged requests debug and turn off debug, put basic info (ip and url) into seperate file for processing and conversion to aggregate format
   beginner log reform is hide ip and maybe url or more from main log, make addl log that doesnt have terminal formatting characters that does have the info, then think of how to collate into url accessed in country and per operating system thing like old server viewshist
+  use dnt header in log reform, also the option of using dnt=1 cookie or priv.coolguy284.com domain instead
 add website version to status, maybe also add more things
 rename qr code to qr code generator and make qr code reader
 converter or smth w. encodings, textboxes, n other stuff and contenteditable div, more general version of base64/url/uricomp etc, but also horizontal instead of vertical
