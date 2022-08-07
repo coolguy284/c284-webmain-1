@@ -66,6 +66,7 @@ use fs.promises and async for everything possible
 potentially add more multi page auto generated pages like unicode
 make misc index proper
 add top navbar to base64 site and other tools sites and rest of website
+  should be in format of coolguy284.com (right arrow) tools (right arrow) base64 encoder; all 3 parts are links
 add waveform gen and other repl sites to website
 possibly live website_data.txt evaluating because of unicode characters pages, should be marked no crawl at first but will need to send that header
 experiment with wiki stuff
