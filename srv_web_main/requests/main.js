@@ -67,7 +67,7 @@ module.exports = async function main(httpVersion, ...args) {
           ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
           ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
           'x-forwarded-for': requestProps.otherServer.castIPv4to6 ? requestProps.ipv6Cast : requestProps.ip,
-          'x-forwarded-proto': 'https',
+          'x-forwarded-proto': requestProps.otherServer.forwardSimpleProto ? (requestProps.proto == 'http' ? 'http' : 'https') : requestProps.proto,
         };
         let srvReq = http.request({
           host: requestProps.otherServer.host,
