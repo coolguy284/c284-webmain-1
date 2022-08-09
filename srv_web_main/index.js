@@ -1,6 +1,8 @@
 var logger = require('./log_utils')('main');
 
-logger.info('Starting c284-webmain-1/srv_web_main');
+var { version } = require('./package.json');
+
+logger.info(`Starting c284-webmain-1/srv_web_main version ${version}`);
 
 var crypto = require('crypto');
 var fs = require('fs');
