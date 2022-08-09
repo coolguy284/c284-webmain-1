@@ -2,7 +2,7 @@ var logger = require('../log_utils')('requests/connect');
 
 var http = require('http');
 var resp = require('../common/resp');
-var { vars: commonVars } = require('../common/vars');
+var { constVars: { _otherServerInvalidHeaders }, vars: commonVars } = require('../common/vars');
 
 module.exports = async function connectMethod(requestProps) {
   // this is exclusively for http2
@@ -12,7 +12,7 @@ module.exports = async function connectMethod(requestProps) {
     // old server proxying
     let sendHeaders = {
       ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
-      ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length' && x[0].toLowerCase() != 'x-c284-nolog')),
+      ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && !_otherServerInvalidHeaders.has(x[0].toLowerCase()))),
       'sec-websocket-key': 'aaaaaaaaaaaaaaaaaaaaaa==',
       'connection': 'keep-alive, Upgrade',
       ...(':protocol' in requestProps.headers ? { upgrade: requestProps.headers[':protocol'] } : null),

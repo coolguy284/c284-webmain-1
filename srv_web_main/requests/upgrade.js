@@ -4,7 +4,7 @@ var http = require('http');
 var { getReqLogStr } = require('../common/get_request_misc');
 var getRequestProps = require('../common/get_request_props');
 var resp = require('../common/resp');
-var { vars: commonVars } = require('../common/vars');
+var { constVars: { _otherServerInvalidHeaders }, vars: commonVars } = require('../common/vars');
 
 module.exports = function serverUpgradeFunc(req, socket, head) {
   try {
@@ -17,7 +17,7 @@ module.exports = function serverUpgradeFunc(req, socket, head) {
       // old server proxying
       let sendHeaders = {
         ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
-        ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length' && x[0].toLowerCase() != 'x-c284-nolog')),
+        ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && !_otherServerInvalidHeaders.has(x[0].toLowerCase()))),
         'x-forwarded-for': requestProps.otherServer.castIPv4to6 ? requestProps.ipv6Cast : requestProps.ip,
         'x-forwarded-proto': requestProps.otherServer.forwardSimpleProto ? (requestProps.proto == 'http' ? 'http' : 'https') : requestProps.proto,
         ...(requestProps.doLogNotPriv ? {} : { 'x-c284-nolog': '1' }),

@@ -56,6 +56,8 @@ module.exports = exports = {
     
     otherServerHostsSet: null,
     otherServerURLStartsArr: null,
+    
+    _otherServerInvalidHeaders: new Set(['content-length', 'x-c284-nolog']),
   },
   
   vars: {
