@@ -10,6 +10,7 @@ var envTypeConverts = new Map([
   ['PROC_MONGODB_LOG_CONS', toBool],
   
   ['SRV_WEB_MAIN_LOG_REQUESTS', toBool],
+  ['SRV_WEB_MAIN_LOG_REQUESTS_ALWAYS', toBool],
   ['SRV_WEB_MAIN_LOG_DEBUG', toBool],
   ['SRV_WEB_MAIN_TLS_KEY_FILE', null],
   ['SRV_WEB_MAIN_TLS_CERT_FILE', null],
