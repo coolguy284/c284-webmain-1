@@ -17,7 +17,7 @@ module.exports = exports = {
       'cache-control': 'no-cache',
       'accept-ranges': 'none',
       'x-content-type-options': 'nosniff',
-      ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+      ...(env.SRV_WEB_MAIN_HTTPS_ENFORCE && hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
     };
   },
   
@@ -29,7 +29,7 @@ module.exports = exports = {
       'cache-control': 'no-cache',
       'accept-ranges': 'none',
       'x-content-type-options': 'nosniff',
-      ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+      ...(env.SRV_WEB_MAIN_HTTPS_ENFORCE && hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
     };
   },
   
@@ -250,7 +250,7 @@ module.exports = exports = {
                 ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
                 'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
                 'x-content-type-options': 'nosniff',
-                ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+                ...(env.SRV_WEB_MAIN_HTTPS_ENFORCE && hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
                 ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
               });
               
@@ -271,7 +271,7 @@ module.exports = exports = {
               await exports.headers(requestProps, 304, {
                 ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
                 'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
-                ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+                ...(env.SRV_WEB_MAIN_HTTPS_ENFORCE && hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
                 ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
                 ...headers,
               });
@@ -284,7 +284,7 @@ module.exports = exports = {
         
         await exports.headers(requestProps, 416, {
           'content-range': `*/${size}`,
-          ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+          ...(env.SRV_WEB_MAIN_HTTPS_ENFORCE && hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
           ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
         });
         await exports.end(requestProps);
@@ -340,7 +340,7 @@ module.exports = exports = {
           'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
           'accept-ranges': 'bytes',
           'x-content-type-options': 'nosniff',
-          ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+          ...(env.SRV_WEB_MAIN_HTTPS_ENFORCE && hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
           ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
           ...headers,
         });
@@ -363,7 +363,7 @@ module.exports = exports = {
         await exports.headers(requestProps, 304, {
           ...(etags[shortPath] ? { 'etag': etags[shortPath] } : {}),
           'cache-control': flags & 1 ? 'public, max-age=604800, immutable' : 'no-cache',
-          ...(hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
+          ...(env.SRV_WEB_MAIN_HTTPS_ENFORCE && hstsHosts.has(requestProps.host) ? { 'strict-transport-security': 'max-age=31536000; preload' } : {}),
           ...(flags & 4 ? { 'x-robots-tag': 'noindex' } : {}),
           ...headers,
         });

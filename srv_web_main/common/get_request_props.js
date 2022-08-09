@@ -11,6 +11,7 @@ module.exports = (httpVersion, ...args) => {
     req: null, res: null,
     stream: null, flags: null, rawHeaders: null,
     headers: null,
+    cookie: null,
     ip: null,
     ipv6Cast: null,
     port: null,
@@ -23,6 +24,7 @@ module.exports = (httpVersion, ...args) => {
     url: null,
     timestamp: new Date(),
     id: vars.currentRequestID++,
+    doLogNotPriv: null,
     doLog: null,
     otherServer: null,
     otherServerOnline: null,
@@ -78,6 +80,8 @@ module.exports = (httpVersion, ...args) => {
       logger.error(httpVersion);
       throw new Error('NotPossibleError');
   }
+  
+  requestProps.cookie = requestProps.headers.cookie ? Object.fromEntries(requestProps.headers.cookie.split('; ').map(x => x.split('=')).filter(x => x.length == 2)) : {};
   
   if (requestProps.rawHost != null) {
     if (/^(?:[a-zA-Z0-9-.]+|(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}|\[(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}\]:[0-9]+)$/.test(requestProps.rawHost))
@@ -147,12 +151,24 @@ module.exports = (httpVersion, ...args) => {
     slicedPath = requestProps.url.path;
   }
   
-  requestProps.doLog = env.SRV_WEB_MAIN_LOG_REQUESTS &&
-    !requestProps.url.pathname.startsWith('/api/') &&
-    !(otherServerBool && (
-      otherServer.noLogURLs.has(slicedPath) ||
-      otherServer.noLogUrlStarts.some(x => slicedPath.startsWith(x))
-    ));
+  if (env.SRV_WEB_MAIN_LOG_REQUESTS) {
+    requestProps.doLogNotPriv =
+      !constVars.noLogHosts.has(requestProps.host) &&
+      requestProps.headers.dnt != '1' &&
+      requestProps.cookie.dnt != '1' &&
+      requestProps.headers['x-c284-nolog'] != '1';
+    
+    requestProps.doLog =
+      requestProps.doLogNotPriv &&
+      !requestProps.url.pathname.startsWith('/api/') &&
+      !(otherServerBool && (
+        otherServer.noLogURLs.has(slicedPath) ||
+        otherServer.noLogUrlStarts.some(x => slicedPath.startsWith(x))
+      ));
+  } else {
+    requestProps.doLogNotPriv = false;
+    requestProps.doLog = false;
+  }
   
   return requestProps;
 };

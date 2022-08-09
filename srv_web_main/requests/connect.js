@@ -12,12 +12,13 @@ module.exports = async function connectMethod(requestProps) {
     // old server proxying
     let sendHeaders = {
       ...(':authority' in requestProps.headers ? { host: requestProps.headers[':authority'] } : null),
-      ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length')),
+      ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && x[0].toLowerCase() != 'content-length' && x[0].toLowerCase() != 'x-c284-nolog')),
       'sec-websocket-key': 'aaaaaaaaaaaaaaaaaaaaaa==',
       'connection': 'keep-alive, Upgrade',
       ...(':protocol' in requestProps.headers ? { upgrade: requestProps.headers[':protocol'] } : null),
       'x-forwarded-for': requestProps.otherServer.castIPv4to6 ? requestProps.ipv6Cast : requestProps.ip,
       'x-forwarded-proto': requestProps.otherServer.forwardSimpleProto ? (requestProps.proto == 'http' ? 'http' : 'https') : requestProps.proto,
+      ...(requestProps.doLogNotPriv ? {} : { 'x-c284-nolog': '1' }),
     };
     let srvReq = http.request({
       host: requestProps.otherServer.host,
