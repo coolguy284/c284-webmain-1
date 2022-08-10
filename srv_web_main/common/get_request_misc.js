@@ -11,16 +11,24 @@ module.exports = {
   },
   
   getReqLogStr: requestProps => {
+    let id = requestProps.id.toString().padStart(5, '0'),
+      ip = requestProps.ip,
+      proto = requestProps.proto.padEnd(5, ' '),
+      logStatus = (requestProps.rawDoLogNotPriv ? '' : ' PRIVATE') + (requestProps.rawDoLog ? '' : ' NOLOG'),
+      host = requestProps.rawHost ?? 'NULL',
+      method = requestProps.method,
+      url = requestProps.rawUrl;
+    
     if (requestProps.httpVersion == 1) {
-      if (requestProps.type == 'main')
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.rawHost ?? 'NULL'} ${requestProps.method} ${requestProps.rawUrl}`;
+      if (method != 'upgrade')
+        return `${id} ${ip} ${proto}${logStatus} ${host} ${method} ${url}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.rawHost ?? 'NULL'} upgrade:${requestProps.headers.upgrade} ${requestProps.method} ${requestProps.rawUrl}`;
+        return `${id} ${ip} ${proto}${logStatus} ${host} upgrade:${requestProps.headers.upgrade} ${method} ${url}`;
     } else {
-      if (requestProps.method != 'connect')
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.rawHost ?? 'NULL'} ${requestProps.method} ${requestProps.rawUrl}`;
+      if (method != 'connect')
+        return `${id} ${ip} ${proto}${logStatus} ${host} ${method} ${url}`;
       else
-        return `${requestProps.id.toString().padStart(5, '0')} ${requestProps.ip} ${requestProps.proto.padEnd(5, ' ')} ${requestProps.rawHost ?? 'NULL'} connect:${requestProps.headers[':protocol']} ${requestProps.rawUrl}`;
+        return `${id} ${ip} ${proto}${logStatus} ${host} connect:${requestProps.headers[':protocol']} ${url}`;
     }
   },
 };
