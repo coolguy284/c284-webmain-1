@@ -1,5 +1,7 @@
 general: update packages (on old servers also), user acc system
 
+fix website index too tall when webbrowser is tall
+
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
@@ -24,7 +26,6 @@ old sites
   make wm1, ns, nsn work as subfolder on website, meaning change html and js files to not use absolute paths
   update github repos description urls once hosted
   check whether oldg really needs external links warning
-fix website index too tall when webbrowser is tall
 potential put srv_web_main through readline stream and add on timestamp and "[main]" if message has no identifiers otherwise
 http2 websocket 404 strange behavior
 add sitemap.xml, robots.txt, and others to debug pages, basically all currently unlinked pages
