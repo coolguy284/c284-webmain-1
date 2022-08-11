@@ -18,7 +18,7 @@ module.exports = async function connectMethod(requestProps) {
       ...(':protocol' in requestProps.headers ? { upgrade: requestProps.headers[':protocol'] } : null),
       'x-forwarded-for': requestProps.otherServer.castIPv4to6 ? requestProps.ipv6Cast : requestProps.ip,
       'x-forwarded-proto': requestProps.otherServer.forwardSimpleProto ? (requestProps.proto == 'http' ? 'http' : 'https') : requestProps.proto,
-      ...(requestProps.doLogNotPriv ? {} : { 'x-c284-nolog': '1' }),
+      ...(requestProps.rawDoLogNotPriv ? {} : { 'x-c284-nolog': '1' }),
     };
     let srvReq = http.request({
       host: requestProps.otherServer.host,

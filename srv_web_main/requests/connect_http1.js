@@ -20,7 +20,7 @@ module.exports = function serverConnectFunc(req, socket, head) {
         ...Object.fromEntries(Object.entries(requestProps.headers).filter(x => !x[0].startsWith(':') && !_otherServerInvalidHeaders.has(x[0].toLowerCase()))),
         'x-forwarded-for': requestProps.otherServer.castIPv4to6 ? requestProps.ipv6Cast : requestProps.ip,
         'x-forwarded-proto': requestProps.otherServer.forwardSimpleProto ? (requestProps.proto == 'http' ? 'http' : 'https') : requestProps.proto,
-        ...(requestProps.doLogNotPriv ? {} : { 'x-c284-nolog': '1' }),
+        ...(requestProps.rawDoLogNotPriv ? {} : { 'x-c284-nolog': '1' }),
       };
       let srvReq = http.request({
         host: requestProps.otherServer.host,
