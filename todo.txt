@@ -109,6 +109,11 @@ logs reform, make all logged requests debug and turn off debug, put basic info (
   defer log debug tcp and tls until request sent unless debug_log_req_always on
     if no request sent assume priv mode unless debug_log_req_always (although check shouldnt be necessary)
 add website version to status, maybe also add more things
+  add cpu and mem and bunch of other things
+  maybe vps name and info
+  maybe vps cost and domain name cost
+  avg requests per second
+  limited request info like approx number of times url accessed
 rename qr code to qr code generator and make qr code reader
 converter or smth w. encodings, textboxes, n other stuff and contenteditable div, more general version of base64/url/uricomp etc, but also horizontal instead of vertical
 random number gens and testing suites
