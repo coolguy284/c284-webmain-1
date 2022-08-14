@@ -26,4 +26,4 @@ sudo docker run --rm -it --name c284-webmain-1_proc_main --network ${NETWORK_NAM
   --mount type=bind,source=/home/webmain/c284-webmain-1_s/srv_web_old2.env.list,target=/home/webmain/c284-webmain-1_s/srv_web_old2.env.list,readonly \
   --mount type=bind,source=/home/webmain/c284-webmain-1/srv_web_main/websites,target=/home/webmain/c284-webmain-1/srv_web_main/websites,readonly \
   --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
-  c284-webmain-1_proc_main ${NETWORK_NAME} --debug | tee "../../c284-webmain-1_s/logs/$(date -u +'%Y_%m_%d %H_%M_%S %a %b %d %I_%M_%S %p %Z').log"
+  coolguy284/c284-webmain-1_proc_main ${NETWORK_NAME} --debug | tee "../../c284-webmain-1_s/logs/$(date -u +'%Y_%m_%d %H_%M_%S %a %b %d %I_%M_%S %p %Z').log"
