@@ -47,7 +47,7 @@ if (toBool(process.env.PROC_MONGODB_ENABLED)) {
   var proc_mongodb = cp.spawn('docker', [
     'run', '--rm', '--name', 'c284-webmain-1_proc_mongodb', '--network', NETWORK_NAME, '--network-alias', 'proc_mongodb',
     '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/mongodb,target=/home/webmain/mongodb',
-    'c284-webmain-1_proc_mongodb'
+    'coolguy284/c284-webmain-1_proc_mongodb'
   ], { stdio: ['ignore', 'pipe', 'pipe'] });
   
   // takes mongodb's fancy JSON logging and makes it pretty for printing to console
@@ -94,7 +94,7 @@ if (toBool(process.env.SRV_WEB_OLD_ENABLED)) {
     'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_old', '--network', NETWORK_NAME, '--network-alias', 'srv_web_old',
     '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/srv_web_old_data,target=/home/webmain/data',
     '-e', 'PORT=8080',
-    'c284-webmain-1_srv_web_old'
+    'coolguy284/c284-webmain-1_srv_web_old'
   ], { stdio: ['pipe', 'pipe', 'pipe'] });
   
   srv_web_old.stdout.pipe(ReadlineStream({})).on('data', msg => console.log(fancyServerLog('srv_web_old', msg.slice(0, -1))));
@@ -109,7 +109,7 @@ if (toBool(process.env.SRV_WEB_OLD2_ENABLED)) {
     '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/srv_web_old2_data,target=/home/webmain/data',
     '--env-file', '/home/webmain/c284-webmain-1_s/srv_web_old2.env.list',
     '-e', 'HTTP=true', '-e', 'HTTPS=false', '-e', 'PORT=8080',
-    'c284-webmain-1_srv_web_old2'
+    'coolguy284/c284-webmain-1_srv_web_old2'
   ], { stdio: ['pipe', 'pipe', 'pipe'] });
   
   srv_web_old2.stdout.pipe(ReadlineStream({})).on('data', msg => console.log(fancyServerLog('srv_web_old2', msg.slice(0, -1))));
@@ -122,7 +122,7 @@ if (toBool(process.env.SRV_WEB_OLDG_ENABLED)) {
   var srv_web_oldg = cp.spawn('docker', [
     'run', '--rm', '-i', '--name', 'c284-webmain-1_srv_web_oldg', '--network', NETWORK_NAME, '--network-alias', 'srv_web_oldg',
     '--mount', 'type=bind,source=/home/webmain/c284-webmain-1_s/srv_web_oldg_data,target=/home/webmain/data',
-    'c284-webmain-1_srv_web_oldg'
+    'coolguy284/c284-webmain-1_srv_web_oldg'
   ], { stdio: ['pipe', 'pipe', 'pipe'] });
   
   srv_web_oldg.stdout.pipe(ReadlineStream({})).on('data', msg => console.log(fancyServerLog('srv_web_oldg', msg.slice(0, -1))));
@@ -137,7 +137,7 @@ var srv_web_main = cp.spawn('docker', [
   ...(process.argv[3] ? ['--mount', 'type=bind,source=/home/webmain/c284-webmain-1/srv_web_main/websites,target=/home/webmain/websites,readonly'] : []),
   '--env-file', '/home/webmain/c284-webmain-1_s/env.list',
   '-p', '80:8080', '-p', '443:8443',
-  'c284-webmain-1_srv_web_main'
+  'coolguy284/c284-webmain-1_srv_web_main'
 ], { stdio: ['pipe', 'pipe', 'pipe'] });
 
 srv_web_main.stdout.pipe(process.stdout);
