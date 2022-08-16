@@ -66,6 +66,7 @@ potentially put old sites in archive tab which links to a page with detailed exp
 use fs.promises and async for everything possible
 potentially add more multi page auto generated pages like unicode
 make misc index proper
+  add tweaks made to regular index to it as well like fix version footer rendering issue and update stylesheet and inline style to match index
 add top navbar to base64 site and other tools sites and rest of website
   should be in format of coolguy284.com (right arrow) tools (right arrow) base64 encoder; all 3 parts are links
 add waveform gen and other repl sites to website
