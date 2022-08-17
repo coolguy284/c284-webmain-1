@@ -116,16 +116,17 @@ module.exports = (httpVersion, ...args) => {
   requestProps.url.path = requestProps.url.href.slice(requestProps.url.origin.length);
   
   let otherServerHostSrvName = constVars.otherServerHosts.get(requestProps.url.host);
-  let isHost = Boolean(otherServerHostSrvName);
+  let isHost = Boolean(otherServerHostSrvName), isPrefix, otherServerBool;
   
   let otherServerURLStartStr, otherServerURLStartSrvName;
   if (!isHost) {
     otherServerURLStartStr = constVars.otherServerURLStartsArr.find(x => requestProps.url.pathname.startsWith(x));
     otherServerURLStartSrvName = otherServerURLStartStr ? constVars.otherServerURLStarts.get(otherServerURLStartStr) : null;
+    isPrefix = Boolean(otherServerURLStartSrvName);
+    otherServerBool = isPrefix;
+  } else {
+    otherServerBool = true;
   }
-  let isPrefix = Boolean(otherServerURLStartSrvName);
-  
-  let otherServerBool = isHost || isPrefix;
   
   let otherServer, slicedPath;
   if (otherServerBool) {
