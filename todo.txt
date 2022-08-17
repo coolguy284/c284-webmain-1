@@ -98,6 +98,7 @@ proper todo list html page
 mongodb reverse proxy upgrades
   take in nodejs ipc comm instead and calls mongo client funcs to abstract away perms, but still add users and perms to mongodb anyway and use them
   maybe seperate proc_mongodbpass w. reverse proxy for password db
+  forward stdin query commands to mongodb
 
 hex editor
 english words searcher
