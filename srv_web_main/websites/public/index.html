@@ -25,7 +25,7 @@
       }
       
       body {
-        margin-bottom: 60px;
+        margin-bottom: 7.3rem;
         background: #e8e8ff;
       }
       
@@ -43,15 +43,15 @@
         position: absolute;
         bottom: 0;
         width: 100%;
-        height: 6.7rem;
-        padding-top: 4.2rem;
       }
       
       .inside-footer {
-        height: 6.7rem;
         line-height: 3rem;
         background: #f0f0ff;
       }
+      
+      .inside-footer-top { border-bottom: 1px solid #c7c7ff; }
+      .inside-footer-bottom { font-size: small; }
       
       @media (max-width: 767.98px) {
         #indexTop { padding: 2rem 1rem 2rem; }
@@ -133,11 +133,11 @@
     
     <footer class = 'footer'>
       <div class = 'inside-footer container-fluid'>
-        <div style = 'border-bottom: 1px solid #c7c7ff;'>
+        <div class = 'inside-footer-top'>
           This website is <a href = 'https://github.com/coolguy284/c284-webmain-1'>open source</a>.
           <span class = 'float-end'>Version {version}</span>
         </div>
-        <div style = 'font-size: small;'>
+        <div class = 'inside-footer-bottom'>
           Powered by <a href = 'http://www.vanilla-js.com/'>Vanilla JS</a>
         </div>
       </div>
