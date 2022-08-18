@@ -12,7 +12,19 @@ module.exports = function recursiveReaddir(path, excludeDirs) {
     
     contents.forEach(x => x.isDirectory() ? folders.push(x) : files.push(x));
     
-    return [...folders.map(x => recursiveReaddir(path + '/' + x.name, excludeDirs.filter(x => x.startsWith(x)).map(x => x.split('/').slice(1).join('/'))).map(y => x.name + '/' + y)).reduce((a, c) => (a.push(...c), a), []), ...files.map(x => x.name)];
+    return [
+      ...folders.map(x =>
+        recursiveReaddir(
+          path + '/' + x.name,
+          excludeDirs
+            .filter(x => x.startsWith(x))
+            .map(x => x.split('/').slice(1).join('/'))
+        )
+        .map(y => x.name + '/' + y)
+      )
+      .reduce((a, c) => (a.push(...c), a), []),
+      ...files.map(x => x.name)
+    ];
   } catch (e) {
     console.error(e);
     return [];
