@@ -5,7 +5,7 @@
     
     <title>coolguy284.com: RECTANGLES</title>
     
-    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'viewport' content = 'width=850, initial-scale=2.0'>
     <meta name = 'description' content = 'Rectangles.'>
     <meta name = 'keywords' content = 'rectangles'>
     <meta name = 'author' content = 'coolguy284'>
@@ -18,6 +18,12 @@
     <meta name = 'og:url' content = 'https://coolguy284.com/misc/rectangles.html'>
     
     <link rel = 'stylesheet' href = '/libs/extern/bootstrap_5.0.0.min.css'>
+    <style>
+      .slider-div {
+        display: flex;
+        align-items: center;
+      }
+    </style>
   </head>
   <body>
     <div class = 'container-fluid p-3'>
@@ -29,11 +35,13 @@
       
       <canvas id = 'canvas' width = 800 height = 500><!-- henlo you smelly egg - sting beans --></canvas><br>
       
-      <input type = 'range' class = 'form-range' id = 'num_shapes' min = -256 max = 256 value = 0 style = 'width: 750px;' oninput = 'UpdateCanvas();'>
+      <div class = 'slider-div'>
+        <input type = 'range' class = 'form-range' id = 'num_shapes' min = -256 max = 256 value = 0 style = 'width: 750px; height: 3rem;' oninput = 'UpdateCanvas();'>
+        
+        <span class = 'ms-2' id = 'num_shapes_text'>0</span>
+      </div>
       
-      <span id = 'num_shapes_text'>0</span><br>
-      
-      <div class = 'row'>
+      <div class = 'row mt-3'>
         <div class = 'col-auto d-flex'>
           <label class = 'col-form-label' for = 'shape_type'>Shape:</label>
           

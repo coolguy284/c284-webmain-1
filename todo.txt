@@ -103,6 +103,7 @@ proc main use docker daemon to get cpu, mem, net, disk io (maybe) of all wm1 pro
   stats recorded every minute
   complete historical records downloadable on status page compressed with xz
 add brotli to oldg and future nginx servers
+maybe update oldg to look better on mobile (also misc/rectangles)
 
 hex editor
 english words searcher
