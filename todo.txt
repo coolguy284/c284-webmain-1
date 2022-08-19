@@ -3,7 +3,7 @@ general: update packages (on old servers also), user acc system
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
-/misc/old/temp redirect pages need updating
+process all file redirects (and maybe all file and folder redirects) so that one redirect's to can be another's from but they both redirect to the another's to (redirect chaining), then convert current redirects to chain instead of all pointing to the correct destination
 
 enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
@@ -102,6 +102,7 @@ proc main use docker daemon to get cpu, mem, net, disk io (maybe) of all wm1 pro
   complete historical records downloadable on status page compressed with xz
 add brotli to oldg and future nginx servers
 maybe update oldg to look better on mobile (also misc/rectangles)
+/misc/old temp pages need to be updated and then removed from the temp pages (previously /misc/old/temp redirect pages need updating)
 
 hex editor
 english words searcher
