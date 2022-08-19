@@ -1,5 +1,7 @@
 general: update packages (on old servers also), user acc system
 
+re add windows index.ps1 and docker scripts
+
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
@@ -136,12 +138,33 @@ add open declaration of password security and data handling (when its time)
 chat upgrades
   option to send as markdown, bbcode, or html
   voice upgrades
-    text, voice, raw data thru voice (or maybe data channels), inputs keyboard mouse controller etc sent to bot and output stream from bot (thru voice channel)
     colored server mutes
+    text, voice, raw data thru voice (or maybe data channels), inputs keyboard mouse controller etc sent to bot and output stream from bot (thru voice channel)
     ability to see whether people can see livestream and what their latency to it is
     ability to mute or cutoff video on livestream, same for audio
-      mute just hides but cutoff stops recieving traffic
+      mute just hides but cutoff stops receiving traffic
       but for convenience mute can do that too unless disabled in client setting
+    ability for a bot to join auto client muted by everyone (although a seperate client mute than the normal one, like client suppress)
+    total list of mutes/deafens on other people:
+      side: client or server side
+      type: mute or deafen
+      category: audio, video, stream, data (can merge categories client side or server side)
+      value: perm off, temp off, inherit, temp on, perm on (inherit copies value from channel permissions and is the default, temp off is how to for example let someone speak in a channel they normally cannot, temp values go away when user leaves voice (but can be set when user not in voice as a preemptive), perm values persist)
+      value inherit can be changed in server settings to be split into two values, inherit (which will insta update when channel permissions update) and inherit once (which will be calculated on channel join and will not change), or to make the single option version of inherit behave like inherit once instead
+      when adjusting voice permissions to prevent a user from doing something, a prompt will appear saying whether they want to set everyone in vc to temp off (only if server is set to not use inherit once for inherit behavior)
+      mutes/deafens can be edited when user not in voice channel as well
+      server setting for whether client deafens of a user that is not you will have effect (i.e. preventing them and only them from hearing your voice, camera, etc.)
+    mutes/deafens on self:
+      client mute: prevents transmitting audio out from self client side, normally linked to a visual client mute which shows others you are doing so but can be decoupled in client settings
+      client deafen: prevents receiving audio from others client side, normally linked to a visual client mute which shows others you are doing so but can be decoupled in client settings
+      pseudo server mute: prevents transmitting audio out from self server side, forces a visual client mute server side so others know you are guaranteed to be doing so and cannot secretly speak
+      pseudo server deafen: prevents receiving audio from others self server side, forces a visual client mute server side so others know you are guaranteed to be doing so and cannot secretly hear
+      client mute/deafen and pseudo server action of the same type are normally linked but can be decoupled client side (although that would appear suspicious)
+      can turn off client mute if it is turned on even if server mute is turned on, there is no gui preventing such an action
+    client actions:
+      audio (default on), video (default off), stream (default off, can be on multiple times aka many different streams), raw data (default off)
+      defaults can be changed in settings
+      in settings deafen can be configured to auto mute as well
   embed ideas
     ability to add datetimes to middle of chat message and have them render in user's timezone
     other such processed elements like that or even active elements
