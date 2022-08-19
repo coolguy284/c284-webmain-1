@@ -45,7 +45,7 @@ module.exports = async function connectMethod(requestProps) {
       let sendHeaders = Object.fromEntries(
         rawHeaderLines.filter(x => !resp._wsInvalidHttp2Headers.has(x[0].toLowerCase()))
       );
-      requestProps.stream.respond({
+      stream.respond({
         ':status': 200,
         ...sendHeaders,
       });

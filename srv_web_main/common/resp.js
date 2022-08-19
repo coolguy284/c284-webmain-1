@@ -81,8 +81,7 @@ module.exports = exports = {
   
   // http 1.1 only
   manual404: (req, socket) => {
-    socket.write(`HTTP/${req.httpVersion} 404 Not Found\r\n\r\n`);
-    socket.end();
+    socket.end(`HTTP/${req.httpVersion} 404 Not Found\r\n\r\n`);
   },
   
   _httpInvalidHttp2Headers: new Set(['connection', 'transfer-encoding']),
@@ -175,7 +174,7 @@ module.exports = exports = {
       throw error;
     }
     
-    // this is supposed to throw on purpose unless filename is a file so functions like fileFull know when to send a 404
+    // this is supposed to throw on purpose unless filename exists and is a file so functions like fileFull know when to send a 404
     if (env.SRV_WEB_MAIN_CACHE_MODE == 1) {
       if (!(filename in global.filesCache)) {
         let error = new Error('ENOENT'); error.code = 'ENOENT';
