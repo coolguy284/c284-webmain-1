@@ -1,6 +1,7 @@
 general: update packages (on old servers also), user acc system
 
 re add windows index.ps1 and docker scripts
+remove extra space at end of http request compared to https/http2 in log
 
 tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
