@@ -176,6 +176,7 @@ chat upgrades
   instant caching of image links and website iframe embed creating links sent, and showing the cached version, to protect end user ip
   c++ client for chat and for rest of website in a general sense
   make a visual stream of text messages with occasional embeds visually appealing
+  option to put certain channels into a check later folder to save their messages for later, then can check the current msgs in the channel the normal way and the earlier ones can be checked later in the folder
 spaces
   universes, zones, simple objects and physical simulation regions
 production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
