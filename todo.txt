@@ -37,6 +37,7 @@ make proxies disconnect other end if one end closes, forward errors as well
   add support for https proxying with ignoretlserrors
 create_sitemap return lastmod and other properties, also return array of objects instead of map
 nosniff and other headers of the same nature should appear everywhere
+allow main code folder and main data secrets folder to be anywhere and make scripts use a relative path to reference them
 
 add nested layers of indexes for unicode
 add privacy policy
