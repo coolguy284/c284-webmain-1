@@ -3,7 +3,6 @@ general: update packages (on old servers also), user acc system
 re add windows index.ps1 and docker scripts
 remove extra space at end of http request compared to https/http2 in log
 
-tls debug log doesnt slice ip ::ffff:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
 process all file redirects (and maybe all file and folder redirects) so that one redirect's to can be another's from but they both redirect to the another's to (redirect chaining), then convert current redirects to chain instead of all pointing to the correct destination
@@ -167,6 +166,8 @@ chat upgrades
       audio (default on), video (default off), stream (default off, can be on multiple times aka many different streams), raw data (default off)
       defaults can be changed in settings
       in settings deafen can be configured to auto mute as well
+    client side servers that can pull channels from other servers
+    ability to client side reorder channels in servers
   embed ideas
     ability to add datetimes to middle of chat message and have them render in user's timezone
     other such processed elements like that or even active elements

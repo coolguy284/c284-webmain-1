@@ -16,7 +16,7 @@ var util = require('util');
 var ws = require('ws');
 
 var { env } = require('./common/env');
-var { mergeIPPort } = require('./common/misc');
+var { mergeIPPort, uncastIPv6 } = require('./common/misc');
 var { vars } = require('./common/vars');
 
 
@@ -26,7 +26,7 @@ if (env.PROC_MONGODB_ENABLED) {
     vars.mongoProxyServerConns = new Set();
     vars.mongoProxyServer = net.createServer(conn => {
       if (conn.remoteAddress != '::ffff:127.0.0.1') {
-        logger.debug(`Mongodb proxy connection invalid, ${conn.remoteAddress}:${conn.remotePort} is not permitted to connect to the proxy`);
+        logger.debug(`Mongodb proxy connection invalid, ${mergeIPPort(uncastIPv6(conn.remoteAddress), conn.remotePort)} is not permitted to connect to the proxy`);
         conn.destroy();
         return;
       }
@@ -75,14 +75,14 @@ if (env.SRV_WEB_MAIN_HTTP_IP) {
   vars.tcpServer = net.createServer(conn => {
     if (conn.destroyed) {
       if (env.SRV_WEB_MAIN_LOG_DEBUG)
-        logger.debug(`TCP open-instaclose ${conn.remoteAddress}, ${conn.remotePort}`);
+        logger.debug(`TCP open-instaclose ${mergeIPPort(uncastIPv6(conn.remoteAddress), conn.remotePort)}`);
       return;
     }
     
     if (env.SRV_WEB_MAIN_LOG_DEBUG) {
-      logger.debug(`TCP open ${mergeIPPort(conn.remoteAddress, conn.remotePort)}`);
+      logger.debug(`TCP open ${mergeIPPort(uncastIPv6(conn.remoteAddress), conn.remotePort)}`);
       conn.on('close', hadError => {
-        logger.debug(`TCP close ${mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`);
+        logger.debug(`TCP close ${mergeIPPort(uncastIPv6(conn.remoteAddress), conn.remotePort)} ${hadError ? 'error' : 'normal'}`);
       });
     }
     
@@ -117,14 +117,14 @@ if (env.SRV_WEB_MAIN_HTTPS_IP) {
   }, conn => {
     if (conn.destroyed) {
       if (env.SRV_WEB_MAIN_LOG_DEBUG)
-        logger.debug(`TLS open-instaclose ${conn.remoteAddress}, ${conn.remotePort}`);
+        logger.debug(`TLS open-instaclose ${mergeIPPort(uncastIPv6(conn.remoteAddress), conn.remotePort)}`);
       return;
     }
     
     if (env.SRV_WEB_MAIN_LOG_DEBUG) {
-      logger.debug(`TLS open ${mergeIPPort(conn.remoteAddress, conn.remotePort)} ${conn.servername} ${conn.alpnProtocol} ${conn.authorized}`);
+      logger.debug(`TLS open ${mergeIPPort(uncastIPv6(conn.remoteAddress), conn.remotePort)} ${conn.servername} ${conn.alpnProtocol} ${conn.authorized}`);
       conn.on('close', hadError => {
-        logger.debug(`TLS close ${mergeIPPort(conn.remoteAddress, conn.remotePort)} ${hadError ? 'error' : 'normal'}`);
+        logger.debug(`TLS close ${mergeIPPort(uncastIPv6(conn.remoteAddress), conn.remotePort)} ${hadError ? 'error' : 'normal'}`);
       });
     }
     

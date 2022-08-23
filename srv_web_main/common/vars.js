@@ -91,6 +91,7 @@ module.exports = exports = {
     tickIntMs: null,
     ticks: null,
     tickFunc: null,
+    tickInt: null,
     
     exitHandlerCalled: null,
     
