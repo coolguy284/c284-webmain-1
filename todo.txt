@@ -6,6 +6,8 @@ remove extra space at end of http request compared to https/http2 in log
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 use map and promise all for git log and others or for none of them
 process all file redirects (and maybe all file and folder redirects) so that one redirect's to can be another's from but they both redirect to the another's to (redirect chaining), then convert current redirects to chain instead of all pointing to the correct destination
+store node-server and other repositories directly in the code, docker build scripts auto clone or update them
+api endpoint that sends a 204 and a non standard date header with extra precision
 
 enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
@@ -102,10 +104,10 @@ mongodb reverse proxy upgrades
   forward stdin query commands to mongodb
 proc main use docker daemon to get cpu, mem, net, disk io (maybe) of all wm1 processes and sends it to main server proc and is shown on status page
   stats recorded every minute
-  complete historical records downloadable on status page compressed with xz
 add brotli to oldg and future nginx servers
 maybe update oldg to look better on mobile (also misc/rectangles)
 /misc/old temp pages need to be updated and then removed from the temp pages
+add option in time syncer to use date header instead
 
 hex editor
 english words searcher
@@ -123,6 +125,8 @@ add website version to status, maybe also add more things
   maybe vps cost and domain name cost
   avg requests per second
   limited request info like approx number of times url accessed
+  total page visits today and total all time; also total unique visitors today and all time
+  all things in status page should have complete historical data available if it makes sense to do so, compressed with xz
 rename qr code to qr code generator and make qr code reader
 converter or smth w. encodings, textboxes, n other stuff and contenteditable div, more general version of base64/url/uricomp etc, but also horizontal instead of vertical
 random number gens and testing suites
@@ -180,11 +184,19 @@ chat upgrades
   c++ client for chat and for rest of website in a general sense
   make a visual stream of text messages with occasional embeds visually appealing
   option to put certain channels into a check later folder to save their messages for later, then can check the current msgs in the channel the normal way and the earlier ones can be checked later on by checking the check later folder
+  client or server side regex replacement of messages (server side in server specific settings)
+  server side fake permissions drop, better than client side roles removed, but also configurable extra permissions drop not related to roles
+  option to replace numbers with word versions, 4 with four
+  option to configure representation of dates and times, but maybe more than one configuration cause dates can be on message, in audit log, etc
+  add ability to client side set user's pfp to previous one or another one entirely or just a nothing, same for usernames
 spaces
   universes, zones, simple objects and physical simulation regions
 production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
 request explorer site where you can create arbitrary http requests to urls on the server, make and close http1.1 and http2 connections, http/https, and even send data through websocket connections
 multipart range header support and support for reading and responding with multiparts in other circumstances as well
+commenter website where you can comment on a site if the site has no comment functionality by default
+  but maybe not if the site owner has an explicit reason not to
+  site owner can later add it as an iframe if they want
 
 extra:
 experiment with unsorted readdirs using fuse, if works potential necessity to sort c284-webmain-1 modtimes.json or maybe just sort it anyway
