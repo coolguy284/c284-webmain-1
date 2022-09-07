@@ -41,6 +41,7 @@ allow main code folder and main data secrets folder to be anywhere and make scri
 
 add nested layers of indexes for unicode
 add privacy policy
+  if cannot do legally rigorous privacy policy yet cause of lack of knowledge, then do simple hard fact data description privacy policy until then
 fancier latency test and time syncer, less NaN
 validation for meta description tags, to supplement validation for canonical urls
   also validator to make sure "to" urls in redirects.txt are the final form of the url for the most part
@@ -118,6 +119,8 @@ logs reform, make all logged requests debug and turn off debug, put basic info (
   beginner log reform is hide ip and maybe url or more from main log, make addl log that doesnt have terminal formatting characters that does have the info, then think of how to collate into url accessed in country and per operating system thing like old server viewshist
   defer log debug tcp and tls until request sent unless debug_log_req_always on
     if no request sent assume priv mode unless debug_log_req_always (although check shouldnt be necessary)
+  handle logs though proc main, proc main sends them to proc mongodb for storing, and mongodb handles deletion and aggregation every 24*30*60 minutes or every server tick
+  delete logs after 30 days, only aggregate after then, no exceptions, including all legacy data
 add website version to status, maybe also add more things
   add cpu and mem and bunch of other things
   maybe vps name and info
@@ -171,6 +174,8 @@ chat upgrades
       in settings deafen can be configured to auto mute as well
     client side servers that can pull channels from other servers
     ability to client side reorder channels in servers
+    zoom in on stream or facecam on mobile or pc
+    stream pop out windows can be set to a particular stream, main window can be split into regions with seperate views and so can pop out
   embed ideas
     ability to add datetimes to middle of chat message and have them render in user's timezone
     other such processed elements like that or even active elements
@@ -188,6 +193,12 @@ chat upgrades
   option to replace numbers with word versions, 4 with four
   option to configure representation of dates and times, but maybe more than one configuration cause dates can be on message, in audit log, etc
   add ability to client side set user's pfp to previous one or another one entirely or just a nothing, same for usernames
+social media
+  by default nothing is used for any analytics
+  if there are analytic requests (for someone's likeness or something) for some reason, they are asked thru notifs (auto denied after a while)
+    requests for accepting tagging you in an image (possibly created by someone else), and other ai reasons or other reasons, and a different prompt for each reason, all opt in by default
+    on the prompt, there is accept or deny of course, but also checkbox for remember this decision, which has a select below it that says "for this content creator", "for all posts" (can also say for whatever other message types there are), and "for everything"
+  images posted by someone that have someone else in them can be removed by the someone else if they don't consent
 spaces
   universes, zones, simple objects and physical simulation regions
 production ready xampp site, self hosted github equiv, all of which are accessible as subfolders on main or their own seperate domain, in future self hosted git might be main git that i use and thus wont be proxied through srv web main but hosted seperately, but only that hosted seperately
