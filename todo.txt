@@ -108,6 +108,7 @@ add brotli to oldg and future nginx servers
 maybe update oldg to look better on mobile (also misc/rectangles)
 /misc/old temp pages need to be updated and then removed from the temp pages
 add option in time syncer to use date header instead
+add webpage with textbox where it just tells you length of content in textbox, maybe other stuff like number of unique chars, number of words, number of unique words, letter distribution chart, etc.
 
 hex editor
 english words searcher
