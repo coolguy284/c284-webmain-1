@@ -362,7 +362,7 @@
           console.warn(format.apply(null, arguments));
           return;
         }
-        cologadd(value, '<span style = "color:#3f3f00;background:#ffffcf;min-width:100%;float:left;">{}</span>');
+        cologadd(value, '<span style = "color:#3f3f00;background-color:#ffffcf;min-width:100%;float:left;">{}</span>');
       };
       console.error = function error(value) {
         if (typeof value != 'string') {
@@ -372,7 +372,7 @@
           console.error(format.apply(null, arguments));
           return;
         }
-        cologadd(value, '<span style = "color:#3f0000;background:#ffcfcf;min-width:100%;float:left;">{}</span>');
+        cologadd(value, '<span style = "color:#3f0000;background-color:#ffcfcf;min-width:100%;float:left;">{}</span>');
       };
       console.clear = function clear() {
         postMessage('clear');
