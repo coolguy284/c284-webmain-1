@@ -110,7 +110,8 @@
         'density': 'Density',
         'temperature': 'Temperature',
         'pressure': 'Pressure',
-        'angle': 'Plane Angle',
+        'angle': 'Angle',
+        'info': 'Information',
       }, unitFactors = {
         'mass_energy': {
           'kg': 1, 'g': 0.001, 'mg': 1e-6, 'mt': 1000,
@@ -184,6 +185,19 @@
         'angle': {
           'rad': 1, 'deg': Math.PI / 180, 'grad': Math.PI / 200,
           'am': Math.PI / 180 / 60, 'as': Math.PI / 180 / 3600,
+        },
+        'info': {
+          'B': 1,
+          'nibble': 0.5,
+          'b': 0.125,
+          'KiB': 1024,
+          'MiB': 1048576,
+          'GiB': 1073741824,
+          'TiB': 1099511627776,
+          'PiB': 1125899906842624,
+          'EiB': 1152921504606846976,
+          'ZiB': 1180591620717411303424,
+          'YiB': 1208925819614629174706176,
         },
       }, unitNames = {
         'mass_energy': {
@@ -280,6 +294,19 @@
         'angle': {
           'deg': 'degrees', 'rad': 'radians', 'grad': 'gradians',
           'am': 'arcminute', 'as': 'arcsecond',
+        },
+        'info': {
+          'B': 'byte',
+          'nibble': 'nibble',
+          'b': 'bit',
+          'KiB': 'kibibyte',
+          'MiB': 'mebibyte',
+          'GiB': 'gibibyte',
+          'TiB': 'tebibyte',
+          'PiB': 'pebibyte',
+          'EiB': 'exbibyte',
+          'ZiB': 'zebibyte',
+          'YiB': 'yobibyte',
         },
       };
       
