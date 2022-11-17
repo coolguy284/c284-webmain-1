@@ -24,6 +24,7 @@ api endpoint that sends a 204 and a non standard date header with extra precisio
 add creation time file in addition to modtimes file, maybe an api to get full date information, or sending extra date info as headers if a certain header is in request
 website with css transforms and animations
 create website url that has the whole website at one url, including images and scripts, and every embedded image and script in the page references the same url, the server uses the accept header to determine what to send
+fix start tag seen without a doctype first on wysiwyg-html-2
 
 enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
@@ -132,6 +133,8 @@ decide whether meta tag keywords should be always lowercase or not
 decide whether to move inline script in index to immediately after navbar
 add method to download all database contents and keep local copy updated, for backup purposes
 add semantic tags to all pages
+add different cursor types experimentor
+add april fools where page permanently uses the busy cursor
 
 hex editor
 english words searcher
@@ -167,6 +170,11 @@ user account system
   also standard admin console as well
   add simple todo list functionality to my website as part of user account (optionally, for sync)
   some sort of keyring to store end to end encrypted keys and other things
+  option to set selectability of UI text in chat and other places, as a global setting for all webpages on site, tied to user account, default is not selectable, can be set to selectable or selectable with selection dissappearing after x seconds, minutes
+    also makes ctrl-a only select content area if set to not selectable, such as code area for online ide
+    optional override for each specific ui type or specific ui element
+  when default settings on anything that is part of user account system changed, popup for do you want to keep your settings or go with new default
+    popup has "remember this decision" checkmark, and below it an option box saying "for x", like "for 1 month", "for 1 year", "forever", etc.
 add open declaration of password security and data handling (when its time)
 chat system
   option to send as markdown, bbcode, or html
@@ -240,6 +248,17 @@ chat system
     end to end keyring symmetric encryption maybe with ecdh key distribution or something
   the 3 levels of encryption can also be set on voice channels and other channel types as well
   channel encryption can be set to only message content (so unencrypted author field and other fields are guaranteed valid (if you trust the server)) or set to all metadata as well (channel just becomes an array of encrypted binary blobs at that point and author fields can be forged)
+  handle dst time changes in timestamps properly (for a timestamp that occurs after fall back time but before fall back, show as "first fold", if after fall back, show as "second fold"; show as a label after the timestamp); also dont make simple mistake of showing daylight time timestamps in standard time after time change
+  special message components editable by everyone
+    ability to lock the special components to only be editable by sender
+  ability to toggle on a don't send mode which makes enter key add newline to msg instead
+  overflow menu in chat box for more niche features
+  ability to enable mods editing messages thru edit others messages permission (it will say edited by moderator)
+    people can set server wide or global to not allow messages to be edited, and to make exceptions for a certain message
+    this might not be used much anyway because of edit requests
+  ability to send edit requests on a message and to approve them or to auto approve or to auto approve but show as edited by the person who sent the request
+  permissions can still be bitfield but stored as base64 string because potentially hundreds of bits
+  ctrl-a can be configured to open ctrl-a dialog to choose what gets selected, so custom message range, select usernames as well, select timestamps, etc.
 social media
   by default nothing is used for any analytics
   if there are analytic requests (for someone's likeness or something) for some reason, they are asked thru notifs (auto denied after a while)
@@ -274,3 +293,5 @@ proc_main index.js seems to stay running if one of sibling docker containers sta
 notes:
 srv_web_main/common/url_valid_check.js has hardcoded 2 functions and 1 set from common (since it must be able to run independently)
 srv_web_main/log_utils.js has hardcoded 1 function from common (since it runs first)
+on all ui elements that pop up on wm1, option to ignore inputs for 250ms or configurable (to prevent accidentally clicking on popup before can react and stop moving finger)
+  can instead do it only on modals that appear without user action
