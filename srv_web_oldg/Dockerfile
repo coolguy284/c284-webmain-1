@@ -11,7 +11,7 @@ RUN apt-get install curl git gcc make -y
 RUN (mkdir nginx &&\
   cd nginx &&\
   #curl -sS https://nginx.org/keys/mdounin.key | gpg --import &&\
-  curl -sSL https://zlib.net/zlib-1.2.12.tar.gz | tar -xzf - &&\
+  curl -sSL https://zlib.net/zlib-1.2.13.tar.gz | tar -xzf - &&\
   curl -sSL https://nginx.org/download/nginx-1.23.2.tar.gz | tar -xzf - &&\
   #gpg --trusted-key 0x520A9993A1C052F8 --verify nginx-1.23.2.tar.gz{.asc,} &&\
   cd nginx-1.23.2 &&\
