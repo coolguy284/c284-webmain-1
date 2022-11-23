@@ -175,6 +175,10 @@ user account system
     optional override for each specific ui type or specific ui element
   when default settings on anything that is part of user account system changed, popup for do you want to keep your settings or go with new default
     popup has "remember this decision" checkmark, and below it an option box saying "for x", like "for 1 month", "for 1 year", "forever", etc.
+  list of current sessions with options to end them and also has past sessions that have closed, kept for a long time like 6 months to ensure they are not missed and also cannot be removed to ensure if someone gets on account they are audited; past sessions off by default
+    ability to turn on deleting of old sessions but it audits the turning on and off; auditing off by default
+      ability to turn off auditing and delete old audits
+  browser that created account is root of trust, can authorize other sessions (or 2fa can authorize them) in order to authorize them as root of trust as well, and can enable the extreme auditing of old sessions and user settings changes, but it is off by default
 add open declaration of password security and data handling (when its time)
 chat system
   option to send as markdown, bbcode, or html
@@ -259,6 +263,7 @@ chat system
   ability to send edit requests on a message and to approve them or to auto approve or to auto approve but show as edited by the person who sent the request
   permissions can still be bitfield but stored as base64 string because potentially hundreds of bits
   ctrl-a can be configured to open ctrl-a dialog to choose what gets selected, so custom message range, select usernames as well, select timestamps, etc.
+  p2p fully e2e encrypted voice channels by default or by choice idk
 social media
   by default nothing is used for any analytics
   if there are analytic requests (for someone's likeness or something) for some reason, they are asked thru notifs (auto denied after a while)
