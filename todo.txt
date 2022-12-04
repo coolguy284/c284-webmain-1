@@ -25,6 +25,8 @@ add creation time file in addition to modtimes file, maybe an api to get full da
 website with css transforms and animations
 create website url that has the whole website at one url, including images and scripts, and every embedded image and script in the page references the same url, the server uses the accept header to determine what to send
 fix start tag seen without a doctype first on wysiwyg-html-2
+rectangles page still has sizing issues on mobile, initally takes up way bigger than the full screen and has to be zoomed out
+oldg technical files page is small on mobile for some reason
 
 enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
@@ -135,6 +137,7 @@ add method to download all database contents and keep local copy updated, for ba
 add semantic tags to all pages
 add different cursor types experimentor
 add april fools where page permanently uses the busy cursor
+add experimentor page for different types of means, medians, modes, where a collection of points can be dragged around and median, mode, and the different means all shown; or a normal distribution that can be skewed to show the mean, median, mode
 
 hex editor
 english words searcher
@@ -179,6 +182,8 @@ user account system
     ability to turn on deleting of old sessions but it audits the turning on and off; auditing off by default
       ability to turn off auditing and delete old audits
   browser that created account is root of trust, can authorize other sessions (or 2fa can authorize them) in order to authorize them as root of trust as well, and can enable the extreme auditing of old sessions and user settings changes, but it is off by default
+  ability to ipban or ban block or ban user acc from certain actions for a certain period of time automatically for certain actions and manually
+  auditing actions forgot after 6mo or some similar period and are cleared from record after similar period (acc can view their own bans until they are forgot)
 add open declaration of password security and data handling (when its time)
 chat system
   option to send as markdown, bbcode, or html
@@ -264,6 +269,8 @@ chat system
   permissions can still be bitfield but stored as base64 string because potentially hundreds of bits
   ctrl-a can be configured to open ctrl-a dialog to choose what gets selected, so custom message range, select usernames as well, select timestamps, etc.
   p2p fully e2e encrypted voice channels by default or by choice idk
+  ability to set server member whitelist so its almost like an auto ban for everyone else
+  ability to reply to 2 or more messages at once, or messages from a different channel or even different server or dm
 social media
   by default nothing is used for any analytics
   if there are analytic requests (for someone's likeness or something) for some reason, they are asked thru notifs (auto denied after a while)
