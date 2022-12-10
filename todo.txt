@@ -11,6 +11,8 @@ add draggability to solid color page items
 link moving
   solid color page shouldnt be in debug, maybe as a main page link
   old pages should be in a misc tab on the navbar, debug pages should be in that misc tab
+unlogged requests should not increment request counter
+check if x-robots-tag: noindex, nofollow, noarchive, nocache, noimageindex, noodp is ultimate noindex header (this is what is returned by cloudflare)
 
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
@@ -27,6 +29,8 @@ create website url that has the whole website at one url, including images and s
 fix start tag seen without a doctype first on wysiwyg-html-2
 rectangles page still has sizing issues on mobile, initally takes up way bigger than the full screen and has to be zoomed out
 oldg technical files page is small on mobile for some reason
+change aria labels or some other accessibility labeling when base64 and other webpages have error
+add jitter to latency test and time syncer; maybe other stats
 
 enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
@@ -135,9 +139,15 @@ decide whether meta tag keywords should be always lowercase or not
 decide whether to move inline script in index to immediately after navbar
 add method to download all database contents and keep local copy updated, for backup purposes
 add semantic tags to all pages
+  add thead, tbody, tfoot to tables
 add different cursor types experimentor
 add april fools where page permanently uses the busy cursor
 add experimentor page for different types of means, medians, modes, where a collection of points can be dragged around and median, mode, and the different means all shown; or a normal distribution that can be skewed to show the mean, median, mode
+special page that shows different hidden pages based on referer; another page that fetches the referer page and renders it, as a backproxy
+add server time sync to advancedtime
+page with custom mouse that is one pixel
+idea of having progress bar above textbox with a character or word limit, maybe a very thin progress bar that has no margin between it and textbox
+unselectable radiobuttons
 
 hex editor
 english words searcher
@@ -184,6 +194,7 @@ user account system
   browser that created account is root of trust, can authorize other sessions (or 2fa can authorize them) in order to authorize them as root of trust as well, and can enable the extreme auditing of old sessions and user settings changes, but it is off by default
   ability to ipban or ban block or ban user acc from certain actions for a certain period of time automatically for certain actions and manually
   auditing actions forgot after 6mo or some similar period and are cleared from record after similar period (acc can view their own bans until they are forgot)
+  data viewer page that can even be accessed without an account, allows editing or deleting of each and every data entry on the site, or requesting of not using data for certain purposes which brings up a popup stating that the data will simply be deleted (or maybe it can be moved to a private location where nobody else can see it but can be moved back to a public location at user's choice)
 add open declaration of password security and data handling (when its time)
 chat system
   option to send as markdown, bbcode, or html
@@ -271,6 +282,13 @@ chat system
   p2p fully e2e encrypted voice channels by default or by choice idk
   ability to set server member whitelist so its almost like an auto ban for everyone else
   ability to reply to 2 or more messages at once, or messages from a different channel or even different server or dm
+  ability to set scrolling behavior
+    show entire chat history at once and have miniscule scrollbar
+    have scrollbar that only scrolls 300ish messages, and snaps back to middle with reset middle position when moved to the edge
+    have bar for whole thing but it is visual, actual scrollbar is interactive circle object that if moved a little bit down will scroll at constant speed, faster for more distance from center, likewise for scrolling up; resets to center if unclicked
+  truly non-account messages will stay as they are now (editable by anyone that pretends to have that name), however a new type of non-account message, one that is linked to a real account or to a autocreated account, called a custom name message (autocreated account is account that is tied to cookies and will be lost on cookies cleared and will be deleted after not using for 90 days (default, configurable), unless the autocreated account is tied to a real account (default never delete then, but also configurable))
+    autocreated account custom name messages can be set on account deletion to delete (default) or to convert to truly non-account messages (with optionally changing name to something else or deleted user or modifying name based on a formula applied to each message)
+  regular account messages can be set on account deletion to delete (default) or to convert to truly non-account message with the same name as original user or deleted user or another name or change name on a formula applied to each message
 social media
   by default nothing is used for any analytics
   if there are analytic requests (for someone's likeness or something) for some reason, they are asked thru notifs (auto denied after a while)
