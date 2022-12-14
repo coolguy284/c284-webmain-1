@@ -325,3 +325,4 @@ srv_web_main/common/url_valid_check.js has hardcoded 2 functions and 1 set from 
 srv_web_main/log_utils.js has hardcoded 1 function from common (since it runs first)
 on all ui elements that pop up on wm1, option to ignore inputs for 250ms or configurable (to prevent accidentally clicking on popup before can react and stop moving finger)
   can instead do it only on modals that appear without user action
+modals that appear without user action should ignore accidental keyboard input like space key presses, to prevent someone who is typing without looking from pressing default option on the modal
