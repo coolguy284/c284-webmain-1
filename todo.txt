@@ -1,5 +1,6 @@
 general: update packages (on old servers also), user acc system
 
+fix old server reverse proxy not proxying headers
 fix host getting set to "invalid" in get_request_props when connecting to server at http://localhost:8080 through non-dockered run
 add circles and ellipses and squares to rectangles.html
 change advanced time "uncapped framerate" to say "full monitor framerate", also update on old site as well
@@ -20,7 +21,8 @@ add validator for canonical urls and meta urls, printing if they exist but do no
   can implement in helpers/main.js, either print as a warning (probably) or an error (maybe)
   also validator to make sure "to" urls in redirects.txt are the final form of the url for the most part
 use map and promise all for git log and others or for none of them
-process all file redirects (and maybe all file and folder redirects) so that one redirect's to can be another's from but they both redirect to the another's to (redirect chaining), then convert current redirects to chain instead of all pointing to the correct destination
+process all file redirects and folder redirects so that one redirect's to can be another's from but they both get set to redirect to the another's to (redirect chaining), then convert current redirects to chain instead of all pointing to the correct destination
+  processed at docker build time instead of at runtime so the redirects.txt at runtime is indentical to how it is now
 store node-server and other repositories directly in the code, docker build scripts auto clone or update them
 api endpoint that sends a 204 and a non standard date header with extra precision
 add creation time file in addition to modtimes file, maybe an api to get full date information, or sending extra date info as headers if a certain header is in request
@@ -61,6 +63,7 @@ make proxies disconnect other end if one end closes, forward errors as well
 create_sitemap return lastmod and other properties, also return array of objects instead of map
 nosniff and other headers of the same nature should appear everywhere
 allow main code folder and main data secrets folder to be anywhere and make scripts use a relative path to reference them
+add alt code to unicode pages
 
 add nested layers of indexes for unicode
 add privacy policy
@@ -148,6 +151,9 @@ add server time sync to advancedtime
 page with custom mouse that is one pixel
 idea of having progress bar above textbox with a character or word limit, maybe a very thin progress bar that has no margin between it and textbox
 unselectable radiobuttons
+website with absolute jsonized list of all elements and a bunch of molecules in searchable table form
+  supporting isotopes, isomers, allotropes, polymorphs; price per kilo or gram or pound or whatever unit (using my unit converter code but made more portable)
+  ability to compare between 2 elements or molecules (useful for comparing prices of silver, gold, diamond, iridium, etc.; should have different values for natural and synthetic, for diamond specifically but possibly others)
 
 hex editor
 english words searcher
@@ -230,6 +236,8 @@ chat system
     ability to client side reorder channels in servers
     zoom in on stream or facecam on mobile or pc
     stream pop out windows can be set to a particular stream, main window can be split into regions with seperate views and so can pop out
+    stream multiple monitors either as seperate streams or as one big stream (which makes zooming imperative); special mode to fullscreen to multiple screens at once with a multiple screen livestream, or to split the livestream into many seperate windows and fullscreen each one independently
+    can set audio of stream to a specific application, even if streaming desktop; or to desktop if streaming a specific application
   embed ideas
     ability to add datetimes to middle of chat message and have them render in user's timezone
     other such processed elements like that or even active elements
@@ -289,6 +297,15 @@ chat system
   truly non-account messages will stay as they are now (editable by anyone that pretends to have that name), however a new type of non-account message, one that is linked to a real account or to a autocreated account, called a custom name message (autocreated account is account that is tied to cookies and will be lost on cookies cleared and will be deleted after not using for 90 days (default, configurable), unless the autocreated account is tied to a real account (default never delete then, but also configurable))
     autocreated account custom name messages can be set on account deletion to delete (default) or to convert to truly non-account messages (with optionally changing name to something else or deleted user or modifying name based on a formula applied to each message)
   regular account messages can be set on account deletion to delete (default) or to convert to truly non-account message with the same name as original user or deleted user or another name or change name on a formula applied to each message
+  profile picture support in any image format, png, jpg, webp, jxl, svg, bmp; gif, apng, mp4, mkv, mov, avi for animated
+    radiobuttons for level of data preservation
+      preserving exact image metadata (but beware uploading geolocation data)
+      strip all metadata, preserve image bytes
+      strip all metadata, compress image losslessly within same image filetype as much as possible
+      strip all metadata, compress image losslessly to filetype with lowest size (usually jxl, although due to lack of browser support a cached webp will be stored as well for like 24 hours or smth) (default)
+      or optionally compress losslessly, when clicked options will appear for format and compression level
+  the ability to dm urself (good as a todo list)
+  get a notification when someone goes online/offline/idle/dnd
 social media
   by default nothing is used for any analytics
   if there are analytic requests (for someone's likeness or something) for some reason, they are asked thru notifs (auto denied after a while)
