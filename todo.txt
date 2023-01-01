@@ -14,6 +14,7 @@ link moving
   old pages should be in a misc tab on the navbar, debug pages should be in that misc tab
 unlogged requests should not increment request counter
 check if x-robots-tag: noindex, nofollow, noarchive, nocache, noimageindex, noodp is ultimate noindex header (this is what is returned by cloudflare)
+add bootstrap credit
 
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
@@ -181,6 +182,9 @@ random number gens and testing suites
 optional service worker for caching and testing
 finish unicode viewer and link it
   putting single char in shows that char as unicode entry first thing, insta search all substring, entry as tall as form box for room for enlarged unicode char, alternative view where each one is a cell
+  unicode searcher might have external link icon at right instead of whole thing being link, to aid text selectability without being annoying, maybe make it a check on top (below search bar, above results)
+  checkbox on top for collapse unallocated characters (converts range into double or triple high cell or single high cell with different visual somehow like slightly darker background, that says its a range), also checkbox for collapse allocated ranges (like surrogates), both checked by default
+    possibly make unalloc checkbox first one that if off will disable second one (still interactable but greyed out and does nothing)
 opencloudhash and cloudhash (csprng based fake hash using database, with api for access), opencloudhash has hash entries visible, cloudhash does not
 xampp subfolder /x, wordpress subfolder /x/w
 user account system
@@ -306,6 +310,7 @@ chat system
       or optionally compress losslessly, when clicked options will appear for format and compression level
   the ability to dm urself (good as a todo list)
   get a notification when someone goes online/offline/idle/dnd
+  ability to right click on someone and ping them to check if they're actually online, checks if their client responds to the ping within 5 seconds
 social media
   by default nothing is used for any analytics
   if there are analytic requests (for someone's likeness or something) for some reason, they are asked thru notifs (auto denied after a while)
