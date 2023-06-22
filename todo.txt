@@ -1,5 +1,10 @@
 general: update packages (on old servers also), user acc system
 
+add chat page noscript tag (maybe calc page too)
+make noscript tags fullwidth of page
+fix colon in hostname (for port number) making hostname invalid
+make calculator output be almost full height of screen
+add chdir to for top level index.js to ensure it always starts in the correct directory
 fix old server reverse proxy not proxying headers
 fix host getting set to "invalid" in get_request_props when connecting to server at http://localhost:8080 through non-dockered run
 add circles and ellipses and squares to rectangles.html
@@ -155,6 +160,7 @@ unselectable radiobuttons
 website with absolute jsonized list of all elements and a bunch of molecules in searchable table form
   supporting isotopes, isomers, allotropes, polymorphs; price per kilo or gram or pound or whatever unit (using my unit converter code but made more portable)
   ability to compare between 2 elements or molecules (useful for comparing prices of silver, gold, diamond, iridium, etc.; should have different values for natural and synthetic, for diamond specifically but possibly others)
+the ability to have short abbreviations for sites, e.g. /at for advanced time, most likely using temporary redirects
 
 hex editor
 english words searcher
