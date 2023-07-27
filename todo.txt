@@ -1,5 +1,8 @@
 general: update packages (on old servers also), user acc system
 
+redirect sitemap_index.xml to sitemap.xml
+make pefect mode for rectangles.html that covers the edges as well
+add md5 hashing and old mds like md4 to sha hasher page
 add chat page noscript tag (maybe calc page too)
 make noscript tags fullwidth of page
 fix colon in hostname (for port number) making hostname invalid
