@@ -1,10 +1,29 @@
 <!doctype html>
 <html>
   <head>
+    <meta charset = 'utf-8'>
+    
     <title>coolguy284.com: Calculator</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'This is an advanced calculator with support for matrices, complex numbers, and hyperreals.'>
+    <meta name = 'keywords' content = 'calculator, matrices, complex-numbers, hyperreals'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/misc/old/tools/calculator.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Calculator'>
+    <meta name = 'og:description' content = 'This is an advanced calculator with support for matrices, complex numbers, and hyperreals.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/misc/old/tools/calculator.html'>
+    
     <style>
+      html {
+        height: 100%;
+      }
       body {
         width: calc(100% - 10px);
+        height: calc(100% - 20px);
         font-family: arial;
       }
       .mgn {
@@ -43,8 +62,9 @@
       }
     </style>
   </head>
+  
   <body>
-    <div id = 'calcres' style = 'width:100%;height:400px;overflow:auto;font-family:monospace;white-space:pre;'></div>
+    <div id = 'calcres' style = 'width:100%;height:calc(100% - 55px);overflow:auto;font-family:monospace;white-space:pre;'></div>
     <input type = 'text' id = 'cinp' style = 'width:calc(100% - 110px);height:40px;font-size:36px;font-family:monospace;'>
     <button onclick = 'HelpTogg()' style = 'position:relative;top:10px;padding:0;margin:0;'><img id = 'hdtog' style = 'width:40px;height:40px;'></button>
     <button onclick = 'SettingsTogg()' style = 'position:relative;top:10px;padding:0;margin:0;'><img id = 'sdtog' style = 'width:40px;height:40px;'></button><br>

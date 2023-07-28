@@ -4,7 +4,6 @@ make pefect mode for rectangles.html that covers the edges as well
 add md5 hashing and old mds like md4 to sha hasher page
 add chat page noscript tag (maybe calc page too)
 make noscript tags fullwidth of page
-make calculator output be almost full height of screen
 add chdir to for top level index.js to ensure it always starts in the correct directory
 add circles and ellipses and squares to rectangles.html
 change advanced time "uncapped framerate" to say "full monitor framerate", also update on old site as well
@@ -19,6 +18,7 @@ unlogged requests should not increment request counter
 check if x-robots-tag: noindex, nofollow, noarchive, nocache, noimageindex, noodp is ultimate noindex header (this is what is returned by cloudflare)
 add bootstrap credit
 rename /misc/status.html to /misc/server_status.html and add appropriate redirect
+add blank line between end of head and beginning of body tag
 
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
