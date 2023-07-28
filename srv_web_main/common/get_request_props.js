@@ -86,7 +86,7 @@ module.exports = (httpVersion, ...args) => {
   requestProps.cookie = requestProps.headers.cookie ? Object.fromEntries(requestProps.headers.cookie.split('; ').map(x => x.split('=')).filter(x => x.length == 2)) : {};
   
   if (requestProps.rawHost != null) {
-    if (/^(?:[a-zA-Z0-9-.]+|(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}|\[(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}\]:[0-9]+)$/.test(requestProps.rawHost))
+    if (/^(?:[a-zA-Z0-9-.]+|[a-zA-Z0-9-.]+:[0-9]{1,5}|(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}|\[(?:[a-fA-F0-9]{0,4}:){1,8}[a-fA-F0-9]{0,4}\]:[0-9]{1,5})$/.test(requestProps.rawHost))
       requestProps.host = requestProps.rawHost;
     else
       requestProps.host = 'INVALID';
@@ -102,13 +102,10 @@ module.exports = (httpVersion, ...args) => {
   let urlProto = requestProps.proto == 'http' ? 'http' : 'https';
   
   try {
-    if (requestProps.host.includes(':'))
-      requestProps.url = new URL(`${urlProto}://[${requestProps.host}]:${requestProps.proto == 'http' ? env.SRV_WEB_MAIN_HTTP_PORT : env.SRV_WEB_MAIN_HTTPS_PORT}${requestProps.urlString}`);
-    else
-      requestProps.url = new URL(`${urlProto}://${requestProps.host}${requestProps.urlString}`);
+    requestProps.url = new URL(`${urlProto}://${requestProps.host}${requestProps.urlString}`);
   } catch (err) {
     logger.warn('Error parsing url');
-    logger.warn([requestProps.proto, requestProps.host, requestProps.urlString]);
+    logger.warn([requestProps.proto, requestProps.host, requestProps.urlString, `${urlProto}://${requestProps.host}${requestProps.urlString}`, requestProps.rawHost, requestProps.url]);
     logger.warn(err);
     requestProps.url = new URL(`${urlProto}://NULL/null`);
   }
