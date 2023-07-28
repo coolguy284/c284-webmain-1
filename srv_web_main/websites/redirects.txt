@@ -5,12 +5,14 @@ RPS //+                                      /
 RPS ^(.*)/index.html$                        $1/
 
 
+# main folder redirects
 DPS /debug/                                  /misc/debug/
 DPS /strange/                                /misc/strange/
 DPS /tools/                                  /misc/tools/
 DPS /unicode/                                /misc/unicode/
 
 
+# main file redirects
 FPS /chat/chat.html                          /chat/
 FPS /misc/debug/char.html                    /misc/debug/useful_characters.html
 FPS /misc/debug/latency.html                 /misc/debug/latency_test.html
@@ -71,6 +73,7 @@ FPS /perr.html                               /misc/debug/templates/500.html
 FPS /rectangles.html                         /misc/rectangles.html
 FPS /redirecttemplate.html                   /misc/debug/templates/meta_redirect.html
 FPS /simple.html                             /misc/debug/simple_page.html
+FTS /sitemap_index.xml                       /sitemap.xml
 FPS /status.html                             /misc/status.html
 FTS /suggestions.html                        https://github.com/coolguy284/c284-webmain-1/issues
 FPS /technical.html                          /misc/debug/
