@@ -84,7 +84,7 @@ module.exports = exports = {
     socket.end(`HTTP/${req.httpVersion} 404 Not Found\r\n\r\n`);
   },
   
-  _httpInvalidHttp2Headers: new Set(['connection', 'transfer-encoding']),
+  _httpInvalidHttp2Headers: new Set(['connection', 'keep-alive', 'transfer-encoding']),
   
   headers: async (requestProps, statusCode, headers) => {
     try {
