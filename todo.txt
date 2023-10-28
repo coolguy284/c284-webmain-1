@@ -1,5 +1,7 @@
 general: update packages (on old servers also), user acc system
 
+srv_web_main has memory leak? (851MiB after a month or two)
+
 make pefect mode for rectangles.html that covers the edges as well
 add md5 hashing and old mds like md4 to sha hasher page
 add chat page noscript tag (maybe calc page too)
@@ -69,6 +71,7 @@ create_sitemap return lastmod and other properties, also return array of objects
 nosniff and other headers of the same nature should appear everywhere
 allow main code folder and main data secrets folder to be anywhere and make scripts use a relative path to reference them
 add alt code to unicode pages
+new systemdata has 2 options, one is tab view other is dropdown view like old
 
 add nested layers of indexes for unicode
 add privacy policy
