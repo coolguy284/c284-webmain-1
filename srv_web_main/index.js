@@ -51,7 +51,7 @@ if (env.PROC_MONGODB_ENABLED) {
     // initalize mongo client
     var mongodb = require('mongodb');
     
-    vars.mongoClient = new mongodb.MongoClient('mongodb://127.0.0.1', { useUnifiedTopology: true });
+    vars.mongoClient = new mongodb.MongoClient('mongodb://127.0.0.1');
     
     await new Promise(r => setTimeout(r, 3000));
     await vars.mongoClient.connect();
