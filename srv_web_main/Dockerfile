@@ -39,6 +39,40 @@ RUN node helpers/compress_and_etags.js --only '^libs/.*$'
 
 COPY --chown=webmain:webmain srv_web_main/dockerenv.list dockerenv.list
 
+# Clones each repo in the apps folder
+# uses this CLEVER solution to invalidate cache when repo is updated (the comment):
+# https://stackoverflow.com/questions/27529191/how-to-update-code-from-git-to-a-docker-container/41361409#41361409
+
+RUN mkdir -p websites/public/apps
+WORKDIR /home/webmain/websites/public/apps
+
+ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/mandel-viewer-v2/commits?per_page=1' mandel-viewer-v2_latest_commit
+RUN rm mandel-viewer-v2_latest_commit
+RUN git clone --depth 1 https://github.com/coolguy284/mandel-viewer-v2.git
+
+ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/special-relativity-sim/commits?per_page=1' special-relativity-sim_latest_commit
+RUN rm special-relativity-sim_latest_commit
+RUN git clone --depth 1 https://github.com/coolguy284/special-relativity-sim.git
+
+ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-fancy-clock/commits?per_page=1' html5-fancy-clock_latest_commit
+RUN rm html5-fancy-clock_latest_commit
+RUN git clone --depth 1 https://github.com/coolguy284/html5-fancy-clock.git
+
+ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-temporal-conways-life/commits?per_page=1' html5-temporal-conways-life_latest_commit
+RUN rm html5-temporal-conways-life_latest_commit
+RUN git clone --depth 1 https://github.com/coolguy284/html5-temporal-conways-life.git
+
+ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-raymarcher/commits?per_page=1' 3d-raymarcher_latest_commit
+RUN rm 3d-raymarcher_latest_commit
+RUN git clone --depth 1 https://github.com/coolguy284/3d-raymarcher.git
+
+ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-time-planner/commits?per_page=1' html5-time-planner_latest_commit
+RUN rm html5-time-planner_latest_commit
+RUN git clone --depth 1 https://github.com/coolguy284/html5-time-planner.git
+
+# Change workdir back for rest of dockerfile
+WORKDIR /home/webmain
+
 COPY --chown=webmain:webmain .git .git
 
 COPY --chown=webmain:webmain srv_web_main/package.json package.json

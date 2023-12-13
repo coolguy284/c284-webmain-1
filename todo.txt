@@ -1,7 +1,22 @@
-general: update packages (on old servers also), user acc system
-
+current:
+fix modtimes broken on the new git pages
+implement redirect chaining
+  process all file redirects and folder redirects so that one redirect's to can be another's from but they both get set to redirect to the another's to (redirect chaining)
+    processed at docker build time instead of at runtime so the redirects.txt at runtime is indentical to how it will be after the above statement is done
+    and it errors at buildtime if a cycle is detected (including complex cycles caused by a folder and a file redirect together)
+  then convert current redirects in file to chain instead of all pointing to the final destination
+  redirect chaining processed in order they appear in file
+move and add redirect:
+  /misc/rectangles.html  ->  /apps/rectangles.html
+  /misc/strange/halloween_name_gen.html  ->  /apps/halloween_name_gen.html
+  /misc/tools/  ->  /tools/
+  /misc/debug/  ->  /debug/
+  delete misc/index.html? (consider this, if not remove this todo entry)
 srv_web_main has memory leak? (851MiB after a month or two)
+put a link to modtimes page and other config pages somewhere
+halloween name generator should spookify when pressing enter on input (listen for onchange event? or maybe just the enter key being pressed?)
 
+tier 1:
 make pefect mode for rectangles.html that covers the edges as well
 add md5 hashing and old mds like md4 to sha hasher page
 add chat page noscript tag (maybe calc page too)
@@ -22,14 +37,13 @@ add bootstrap credit
 rename /misc/status.html to /misc/server_status.html and add appropriate redirect
 add blank line between end of head and beginning of body tag
 
+tier 2:
 rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
   validation for meta description tags, to supplement validation for canonical urls
   can implement in helpers/main.js, either print as a warning (probably) or an error (maybe)
   also validator to make sure "to" urls in redirects.txt are the final form of the url for the most part
 use map and promise all for git log and others or for none of them
-process all file redirects and folder redirects so that one redirect's to can be another's from but they both get set to redirect to the another's to (redirect chaining), then convert current redirects to chain instead of all pointing to the correct destination
-  processed at docker build time instead of at runtime so the redirects.txt at runtime is indentical to how it is now
 store node-server and other repositories directly in the code, docker build scripts auto clone or update them
 api endpoint that sends a 204 and a non standard date header with extra precision
 add creation time file in addition to modtimes file, maybe an api to get full date information, or sending extra date info as headers if a certain header is in request
@@ -41,6 +55,7 @@ oldg technical files page is small on mobile for some reason
 change aria labels or some other accessibility labeling when base64 and other webpages have error
 add jitter to latency test and time syncer; maybe other stats
 
+tier 3:
 enigma machine and other sites in tools and other from the old site
 don't use recursion for recursive readdir or sitemap get (fix both on both wm1 and zextra)
 copied over bson and other libs/extern should have version in title so webpages are guaranteed to request latest version instead of caching
@@ -73,6 +88,7 @@ allow main code folder and main data secrets folder to be anywhere and make scri
 add alt code to unicode pages
 new systemdata has 2 options, one is tab view other is dropdown view like old
 
+medium concepts:
 add nested layers of indexes for unicode
 add privacy policy
   if cannot do legally rigorous privacy policy yet cause of lack of knowledge, then do simple hard fact data description privacy policy until then
@@ -164,6 +180,7 @@ website with absolute jsonized list of all elements and a bunch of molecules in 
   ability to compare between 2 elements or molecules (useful for comparing prices of silver, gold, diamond, iridium, etc.; should have different values for natural and synthetic, for diamond specifically but possibly others)
 the ability to have short abbreviations for sites, e.g. /at for advanced time, most likely using temporary redirects
 
+big concepts:
 hex editor
 english words searcher
 add pseudo live birth and death tracker that is not linear but instead has realistic randomness in the timing, also maybe other events, also random names
@@ -346,6 +363,10 @@ corrections api, ability to request a correction, however minor, on any page of 
 
 extra:
 experiment with unsorted readdirs using fuse, if works potential necessity to sort c284-webmain-1 modtimes.json or maybe just sort it anyway
+
+low priority:
+add text lines sorter page using contenteditable div
+general: update packages (on old servers also), user acc system
 
 problems:
 proc_main index.js seems to stay running if one of sibling docker containers started by it is still running
