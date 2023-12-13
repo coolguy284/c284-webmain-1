@@ -3,6 +3,18 @@ var fs = require('fs');
 
 var crawler = require('../common/sitemap_crawler');
 
+let webmainPath = 'srv_web_main/';
+let websitePath = 'websites/public/';
+
+let gitSubrepos = [
+  'apps/mandel-viewer-v2/',
+  'apps/special-relativity-sim/',
+  'apps/html5-fancy-clock/',
+  'apps/html5-temporal-conways-life/',
+  'apps/3d-raymarcher/',
+  'apps/html5-time-planner/',
+];
+
 // load environment variables from .dockerenv file
 fs.readFileSync('dockerenv.list').toString().split(/\r?\n/g).forEach(entry => {
   if (entry[0] == '#') return;
@@ -13,7 +25,20 @@ fs.readFileSync('dockerenv.list').toString().split(/\r?\n/g).forEach(entry => {
   process.env[key] = value;
 });
 
+function getSubRepoPath(baseRepoPath, subRepos, filePath) {
+  for (let subRepo of subRepos) {
+    let subRepoFullPath = webmainPath + websitePath + subRepo;
+    if (filePath.startsWith(subRepoFullPath)) {
+      return [subRepoFullPath.slice(0, -1), filePath.slice(subRepoFullPath.length)];
+    }
+  }
+  
+  return [baseRepoPath, filePath];
+}
+
 function getGitModDate(repoPath, filePath) {
+  [ repoPath, filePath ] = getSubRepoPath(repoPath, gitSubrepos, filePath);
+  
   return new Promise((resolve, reject) => {
     var proc = cp.spawn(
       'git',
@@ -27,6 +52,7 @@ function getGitModDate(repoPath, filePath) {
       switch (code) {
         case 0:
           var output = Buffer.concat(outputBufs).toString();
+          console.log('pathsuc', [repoPath, filePath, output]);
           if (output == '')
             resolve(null);
           else
@@ -46,12 +72,22 @@ function getGitModDate(repoPath, filePath) {
 }
 
 (async () => {
-  // put modtimes of all webpages in websites/modtimes.json
+  // puts modtimes of all webpages in websites/modtimes.json
   
   var recursiveReaddir = require('../common/recursive_readdir');
   
   var pageNames = recursiveReaddir('websites/public');
-  pageNames = pageNames.filter(x => !x.endsWith('.br') && !x.endsWith('.gz'));
+  pageNames = pageNames.filter(x => {
+    if (x.endsWith('.br') || x.endsWith('.gz')) return false;
+    
+    for (let subRepo of gitSubrepos) {
+      if (x.startsWith(subRepo + '.git/')) {
+        return false;
+      }
+    }
+    
+    return true;
+  });
   
   var pageNamesFiltered = pageNames.filter(x => !x.includes('/'));
   var pageNamesFilteredAddIndex = pageNames.indexOf(pageNamesFiltered[0]);
@@ -75,7 +111,7 @@ function getGitModDate(repoPath, filePath) {
     else
       pagePath = 'websites/public/' + pageName;
     
-    var pageGitModTime = await getGitModDate('.', 'srv_web_main/' + pagePath);
+    var pageGitModTime = await getGitModDate('.', webmainPath + pagePath);
     
     if (pageGitModTime)
       return [pageName, pageGitModTime];
@@ -90,6 +126,11 @@ function getGitModDate(repoPath, filePath) {
       return null;
     }
   }))).filter(x => x);
+  
+  // remove all subrepo git repositories
+  await Promise.all(gitSubrepos.map(async subRepo => {
+    return fs.promises.rm(websitePath + subRepo + '.git', { recursive: true });
+  }));
   
   var pageModTimes = Object.fromEntries(pageModTimeEntries);
   

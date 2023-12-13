@@ -1,5 +1,5 @@
 current:
-fix modtimes broken on the new git pages
+modtime of each html page should be the latest modtime of the script files / css files / favicon files / image / video files it contains
 implement redirect chaining
   process all file redirects and folder redirects so that one redirect's to can be another's from but they both get set to redirect to the another's to (redirect chaining)
     processed at docker build time instead of at runtime so the redirects.txt at runtime is indentical to how it will be after the above statement is done

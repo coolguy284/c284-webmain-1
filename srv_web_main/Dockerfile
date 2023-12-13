@@ -48,27 +48,27 @@ WORKDIR /home/webmain/websites/public/apps
 
 ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/mandel-viewer-v2/commits?per_page=1' mandel-viewer-v2_latest_commit
 RUN rm mandel-viewer-v2_latest_commit
-RUN git clone --depth 1 https://github.com/coolguy284/mandel-viewer-v2.git
+RUN git clone https://github.com/coolguy284/mandel-viewer-v2.git
 
 ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/special-relativity-sim/commits?per_page=1' special-relativity-sim_latest_commit
 RUN rm special-relativity-sim_latest_commit
-RUN git clone --depth 1 https://github.com/coolguy284/special-relativity-sim.git
+RUN git clone https://github.com/coolguy284/special-relativity-sim.git
 
 ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-fancy-clock/commits?per_page=1' html5-fancy-clock_latest_commit
 RUN rm html5-fancy-clock_latest_commit
-RUN git clone --depth 1 https://github.com/coolguy284/html5-fancy-clock.git
+RUN git clone https://github.com/coolguy284/html5-fancy-clock.git
 
 ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-temporal-conways-life/commits?per_page=1' html5-temporal-conways-life_latest_commit
 RUN rm html5-temporal-conways-life_latest_commit
-RUN git clone --depth 1 https://github.com/coolguy284/html5-temporal-conways-life.git
+RUN git clone https://github.com/coolguy284/html5-temporal-conways-life.git
 
 ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-raymarcher/commits?per_page=1' 3d-raymarcher_latest_commit
 RUN rm 3d-raymarcher_latest_commit
-RUN git clone --depth 1 https://github.com/coolguy284/3d-raymarcher.git
+RUN git clone https://github.com/coolguy284/3d-raymarcher.git
 
 ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-time-planner/commits?per_page=1' html5-time-planner_latest_commit
 RUN rm html5-time-planner_latest_commit
-RUN git clone --depth 1 https://github.com/coolguy284/html5-time-planner.git
+RUN git clone https://github.com/coolguy284/html5-time-planner.git
 
 # Change workdir back for rest of dockerfile
 WORKDIR /home/webmain
