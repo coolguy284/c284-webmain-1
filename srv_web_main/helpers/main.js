@@ -52,7 +52,6 @@ function getGitModDate(repoPath, filePath) {
       switch (code) {
         case 0:
           var output = Buffer.concat(outputBufs).toString();
-          console.log('pathsuc', [repoPath, filePath, output]);
           if (output == '')
             resolve(null);
           else
