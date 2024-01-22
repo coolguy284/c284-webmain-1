@@ -1,4 +1,5 @@
 current:
+in production dockerfile move .git to bottom of list
 modtime of each html page should be the latest modtime of the script files / css files / favicon files / image / video files it contains
 implement redirect chaining
   process all file redirects and folder redirects so that one redirect's to can be another's from but they both get set to redirect to the another's to (redirect chaining)
@@ -368,6 +369,8 @@ experiment with unsorted readdirs using fuse, if works potential necessity to so
 low priority:
 add text lines sorter page using contenteditable div
 general: update packages (on old servers also), user acc system
+advanced time:
+  consolidate localstorage keys on advancedtime
 
 problems:
 proc_main index.js seems to stay running if one of sibling docker containers started by it is still running
