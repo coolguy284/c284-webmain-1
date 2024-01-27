@@ -4,7 +4,15 @@ var cp = require('child_process');
 var fs = require('fs');
 
 try {
-  fs.readFileSync('../c284-webmain-1_s/env.list').toString().split(/\r?\n/g).forEach(entry => {
+  let contents;
+  
+  if (fs.existsSync('debug_mode')) {
+    contents = fs.readFileSync('../c284-webmain-1_s/env.debug.list');
+  } else {
+    contents = fs.readFileSync('../c284-webmain-1_s/env.list');
+  }
+  
+  contents.toString().split(/\r?\n/g).forEach(entry => {
     if (entry[0] == '#') return;
     let split = entry.split('=');
     if (split.length < 2) return;

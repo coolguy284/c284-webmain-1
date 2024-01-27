@@ -12,3 +12,4 @@
 /srv_web_main/**/*.br
 /package.json
 /package-lock.json
+/debug_mode
