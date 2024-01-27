@@ -1,7 +1,7 @@
 var logger = require('../log_utils')('common/resp');
 
 var fs = require('fs');
-var mime = require('mime');
+var mime; import('mime').then(module => mime = module.default);
 var { env } = require('./env');
 var websiteData = require('./website_data');
 var { constVars: { hstsHosts } } = require('./vars');
