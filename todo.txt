@@ -371,6 +371,7 @@ add text lines sorter page using contenteditable div
 general: update packages (on old servers also), user acc system
 advanced time:
   consolidate localstorage keys on advancedtime
+make docker build args into single file
 
 problems:
 proc_main index.js seems to stay running if one of sibling docker containers started by it is still running
