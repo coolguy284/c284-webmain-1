@@ -18,7 +18,9 @@ USER webmain
 
 RUN mkdir cert
 
-ADD --chown=webmain:webmain https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt websites/public/data/
+# manual instead of add because the file will never change so might as well reduce server load
+#ADD --chown=webmain:webmain https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt websites/public/data/
+RUN mkdir -p websites/public/data && curl -fsSL https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt > websites/public/data/UnicodeData.txt
 
 COPY --chown=webmain:webmain srv_web_main/common/recursive_readdir.js common/recursive_readdir.js
 COPY --chown=webmain:webmain srv_web_main/common/website_data_parse.js common/website_data_parse.js
