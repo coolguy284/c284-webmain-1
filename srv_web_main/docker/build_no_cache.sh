@@ -1,3 +1,3 @@
 cd "${0%/*}/.."
 
-sudo docker build --build-arg NODE_VERSION=21.6.1 --no-cache -t coolguy284/c284-webmain-1_srv_web_main -f Dockerfile ..
+sudo docker build $(../docker/get_build_args.sh) --no-cache -t coolguy284/c284-webmain-1_srv_web_main -f Dockerfile ..

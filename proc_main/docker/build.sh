@@ -1,1 +1,3 @@
-sudo docker build --build-arg NODE_VERSION=21.6.1 -t coolguy284/c284-webmain-1_proc_main "${0%/*}/.."
+cd "${0%/*}/.."
+
+sudo docker build $(../docker/get_build_args.sh) -t coolguy284/c284-webmain-1_proc_main .
