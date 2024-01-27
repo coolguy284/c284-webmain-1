@@ -11,11 +11,11 @@ RUN apt-get install curl git gcc make -y
 RUN (mkdir nginx &&\
   cd nginx &&\
   #curl -sS https://nginx.org/keys/mdounin.key | gpg --import &&\
-  curl -sSL https://zlib.net/zlib-1.3.tar.gz | tar -xzf - &&\
+  curl -sSL https://zlib.net/zlib-1.3.1.tar.gz | tar -xzf - &&\
   curl -sSL https://nginx.org/download/nginx-1.25.3.tar.gz | tar -xzf - &&\
   #gpg --trusted-key 0x520A9993A1C052F8 --verify nginx-1.25.3.tar.gz{.asc,} &&\
   cd nginx-1.25.3 &&\
-  ./configure --without-http_rewrite_module --with-zlib=../zlib-1.3 &&\
+  ./configure --without-http_rewrite_module --with-zlib=../zlib-1.3.1 &&\
   make &&\
   make install &&\
   cd ../.. &&\
