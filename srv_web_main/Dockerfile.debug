@@ -57,6 +57,10 @@ RUN git clone https://github.com/coolguy284/mandel-viewer-v2.git
 #RUN rm special-relativity-sim_latest_commit
 RUN git clone https://github.com/coolguy284/special-relativity-sim.git
 
+#ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-gravity/commits?per_page=1' 3d-gravity_latest_commit
+#RUN rm 3d-gravity_latest_commit
+RUN git clone https://github.com/coolguy284/3d-gravity.git
+
 #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-fancy-clock/commits?per_page=1' html5-fancy-clock_latest_commit
 #RUN rm html5-fancy-clock_latest_commit
 RUN git clone https://github.com/coolguy284/html5-fancy-clock.git

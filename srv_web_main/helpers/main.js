@@ -9,6 +9,7 @@ let websitePath = 'websites/public/';
 let gitSubrepos = [
   'apps/mandel-viewer-v2/',
   'apps/special-relativity-sim/',
+  'apps/3d-gravity/',
   'apps/html5-fancy-clock/',
   'apps/html5-temporal-conways-life/',
   'apps/3d-raymarcher/',
