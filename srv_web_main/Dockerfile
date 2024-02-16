@@ -80,8 +80,6 @@ RUN git clone https://github.com/coolguy284/html5-time-tracker.git
 # Change workdir back for rest of dockerfile
 WORKDIR /home/webmain
 
-COPY --chown=webmain:webmain .git .git
-
 COPY --chown=webmain:webmain srv_web_main/package.json package.json
 
 COPY --chown=webmain:webmain srv_web_main/helpers helpers
@@ -91,6 +89,8 @@ COPY --chown=webmain:webmain srv_web_main/requests requests
 COPY --chown=webmain:webmain srv_web_main/websites websites
 
 COPY --chown=webmain:webmain srv_web_main/websites/redirects.txt srv_web_main/websites/website_data.txt websites/public/misc/debug/config/
+
+COPY --chown=webmain:webmain .git .git
 
 RUN ln -s . srv_web_main && node helpers/main.js && rm srv_web_main
 
