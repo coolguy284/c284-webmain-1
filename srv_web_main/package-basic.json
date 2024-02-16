@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "bson": "^6.2.0",
+    "bson": "^6.3.0",
     "bufferutil": "^4.0.8",
     "mime": "^4.0.1",
     "mongodb": "^6.3.0",
