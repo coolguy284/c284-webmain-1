@@ -137,8 +137,16 @@ function getGitModDate(repoPath, filePath) {
   var pageModTimeValues = pageModTimeEntries.map(x => x[1]).filter(x => x);
   var latestModTime = pageModTimeValues.reduce((a, c) => c > a ? c : a, pageModTimeValues[0]);
   
-  var sites = await crawler.crawl('/index.html', crawler.fsGetterFuncGen('websites/public', new Set(['/sitemap.xml'])));
-  var validSites = new Set(Array.from(sites.keys()).map(x => x.slice(1)));
+  var sites = Array.from(
+    (
+      await crawler.crawl(
+        '/index.html',
+        crawler.fsGetterFuncGen('websites/public', new Set(['/sitemap.xml']))
+      )
+    )
+    .keys()
+  );
+  var validSites = new Set(sites.map(x => x.slice(1)));
   var crawledPageModTimeValues = pageModTimeEntries.filter(x => validSites.has(x[0])).map(x => x[1]).filter(x => x);
   var latestSitemapModTime = crawledPageModTimeValues.reduce((a, c) => c > a ? c : a, crawledPageModTimeValues[0]);
   
