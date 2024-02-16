@@ -13,7 +13,7 @@ let gitSubrepos = [
   'apps/html5-fancy-clock/',
   'apps/html5-temporal-conways-life/',
   'apps/3d-raymarcher/',
-  'apps/html5-time-planner/',
+  'apps/html5-time-tracker/',
 ];
 
 // load environment variables from .dockerenv file

@@ -73,9 +73,9 @@ ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-raymarch
 RUN rm 3d-raymarcher_latest_commit
 RUN git clone https://github.com/coolguy284/3d-raymarcher.git
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-time-planner/commits?per_page=1' html5-time-planner_latest_commit
-RUN rm html5-time-planner_latest_commit
-RUN git clone https://github.com/coolguy284/html5-time-planner.git
+ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-time-tracker/commits?per_page=1' html5-time-tracker_latest_commit
+RUN rm html5-time-tracker_latest_commit
+RUN git clone https://github.com/coolguy284/html5-time-tracker.git
 
 # Change workdir back for rest of dockerfile
 WORKDIR /home/webmain

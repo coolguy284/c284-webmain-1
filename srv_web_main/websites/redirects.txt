@@ -78,6 +78,7 @@ FPS /status.html                             /misc/status.html
 FTS /suggestions.html                        https://github.com/coolguy284/c284-webmain-1/issues
 FPS /technical.html                          /misc/debug/
 FTS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
+FPS /apps/html5-time-planner/                /apps/html5-time-tracker/
 
 # redirects to old server stash
 FPS /misc/tools/advancedtime.html            /misc/old/tools/advancedtime.html
