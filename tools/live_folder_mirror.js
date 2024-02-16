@@ -7,57 +7,13 @@ console.log(`To ${TO_PATH}`);
 let fs = require('fs');
 let path = require('path');
 
-async function recursiveReaddir(basePath, excludedDirs, includeDirs) {
-  if (!Array.isArray(excludedDirs)) excludedDirs = [];
-  
-  let currentExcludeDirs = excludedDirs.filter(x => !x.includes('/'));
-  
-  let contents = (await fs.promises.readdir(basePath, { withFileTypes: true }))
-    .filter(x => !currentExcludeDirs.includes(x.name));
-  
-  var folders = [], files = [];
-  
-  contents.forEach(x => x.isDirectory() ? folders.push(x) : files.push(x));
-  
-  if (includeDirs) {
-    return [
-      '.',
-      ...(await Promise.all(folders.map(async x =>
-        (await recursiveReaddir(
-          basePath + '/' + x.name,
-          excludedDirs
-            .filter(x => x.startsWith(x))
-            .map(x => x.split('/').slice(1).join('/')),
-          includeDirs
-        ))
-        .map(y => (x.name + '/' + y).replace(/\/\.$/, ''))
-      )))
-      .reduce((a, c) => (a.push(...c), a), []),
-      ...files.map(x => x.name),
-    ];
-  } else {
-    return [
-      ...(await Promise.all(folders.map(async x =>
-        (await recursiveReaddir(
-          basePath + '/' + x.name,
-          excludedDirs
-            .filter(x => x.startsWith(x))
-            .map(x => x.split('/').slice(1).join('/')),
-          includeDirs
-        ))
-        .map(y => (x.name + '/' + y))
-      )))
-      .reduce((a, c) => (a.push(...c), a), []),
-      ...files.map(x => x.name),
-    ];
-  }
-}
+let recursiveReaddir = require('../srv_web_main/common/recursive_readdir');
 
 (async () => {
   console.log('Reading dirs');
   
-  let fromFiles = new Set(await recursiveReaddir(FROM_PATH, ['node_modules'], true));
-  let toFiles = new Set(await recursiveReaddir(TO_PATH, [], true));
+  let fromFiles = new Set(await recursiveReaddir(FROM_PATH, { includeFolders: true, excludeDirs: ['node_modules'] }));
+  let toFiles = new Set(await recursiveReaddir(TO_PATH, { includeFolders: true }));
   
   console.log('Removing extra files');
   
