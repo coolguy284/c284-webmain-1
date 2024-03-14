@@ -30,6 +30,7 @@ async function createSitemap(sites, siteModTimesObj) {
     'apps/3d-gravity/index.html': 0.7,
     'apps/3d-raymarcher/index.html': 0.7,
     'apps/html5-fancy-clock/index.html': 0.7,
+    'apps/inf-voxel-test/index.html': 0.7,
     'apps/mandel-viewer-v2/index.html': 0.7,
     'apps/special-relativity-sim/index.html': 0.7,
     'chat/index.html': 0.7,

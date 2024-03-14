@@ -13,6 +13,7 @@ let gitSubrepos = [
   'apps/html5-fancy-clock/',
   'apps/html5-temporal-conways-life/',
   'apps/3d-raymarcher/',
+  'apps/inf-voxel-test/',
   'apps/html5-time-tracker/',
 ];
 
