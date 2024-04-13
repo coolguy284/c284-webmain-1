@@ -79,6 +79,7 @@ async function createSitemap(sites, siteModTimesObj) {
     'misc/debug/localstorage_editor.html': 0.1,
     'misc/debug/simple_page.html': 0.1,
     'misc/debug/time_syncer.html': 0.1,
+    'misc/debug/time_syncer_2.html': 0.1,
     
     'misc/debug/templates/404.html': 0.0,
     'misc/debug/templates/500.html': 0.0,
