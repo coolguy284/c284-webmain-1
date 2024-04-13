@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Time Syncer 2</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'This page continuously calculates the difference between the time of the server and the client in order to show the server time.'>
+    <meta name = 'keywords' content = 'tools'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/misc/debug/time_syncer_2.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Time Syncer 2'>
+    <meta name = 'og:description' content = 'This page continuously calculates the difference between the time of the server and the client in order to show the server time.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/misc/debug/time_syncer_2.html'>
+    
+    <style>
+      html {
+        font-family: Arial, sans-serif;
+      }
+      
+      span {
+        font-family: Consolas, monospace;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <h1>Info</h1>
+    <p>This page calculates the difference between the time of the server and the client in order to show the server time.</p>
+    
+    <h1>Data</h1>
+    <p>Client Time: <span id = 'client_time'>-</span></p>
+    <p>Server Time: <span id = 'server_time'>-</span></p>
+    <p>Client - Server: <span id = 'client_minus_server_time'>-</span> ms</p>
+    <p>Latency To Server: <span id = 'server_latency'>-</span> ms</p>
+    <p>Samples: <span id = 'samples'>-</span> (<span id = 'max_samples'>-</span> max)</p>
+    <p><span id = 'connection_status'>Code Not Running</span></p>
+    <button id = 'status_toggle' onclick = 'toggleTimeUpdateLoop();'>Start / Stop</button>
+    
+    <script>
+      let TIME_PING_URL = '/api/query/current_time?form=number';
+      let DUMMY_MODE = location.origin == 'null';
+      let PING_INTERVAL_MS = 500;
+      let MAX_SAMPLES = 100;
+      
+      class SampleAverager {
+        #maxSamples;
+        #samples = [0];
+        #currentSampleIndex = -2;
+        #sampleAverage = 0;
+        
+        constructor(maxSamples) {
+          this.#maxSamples = maxSamples;
+        }
+        
+        newSampleInput(sample) {
+          if (this.#currentSampleIndex < 0) {
+            this.#currentSampleIndex++;
+          } else {
+            if (this.#currentSampleIndex in this.#samples) {
+              this.#sampleAverage -= this.#samples[this.#currentSampleIndex] / this.#samples.length;
+            } else {
+              this.#sampleAverage *= this.#samples.length / (this.#samples.length + 1);
+            }
+            this.#samples[this.#currentSampleIndex] = sample;
+            this.#sampleAverage += this.#samples[this.#currentSampleIndex] / this.#samples.length;
+            
+            this.#currentSampleIndex++;
+            if (this.#currentSampleIndex >= this.#samples.length) {
+              if (this.#samples.length >= this.#maxSamples) {
+                this.#currentSampleIndex = 0;
+              }
+            }
+          }
+        }
+        
+        getSampleAverage() {
+          return this.#sampleAverage;
+        }
+        
+        numSamples() {
+          return this.#samples.length;
+        }
+      }
+      
+      let guiLoopRunning = false;
+      let timeUpdateLoopRunning = false;
+      let currentClientOffset = 0;
+      let roundTripMSSamples = new SampleAverager(MAX_SAMPLES);
+      let clientDiffMSSamples = new SampleAverager(MAX_SAMPLES);
+      
+      async function getServerTime() {
+        return await new Promise(r => {
+          if (DUMMY_MODE) {
+            r({
+              roundTripMS: 100,
+              clientDiffMS: 50,
+            });
+          } else {
+            let requestStartClientTimeMS = Date.now();
+            
+            request = new XMLHttpRequest();
+            request.open('GET', TIME_PING_URL);
+            request.send();
+            request.addEventListener('load', () => {
+              let requestEndClientTimeMS = Date.now();
+              let requestMiddleClientTimeMS = (requestEndClientTimeMS + requestStartClientTimeMS) / 2;
+              let requestMiddleServerTimeMS = Number(request.responseText);
+              
+              let roundTripMS = requestEndClientTimeMS - requestStartClientTimeMS;
+              let clientDiffMS = requestMiddleClientTimeMS - requestMiddleServerTimeMS;
+              
+              r({
+                roundTripMS,
+                clientDiffMS,
+              });
+            }, true);
+          }
+        });
+      }
+      
+      function dateToString(date) {
+        let str = date.toString();
+        
+        let [ timeStr, utcOffsetStr ] = str.split(' GMT');
+        
+        return `${timeStr}.${(date.getMilliseconds() + '').padStart(3, '0')} GMT${utcOffsetStr}`;
+      }
+      
+      function msToString(ms) {
+        let prefix = ms < 0 ? '-' : '+';
+        
+        ms = Math.abs(ms);
+        
+        let [ int, frac ] = ms.toFixed(3).split('.');
+        
+        return `${prefix}${int}.${frac}`;
+      }
+      
+      async function guiLoop() {
+        if (guiLoopRunning) return;
+        
+        guiLoopRunning = true;
+        
+        while (guiLoopRunning) {
+          let clientNow = new Date();
+          let serverNow = new Date(clientNow.getTime() - currentClientOffset);
+          
+          client_time.textContent = dateToString(clientNow);
+          server_time.textContent = dateToString(serverNow);
+          
+          await new Promise(r => requestAnimationFrame(r));
+          await new Promise(r => requestAnimationFrame(r));
+        }
+      }
+      
+      async function timeUpdateLoop() {
+        if (timeUpdateLoopRunning) return;
+        
+        timeUpdateLoopRunning = true;
+        
+        while (timeUpdateLoopRunning) {
+          let now = Date.now();
+          let awaitUntil = now + PING_INTERVAL_MS;
+          
+          let { roundTripMS, clientDiffMS } = await getServerTime();
+          
+          roundTripMSSamples.newSampleInput(roundTripMS);
+          clientDiffMSSamples.newSampleInput(clientDiffMS);
+          
+          currentClientOffset = clientDiffMSSamples.getSampleAverage();
+          
+          client_minus_server_time.textContent = msToString(currentClientOffset);
+          server_latency.textContent = msToString(roundTripMSSamples.getSampleAverage());
+          samples.textContent = roundTripMSSamples.numSamples();
+          max_samples.textContent = MAX_SAMPLES;
+          
+          let timeLeft = awaitUntil - Date.now();
+          if (timeLeft > 0) {
+            await new Promise(r => setTimeout(r, timeLeft));
+          }
+        }
+      }
+      
+      function toggleTimeUpdateLoop() {
+        if (!timeUpdateLoopRunning) {
+          timeUpdateLoop();
+          
+          connection_status.textContent = DUMMY_MODE ? 'Connected (Dummy)' : 'Connected';
+        } else {
+          timeUpdateLoopRunning = false;
+          
+          connection_status.textContent = 'Code Not Running';
+        }
+      }
+      
+      guiLoop();
+      toggleTimeUpdateLoop();
+    </script>
+  </body>
+</html>
