@@ -46,6 +46,8 @@
       let DUMMY_MODE = location.origin == 'null';
       let PING_INTERVAL_MS = 500;
       let MAX_SAMPLES = 100;
+      let ARTIFICIAL_LATENCY = 0;
+      let DUMMY_LATENCY = 100;
       
       class SampleAverager {
         #maxSamples;
@@ -97,29 +99,49 @@
         return await new Promise(r => {
           if (DUMMY_MODE) {
             r({
-              roundTripMS: 100,
-              clientDiffMS: 50,
+              roundTripMS: DUMMY_LATENCY,
+              clientDiffMS: DUMMY_LATENCY / 2,
             });
           } else {
             let requestStartClientTimeMS = Date.now();
             
-            request = new XMLHttpRequest();
-            request.open('GET', TIME_PING_URL);
-            request.send();
-            request.addEventListener('load', () => {
-              let requestEndClientTimeMS = Date.now();
-              let requestMiddleClientTimeMS = (requestEndClientTimeMS + requestStartClientTimeMS) / 2;
-              let requestMiddleServerTimeMS = Number(request.responseText);
-              
-              let roundTripMS = requestEndClientTimeMS - requestStartClientTimeMS;
-              let clientDiffMS = requestMiddleClientTimeMS - requestMiddleServerTimeMS;
-              
-              r({
-                roundTripMS,
-                clientDiffMS,
-              });
-            }, true);
+            if (ARTIFICIAL_LATENCY > 0) {
+              setTimeout(() => {
+                getServerTimeStartProcessing(r, requestStartClientTimeMS);
+              }, ARTIFICIAL_LATENCY);
+            } else {
+              getServerTimeStartProcessing(r, requestStartClientTimeMS);
+            }
           }
+        });
+      }
+      
+      function getServerTimeStartProcessing(r, requestStartClientTimeMS) {
+        let request = new XMLHttpRequest();
+        request.open('GET', TIME_PING_URL);
+        request.send();
+        request.addEventListener('load', () => {
+          if (ARTIFICIAL_LATENCY > 0) {
+            setTimeout(() => {
+              getServerTimeEndProcessing(r, requestStartClientTimeMS, request);
+            }, ARTIFICIAL_LATENCY);
+          } else {
+            getServerTimeEndProcessing(r, requestStartClientTimeMS, request);
+          }
+        }, true);
+      }
+      
+      function getServerTimeEndProcessing(r, requestStartClientTimeMS, request) {
+        let requestEndClientTimeMS = Date.now();
+        let requestMiddleClientTimeMS = (requestEndClientTimeMS + requestStartClientTimeMS) / 2;
+        let requestMiddleServerTimeMS = Number(request.responseText);
+        
+        let roundTripMS = requestEndClientTimeMS - requestStartClientTimeMS;
+        let clientDiffMS = requestMiddleClientTimeMS - requestMiddleServerTimeMS;
+        
+        r({
+          roundTripMS,
+          clientDiffMS,
         });
       }
       
