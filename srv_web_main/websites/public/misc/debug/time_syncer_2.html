@@ -39,7 +39,7 @@
     <p>Latency To Server: <span id = 'server_latency'>-</span> ms</p>
     <p>Samples: <span id = 'samples'>-</span> (<span id = 'max_samples'>-</span> max)</p>
     <p>Total Ticks: <span id = 'total_ticks'>-</span></p>
-    <p><span id = 'connection_status'>Code Not Running</span></p>
+    <p><span id = 'connection_status'>Code Not Running</span><span id = 'connection_dummy'></span></p>
     <button id = 'status_toggle' onclick = 'toggleTimeUpdateLoop();'>Start / Stop</button>
     
     <script>
@@ -48,11 +48,13 @@
       let PING_INTERVAL_MS = 500;
       let MAX_SAMPLES = 100;
       let IGNORED_START_SAMPLES = 2;
+      let DO_DISCONNECTED_CHECK = true;
+      let DISCONNECTED_TIMEOUT = 2000;
       let ARTIFICIAL_LATENCY = 0;
       let DUMMY_LATENCY = 100;
       let DUMMY_OFFSET = 10;
       let DUMMY_OFFSET_SLEW = 0.1;
-      let DUMMY_ERROR_PROBABILITY = 0.1;
+      let DUMMY_ERROR_PROBABILITY = 0;
       
       class SampleAverager {
         #maxSamples;
@@ -219,10 +221,26 @@
         
         let ticks = 0;
         let pastNow = Date.now();
+        let errorTimeout = null;
+        let noError = null;
+        let pastNoError = noError;
         
         while (timeUpdateLoopRunning) {
+          if (DO_DISCONNECTED_CHECK && (noError || noError == null)) {
+            if (errorTimeout != null) {
+              clearTimeout(errorTimeout);
+              errorTimeout = null;
+            }
+            errorTimeout = setTimeout(() => {
+              if (timeUpdateLoopRunning) {
+                connection_status.textContent = 'Disconnected';
+              }
+            }, DISCONNECTED_TIMEOUT);
+          }
+          
           let now = Date.now();
           let awaitUntil = now + PING_INTERVAL_MS;
+          if (DO_DISCONNECTED_CHECK) noError = false;
           
           try {
             let { roundTripMS, clientDiffMS } = await getServerTime();
@@ -242,12 +260,30 @@
             server_latency.textContent = msToString(roundTripMSSamples.getSampleAverage());
             samples.textContent = roundTripMSSamples.numSamples();
             max_samples.textContent = MAX_SAMPLES;
+            
+            if (DO_DISCONNECTED_CHECK) noError = true;
           } catch { /* empty */ }
           
-          total_ticks.textContent = ++ticks;
+          if (DO_DISCONNECTED_CHECK && noError) {
+            if (errorTimeout != null) {
+              clearTimeout(errorTimeout);
+              errorTimeout = null;
+            }
+            
+            if (errorTimeout == null || pastNoError == null) {
+              // error state was set, but since successful, unset error status
+              if (timeUpdateLoopRunning) {
+                connection_status.textContent = 'Connected';
+              }
+            }
+          }
+          
+          ticks++;
+          total_ticks.textContent = ticks;
           
           pastClientOffset = currentClientOffset;
           pastNow = now;
+          if (DO_DISCONNECTED_CHECK) pastNoError = noError;
           
           let timeLeft = awaitUntil - Date.now();
           if (timeLeft > 0) {
@@ -257,10 +293,19 @@
       }
       
       function toggleTimeUpdateLoop() {
+        if (DUMMY_MODE) {
+          connection_dummy.textContent = ' (Dummy)';
+        } else {
+          connection_dummy.textContent = '';
+        }
         if (!timeUpdateLoopRunning) {
           timeUpdateLoop();
           
-          connection_status.textContent = DUMMY_MODE ? 'Connected (Dummy)' : 'Connected';
+          if (DO_DISCONNECTED_CHECK) {
+            connection_status.textContent = 'Starting';
+          } else {
+            connection_status.textContent = 'Connected';
+          }
         } else {
           timeUpdateLoopRunning = false;
           
