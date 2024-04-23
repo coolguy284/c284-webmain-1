@@ -55,11 +55,12 @@
     <p>Client Time: <span id = 'client_time' class = 'mono'>-</span></p>
     <p>Server Time: <span id = 'server_time' class = 'mono'>-</span></p>
     <p class = 'small_btm_margin'><span id = 'rendering_status' class = 'mono'>-</span></p>
-    <!--<div>
+    <div>
       <span>Frame Skip:</span>
-      <input type = 'range' id = 'render_frame_skips' min = 1 max = 15 step = 1 value = 2>
-      <input type = 'text' id = 'render_frame_skips_text' value = 2>
-    </div>-->
+      <!-- https://stackoverflow.com/questions/18544890/onchange-event-on-input-type-range-is-not-triggering-in-firefox-while-dragging -->
+      <input type = 'range' id = 'render_frame_skips' min = 1 max = 15 step = 1 value = 2 oninput = 'updateFrameSkip(this);'>
+      <input type = 'text' id = 'render_frame_skips_text' value = 2 onchange = 'updateFrameSkip(this);'>
+    </div>
     <br>
     <button id = 'status_toggle' onclick = 'toggleGuiLoop();'>Start / Stop Rendering</button>
     <hr>
@@ -83,6 +84,7 @@
       let DUMMY_OFFSET = 10;
       let DUMMY_OFFSET_SLEW = 0.1;
       let DUMMY_ERROR_PROBABILITY = 0;
+      let RENDER_FRAME_SKIPS = 2;
       
       class SampleAverager {
         #maxSamples;
@@ -241,8 +243,10 @@
           client_time.textContent = dateToString(clientNow);
           server_time.textContent = dateToString(serverNow);
           
-          await new Promise(r => requestAnimationFrame(r));
-          await new Promise(r => requestAnimationFrame(r));
+          for (let i = 0; i < RENDER_FRAME_SKIPS; i++) {
+            await new Promise(r => requestAnimationFrame(r));
+            if (!guiLoopRunning) break;
+          }
         }
       }
       
@@ -255,6 +259,23 @@
           guiLoopRunning = false;
           
           rendering_status.textContent = 'Not Rendering';
+        }
+      }
+      
+      function updateFrameSkip(elem) {
+        switch (elem.type) {
+          case 'range':
+            RENDER_FRAME_SKIPS = Number(elem.value);
+            render_frame_skips_text.value = RENDER_FRAME_SKIPS;
+            break;
+          
+          case 'text': {
+            let newVal = Number(elem.value);
+            if (Number.isSafeInteger(newVal)) {
+              RENDER_FRAME_SKIPS = newVal;
+              render_frame_skips.value = RENDER_FRAME_SKIPS;
+            }
+            } break;
         }
       }
       
