@@ -54,7 +54,7 @@
       let DUMMY_LATENCY = 100;
       let DUMMY_OFFSET = 10;
       let DUMMY_OFFSET_SLEW = 0.1;
-      let DUMMY_ERROR_PROBABILITY = 0;
+      let DUMMY_ERROR_PROBABILITY = 1;
       
       class SampleAverager {
         #maxSamples;
@@ -116,7 +116,11 @@
             setTimeout(() => {
               let error = false;
               if (DUMMY_ERROR_PROBABILITY > 0) {
-                error = Math.random() < DUMMY_ERROR_PROBABILITY;
+                if (DUMMY_ERROR_PROBABILITY >= 1) {
+                  error = true;
+                } else {
+                  error = Math.random() <= DUMMY_ERROR_PROBABILITY;
+                }
               }
               if (error) {
                 j(new Error('XHR Dummy Error'));
@@ -224,17 +228,22 @@
         let errorTimeout = null;
         let noError = null;
         let pastNoError = noError;
+        let startDisconnectedTicks = null;
         
         while (timeUpdateLoopRunning) {
-          if (DO_DISCONNECTED_CHECK && (noError || noError == null)) {
+          if (DO_DISCONNECTED_CHECK && (noError || noError == null || errorTimeout == null)) {
             if (errorTimeout != null) {
               clearTimeout(errorTimeout);
               errorTimeout = null;
             }
             errorTimeout = setTimeout(() => {
               if (timeUpdateLoopRunning) {
-                connection_status.textContent = 'Disconnected';
+                if (startDisconnectedTicks == null) {
+                  startDisconnectedTicks = ticks;
+                }
+                connection_status.textContent = `Disconnected ${((ticks - startDisconnectedTicks) * PING_INTERVAL_MS / 1000).toFixed(0)}s`;
               }
+              errorTimeout = null;
             }, DISCONNECTED_TIMEOUT);
           }
           
@@ -261,7 +270,10 @@
             samples.textContent = roundTripMSSamples.numSamples();
             max_samples.textContent = MAX_SAMPLES;
             
-            if (DO_DISCONNECTED_CHECK) noError = true;
+            if (DO_DISCONNECTED_CHECK) {
+              noError = true;
+              startDisconnectedTicks = null;
+            }
           } catch { /* empty */ }
           
           if (DO_DISCONNECTED_CHECK && noError) {
