@@ -22,8 +22,27 @@
         font-family: Arial, sans-serif;
       }
       
-      span {
+      button {
+        margin-bottom: 1rem;
+      }
+      
+      input[type = range] {
+        position: relative;
+        top: 0.4rem;
+        margin-right: 0.2rem;
+      }
+      
+      input[type = text] {
+        width: 3rem;
+        font-size: 1rem;
+      }
+      
+      .mono {
         font-family: Consolas, monospace;
+      }
+      
+      .small_btm_margin {
+        margin-bottom: 0.5rem;
       }
     </style>
   </head>
@@ -33,14 +52,23 @@
     <p>This page calculates the difference between the time of the server and the client in order to show the server time.</p>
     
     <h1>Data</h1>
-    <p>Client Time: <span id = 'client_time'>-</span></p>
-    <p>Server Time: <span id = 'server_time'>-</span></p>
-    <p>Client - Server: <span id = 'client_minus_server_time'>-</span> ms, slew: <span id = 'client_minus_server_time_slew'>-</span> &micro;s/s</p>
-    <p>Latency To Server: <span id = 'server_latency'>-</span> ms</p>
-    <p>Samples: <span id = 'samples'>-</span> (<span id = 'max_samples'>-</span> max)</p>
-    <p>Total Ticks: <span id = 'total_ticks'>-</span></p>
-    <p><span id = 'connection_status'>Code Not Running</span><span id = 'connection_dummy'></span></p>
-    <button id = 'status_toggle' onclick = 'toggleTimeUpdateLoop();'>Start / Stop</button>
+    <p>Client Time: <span id = 'client_time' class = 'mono'>-</span></p>
+    <p>Server Time: <span id = 'server_time' class = 'mono'>-</span></p>
+    <p class = 'small_btm_margin'><span id = 'rendering_status' class = 'mono'>-</span></p>
+    <!--<div>
+      <span>Frame Skip:</span>
+      <input type = 'range' id = 'render_frame_skips' min = 1 max = 15 step = 1 value = 2>
+      <input type = 'text' id = 'render_frame_skips_text' value = 2>
+    </div>-->
+    <br>
+    <button id = 'status_toggle' onclick = 'toggleGuiLoop();'>Start / Stop Rendering</button>
+    <hr>
+    <p>Client - Server: <span id = 'client_minus_server_time' class = 'mono'>-</span> ms, slew: <span id = 'client_minus_server_time_slew' class = 'mono'>-</span> &micro;s/s</p>
+    <p>Latency To Server: <span id = 'server_latency' class = 'mono'>-</span> ms</p>
+    <p>Samples: <span id = 'samples' class = 'mono'>-</span> (<span id = 'max_samples' class = 'mono'>-</span> max)</p>
+    <p>Total Ticks: <span id = 'total_ticks' class = 'mono'>-</span></p>
+    <p><span id = 'connection_status' class = 'mono'>Code Not Running</span><span id = 'connection_dummy' class = 'mono'></span></p>
+    <button id = 'status_toggle' onclick = 'toggleTimeUpdateLoop();'>Start / Stop Syncing</button>
     
     <script>
       let TIME_PING_URL = '/api/query/current_time?form=number';
@@ -54,7 +82,7 @@
       let DUMMY_LATENCY = 100;
       let DUMMY_OFFSET = 10;
       let DUMMY_OFFSET_SLEW = 0.1;
-      let DUMMY_ERROR_PROBABILITY = 1;
+      let DUMMY_ERROR_PROBABILITY = 0;
       
       class SampleAverager {
         #maxSamples;
@@ -218,6 +246,18 @@
         }
       }
       
+      function toggleGuiLoop() {
+        if (!guiLoopRunning) {
+          guiLoop();
+          
+          rendering_status.textContent = 'Rendering';
+        } else {
+          guiLoopRunning = false;
+          
+          rendering_status.textContent = 'Not Rendering';
+        }
+      }
+      
       async function timeUpdateLoop() {
         if (timeUpdateLoopRunning) return;
         
@@ -325,7 +365,7 @@
         }
       }
       
-      guiLoop();
+      toggleGuiLoop();
       toggleTimeUpdateLoop();
     </script>
   </body>
