@@ -52,6 +52,7 @@
       let DUMMY_LATENCY = 100;
       let DUMMY_OFFSET = 10;
       let DUMMY_OFFSET_SLEW = 0.1;
+      let DUMMY_ERROR_PROBABILITY = 0.1;
       
       class SampleAverager {
         #maxSamples;
@@ -108,29 +109,37 @@
       }
       
       async function getServerTime() {
-        return await new Promise(r => {
+        return await new Promise((r, j) => {
           if (DUMMY_MODE) {
             setTimeout(() => {
-              r({
-                roundTripMS: DUMMY_LATENCY,
-                clientDiffMS: DUMMY_OFFSET + (Date.now() - window.startTime) / 1000 * DUMMY_OFFSET_SLEW,
-              });
+              let error = false;
+              if (DUMMY_ERROR_PROBABILITY > 0) {
+                error = Math.random() < DUMMY_ERROR_PROBABILITY;
+              }
+              if (error) {
+                j(new Error('XHR Dummy Error'));
+              } else {
+                r({
+                  roundTripMS: DUMMY_LATENCY,
+                  clientDiffMS: DUMMY_OFFSET + (Date.now() - window.startTime) / 1000 * DUMMY_OFFSET_SLEW,
+                });
+              }
             }, DUMMY_LATENCY);
           } else {
             let requestStartClientTimeMS = Date.now();
             
             if (ARTIFICIAL_LATENCY > 0) {
               setTimeout(() => {
-                getServerTimeStartProcessing(r, requestStartClientTimeMS);
+                getServerTimeStartProcessing(r, j, requestStartClientTimeMS);
               }, ARTIFICIAL_LATENCY);
             } else {
-              getServerTimeStartProcessing(r, requestStartClientTimeMS);
+              getServerTimeStartProcessing(r, j, requestStartClientTimeMS);
             }
           }
         });
       }
       
-      function getServerTimeStartProcessing(r, requestStartClientTimeMS) {
+      function getServerTimeStartProcessing(r, j, requestStartClientTimeMS) {
         let request = new XMLHttpRequest();
         request.open('GET', TIME_PING_URL);
         request.send();
@@ -143,6 +152,15 @@
             getServerTimeEndProcessing(r, requestStartClientTimeMS, request);
           }
         }, true);
+        request.addEventListener('error', () => {
+          j(new Error('XHR Error'));
+        });
+        request.addEventListener('abort', () => {
+          j(new Error('XHR Abort'));
+        });
+        request.addEventListener('timeout', () => {
+          j(new Error('XHR Timeout'));
+        });
       }
       
       function getServerTimeEndProcessing(r, requestStartClientTimeMS, request) {
@@ -206,23 +224,26 @@
           let now = Date.now();
           let awaitUntil = now + PING_INTERVAL_MS;
           
-          let { roundTripMS, clientDiffMS } = await getServerTime();
+          try {
+            let { roundTripMS, clientDiffMS } = await getServerTime();
+            
+            roundTripMSSamples.newSampleInput(roundTripMS);
+            clientDiffMSSamples.newSampleInput(clientDiffMS);
+            
+            currentClientOffset = clientDiffMSSamples.getSampleAverage();
+            let trueTickTime = now - pastNow;
+            if (trueTickTime != 0) {
+              clientDiffSlewMSSamples.newSampleInput((currentClientOffset - pastClientOffset) / trueTickTime * 1000);
+            }
+            currentClientOffsetSlew = clientDiffSlewMSSamples.getSampleAverage();
+            
+            client_minus_server_time.textContent = msToString(currentClientOffset);
+            client_minus_server_time_slew.textContent = msToString(currentClientOffsetSlew * 1000);
+            server_latency.textContent = msToString(roundTripMSSamples.getSampleAverage());
+            samples.textContent = roundTripMSSamples.numSamples();
+            max_samples.textContent = MAX_SAMPLES;
+          } catch { /* empty */ }
           
-          roundTripMSSamples.newSampleInput(roundTripMS);
-          clientDiffMSSamples.newSampleInput(clientDiffMS);
-          
-          currentClientOffset = clientDiffMSSamples.getSampleAverage();
-          let trueTickTime = now - pastNow;
-          if (trueTickTime != 0) {
-            clientDiffSlewMSSamples.newSampleInput((currentClientOffset - pastClientOffset) / trueTickTime);
-          }
-          currentClientOffsetSlew = clientDiffSlewMSSamples.getSampleAverage();
-          
-          client_minus_server_time.textContent = msToString(currentClientOffset);
-          client_minus_server_time_slew.textContent = msToString(currentClientOffsetSlew * 1000);
-          server_latency.textContent = msToString(roundTripMSSamples.getSampleAverage());
-          samples.textContent = roundTripMSSamples.numSamples();
-          max_samples.textContent = MAX_SAMPLES;
           total_ticks.textContent = ++ticks;
           
           pastClientOffset = currentClientOffset;
