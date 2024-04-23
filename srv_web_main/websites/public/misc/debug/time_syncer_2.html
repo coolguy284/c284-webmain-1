@@ -47,6 +47,7 @@
       let DUMMY_MODE = location.origin == 'null';
       let PING_INTERVAL_MS = 500;
       let MAX_SAMPLES = 100;
+      let IGNORED_START_SAMPLES = 2;
       let ARTIFICIAL_LATENCY = 0;
       let DUMMY_LATENCY = 100;
       let DUMMY_OFFSET = 10;
@@ -58,8 +59,9 @@
         #currentSampleIndex = -2;
         #sampleAverage = 0;
         
-        constructor(maxSamples) {
+        constructor(maxSamples, ignoredStartSamples) {
           this.#maxSamples = maxSamples;
+          this.#currentSampleIndex = -ignoredStartSamples;
         }
         
         newSampleInput(sample) {
@@ -97,9 +99,9 @@
       let currentClientOffset = 0;
       let pastClientOffset = currentClientOffset;
       let currentClientOffsetSlew = 0;
-      let roundTripMSSamples = new SampleAverager(MAX_SAMPLES);
-      let clientDiffMSSamples = new SampleAverager(MAX_SAMPLES);
-      let clientDiffSlewMSSamples = new SampleAverager(MAX_SAMPLES);
+      let roundTripMSSamples = new SampleAverager(MAX_SAMPLES, IGNORED_START_SAMPLES);
+      let clientDiffMSSamples = new SampleAverager(MAX_SAMPLES, IGNORED_START_SAMPLES);
+      let clientDiffSlewMSSamples = new SampleAverager(MAX_SAMPLES, IGNORED_START_SAMPLES);
       
       if (DUMMY_MODE) {
         window.startTime = Date.now();
