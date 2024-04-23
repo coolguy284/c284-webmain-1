@@ -35,9 +35,10 @@
     <h1>Data</h1>
     <p>Client Time: <span id = 'client_time'>-</span></p>
     <p>Server Time: <span id = 'server_time'>-</span></p>
-    <p>Client - Server: <span id = 'client_minus_server_time'>-</span> ms</p>
+    <p>Client - Server: <span id = 'client_minus_server_time'>-</span> ms, slew: <span id = 'client_minus_server_time_slew'>-</span> &micro;s/s</p>
     <p>Latency To Server: <span id = 'server_latency'>-</span> ms</p>
     <p>Samples: <span id = 'samples'>-</span> (<span id = 'max_samples'>-</span> max)</p>
+    <p>Total Ticks: <span id = 'total_ticks'>-</span></p>
     <p><span id = 'connection_status'>Code Not Running</span></p>
     <button id = 'status_toggle' onclick = 'toggleTimeUpdateLoop();'>Start / Stop</button>
     
@@ -48,6 +49,8 @@
       let MAX_SAMPLES = 100;
       let ARTIFICIAL_LATENCY = 0;
       let DUMMY_LATENCY = 100;
+      let DUMMY_OFFSET = 10;
+      let DUMMY_OFFSET_SLEW = 0.1;
       
       class SampleAverager {
         #maxSamples;
@@ -92,16 +95,25 @@
       let guiLoopRunning = false;
       let timeUpdateLoopRunning = false;
       let currentClientOffset = 0;
+      let pastClientOffset = currentClientOffset;
+      let currentClientOffsetSlew = 0;
       let roundTripMSSamples = new SampleAverager(MAX_SAMPLES);
       let clientDiffMSSamples = new SampleAverager(MAX_SAMPLES);
+      let clientDiffSlewMSSamples = new SampleAverager(MAX_SAMPLES);
+      
+      if (DUMMY_MODE) {
+        window.startTime = Date.now();
+      }
       
       async function getServerTime() {
         return await new Promise(r => {
           if (DUMMY_MODE) {
-            r({
-              roundTripMS: DUMMY_LATENCY,
-              clientDiffMS: DUMMY_LATENCY / 2,
-            });
+            setTimeout(() => {
+              r({
+                roundTripMS: DUMMY_LATENCY,
+                clientDiffMS: DUMMY_OFFSET + (Date.now() - window.startTime) / 1000 * DUMMY_OFFSET_SLEW,
+              });
+            }, DUMMY_LATENCY);
           } else {
             let requestStartClientTimeMS = Date.now();
             
@@ -185,6 +197,9 @@
         
         timeUpdateLoopRunning = true;
         
+        let ticks = 0;
+        let pastNow = Date.now();
+        
         while (timeUpdateLoopRunning) {
           let now = Date.now();
           let awaitUntil = now + PING_INTERVAL_MS;
@@ -195,11 +210,21 @@
           clientDiffMSSamples.newSampleInput(clientDiffMS);
           
           currentClientOffset = clientDiffMSSamples.getSampleAverage();
+          let trueTickTime = now - pastNow;
+          if (trueTickTime != 0) {
+            clientDiffSlewMSSamples.newSampleInput((currentClientOffset - pastClientOffset) / trueTickTime);
+          }
+          currentClientOffsetSlew = clientDiffSlewMSSamples.getSampleAverage();
           
           client_minus_server_time.textContent = msToString(currentClientOffset);
+          client_minus_server_time_slew.textContent = msToString(currentClientOffsetSlew * 1000);
           server_latency.textContent = msToString(roundTripMSSamples.getSampleAverage());
           samples.textContent = roundTripMSSamples.numSamples();
           max_samples.textContent = MAX_SAMPLES;
+          total_ticks.textContent = ++ticks;
+          
+          pastClientOffset = currentClientOffset;
+          pastNow = now;
           
           let timeLeft = awaitUntil - Date.now();
           if (timeLeft > 0) {
