@@ -254,9 +254,13 @@
           client_time.textContent = dateToString(clientNow);
           server_time.textContent = dateToString(serverNow);
           
-          for (let i = 0; i < RENDER_FRAME_SKIPS; i++) {
+          if (RENDER_FRAME_SKIPS > 0) {
+            for (let i = 0; i < RENDER_FRAME_SKIPS; i++) {
+              await new Promise(r => requestAnimationFrame(r));
+              if (!guiLoopRunning) break;
+            }
+          } else {
             await new Promise(r => requestAnimationFrame(r));
-            if (!guiLoopRunning) break;
           }
         }
       }
