@@ -66,7 +66,7 @@
     <hr>
     <p>Client - Server: <span id = 'client_minus_server_time' class = 'mono'>-</span> ms</p>
     <p>Slew: <span id = 'client_minus_server_time_slew' class = 'mono'>-</span> &micro;s/s</p>
-    <p>ETA till <span id = 'eta_till_close_threshold' class = 'mono'>-</span>ms: <span id = 'eta_till_close' class = 'mono'>-</span></p>
+    <p>ETA till <input type = 'text' id = 'eta_till_close_target' value = 0 onchange = 'updateEtaTillClose(this);'>ms &PlusMinus; <input type = 'text' id = 'eta_till_close_tolerance' value = 25 onchange = 'updateEtaTillClose(this);'>ms: <span id = 'eta_till_close' class = 'mono'>-</span></p>
     <p>Latency To Server: <span id = 'server_latency' class = 'mono'>-</span> ms</p>
     <p>Samples: <span id = 'samples' class = 'mono'>-</span> (<span id = 'max_samples' class = 'mono'>-</span> max)</p>
     <p>Total Ticks: <span id = 'total_ticks' class = 'mono'>-</span></p>
@@ -87,7 +87,8 @@
       let DUMMY_OFFSET_SLEW = -0.1;
       let DUMMY_ERROR_PROBABILITY = 0;
       let RENDER_FRAME_SKIPS = 2;
-      let CLOSE_OFFSET_THRESHOLD = 25;
+      let CLOSE_OFFSET_TARGET = 0;
+      let CLOSE_OFFSET_TOLERANCE = 25;
       
       class SampleAverager {
         #maxSamples;
@@ -342,26 +343,32 @@
             
             client_minus_server_time.textContent = msToString(currentClientOffset);
             client_minus_server_time_slew.textContent = msToString(currentClientOffsetSlew * 1000);
-            eta_till_close_threshold.textContent = CLOSE_OFFSET_THRESHOLD;
             
             let closeStatus = null;
-            let absCurrentClientOffset, maybeFlippedCurrentClientOffsetSlew;
-            if (currentClientOffset < 0) {
-              absCurrentClientOffset = -currentClientOffset;
-              maybeFlippedCurrentClientOffsetSlew = -currentClientOffsetSlew;
+            if (Number.isNaN(CLOSE_OFFSET_TARGET)) {
+              closeStatus = 'Target NaN';
+            } else if (Number.isNaN(CLOSE_OFFSET_TOLERANCE)) {
+              closeStatus = 'Threshold NaN';
             } else {
-              absCurrentClientOffset = currentClientOffset;
-              maybeFlippedCurrentClientOffsetSlew = currentClientOffsetSlew;
-            }
-            if (absCurrentClientOffset > CLOSE_OFFSET_THRESHOLD) {
-              let etaTillCloseSecs = (absCurrentClientOffset - CLOSE_OFFSET_THRESHOLD) / -maybeFlippedCurrentClientOffsetSlew;
-              if (etaTillCloseSecs < 0) {
-                closeStatus = 'NEVER';
+              let shiftedAbsCurrentClientOffset = currentClientOffset - CLOSE_OFFSET_TARGET,
+                maybeFlippedCurrentClientOffsetSlew;
+              if (shiftedAbsCurrentClientOffset < 0) {
+                shiftedAbsCurrentClientOffset = -shiftedAbsCurrentClientOffset;
+                maybeFlippedCurrentClientOffsetSlew = -currentClientOffsetSlew;
               } else {
-                closeStatus = hmsToString(etaTillCloseSecs);
+                maybeFlippedCurrentClientOffsetSlew = currentClientOffsetSlew;
               }
-            } else {
-              closeStatus = 'REACHED';
+              if (shiftedAbsCurrentClientOffset > CLOSE_OFFSET_TOLERANCE) {
+                let etaTillCloseSecs = (shiftedAbsCurrentClientOffset - CLOSE_OFFSET_TOLERANCE) / -maybeFlippedCurrentClientOffsetSlew;
+                if (etaTillCloseSecs < 0) {
+                  closeStatus = 'NEVER';
+                } else {
+                  closeStatus = hmsToString(etaTillCloseSecs);
+                }
+              } else {
+                let fracToBoundary = shiftedAbsCurrentClientOffset / CLOSE_OFFSET_TOLERANCE;
+                closeStatus = `REACHED (${(fracToBoundary * 100).toFixed(1)}% to boundary)`;
+              }
             }
             eta_till_close.textContent = closeStatus;
             
@@ -373,7 +380,11 @@
               noError = true;
               startDisconnectedTicks = null;
             }
-          } catch { /* empty */ }
+          } catch (e) {
+            if (!e.toString().startsWith('Error: XHR')) {
+              throw e;
+            }
+          }
           
           if (DO_DISCONNECTED_CHECK && noError) {
             if (errorTimeout != null) {
@@ -421,6 +432,18 @@
           timeUpdateLoopRunning = false;
           
           connection_status.textContent = 'Code Not Running';
+        }
+      }
+      
+      function updateEtaTillClose(elem) {
+        switch (elem) {
+          case eta_till_close_target:
+            CLOSE_OFFSET_TARGET = Number(eta_till_close_target.value);
+            break;
+          
+          case eta_till_close_tolerance:
+            CLOSE_OFFSET_TOLERANCE = Number(eta_till_close_tolerance.value);
+            break;
         }
       }
       
