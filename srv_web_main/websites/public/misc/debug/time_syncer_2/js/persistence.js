@@ -8,11 +8,14 @@ function copyLocalVarsToUi() {
 
 function loadVarsFromLocalStorage() {
   let data = localStorage.timeSyncer2Data;
-  if (data == null) return;
-  try {
-    data = JSON.parse(data);
-  } catch {
-    return;
+  if (data == null) {
+    data = {};
+  } else {
+    try {
+      data = JSON.parse(data);
+    } catch {
+      data = {};
+    }
   }
   
   if (data.RENDER_FRAME_SKIPS != null) RENDER_FRAME_SKIPS = data.RENDER_FRAME_SKIPS;
