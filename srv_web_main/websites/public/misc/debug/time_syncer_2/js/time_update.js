@@ -77,7 +77,6 @@ async function timeUpdateLoop() {
       
       server_latency.textContent = msToString(roundTripMSSamples.getSampleAverage());
       samples.textContent = roundTripMSSamples.numSamples();
-      max_samples.textContent = MAX_SAMPLES;
       
       if (DO_DISCONNECTED_CHECK) {
         noError = true;
@@ -115,6 +114,8 @@ async function timeUpdateLoop() {
       await new Promise(r => setTimeout(r, timeLeft));
     }
   }
+  
+  clearAveragers();
 }
 
 function toggleTimeUpdateLoop() {

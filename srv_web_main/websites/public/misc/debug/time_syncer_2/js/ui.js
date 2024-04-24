@@ -30,3 +30,14 @@ function updateEtaTillClose(elem) {
   
   saveVarsToLocalStorage();
 }
+
+function updateMaxSamples() {
+  let val = Number(max_samples_text.value);
+  if (!Number.isSafeInteger(val) || val <= 0) {
+    max_samples_text.value = MAX_SAMPLES;
+  } else {
+    MAX_SAMPLES = val;
+  }
+  
+  updateAveragerMaxSamples();
+}

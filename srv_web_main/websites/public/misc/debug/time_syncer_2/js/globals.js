@@ -10,3 +10,15 @@ let clientDiffSlewMSSamples = new SampleAverager(MAX_SAMPLES, IGNORED_START_SAMP
 if (DUMMY_MODE) {
   window.startTime = Date.now();
 }
+
+function clearAveragers() {
+  roundTripMSSamples.clear();
+  clientDiffMSSamples.clear();
+  clientDiffSlewMSSamples.clear();
+}
+
+function updateAveragerMaxSamples() {
+  roundTripMSSamples.setMaxSamples(MAX_SAMPLES);
+  clientDiffMSSamples.setMaxSamples(MAX_SAMPLES);
+  clientDiffSlewMSSamples.setMaxSamples(MAX_SAMPLES);
+}
