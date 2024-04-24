@@ -40,4 +40,5 @@ function updateMaxSamples() {
   }
   
   updateAveragerMaxSamples();
+  saveVarsToLocalStorage();
 }

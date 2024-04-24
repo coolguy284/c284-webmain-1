@@ -36,15 +36,15 @@ class SampleAverager {
       if (this.#currentSampleIndex in this.#samples) {
         this.#updateAtIndex(this.#currentSampleIndex, sample);
       } else {
-        this.#appendToEnd(sample);
+        if (this.#samples.length >= this.#maxSamples) {
+          this.#currentSampleIndex = 0;
+          this.#updateAtIndex(this.#currentSampleIndex, sample);
+        } else {
+          this.#appendToEnd(sample);
+        }
       }
       
       this.#currentSampleIndex++;
-      if (this.#currentSampleIndex >= this.#samples.length) {
-        if (this.#samples.length >= this.#maxSamples) {
-          this.#currentSampleIndex = 0;
-        }
-      }
     }
   }
   
