@@ -65,6 +65,7 @@ async function createSitemap(sites, siteModTimesObj) {
     'misc/tools/uri_comp.html': 0.5,
     'misc/status.html': 0.5,
     'misc/rectangles.html': 0.5,
+    'misc/debug/time_syncer_2/index.html': 0.5,
     
     'misc/debug/big_scroll_area.html': 0.4,
     'misc/own_eyes.html': 0.4,
@@ -79,7 +80,6 @@ async function createSitemap(sites, siteModTimesObj) {
     'misc/debug/localstorage_editor.html': 0.1,
     'misc/debug/simple_page.html': 0.1,
     'misc/debug/time_syncer.html': 0.1,
-    'misc/debug/time_syncer_2.html': 0.1,
     
     'misc/debug/templates/404.html': 0.0,
     'misc/debug/templates/500.html': 0.0,
@@ -90,6 +90,24 @@ async function createSitemap(sites, siteModTimesObj) {
     'misc/unicode/index.html': 0.0,
     'user/login.html': 0.0,
   };
+  
+  let sitePages = new Set(sites.map(site => {
+    let relativeURLShort = site.slice(1);
+    
+    return relativeURLShort;
+  }));
+  
+  let missingPages = Array.from(sitePages).filter(url => !(url in pagePriority));
+  let extraPages = Object.keys(pagePriority).filter(url => !sitePages.has(url));
+  if (missingPages.length > 0 && extraPages.length > 0) {
+    throw new Error(`missing pages from pagepriority:\n${missingPages.join('\n')}, extra pages in pagepriority:\n${extraPages.join('\n')}`);
+  }
+  if (missingPages.length > 0) {
+    throw new Error(`missing pages from pagepriority:\n${missingPages.join('\n')}`);
+  }
+  if (extraPages.length > 0) {
+    throw new Error(`extra pages in pagepriority:\n${extraPages.join('\n')}`);
+  }
   
   await fs.promises.writeFile(
     'websites/public/sitemap.xml',
@@ -128,16 +146,6 @@ async function createSitemap(sites, siteModTimesObj) {
           }
           
           let priorityEntry = pagePriority[relativeURLShort];
-          
-          if (priorityEntry == null) {
-            let missingPages = a.map(site => {
-              let relativeURLShort = site.slice(1);
-              
-              return relativeURLShort;
-            }).filter(url => !(url in pagePriority));
-            
-            throw new Error(`${relativeURLShort} not in pagePriority\nmissing pages:\n${missingPages.join('\n')}`);
-          }
           
           let priority = pagePriority[relativeURLShort].toFixed(1);
           
