@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Time Syncer 2</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'This page continuously calculates the difference between the time of the server and the client in order to show the server time.'>
+    <meta name = 'keywords' content = 'tools'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/misc/debug/time_syncer_2.html'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Time Syncer 2'>
+    <meta name = 'og:description' content = 'This page continuously calculates the difference between the time of the server and the client in order to show the server time.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/misc/debug/time_syncer_2.html'>
+    
+    <link rel = 'stylesheet' href = 'style.css'>
+  </head>
+  
+  <body>
+    <h1>Info</h1>
+    <p>This page calculates the difference between the time of the server and the client in order to show the server time.</p>
+    
+    <h1>Data</h1>
+    <p>Client Time: <span id = 'client_time' class = 'mono'>-</span></p>
+    <p>Server Time: <span id = 'server_time' class = 'mono'>-</span></p>
+    <p class = 'small_btm_margin'><span id = 'rendering_status' class = 'mono'>-</span></p>
+    <div>
+      <span>Frame Skip:</span>
+      <!-- https://stackoverflow.com/questions/18544890/onchange-event-on-input-type-range-is-not-triggering-in-firefox-while-dragging -->
+      <input type = 'range' id = 'render_frame_skips' min = 1 max = 15 step = 1 value = 2 oninput = 'updateFrameSkip(this);'>
+      <input type = 'text' id = 'render_frame_skips_text' value = 2 onchange = 'updateFrameSkip(this);'>
+    </div>
+    <br>
+    <button id = 'status_toggle' onclick = 'toggleGuiLoop();'>Start / Stop Rendering</button>
+    <hr>
+    <p>Client - Server: <span id = 'client_minus_server_time' class = 'mono'>-</span> ms</p>
+    <p>Slew: <span id = 'client_minus_server_time_slew' class = 'mono'>-</span> &micro;s/s</p>
+    <p>ETA till <input type = 'text' id = 'eta_till_close_target' value = 0 onchange = 'updateEtaTillClose(this);'>ms &PlusMinus; <input type = 'text' id = 'eta_till_close_tolerance' value = 25 onchange = 'updateEtaTillClose(this);'>ms: <span id = 'eta_till_close' class = 'mono'>-</span></p>
+    <p>Latency To Server: <span id = 'server_latency' class = 'mono'>-</span> ms</p>
+    <p>Samples: <span id = 'samples' class = 'mono'>-</span> (<span id = 'max_samples' class = 'mono'>-</span> max)</p>
+    <p>Total Ticks: <span id = 'total_ticks' class = 'mono'>-</span></p>
+    <p><span id = 'connection_status' class = 'mono'>Code Not Running</span><span id = 'connection_dummy' class = 'mono'></span></p>
+    <button id = 'status_toggle' onclick = 'toggleTimeUpdateLoop();'>Start / Stop Syncing</button>
+    
+    <script src = 'js/constants.js'></script>
+    <script src = 'js/sample_averager.js'></script>
+    <script src = 'js/globals.js'></script>
+    <script src = 'js/lib.js'></script>
+    <script src = 'js/server_time.js'></script>
+    <script src = 'js/current_time.js'></script>
+    <script src = 'js/time_update.js'></script>
+    <script src = 'js/ui.js'></script>
+    <script src = 'js/init.js'></script>
+  </body>
+</html>

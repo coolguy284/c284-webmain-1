@@ -1,0 +1,2 @@
+toggleGuiLoop();
+toggleTimeUpdateLoop();
