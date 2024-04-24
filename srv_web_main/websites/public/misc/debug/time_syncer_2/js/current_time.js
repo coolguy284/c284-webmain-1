@@ -31,4 +31,6 @@ function toggleGuiLoop() {
     
     rendering_status.textContent = 'Not Rendering';
   }
+  
+  saveVarsToLocalStorage();
 }

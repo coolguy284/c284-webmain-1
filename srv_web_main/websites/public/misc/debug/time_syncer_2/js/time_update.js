@@ -136,4 +136,6 @@ function toggleTimeUpdateLoop() {
     
     connection_status.textContent = 'Code Not Running';
   }
+  
+  saveVarsToLocalStorage();
 }

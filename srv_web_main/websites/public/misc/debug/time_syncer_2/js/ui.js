@@ -13,6 +13,8 @@ function updateFrameSkip(elem) {
       }
       } break;
   }
+  
+  saveVarsToLocalStorage();
 }
 
 function updateEtaTillClose(elem) {
@@ -25,4 +27,6 @@ function updateEtaTillClose(elem) {
       CLOSE_OFFSET_TOLERANCE = Number(eta_till_close_tolerance.value);
       break;
   }
+  
+  saveVarsToLocalStorage();
 }

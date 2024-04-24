@@ -1,2 +1,1 @@
-toggleGuiLoop();
-toggleTimeUpdateLoop();
+loadVarsFromLocalStorage();
