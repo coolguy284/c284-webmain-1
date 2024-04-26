@@ -5,10 +5,14 @@ async function guiLoop() {
   
   while (guiLoopRunning) {
     let clientNow = new Date();
-    let serverNow = new Date(clientNow.getTime() - currentClientOffset);
-    
     client_time.textContent = dateToString(clientNow);
-    server_time.textContent = dateToString(serverNow);
+    
+    if (currentClientOffset != null) {
+      let serverNow = new Date(clientNow.getTime() - currentClientOffset);
+      server_time.textContent = dateToString(serverNow);
+    } else {
+      server_time.textContent = '-';
+    }
     
     if (RENDER_FRAME_SKIPS > 0) {
       for (let i = 0; i < RENDER_FRAME_SKIPS; i++) {

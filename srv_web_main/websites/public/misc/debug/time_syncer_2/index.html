@@ -41,7 +41,7 @@
     <p>Slew: <span id = 'client_minus_server_time_slew' class = 'mono'>-</span> &micro;s/s</p>
     <p>ETA till <input type = 'text' id = 'eta_till_close_target' value = 0 onchange = 'updateEtaTillClose(this);'>ms &PlusMinus; <input type = 'text' id = 'eta_till_close_tolerance' value = 25 onchange = 'updateEtaTillClose(this);'>ms: <span id = 'eta_till_close' class = 'mono'>-</span></p>
     <p>Latency To Server: <span id = 'server_latency' class = 'mono'>-</span> ms</p>
-    <p>Samples: <span id = 'samples' class = 'mono'>-</span> (<input type = 'text' id = 'max_samples_text' value = 100 onchange = 'updateMaxSamples();'> max)</p>
+    <p>Samples: <span id = 'samples_normal' class = 'mono'>-</span> normal, <span id = 'samples_slew' class = 'mono'>-</span> slew (<input type = 'text' id = 'max_samples_text' value = 100 onchange = 'updateMaxSamples();'> max)</p>
     <p>Total Ticks: <span id = 'total_ticks' class = 'mono'>-</span></p>
     <p><span id = 'connection_status' class = 'mono'>Code Not Running</span><span id = 'connection_dummy' class = 'mono'></span></p>
     <button id = 'status_toggle' onclick = 'toggleTimeUpdateLoop();'>Start / Stop Syncing</button>

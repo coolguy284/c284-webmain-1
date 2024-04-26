@@ -10,6 +10,8 @@ async function timeUpdateLoop() {
   let pastNoError = noError;
   let startDisconnectedTicks = null;
   
+  clearAveragers();
+  
   while (timeUpdateLoopRunning) {
     if (DO_DISCONNECTED_CHECK && (noError || noError == null || errorTimeout == null)) {
       if (errorTimeout != null) {
@@ -39,7 +41,7 @@ async function timeUpdateLoop() {
       
       currentClientOffset = clientDiffMSSamples.getSampleAverage();
       let trueTickTime = now - pastNow;
-      if (trueTickTime != 0) {
+      if (trueTickTime != 0 && pastClientOffset != null) {
         clientDiffSlewMSSamples.newSampleInput((currentClientOffset - pastClientOffset) / trueTickTime * 1000);
       }
       currentClientOffsetSlew = clientDiffSlewMSSamples.getSampleAverage();
@@ -76,7 +78,8 @@ async function timeUpdateLoop() {
       eta_till_close.textContent = closeStatus;
       
       server_latency.textContent = msToString(roundTripMSSamples.getSampleAverage());
-      samples.textContent = roundTripMSSamples.numSamples();
+      samples_normal.textContent = roundTripMSSamples.numSamples();
+      samples_slew.textContent = clientDiffSlewMSSamples.numSamples();
       
       if (DO_DISCONNECTED_CHECK) {
         noError = true;
@@ -114,8 +117,6 @@ async function timeUpdateLoop() {
       await new Promise(r => setTimeout(r, timeLeft));
     }
   }
-  
-  clearAveragers();
 }
 
 function toggleTimeUpdateLoop() {

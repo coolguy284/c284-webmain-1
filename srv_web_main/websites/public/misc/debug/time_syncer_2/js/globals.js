@@ -1,8 +1,8 @@
 let guiLoopRunning = false;
 let timeUpdateLoopRunning = false;
-let currentClientOffset = 0;
-let pastClientOffset = currentClientOffset;
-let currentClientOffsetSlew = 0;
+let currentClientOffset = null;
+let pastClientOffset = null;
+let currentClientOffsetSlew = null;
 let roundTripMSSamples = new SampleAverager(MAX_SAMPLES, IGNORED_START_SAMPLES);
 let clientDiffMSSamples = new SampleAverager(MAX_SAMPLES, IGNORED_START_SAMPLES);
 let clientDiffSlewMSSamples = new SampleAverager(MAX_SAMPLES, IGNORED_START_SAMPLES);
@@ -15,6 +15,9 @@ function clearAveragers() {
   roundTripMSSamples.clear();
   clientDiffMSSamples.clear();
   clientDiffSlewMSSamples.clear();
+  currentClientOffset = null;
+  pastClientOffset = null;
+  currentClientOffsetSlew = null;
 }
 
 function updateAveragerMaxSamples() {
