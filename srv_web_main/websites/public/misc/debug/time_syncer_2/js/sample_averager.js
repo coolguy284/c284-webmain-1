@@ -1,8 +1,8 @@
 class SampleAverager {
   #maxSamples;
-  #samples = [0];
   #ignoredStartSamples;
   #currentSampleIndex;
+  #samples = [0];
   #sampleAverage = 0;
   
   constructor(maxSamples, ignoredStartSamples) {
@@ -74,12 +74,12 @@ class SampleAverager {
     this.#samples = [0];
   }
   
-  recalculate() {
-    this.#sampleAverage = this.#samples.reduce((a, c) => a + c) / this.#samples.length;
-  }
-  
   _getTrueAverage() {
     return this.#samples.reduce((a, c) => a + c) / this.#samples.length;
+  }
+  
+  recalculate() {
+    this.#sampleAverage = this._getTrueAverage();
   }
 }
 
@@ -115,4 +115,6 @@ function testSampleAverager() {
     avg.newSampleInput(x);
     checkIntegrity();
   });
+  
+  console.log('SampleAverager test successful.');
 }
