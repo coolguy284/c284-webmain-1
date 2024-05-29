@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 var fs = require('fs');
+var canvas = require('canvas');
 var { toBool, env } = require('../common/env');
 var { getPublicPath } = require('../common/get_request_misc');
 var { mergeIPPort, ipv6ToHex, isSubDir } = require('../common/misc');
@@ -158,6 +159,47 @@ module.exports = async function getMethod(requestProps) {
           await resp.data(requestProps, 200, new Date().toISOString());
           break;
       }
+    }
+    
+    else if (requestProps.url.pathname == '/api/current-time.png') {
+      let imgCanvas = canvas.createCanvas(400, 400);
+      let ctx = imgCanvas.getContext('2d');
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, 400, 400);
+      let date;
+      let offset = requestProps.url.searchParams.get('offsetmins');
+      if (offset == null) {
+        date = new Date();
+      } else {
+        offset = Number(offset);
+        if (Number.isFinite(offset)) {
+          date = new Date(Date.now() + offset * 60_000);
+        } else {
+          date = null;
+        }
+      }
+      ctx.fillStyle = 'black';
+      ctx.font = '24px Liberation Sans';
+      if (date != null) {
+        ctx.fillText(
+          'It is currently ' +
+          ((date.getUTCHours() + 11) % 12 + 1 + '').padStart(2, '0') + ':' +
+          (date.getUTCMinutes() + '').padStart(2, '0') + ':' +
+          (date.getUTCSeconds() + '').padStart(2, '0') + ' ' +
+          (date.getUTCHours() >= 12 ? 'PM' : 'AM'),
+          50, 206
+        );
+      } else {
+        ctx.fillText(
+          'Timezone offset invalid',
+          50, 206
+        );
+      }
+      await resp.headers(requestProps, 200, {
+        'content-type': 'image/png' ,
+        'cache-control': 'no-cache'
+      });
+      await resp.stream(requestProps, imgCanvas.createPNGStream({ compressionLevel: 4 }));
     }
     
     else if (requestProps.url.pathname == '/api/null') {

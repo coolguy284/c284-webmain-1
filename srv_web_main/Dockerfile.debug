@@ -12,7 +12,7 @@ RUN apt-get install curl git -y
 ARG NODE_MAJOR_VER
 ARG NODE_FULL_VER
 RUN curl -fsSL https://deb.nodesource.com/nsolid_setup_deb.sh | bash -s $NODE_MAJOR_VER
-RUN apt-get install nodejs -y
+RUN apt-get install nodejs fontconfig fonts-liberation pkg-config build-essential libpixman-1-dev libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev make -y
 RUN npm install -g npm
 
 USER webmain
@@ -38,8 +38,8 @@ RUN npm install
 RUN mkdir -p websites/public/libs/extern && \
   cp node_modules/bson/lib/bson.bundle.js websites/public/libs/extern/bson.bundle.js && \
   cp node_modules/bson/lib/bson.bundle.js.map websites/public/libs/extern/bson.bundle.js.map && \
-  cp node_modules/mathjs/lib/math.js websites/public/libs/extern/math.js && \
-  cp node_modules/mathjs/lib/math.js.map websites/public/libs/extern/math.js.map
+  cp node_modules/mathjs/lib/browser/math.js websites/public/libs/extern/math.js && \
+  cp node_modules/mathjs/lib/browser/math.js.map websites/public/libs/extern/math.js.map
 
 COPY --chown=webmain:webmain srv_web_main/websites/public/libs websites/public/libs
 RUN node helpers/compress_and_etags.js --only '^libs/.*$'
