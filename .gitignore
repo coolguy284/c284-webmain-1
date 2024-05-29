@@ -3,6 +3,8 @@
 /srv_web_main/node_modules
 /srv_web_main/websites/public/libs/extern/bson.bundle.js
 /srv_web_main/websites/public/libs/extern/bson.bundle.js.map
+/srv_web_main/websites/public/libs/extern/math.js
+/srv_web_main/websites/public/libs/extern/math.js.map
 /srv_web_main/websites/public/sitemap.xml
 /srv_web_main/websites/etags.json
 /srv_web_main/dockerenv.list

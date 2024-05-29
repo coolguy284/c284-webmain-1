@@ -35,7 +35,11 @@ COPY --chown=webmain:webmain srv_web_main/log_utils.js log_utils.js
 COPY --chown=webmain:webmain srv_web_main/package-basic.json package.json
 RUN npm install
 
-RUN mkdir -p websites/public/libs/extern && cp node_modules/bson/lib/bson.bundle.js websites/public/libs/extern/bson.bundle.js && cp node_modules/bson/lib/bson.bundle.js.map websites/public/libs/extern/bson.bundle.js.map
+RUN mkdir -p websites/public/libs/extern && \
+  cp node_modules/bson/lib/bson.bundle.js websites/public/libs/extern/bson.bundle.js && \
+  cp node_modules/bson/lib/bson.bundle.js.map websites/public/libs/extern/bson.bundle.js.map && \
+  cp node_modules/mathjs/lib/math.js websites/public/libs/extern/math.js && \
+  cp node_modules/mathjs/lib/math.js.map websites/public/libs/extern/math.js.map
 
 COPY --chown=webmain:webmain srv_web_main/websites/public/libs websites/public/libs
 RUN node helpers/compress_and_etags.js --only '^libs/.*$'

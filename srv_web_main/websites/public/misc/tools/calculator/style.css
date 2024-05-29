@@ -1,0 +1,30 @@
+/* flex-based reset */
+
+body *:not(script) {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+}
+
+/* main styles */
+
+.text {
+  /* TODO fix */
+  display: block;
+  
+  * {
+    display: block;
+  }
+}
+
+.corner-banner {
+  position: fixed;
+  bottom: 0.2rem;
+  right: 0.2rem;
+  font-size: 0.6rem;
+}
