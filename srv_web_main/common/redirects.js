@@ -49,7 +49,31 @@ fs.readFileSync('websites/redirects.txt').toString()
   });
 
 for (var redirect of redirects) {
-  if (redirect.type == 'file') redirect.redirects = Object.fromEntries(redirect.redirects);
+  if (redirect.type == 'file') {
+    redirect.redirects = Object.fromEntries(redirect.redirects);
+    
+    let redirects = redirect.redirects;
+    let newRedirects = {};
+    
+    for (let from in redirects) {
+      if (from in newRedirects) break;
+      let to = redirects[from];
+      if (to.to in redirects) {
+        let chain = [from];
+        while (to.to in redirects) {
+          let newTo = redirects[to.to];
+          if (to.to == newTo.to) throw new Error(`Circular or self referential redirect detected: ${chain.join(', ') + ', ' + to.to}`);
+          chain.push(to.to);
+          to = newTo;
+        }
+        chain.slice(0, -1).forEach(x => newRedirects[x] = to);
+      } else {
+        newRedirects[from] = to;
+      }
+    }
+    
+    redirects.redirects = newRedirects;
+  }
 }
 
 // takes in a url object and returns [false] if no redirects, else returns [true, statusCode, locationString]

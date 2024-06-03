@@ -1,5 +1,5 @@
 current:
-redirect tools calculator to apps calculator
+make redirects into map
 setup redirects for /misc/debug/time_syncer_2.html -> /misc/debug/time_syncer_2/; /misc/apps/ -> /apps/
 create adhd visualizer
 modtime of each html page should be the latest modtime of the script files / css files / favicon files / image / video files it contains
