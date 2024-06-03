@@ -6,6 +6,7 @@ RPS ^(.*)/index.html$                        $1/
 
 
 # main folder redirects
+DPS /misc/apps/                              /apps/
 DPS /misc/debug/                             /debug/
 DPS /misc/tools/                             /tools/
 DPS /misc/unicode/                           /unicode/
@@ -38,6 +39,8 @@ FPS /page_500.html                           /errors/500.html
 FPS /errors/500.html                         /debug/templates/500.html
 
 FPS /redirecttemplate.html                   /debug/templates/meta_redirect.html
+
+FPS /debug/time_syncer_2.html                /debug/time_syncer_2/
 
 FPS /debug/latency.html                      /debug/latency_test.html
 

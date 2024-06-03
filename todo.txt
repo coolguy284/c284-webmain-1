@@ -6,15 +6,8 @@ add to calculator:
   clearAll
   clear, has, get, set, delete
 make redirects into map
-setup redirects for /misc/debug/time_syncer_2.html -> /misc/debug/time_syncer_2/; /misc/apps/ -> /apps/
 create adhd visualizer
 modtime of each html page should be the latest modtime of the script files / css files / favicon files / image / video files it contains
-move and add redirect:
-  /misc/rectangles.html  ->  /apps/rectangles.html
-  /misc/strange/halloween_name_gen.html  ->  /apps/halloween_name_gen.html
-  /misc/tools/  ->  /tools/
-  /misc/debug/  ->  /debug/
-  delete misc/index.html? (consider this, if not remove this todo entry)
 srv_web_main has memory leak? (851MiB after a month or two)
 put a link to modtimes page and other config pages somewhere
 halloween name generator should spookify when pressing enter on input (listen for onchange event? or maybe just the enter key being pressed?)
