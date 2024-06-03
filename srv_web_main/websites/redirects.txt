@@ -6,90 +6,133 @@ RPS ^(.*)/index.html$                        $1/
 
 
 # main folder redirects
-DPS /debug/                                  /misc/debug/
-DPS /strange/                                /misc/strange/
-DPS /tools/                                  /misc/tools/
-DPS /unicode/                                /misc/unicode/
+DPS /misc/debug/                             /debug/
+DPS /misc/tools/                             /tools/
+DPS /misc/unicode/                           /unicode/
 
 
 # main file redirects
-FPS /chat/chat.html                          /chat/
-FPS /misc/debug/char.html                    /misc/debug/useful_characters.html
-FPS /misc/debug/latency.html                 /misc/debug/latency_test.html
-FPS /misc/debug/localstorage.html            /misc/debug/localstorage_editor.html
-FPS /misc/debug/owneyes.html                 /misc/own_eyes.html
-FPS /debug/halloween.html                    /misc/strange/halloween_name_gen.html
-FPS /errors/404.html                         /misc/debug/templates/404.html
-FPS /errors/500.html                         /misc/debug/templates/500.html
-FPS /htmleditor/                             /old/debug/htmleditor.html
-FPS /libs/extern/bootstrap.bundle.min.js     /libs/extern/bootstrap_5.0.0.bundle.min.js
-FPS /libs/extern/bootstrap.bundle.min.js.map /libs/extern/bootstrap_5.0.0.bundle.min.js.map
-FPS /libs/extern/bootstrap.min.css           /libs/extern/bootstrap_5.0.0.min.css
-FPS /libs/extern/bootstrap.min.css.map       /libs/extern/bootstrap_5.0.0.min.css.map
-FPS /libs/extern/jsencrypt-rsa.js            /libs/extern/jsencrypt-rsa_v1.js
-FPS /libs/bootstrap.bundle.min.js            /libs/extern/bootstrap_5.0.0.bundle.min.js
-FPS /libs/bootstrap.bundle.min.js.map        /libs/extern/bootstrap_5.0.0.bundle.min.js.map
-FPS /libs/bootstrap.min.css                  /libs/extern/bootstrap_5.0.0.min.css
-FPS /libs/bootstrap.min.css.map              /libs/extern/bootstrap_5.0.0.min.css.map
-FPS /libs/crypto-js_3.1.2_rollups_aes.js     /libs/extern/crypto-js_3.1.2_rollups_aes.js
-FPS /libs/jsencrypt-rsa.js                   /libs/extern/jsencrypt-rsa_v1.js
-FPS /libs/sha3_0.8.0.min.js                  /libs/extern/sha3_0.8.0.min.js
-FPS /libs/sha256_0.9.0.min.js                /libs/extern/sha256_0.9.0.min.js
-FPS /libs/sha512_0.8.0.min.js                /libs/extern/sha512_0.8.0.min.js
-FPS /localstorage/                           /misc/debug/localstorage_editor.html
-FPS /strange/halloween.html                  /misc/strange/halloween_name_gen.html
-FPS /misc/strange/halloween.html             /misc/strange/halloween_name_gen.html
-FPS /misc/tools/aes-new.html                 /misc/tools/aes_new.html
-FPS /misc/tools/dataurl.html                 /misc/tools/data_url.html
-FPS /misc/tools/downloader.html              /misc/tools/file_downloader.html
-FPS /misc/tools/encodedecode.html            /misc/tools/encode_decode.html
-FPS /misc/tools/encodingdecoding.html        /misc/tools/encode_decode.html
-FPS /misc/tools/halloween.html               /misc/strange/halloween_name_gen.html
-FPS /misc/tools/html.html                    /misc/tools/html_escape.html
-FPS /misc/tools/htmlescape.html              /misc/tools/html_escape.html
-FPS /misc/tools/morsecode.html               /misc/tools/morse_code.html
-FPS /misc/tools/qr_code.html                 /misc/tools/qr_code_gen.html
-FPS /misc/tools/qrcode.html                  /misc/tools/qr_code_gen.html
-FPS /misc/tools/rsa-new.html                 /misc/tools/rsa_new.html
-FPS /misc/tools/sha256.html                  /misc/tools/sha.html
-FPS /misc/tools/unitconv.html                /misc/tools/unit_converter.html
-FPS /misc/tools/uricomp.html                 /misc/tools/uri_comp.html
-FPS /misc/tools/widelatin.html               /misc/tools/wide_latin.html
-FPS /spacetypes/                             /misc/debug/space_lengths.html
-FPS /chat.html                               /chat/
-FPS /contact.html                            /misc/contact.html
-FPS /echows                                  /echo_ws
-FPS /encodedecode.html                       /misc/tools/encode_decode.html
-FPS /encodingdecoding.html                   /misc/tools/encode_decode.html
-FTS /feedback.html                           https://github.com/coolguy284/c284-webmain-1/issues
-FPS /indexredirect.html                      /r?u=%2F
-FPS /no_source.css                           /misc/no_source.css
-FPS /no_source.html                          /misc/no_source.html
-FPS /own_eyes.html                           /misc/own_eyes.html
-FPS /p404.html                               /misc/debug/templates/404.html
-FPS /page_404.html                           /misc/debug/templates/404.html
-FPS /page_500.html                           /misc/debug/templates/500.html
-FPS /perr.html                               /misc/debug/templates/500.html
-FPS /rectangles.html                         /misc/rectangles.html
-FPS /redirecttemplate.html                   /misc/debug/templates/meta_redirect.html
-FPS /simple.html                             /misc/debug/simple_page.html
-FTS /sitemap_index.xml                       /sitemap.xml
-FPS /status.html                             /misc/status.html
-FTS /suggestions.html                        https://github.com/coolguy284/c284-webmain-1/issues
-FPS /technical.html                          /misc/debug/
-FTS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
-FPS /apps/html5-time-planner/                /apps/html5-time-tracker/
 FPS /misc/tools/calculator.html              /apps/calculator/
+FPS /misc/tools/calculator/                  /apps/calculator/
+
+FPS /tools/halloween.html                    /debug/halloween.html
+FPS /debug/halloween.html                    /strange/halloween.html
+FPS /strange/halloween.html                  /misc/strange/halloween.html
+FPS /misc/strange/halloween.html             /misc/strange/halloween_name_gen.html
+FPS /misc/strange/halloween_name_gen.html    /apps/halloween_name_gen.html
+
+FPS /apps/html5-time-planner/                /apps/html5-time-tracker/
+
+FPS /rectangles.html                         /misc/rectangles.html
+FPS /misc/rectangles.html                    /apps/rectangles.html
+
+FPS /chat.html                               /chat/chat.html
+FPS /chat/chat.html                          /chat/
+
+FPS /p404.html                               /page_404.html
+FPS /page_404.html                           /errors/404.html
+FPS /errors/404.html                         /debug/templates/404.html
+
+FPS /perr.html                               /page_500.html
+FPS /page_500.html                           /errors/500.html
+FPS /errors/500.html                         /debug/templates/500.html
+
+FPS /redirecttemplate.html                   /debug/templates/meta_redirect.html
+
+FPS /debug/latency.html                      /debug/latency_test.html
+
+FPS /localstorage/                           /debug/localstorage.html
+FPS /debug/localstorage.html                 /debug/localstorage_editor.html
+
+FPS /simple.html                             /debug/simple_page.html
+
+FPS /spacetypes/                             /debug/space_lengths.html
+
+FPS /debug/char.html                         /debug/useful_characters.html
+
+FPS /libs/bootstrap.bundle.min.js            /libs/extern/bootstrap.bundle.min.js
+FPS /libs/extern/bootstrap.bundle.min.js     /libs/extern/bootstrap_5.0.0.bundle.min.js
+
+FPS /libs/bootstrap.bundle.min.js.map        /libs/extern/bootstrap.bundle.min.js.map
+FPS /libs/extern/bootstrap.bundle.min.js.map /libs/extern/bootstrap_5.0.0.bundle.min.js.map
+
+FPS /libs/bootstrap.min.css                  /libs/extern/bootstrap.min.css
+FPS /libs/extern/bootstrap.min.css           /libs/extern/bootstrap_5.0.0.min.css
+
+FPS /libs/bootstrap.min.css.map              /libs/extern/bootstrap.min.css.map
+FPS /libs/extern/bootstrap.min.css.map       /libs/extern/bootstrap_5.0.0.min.css.map
+
+FPS /libs/crypto-js_3.1.2_rollups_aes.js     /libs/extern/crypto-js_3.1.2_rollups_aes.js
+
+FPS /libs/jsencrypt-rsa.js                   /libs/extern/jsencrypt-rsa.js
+FPS /libs/extern/jsencrypt-rsa.js            /libs/extern/jsencrypt-rsa_v1.js
+
+FPS /libs/sha3_0.8.0.min.js                  /libs/extern/sha3_0.8.0.min.js
+
+FPS /libs/sha256_0.9.0.min.js                /libs/extern/sha256_0.9.0.min.js
+
+FPS /libs/sha512_0.8.0.min.js                /libs/extern/sha512_0.8.0.min.js
+
+FPS /contact.html                            /misc/contact.html
+
+FPS /no_source.css                           /misc/no_source.css
+
+FPS /no_source.html                          /misc/no_source.html
+
+FPS /status.html                             /misc/status.html
+
+FPS /debug/owneyes.html                      /own_eyes.html
+FPS /own_eyes.html                           /misc/own_eyes.html
+
+FPS /tools/aes-new.html                      /tools/aes_new.html
+
+FPS /tools/dataurl.html                      /tools/data_url.html
+
+FPS /tools/downloader.html                   /tools/file_downloader.html
+
+FPS /encodedecode.html                       /tools/encodedecode.html
+FPS /encodingdecoding.html                   /tools/encodingdecoding.html
+FPS /tools/encodedecode.html                 /tools/encode_decode.html
+FPS /tools/encodingdecoding.html             /tools/encode_decode.html
+
+FPS /tools/html.html                         /tools/htmlescape.html
+FPS /tools/htmlescape.html                   /tools/html_escape.html
+
+FPS /tools/morsecode.html                    /tools/morse_code.html
+
+FPS /tools/qrcode.html                       /tools/qr_code.html
+FPS /tools/qr_code.html                      /tools/qr_code_gen.html
+
+FPS /tools/rsa-new.html                      /tools/rsa_new.html
+
+FPS /tools/sha256.html                       /tools/sha.html
+
+FPS /tools/unitconv.html                     /tools/unit_converter.html
+
+FPS /tools/uricomp.html                      /tools/uri_comp.html
+
+FPS /tools/widelatin.html                    /tools/wide_latin.html
+
+FPS /echows                                  /echo_ws
+
+FPS /indexredirect.html                      /r?u=%2F
+
+FTS /sitemap_index.xml                       /sitemap.xml
+
+FPS /technical.html                          /debug/
+
+FTS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
+
+FTS /feedback.html                           https://github.com/coolguy284/c284-webmain-1/issues
+FTS /suggestions.html                        https://github.com/coolguy284/c284-webmain-1/issues
 
 # redirects to old server stash
-FPS /misc/tools/advancedtime.html            /misc/old/tools/advancedtime.html
-FPS /misc/tools/coderunner.html              /misc/old/tools/coderunner.html
-FPS /misc/tools/enigma.html                  /misc/old/tools/enigma.html
-FPS /misc/tools/systemdata.html              /misc/old/tools/systemdata.html
-
-# redirects from lower dir pages
-FPS /misc/tools/code_runner.html             /misc/old/tools/coderunner.html
-FPS /misc/tools/system_data.html             /misc/old/tools/systemdata.html
+FPS /tools/advancedtime.html                 /misc/old/tools/advancedtime.html
+FPS /tools/code_runner.html                  /misc/old/tools/coderunner.html
+FPS /tools/coderunner.html                   /misc/old/tools/coderunner.html
+FPS /tools/enigma.html                       /misc/old/tools/enigma.html
+FPS /tools/system_data.html                  /misc/old/tools/systemdata.html
+FPS /tools/systemdata.html                   /misc/old/tools/systemdata.html
 
 # redirects to hosted old server
 FTS /misc/debug/aprilfools/index-old.html    /old/debug/aprilfools/index-old.html
@@ -105,7 +148,10 @@ FTS /misc/debug/chatview.html                /old/debug/chatview.html
 FTS /misc/debug/commrun.html                 /old/debug/commrun.html
 FTS /misc/debug/evtsrc.html                  /old/debug/evtsrc.html
 FTS /misc/debug/hecc.html                    /old/debug/hecc.html
+
+FPS /htmleditor/                             /misc/debug/htmleditor.html
 FTS /misc/debug/htmleditor.html              /old/debug/htmleditor.html
+
 FTS /misc/debug/malloc.html                  /old/debug/malloc.html
 FTS /misc/debug/notiftest.html               /old/debug/notiftest.html
 FTS /misc/debug/sdstor.html                  /old/debug/sdstor.html
@@ -117,32 +163,31 @@ FTS /old/perr.html                           /old/old/perr.html
 FTS /path_ee/                                /old/path_ee/index.html
 FTS /temp/link.html                          /old/temp/link.html
 FTS /temp/linkh.html                         /old/temp/linkh.html
-FTS /misc/tools/calculator/compopsjs         /old/tools/calculator/compopsjs
-FTS /misc/tools/calculator/constants.js      /old/tools/calculator/constants.js
-FTS /misc/tools/calculator/exprconvert.js    /old/tools/calculator/exprconvert.js
-FTS /misc/tools/calculator/exprparser.js     /old/tools/calculator/exprparser.js
-FTS /misc/tools/calculator/funccall.js       /old/tools/calculator/funccall.js
-FTS /misc/tools/calculator/images_port.js    /old/tools/calculator/images_port.js
-FTS /misc/tools/calculator/images.js         /old/tools/calculator/images.js
-FTS /misc/tools/calculator/index.css         /old/tools/calculator/index.css
-FTS /misc/tools/calculator/                  /old/tools/calculator/index.html
-FTS /misc/tools/calculator/index.js          /old/tools/calculator/index.js
-FTS /misc/tools/calculator/matrixops.js      /old/tools/calculator/matrixops.js
-FTS /misc/tools/calculator/namespace.js      /old/tools/calculator/namespace.js
-FTS /misc/tools/calculator/operators.js      /old/tools/calculator/operators.js
-FTS /misc/tools/calculator/stmtconvert.js    /old/tools/calculator/stmtconvert.js
-FTS /misc/tools/calculator/stmtparser.js     /old/tools/calculator/stmtparser.js
-FTS /misc/tools/calculator/surrops.js        /old/tools/calculator/surrops.js
-FTS /misc/tools/calculator/types.js          /old/tools/calculator/types.js
-FTS /misc/tools/calculator/typessupp.js      /old/tools/calculator/typessupp.js
-FTS /misc/tools/science/atmosphere.html      /old/tools/science/atmosphere.html
-FTS /misc/tools/science/atmosphere.js        /old/tools/science/atmosphere.js
-FTS /misc/tools/systemdata/conc.js           /old/tools/systemdata/conc.js
-FTS /misc/tools/systemdata/consoleedit.js    /old/tools/systemdata/consoleedit.js
-FTS /misc/tools/systemdata/                  /old/tools/systemdata/index.html
-FTS /misc/tools/systemdata/systemdata.js     /old/tools/systemdata/systemdata.js
-FTS /misc/tools/god.html                     /old/tools/god.html
-FTS /misc/tools/unicode.html                 /old/tools/unicode.html
+FTS /tools/calculator/compops.js             /old/tools/calculator/compops.js
+FTS /tools/calculator/constants.js           /old/tools/calculator/constants.js
+FTS /tools/calculator/exprconvert.js         /old/tools/calculator/exprconvert.js
+FTS /tools/calculator/exprparser.js          /old/tools/calculator/exprparser.js
+FTS /tools/calculator/funccall.js            /old/tools/calculator/funccall.js
+FTS /tools/calculator/images_port.js         /old/tools/calculator/images_port.js
+FTS /tools/calculator/images.js              /old/tools/calculator/images.js
+FTS /tools/calculator/index.css              /old/tools/calculator/index.css
+FTS /tools/calculator/index.js               /old/tools/calculator/index.js
+FTS /tools/calculator/matrixops.js           /old/tools/calculator/matrixops.js
+FTS /tools/calculator/namespace.js           /old/tools/calculator/namespace.js
+FTS /tools/calculator/operators.js           /old/tools/calculator/operators.js
+FTS /tools/calculator/stmtconvert.js         /old/tools/calculator/stmtconvert.js
+FTS /tools/calculator/stmtparser.js          /old/tools/calculator/stmtparser.js
+FTS /tools/calculator/surrops.js             /old/tools/calculator/surrops.js
+FTS /tools/calculator/types.js               /old/tools/calculator/types.js
+FTS /tools/calculator/typessupp.js           /old/tools/calculator/typessupp.js
+FTS /tools/science/atmosphere.html           /old/tools/science/atmosphere.html
+FTS /tools/science/atmosphere.js             /old/tools/science/atmosphere.js
+FTS /tools/systemdata/conc.js                /old/tools/systemdata/conc.js
+FTS /tools/systemdata/consoleedit.js         /old/tools/systemdata/consoleedit.js
+FTS /tools/systemdata/                       /old/tools/systemdata/index.html
+FTS /tools/systemdata/systemdata.js          /old/tools/systemdata/systemdata.js
+FTS /tools/god.html                          /old/tools/god.html
+FTS /tools/unicode.html                      /old/tools/unicode.html
 FTS /admin-fs.html                           /old/admin-fs.html
 FTS /admin.html                              /old/admin.html
 FTS /chathid.html                            /old/chathid.html
