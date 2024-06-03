@@ -204,5 +204,5 @@ function getGitModDate(repoPath, filePath) {
   
   // compress files and create etags
   
-  await require('./compress_and_etags')('--except', '^data/UnicodeData\\.txt(?:\\.br|\\.gz)?$', '^libs/.*$');
+  await require('./compress_and_etags')('--except', '^data/UnicodeData\\.txt(?:\\.br|\\.gz)?$', '^libs/.*$', '^apps/inf-voxel-test/lib_extern/.*$');
 })();
