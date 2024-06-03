@@ -36,7 +36,7 @@ async function isValidUrl(url) {
   
   if (url.startsWith('/old/') || url.startsWith('/old2/') || url.startsWith('/oldg/')) return true;
   
-  if (url.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/([Uu])\+((?:|0?[0-9A-Fa-f]|10)[0-9A-Fa-f]{4})$/.exec(url))) {
+  if (url.startsWith('/unicode/') && (match = /^\/unicode\/([Uu])\+((?:|0?[0-9A-Fa-f]|10)[0-9A-Fa-f]{4})$/.exec(url))) {
     let fancyCodePoint = parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0');
     if (match[1] == 'u' || fancyCodePoint != match[2])
       return false;

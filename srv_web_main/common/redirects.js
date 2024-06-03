@@ -74,6 +74,8 @@ for (var redirect of redirects) {
     
     redirects.redirects = newRedirects;
   }
+  
+  // to check: Object.entries(require('./common/redirects').redirects.at(-2).redirects).slice(0, 10)
 }
 
 // takes in a url object and returns [false] if no redirects, else returns [true, statusCode, locationString]
@@ -114,19 +116,19 @@ function followRedirects(url) {
       case 'custom':
         switch (redirect.name) {
           case 'unicode': {
-            if (urlString == '/misc/unicode/U+0NAN') {
+            if (urlString == '/unicode/U+0NAN') {
               didRedirect = true;
               statusCode = redirect.statusCode;
-              urlString = '/misc/unicode/U+';
+              urlString = '/unicode/U+';
             }
             
             let match;
-            if (urlString.startsWith('/misc/unicode/') && (match = /^\/misc\/unicode\/(?:([Uu])\+(0{0,2}(?:0?[0-9A-Fa-f]|10)?[0-9A-Fa-f]{0,4}))$/.exec(urlString))) {
+            if (urlString.startsWith('/unicode/') && (match = /^\/unicode\/(?:([Uu])\+(0{0,2}(?:0?[0-9A-Fa-f]|10)?[0-9A-Fa-f]{0,4}))$/.exec(urlString))) {
               let fancyCodePoint = match[2] ? parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0') : '0000';
               if (match[1] == 'u' || fancyCodePoint != match[2]) {
                 didRedirect = true;
                 statusCode = redirect.statusCode;
-                urlString = '/misc/unicode/U+' + fancyCodePoint;
+                urlString = '/unicode/U+' + fancyCodePoint;
               }
             }
             break;

@@ -217,5 +217,5 @@ FTS /bellringlog-2017-2018.html              /oldg/bellringlog-2017-2018.html
 FTS /bellringlog-2018-2019.html              /oldg/bellringlog-2018-2019.html
 
 
-# /misc/unicode redirect (custom code)
+# /unicode redirect (custom code)
 CPS unicode

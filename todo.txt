@@ -1,4 +1,10 @@
 current:
+add to calculator:
+  word search func
+  clearVars
+  clearHistory
+  clearAll
+  clear, has, get, set, delete
 make redirects into map
 setup redirects for /misc/debug/time_syncer_2.html -> /misc/debug/time_syncer_2/; /misc/apps/ -> /apps/
 create adhd visualizer
@@ -42,7 +48,7 @@ rename /misc/status.html to /misc/server_status.html and add appropriate redirec
 add blank line between end of head and beginning of body tag
 
 tier 2:
-rename /data/UnicodeData.txt to /misc/unicode/data/UnicodeData.txt
+rename /data/UnicodeData.txt to /unicode/UnicodeData.txt
 add validator for canonical urls and meta urls, printing if they exist but do not match real url or if they are not equal
   validation for meta description tags, to supplement validation for canonical urls
   can implement in helpers/main.js, either print as a warning (probably) or an error (maybe)
