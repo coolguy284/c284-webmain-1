@@ -70,6 +70,10 @@ body {
   right: 0.3rem;
 }
 
+.variable-pane {
+  max-width: 10rem;
+}
+
 .corner-banner {
   position: fixed;
   bottom: 0.2rem;

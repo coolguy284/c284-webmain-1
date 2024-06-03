@@ -79,10 +79,10 @@ FTS /suggestions.html                        https://github.com/coolguy284/c284-
 FPS /technical.html                          /misc/debug/
 FTS /todo.html                               https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt
 FPS /apps/html5-time-planner/                /apps/html5-time-tracker/
+FPS /misc/tools/calculator.html              /apps/calculator/
 
 # redirects to old server stash
 FPS /misc/tools/advancedtime.html            /misc/old/tools/advancedtime.html
-FPS /misc/tools/calculator.html              /misc/old/tools/calculator.html
 FPS /misc/tools/coderunner.html              /misc/old/tools/coderunner.html
 FPS /misc/tools/enigma.html                  /misc/old/tools/enigma.html
 FPS /misc/tools/systemdata.html              /misc/old/tools/systemdata.html
