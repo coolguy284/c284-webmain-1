@@ -9,12 +9,6 @@ make redirects into map
 setup redirects for /misc/debug/time_syncer_2.html -> /misc/debug/time_syncer_2/; /misc/apps/ -> /apps/
 create adhd visualizer
 modtime of each html page should be the latest modtime of the script files / css files / favicon files / image / video files it contains
-implement redirect chaining
-  process all file redirects and folder redirects so that one redirect's to can be another's from but they both get set to redirect to the another's to (redirect chaining)
-    processed at docker build time instead of at runtime so the redirects.txt at runtime is indentical to how it will be after the above statement is done
-    and it errors at buildtime if a cycle is detected (including complex cycles caused by a folder and a file redirect together)
-  then convert current redirects in file to chain instead of all pointing to the final destination
-  redirect chaining processed in order they appear in file
 move and add redirect:
   /misc/rectangles.html  ->  /apps/rectangles.html
   /misc/strange/halloween_name_gen.html  ->  /apps/halloween_name_gen.html
@@ -380,6 +374,14 @@ general: update packages (on old servers also), user acc system
 advanced time:
   consolidate localstorage keys on advancedtime
 make docker build args into single file
+
+prob not doing:
+complex redirect chaining
+  process all file redirects and folder redirects so that one redirect's to can be another's from but they both get set to redirect to the another's to (redirect chaining)
+    processed at docker build time instead of at runtime so the redirects.txt at runtime is indentical to how it will be after the above statement is done
+    and it errors at buildtime if a cycle is detected (including complex cycles caused by a folder and a file redirect together)
+  then convert current redirects in file to chain instead of all pointing to the final destination
+  redirect chaining processed in order they appear in file
 
 problems:
 proc_main index.js seems to stay running if one of sibling docker containers started by it is still running

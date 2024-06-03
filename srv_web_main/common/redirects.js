@@ -50,13 +50,11 @@ fs.readFileSync('websites/redirects.txt').toString()
 
 for (var redirect of redirects) {
   if (redirect.type == 'file') {
-    redirect.redirects = Object.fromEntries(redirect.redirects);
-    
-    let redirects = redirect.redirects;
+    let redirects = Object.fromEntries(redirect.redirects);
     let newRedirects = {};
     
     for (let from in redirects) {
-      if (from in newRedirects) break;
+      if (from in newRedirects) continue;
       let to = redirects[from];
       if (to.to in redirects) {
         let chain = [from];
@@ -72,10 +70,10 @@ for (var redirect of redirects) {
       }
     }
     
-    redirects.redirects = newRedirects;
+    redirect.redirects = newRedirects;
   }
   
-  // to check: Object.entries(require('./common/redirects').redirects.at(-2).redirects).slice(0, 10)
+  // to check: Object.entries(require('./common/redirects').redirects.at(-2).redirects).slice(0, 30)
 }
 
 // takes in a url object and returns [false] if no redirects, else returns [true, statusCode, locationString]
