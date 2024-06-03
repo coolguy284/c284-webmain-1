@@ -1,0 +1,78 @@
+/* flex-based reset */
+
+html, body {
+  height: 100%;
+}
+
+body, body *:not(script) {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  gap: 0.2rem;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+hr {
+  width: 100%;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.growable {
+  flex-grow: 1;
+}
+
+.left {
+  align-items: start;
+}
+
+.text {
+  /* TODO fix */
+  display: block;
+  
+  * {
+    display: inline;
+  }
+}
+
+/* main styles */
+
+body {
+  padding: 0.4rem 0.4rem 1rem;
+}
+
+.popup {
+  z-index: 1;
+  position: fixed;
+  top: 0.3rem;
+  left: 0.3rem;
+  width: calc(100% - 0.6rem);
+  height: calc(100% - 1.2rem);
+  border: 1px solid gray;
+  border-radius: 0.4rem;
+  background-color: white;
+  padding: 0.4rem;
+}
+
+.close-btn {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+}
+
+.corner-banner {
+  position: fixed;
+  bottom: 0.2rem;
+  right: 0.2rem;
+  font-size: 0.5rem;
+}

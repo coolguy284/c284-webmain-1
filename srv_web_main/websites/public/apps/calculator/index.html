@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang = 'en'>
+  <head>
+    <meta charset = 'utf-8'>
+    
+    <title>coolguy284.com: Math.JS Calculator</title>
+    
+    <meta name = 'viewport' content = 'width=device-width, initial-scale=1.0'>
+    <meta name = 'description' content = 'A simple calculator front for the math.js evaluate function.'>
+    <meta name = 'keywords' content = 'calculator'>
+    <meta name = 'author' content = 'coolguy284'>
+    
+    <link rel = 'canonical' href = 'https://coolguy284.com/misc/tools/calculator/'>
+    
+    <meta name = 'og:title' content = 'coolguy284.com: Math.JS Calculator'>
+    <meta name = 'og:description' content = 'A simple calculator front for the math.js evaluate function.'>
+    <meta name = 'og:type' content = 'website'>
+    <meta name = 'og:url' content = 'https://coolguy284.com/misc/tools/calculator/'>
+    
+    <link rel = 'stylesheet' href = 'style.css'>
+  </head>
+  
+  <body>
+    <div class = 'row growable'>
+      <div class = 'growable'>
+        <h5>Output</h5>
+        <hr>
+        <div id = 'calculator_output' class = 'growable'>-</div>
+      </div>
+      
+      <div>
+        <h5>Variables</h5>
+        <hr>
+        <div id = 'vars_list' class = 'growable'>-</div>
+      </div>
+    </div>
+    
+    <div class = 'row'>
+      <input type = 'text' id = 'calculator_input' class = 'growable'>
+      
+      <button onclick = 'toggleSettings();'>Settings</button>
+      <button onclick = 'toggleHelp();'>Help</button>
+    </div>
+    
+    <div id = 'settings_div' class = 'popup left' style = 'display: none;'>
+      <h5>Math.JS Precision</h5>
+      <input type = 'number' id = 'setting_mathjs_precision' value = 64 min = 0 step = 1 required>
+      
+      <button class = 'close-btn' onclick = 'toggleSettings();'>X</button>
+    </div>
+    
+    <div id = 'help_div' class = 'popup' style = 'display: none;'>
+      WIP
+      
+      <button class = 'close-btn' onclick = 'toggleHelp();'>X</button>
+    </div>
+    
+    <div class = 'corner-banner text'>
+      Powered by <a href = 'https://mathjs.org/'>Math.JS</a>.
+    </div>
+    
+    <script src = '/libs/extern/math.js'></script>
+    <script src = 'script.js'></script>
+  </body>
+</html>

@@ -15,7 +15,7 @@ if [ -z $(sudo docker network ls --filter name=^${NETWORK_NAME}$ --format="{{ .N
   sudo docker network create --ipv6 --subnet fd00:1110:0111::/48 ${NETWORK_NAME};
 fi
 
-sudo docker run --rm -it --name c284-webmain-1_proc_main --network ${NETWORK_NAME} --network-alias proc_main \
+sudo docker run --rm -dit --name c284-webmain-1_proc_main --network ${NETWORK_NAME} --network-alias proc_main \
   --mount type=bind,source=/home/webmain/c284-webmain-1_s/cert,target=/home/webmain/c284-webmain-1_s/cert,readonly \
   --mount type=bind,source=/home/webmain/c284-webmain-1_s/logs_mongodb,target=/home/webmain/c284-webmain-1_s/logs_mongodb \
   --mount type=bind,source=/home/webmain/c284-webmain-1_s/mongodb,target=/home/webmain/c284-webmain-1_s/mongodb \
@@ -27,3 +27,11 @@ sudo docker run --rm -it --name c284-webmain-1_proc_main --network ${NETWORK_NAM
   --mount type=bind,source=/home/webmain/c284-webmain-1/srv_web_main/websites,target=/home/webmain/c284-webmain-1/srv_web_main/websites,readonly \
   --mount type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock \
   coolguy284/c284-webmain-1_proc_main ${NETWORK_NAME} --debug | tee "../../c284-webmain-1_s/logs/$(date -u +'%Y_%m_%d %H_%M_%S %a %b %d %I_%M_%S %p %Z').log"
+
+(
+  set -m
+  LOGFILENAME="../../c284-webmain-1_s/logs/$(date -u +'%Y_%m_%d %H_%M_%S %a %b %d %I_%M_%S %p %Z').log"
+  sudo docker logs -f c284-webmain-1_proc_main > "$LOGFILENAME" 2> "$LOGFILENAME" &
+)
+
+sudo docker attach c284-webmain-1_proc_main
