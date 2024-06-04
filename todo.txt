@@ -5,7 +5,6 @@ add to calculator:
   clearHistory
   clearAll
   clear, has, get, set, delete
-make redirects into map
 create adhd visualizer
 modtime of each html page should be the latest modtime of the script files / css files / favicon files / image / video files it contains
 srv_web_main has memory leak? (851MiB after a month or two)

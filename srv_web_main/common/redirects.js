@@ -50,23 +50,22 @@ fs.readFileSync('websites/redirects.txt').toString()
 
 for (var redirect of redirects) {
   if (redirect.type == 'file') {
-    let redirects = Object.fromEntries(redirect.redirects);
-    let newRedirects = {};
+    let redirects = new Map(redirect.redirects);
+    let newRedirects = new Map();
     
-    for (let from in redirects) {
-      if (from in newRedirects) continue;
-      let to = redirects[from];
-      if (to.to in redirects) {
+    for (let [ from, to ] of redirects) {
+      if (newRedirects.has(from)) continue;
+      if (redirects.has(to.to)) {
         let chain = [from];
-        while (to.to in redirects) {
-          let newTo = redirects[to.to];
+        while (redirects.has(to.to)) {
+          let newTo = redirects.get(to.to);
           if (to.to == newTo.to) throw new Error(`Circular or self referential redirect detected: ${chain.join(', ') + ', ' + to.to}`);
           chain.push(to.to);
           to = newTo;
         }
-        chain.slice(0, -1).forEach(x => newRedirects[x] = to);
+        chain.slice(0, -1).forEach(x => newRedirects.set(x, to));
       } else {
-        newRedirects[from] = to;
+        newRedirects.set(from, to);
       }
     }
     
@@ -86,7 +85,7 @@ function followRedirects(url) {
   for (var redirect of redirects) {
     switch (redirect.type) {
       case 'file': {
-        let fileRedirect = redirect.redirects[urlString];
+        let fileRedirect = redirect.redirects.get(urlString);
         if (fileRedirect != null) {
           didRedirect = true;
           statusCode = fileRedirect.statusCode;
