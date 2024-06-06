@@ -80,3 +80,11 @@ body {
   right: 0.2rem;
   font-size: 0.5rem;
 }
+
+.wrap {
+  word-wrap: break-word;
+}
+
+.no-overflow {
+  overflow: hidden;
+}
