@@ -27,6 +27,8 @@ calculator_input.addEventListener('keydown', evt => {
     commandHistoryIndex = null;
     currentCommandText = null;
     evt.preventDefault();
+    // scroll to bottom of command history
+    calculator_output.scrollTop = calculator_output.scrollHeight;
   } else if (evt.code == 'ArrowUp') {
     if (state.commandHistory.length > 0) {
       if (commandHistoryIndex == null) {
