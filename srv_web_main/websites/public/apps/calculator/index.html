@@ -22,13 +22,13 @@
   
   <body>
     <div class = 'row growable no-overflow'>
-      <div class = 'growable no-overflow'>
+      <div class = 'pane growable no-overflow'>
         <h4>Output</h4>
         <hr>
         <div id = 'calculator_output' class = 'growable wrap scroll'>-</div>
       </div>
       
-      <div class = 'variable-pane no-overflow'>
+      <div class = 'pane variable-pane no-overflow unshrinkable'>
         <h4>Variables</h4>
         <hr>
         <div id = 'vars_list' class = 'growable wrap scroll'>-</div>
@@ -46,13 +46,13 @@
       <h5>Math.JS Precision</h5>
       <input type = 'number' id = 'setting_mathjs_precision' value = 64 min = 0 step = 1 required>
       
-      <button class = 'close-btn' onclick = 'toggleSettings();'>X</button>
+      <button class = 'close-btn' onclick = 'toggleSettings();'>&#10006;</button>
     </div>
     
     <div id = 'help_div' class = 'popup scroll' style = 'display: none;'>
       WIP
       
-      <button class = 'close-btn' onclick = 'toggleHelp();'>X</button>
+      <button class = 'close-btn' onclick = 'toggleHelp();'>&#10006;</button>
     </div>
     
     <div class = 'corner-banner text'>
