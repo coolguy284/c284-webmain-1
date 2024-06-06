@@ -1,4 +1,6 @@
 # immutable files
+/apps/inf-voxel-test/libs_extern/*: 1
+/data/*: 1
 /libs/extern/*: 1
 /libs/extern/README_original_urls.txt: -1
 /favicon.ico: 1
@@ -15,6 +17,7 @@
 *.xml: 2
 
 # web crawler noindex files
+/data/*: 4
 /debug/config/*: 4
 /debug/templates/*: 4
 /unicode/*: 4

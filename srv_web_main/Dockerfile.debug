@@ -23,12 +23,17 @@ RUN mkdir cert
 #ADD --chown=webmain:webmain https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt websites/public/data/
 RUN mkdir -p websites/public/data && curl -fsSL https://www.unicode.org/Public/UCD/latest/ucd/UnicodeData.txt > websites/public/data/UnicodeData.txt
 
+# clone english words list
+WORKDIR /home/webmain/websites/public/data
+RUN git clone https://github.com/dwyl/english-words.git && mv english-words/words.txt ./ && rm -rf english-words
+WORKDIR /home/webmain
+
 COPY --chown=webmain:webmain srv_web_main/common/recursive_readdir.js common/recursive_readdir.js
 COPY --chown=webmain:webmain srv_web_main/common/website_data_parse.js common/website_data_parse.js
 COPY --chown=webmain:webmain srv_web_main/websites/website_data.txt websites/website_data.txt
 COPY --chown=webmain:webmain srv_web_main/helpers/compress_and_etags.js helpers/compress_and_etags.js
 
-RUN node helpers/compress_and_etags.js --only '^data/UnicodeData\.txt(?:\.br|\.gz)?$'
+RUN node helpers/compress_and_etags.js --only '^data/[a-zA-Z]+\.txt(?:\.br|\.gz)?$'
 
 COPY --chown=webmain:webmain srv_web_main/log_utils.js log_utils.js
 

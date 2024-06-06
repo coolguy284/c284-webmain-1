@@ -1,5 +1,6 @@
 /.vs
 /node_modules
+/srv_web_main/websites/public/data
 /srv_web_main/node_modules
 /srv_web_main/websites/public/libs/extern/bson.bundle.js
 /srv_web_main/websites/public/libs/extern/bson.bundle.js.map
