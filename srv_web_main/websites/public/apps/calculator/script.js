@@ -88,7 +88,7 @@ setting_mathjs_precision.addEventListener('change', () => {
     setting_mathjs_precision.value = DEFAULT_PRECISION;
   }
   state.cfg.precision = Number(setting_mathjs_precision.value);
-  setting_mathjs_precision.value = state.cfg.precision;
+  mathCtx.config({ precision: state.cfg.precision });
 });
 
 calculator_input.addEventListener('keydown', evt => {
