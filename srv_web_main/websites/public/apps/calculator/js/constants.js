@@ -1,0 +1,4 @@
+let MAX_COMMAND_HISTORY = 1000;
+let MAX_RESULT_HISTORY = 2000;
+let DEFAULT_PRECISION = 64;
+let LOCALSTORAGE_KEY = 'calculator_storage';
