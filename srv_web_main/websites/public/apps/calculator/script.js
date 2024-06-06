@@ -17,6 +17,7 @@ let stateSetVars = vars => {
     calcParser.set(key, value);
   }
 };
+let stateUpdated = false;
 
 let commandHistoryIndex = null;
 let currentCommandText = null;
@@ -58,6 +59,7 @@ function calculate(string) {
   try {
     let result = calcParser.evaluate(string);
     calcParser.set('ans', result);
+    stateUpdated = true;
     return mathObjToString(result);
   } catch (err) {
     return err.toString();
@@ -92,11 +94,31 @@ function updateVariablesList() {
   }
 }
 
+function loadFromLocalStorage() {
+  let data = localStorage[LOCALSTORAGE_KEY] ?? '{}';
+  let stateFromSave = JSON.parse(data, mathCtx.reviver);
+  state.commandHistory = stateFromSave.commandHistory ?? [];
+  state.resultHistory = stateFromSave.resultHistory ?? [];
+  state.cfg = {};
+  state.cfg.precision = stateFromSave.cfg?.precision ?? DEFAULT_PRECISION;
+  stateSetVars(stateFromSave.vars ?? []);
+}
+
+function saveToLocalStorage() {
+  let stateToSave = {
+    ...state,
+    vars: stateGetVars(),
+  };
+  let data = JSON.stringify(stateToSave, mathCtx.replacer);
+  localStorage[LOCALSTORAGE_KEY] = data;
+}
+
 setting_mathjs_precision.addEventListener('change', () => {
   if (setting_mathjs_precision.value == '') {
     setting_mathjs_precision.value = DEFAULT_PRECISION;
   }
   state.cfg.precision = Number(setting_mathjs_precision.value);
+  stateUpdated = true;
   mathCtx.config({ precision: state.cfg.precision });
 });
 
@@ -108,6 +130,7 @@ calculator_input.addEventListener('keydown', evt => {
     state.commandHistory.push(commandStr);
     state.resultHistory.push(`-> ${commandStr}`);
     state.resultHistory.push(`<- ${resultStr}`);
+    stateUpdated = true;
     appendUpdateResultHistory(2);
     updateVariablesList();
     commandHistoryIndex = null;
@@ -151,27 +174,15 @@ calculator_input.addEventListener('keydown', evt => {
   }
 });
 
-function loadFromLocalStorage() {
-  let data = localStorage[LOCALSTORAGE_KEY] ?? '{}';
-  let stateFromSave = JSON.parse(data, mathCtx.reviver);
-  state.commandHistory = stateFromSave.commandHistory ?? [];
-  state.resultHistory = stateFromSave.resultHistory ?? [];
-  state.cfg = {};
-  state.cfg.precision = stateFromSave.cfg.precision ?? DEFAULT_PRECISION;
-  stateSetVars(stateFromSave.vars);
-}
-
-function saveToLocalStorage() {
-  let stateToSave = {
-    ...state,
-    vars: stateGetVars(),
-  };
-  let data = JSON.stringify(stateToSave, mathCtx.replacer);
-  localStorage[LOCALSTORAGE_KEY] = data;
-}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState == 'hidden' && stateUpdated) {
+    saveToLocalStorage();
+    stateUpdated = false;
+  }
+});
 
 function init() {
-  //loadFromLocalStorage();
+  loadFromLocalStorage();
   updateResultHistory();
   updateVariablesList();
   calculator_input.focus();
