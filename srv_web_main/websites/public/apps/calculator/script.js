@@ -20,6 +20,7 @@ let stateSetVars = vars => {
 
 let commandHistoryIndex = null;
 let currentCommandText = null;
+let calculatorOutput = '';
 
 let mathCtx = math.create({
   number: 'BigNumber',
@@ -68,11 +69,18 @@ function getVariables() {
 }
 
 function updateResultHistory() {
-  calculator_output.innerText = state.resultHistory.join('\n');
+  calculatorOutput = state.resultHistory.join('\n');
+  calculator_output.innerText = calculatorOutput;
 }
 
 function appendUpdateResultHistory(number) {
-  calculator_output.innerText += '\n' + state.resultHistory.slice(-number).join('\n');
+  let additional = state.resultHistory.slice(-number).join('\n');
+  if (calculatorOutput.length != 0) {
+    calculatorOutput += '\n' + additional;
+  } else {
+    calculatorOutput = additional;
+  }
+  calculator_output.innerText = calculatorOutput;
 }
 
 function updateVariablesList() {
