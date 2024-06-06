@@ -12,10 +12,26 @@ function mathObjToString(obj, suppressError) {
 
 function calculate(string) {
   try {
-    let result = calcParser.evaluate(string);
-    calcParser.set('ans', result);
-    stateUpdated = true;
-    return mathObjToString(result);
+    switch (string) {
+      case 'clear':
+        mathCtx.clearAll();
+        break;
+      
+      case 'clear vars':
+        mathCtx.clear();
+        break;
+      
+      case 'clear history':
+        mathCtx.clearHistory();
+        break;
+      
+      default: {
+        let result = calcParser.evaluate(string);
+        calcParser.set('ans', result);
+        stateUpdated = true;
+        return mathObjToString(result);
+      }
+    }
   } catch (err) {
     return err.toString();
   }

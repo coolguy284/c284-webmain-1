@@ -13,10 +13,14 @@ calculator_input.addEventListener('keydown', evt => {
     let resultStr = calculate(commandStr);
     calculator_input.value = '';
     state.commandHistory.push(commandStr);
-    state.resultHistory.push(`-> ${commandStr}`);
-    state.resultHistory.push(`<- ${resultStr}`);
     stateUpdated = true;
-    appendUpdateResultHistory(2);
+    if (resultStr != null) {
+      state.resultHistory.push(`-> ${commandStr}`);
+      state.resultHistory.push(`<- ${resultStr}`);
+      appendUpdateResultHistory(2);
+    } else {
+      updateResultHistory();
+    }
     updateVariablesList();
     commandHistoryIndex = null;
     currentCommandText = null;
