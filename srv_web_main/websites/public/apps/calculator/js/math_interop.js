@@ -1,11 +1,5 @@
 function mathObjToString(obj) {
-  if (obj === undefined) {
-    return 'undefined';
-  } else if (obj === null) {
-    return 'null';
-  } else {
-    return obj.toString();
-  }
+  return mathCtx.format(obj);
 }
 
 function calculate(string) {
