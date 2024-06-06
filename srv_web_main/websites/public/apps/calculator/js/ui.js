@@ -37,3 +37,8 @@ function updateVariablesList() {
     vars_list.innerText = vars.join('\n');
   }
 }
+
+function resetCommandHistoryPosition() {
+  commandHistoryIndex = null;
+  currentCommandText = null;
+}

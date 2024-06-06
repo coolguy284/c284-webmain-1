@@ -62,10 +62,18 @@ calculator_input.addEventListener('keydown', evt => {
     }
     evt.preventDefault();
   } else {
-    commandHistoryIndex = null;
-    currentCommandText = null;
+    // clear command history if a normal input is typed (cut / paste handled seperately)
+    if (
+      !(evt.altKey || evt.ctrlKey || evt.metaKey || evt.shiftKey) &&
+      (evt.key.length <= 2 || evt.key == 'Backspace' || evt.key == 'Delete')
+    ) {
+      resetCommandHistoryPosition();
+    }
   }
 });
+
+calculator_input.addEventListener('paste', resetCommandHistoryPosition);
+calculator_input.addEventListener('cut', resetCommandHistoryPosition);
 
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState == 'hidden' && stateUpdated) {
