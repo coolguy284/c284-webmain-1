@@ -1,11 +1,28 @@
 let MAX_COMMAND_HISTORY = 1000;
 let MAX_RESULT_HISTORY = 2000;
+let DEFAULT_PRECISION = 64;
 
-let commandHistory = [];
-let resultHistory = [];
+let state = {
+  commandHistory: [],
+  resultHistory: [],
+  cfg: {
+    precision: DEFAULT_PRECISION,
+  },
+};
+let stateGetVars = () => Array.from(calcParser.getAllAsMap());
+let stateSetVars = vars => {
+  calcParser.clear();
+  for (let [ key, value ] of vars) {
+    calcParser.set(key, value);
+  }
+};
+
+let commandHistoryIndex = null;
+let currentCommandText = null;
+
 let mathCtx = math.create({
   number: 'BigNumber',
-  precision: 64,
+  precision: state.cfg.precision,
 });
 let calcParser = mathCtx.parser();
 
@@ -50,11 +67,11 @@ function getVariables() {
 }
 
 function updateResultHistory() {
-  calculator_output.innerText = resultHistory.join('\n');
+  calculator_output.innerText = state.resultHistory.join('\n');
 }
 
 function appendUpdateResultHistory(number) {
-  updateResultHistory();
+  calculator_output.innerText += '\n' + state.resultHistory.slice(-number).join('\n');
 }
 
 function updateVariablesList() {
@@ -66,22 +83,62 @@ function updateVariablesList() {
   }
 }
 
-setting_mathjs_precision.addEventListener('change', evt => {
+setting_mathjs_precision.addEventListener('change', () => {
   if (setting_mathjs_precision.value == '') {
-    setting_mathjs_precision.value = 64;
+    setting_mathjs_precision.value = DEFAULT_PRECISION;
   }
+  state.cfg.precision = Number(setting_mathjs_precision.value);
+  setting_mathjs_precision.value = state.cfg.precision;
 });
 
-calculator_input.addEventListener('keypress', evt => {
+calculator_input.addEventListener('keydown', evt => {
   if (evt.code == 'Enter') {
     let commandStr = calculator_input.value;
     let resultStr = calculate(commandStr);
     calculator_input.value = '';
-    commandHistory.push(commandStr);
-    resultHistory.push(`-> ${commandStr}`);
-    resultHistory.push(`<- ${resultStr}`);
+    state.commandHistory.push(commandStr);
+    state.resultHistory.push(`-> ${commandStr}`);
+    state.resultHistory.push(`<- ${resultStr}`);
     appendUpdateResultHistory(2);
     updateVariablesList();
+    commandHistoryIndex = null;
+    currentCommandText = null;
+    evt.preventDefault();
+  } else if (evt.code == 'ArrowUp') {
+    if (state.commandHistory.length > 0) {
+      if (commandHistoryIndex == null) {
+        commandHistoryIndex = state.commandHistory.length - 1;
+        currentCommandText = calculator_input.value;
+        calculator_input.value = state.commandHistory[commandHistoryIndex];
+      } else {
+        if (commandHistoryIndex > 0) {
+          commandHistoryIndex--;
+          calculator_input.value = state.commandHistory[commandHistoryIndex];
+        }
+      }
+    }
+    evt.preventDefault();
+  } else if (evt.code == 'ArrowDown') {
+    if (state.commandHistory.length > 0) {
+      if (commandHistoryIndex != null) {
+        if (commandHistoryIndex >= state.commandHistory.length - 1) {
+          commandHistoryIndex = null;
+          if (currentCommandText != null) {
+            calculator_input.value = currentCommandText;
+          } else {
+            calculator_input.value = '';
+          }
+          currentCommandText = null;
+        } else {
+          commandHistoryIndex++;
+          calculator_input.value = state.commandHistory[commandHistoryIndex];
+        }
+      }
+    }
+    evt.preventDefault();
+  } else {
+    commandHistoryIndex = null;
+    currentCommandText = null;
   }
 });
 
