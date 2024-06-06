@@ -36,6 +36,18 @@ hr {
   align-items: start;
 }
 
+.wrap {
+  word-wrap: break-word;
+}
+
+.no-overflow {
+  overflow: hidden;
+}
+
+.scroll {
+  overflow-y: auto;
+}
+
 .text {
   /* TODO fix */
   display: block;
@@ -79,12 +91,4 @@ body {
   bottom: 0.2rem;
   right: 0.2rem;
   font-size: 0.5rem;
-}
-
-.wrap {
-  word-wrap: break-word;
-}
-
-.no-overflow {
-  overflow: hidden;
 }

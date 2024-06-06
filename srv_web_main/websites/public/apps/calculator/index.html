@@ -21,17 +21,17 @@
   </head>
   
   <body>
-    <div class = 'row growable'>
+    <div class = 'row growable no-overflow'>
       <div class = 'growable no-overflow'>
         <h4>Output</h4>
         <hr>
-        <div id = 'calculator_output' class = 'growable wrap'>-</div>
+        <div id = 'calculator_output' class = 'growable wrap scroll'>-</div>
       </div>
       
-      <div class = 'variable-pane'>
+      <div class = 'variable-pane no-overflow'>
         <h4>Variables</h4>
         <hr>
-        <div id = 'vars_list' class = 'growable wrap'>-</div>
+        <div id = 'vars_list' class = 'growable wrap scroll'>-</div>
       </div>
     </div>
     
@@ -42,14 +42,14 @@
       <button onclick = 'toggleHelp();'>Help</button>
     </div>
     
-    <div id = 'settings_div' class = 'popup left' style = 'display: none;'>
+    <div id = 'settings_div' class = 'popup left scroll' style = 'display: none;'>
       <h5>Math.JS Precision</h5>
       <input type = 'number' id = 'setting_mathjs_precision' value = 64 min = 0 step = 1 required>
       
       <button class = 'close-btn' onclick = 'toggleSettings();'>X</button>
     </div>
     
-    <div id = 'help_div' class = 'popup' style = 'display: none;'>
+    <div id = 'help_div' class = 'popup scroll' style = 'display: none;'>
       WIP
       
       <button class = 'close-btn' onclick = 'toggleHelp();'>X</button>
