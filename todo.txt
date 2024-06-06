@@ -362,6 +362,7 @@ general: update packages (on old servers also), user acc system
 advanced time:
   consolidate localstorage keys on advancedtime
 make docker build args into single file
+calculator: add variable aliases for nil, None, missing, etc.
 
 prob not doing:
 complex redirect chaining

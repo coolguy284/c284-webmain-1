@@ -11,11 +11,11 @@ calculator_input.addEventListener('keydown', evt => {
   if (evt.code == 'Enter') {
     let commandStr = calculator_input.value;
     let resultStr = calculate(commandStr);
+    stateUpdated = true;
     calculator_input.value = '';
     if (state.commandHistory.length == 0 || state.commandHistory.at(-1) != commandStr) {
       state.commandHistory.push(commandStr);
     }
-    stateUpdated = true;
     if (resultStr != null) {
       state.resultHistory.push(`-> ${commandStr}`);
       state.resultHistory.push(`<- ${resultStr}`);

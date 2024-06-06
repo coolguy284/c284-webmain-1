@@ -14,6 +14,7 @@ function calculate(string) {
   try {
     switch (string) {
       case 'clear':
+      case 'cls':
         mathCtx.clearAll();
         break;
       
