@@ -12,7 +12,9 @@ calculator_input.addEventListener('keydown', evt => {
     let commandStr = calculator_input.value;
     let resultStr = calculate(commandStr);
     calculator_input.value = '';
-    state.commandHistory.push(commandStr);
+    if (state.commandHistory.length == 0 || state.commandHistory.at(-1) != commandStr) {
+      state.commandHistory.push(commandStr);
+    }
     stateUpdated = true;
     if (resultStr != null) {
       state.resultHistory.push(`-> ${commandStr}`);
