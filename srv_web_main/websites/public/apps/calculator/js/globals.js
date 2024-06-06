@@ -90,4 +90,31 @@ mathCtx.import({
     mathCtx.clear();
     mathCtx.clearHistory();
   },
+  
+  englishWords: () => {
+    if (ENGLISH_WORDS == null) {
+      throw new Error('Words list not initialized yet');
+    }
+    return ENGLISH_WORDS;
+  },
+  
+  englishWordsAlpha: () => {
+    if (ENGLISH_WORDS == null) {
+      throw new Error('Words list not initialized yet');
+    }
+    return ENGLISH_WORDS_ALPHA;
+  },
+  
+  wordSearchBasic: (query, includeNonAlphanumeric) => {
+    return mathCtx.wordSearchRegex('^' + query.replaceAll('*', '.') + '$', includeNonAlphanumeric);
+  },
+  
+  wordSearchRegex: (queryRegex, includeNonAlphanumeric) => {
+    if (ENGLISH_WORDS == null) {
+      throw new Error('Words list not initialized yet');
+    }
+    let wordList = includeNonAlphanumeric ? ENGLISH_WORDS : ENGLISH_WORDS_ALPHA;
+    queryRegex = new RegExp(queryRegex);
+    return wordList.filter(word => queryRegex.test(word));
+  },
 });
