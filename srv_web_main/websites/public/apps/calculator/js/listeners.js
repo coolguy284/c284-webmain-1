@@ -8,7 +8,7 @@ setting_mathjs_precision.addEventListener('change', () => {
 });
 
 calculator_input.addEventListener('keydown', evt => {
-  if (evt.code == 'Enter') {
+  if (evt.key == 'Enter') {
     let commandStr = calculator_input.value;
     let resultStr = calculate(commandStr);
     stateUpdated = true;
@@ -29,7 +29,7 @@ calculator_input.addEventListener('keydown', evt => {
     evt.preventDefault();
     // scroll to bottom of command history
     calculator_output.scrollTop = calculator_output.scrollHeight;
-  } else if (evt.code == 'ArrowUp') {
+  } else if (evt.key == 'ArrowUp') {
     if (state.commandHistory.length > 0) {
       if (commandHistoryIndex == null) {
         commandHistoryIndex = state.commandHistory.length - 1;
@@ -43,7 +43,7 @@ calculator_input.addEventListener('keydown', evt => {
       }
     }
     evt.preventDefault();
-  } else if (evt.code == 'ArrowDown') {
+  } else if (evt.key == 'ArrowDown') {
     if (state.commandHistory.length > 0) {
       if (commandHistoryIndex != null) {
         if (commandHistoryIndex >= state.commandHistory.length - 1) {
