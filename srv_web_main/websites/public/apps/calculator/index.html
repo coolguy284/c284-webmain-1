@@ -21,26 +21,26 @@
   </head>
   
   <body>
+    <div class = 'row no-overflow scroll'>
+      <button onclick = 'setViewMode("output");'>Output</button>
+      <button onclick = 'setViewMode("variables");'>Variables</button>
+      <button onclick = 'setViewMode("both");'>Both</button>
+      <div class = 'growable undo-gap-horz'></div>
+      <button onclick = 'toggleSettings();'>Settings</button>
+      <button onclick = 'toggleHelp();'>Help</button>
+    </div>
+    
     <div class = 'row growable no-overflow'>
       <div class = 'pane growable no-overflow'>
-        <h4>Output</h4>
-        <hr>
         <div id = 'calculator_output' class = 'growable wrap scroll'>-</div>
       </div>
       
       <div class = 'pane variable-pane no-overflow unshrinkable'>
-        <h4>Variables</h4>
-        <hr>
         <div id = 'vars_list' class = 'growable wrap scroll'>-</div>
       </div>
     </div>
     
-    <div class = 'row'>
-      <input type = 'text' id = 'calculator_input' class = 'growable'>
-      
-      <button onclick = 'toggleSettings();'>Settings</button>
-      <button onclick = 'toggleHelp();'>Help</button>
-    </div>
+    <input type = 'text' id = 'calculator_input'>
     
     <div id = 'settings_div' class = 'popup left scroll' style = 'display: none;'>
       <h5>Number Precision (Digits)</h5>

@@ -14,6 +14,25 @@ function toggleHelp() {
   toggleElem(help_div);
 }
 
+function setViewMode(mode) {
+  switch (mode) {
+    case 'output':
+      calculator_output.style.display = '';
+      vars_list.style.display = 'none';
+      break;
+    
+    case 'variables':
+      calculator_output.style.display = 'none';
+      vars_list.style.display = '';
+      break;
+    
+    case 'both':
+      calculator_output.style.display = '';
+      vars_list.style.display = '';
+      break;
+  }
+}
+
 function updateResultHistory() {
   calculatorOutput = state.resultHistory.join('\n');
   calculator_output.innerText = calculatorOutput;

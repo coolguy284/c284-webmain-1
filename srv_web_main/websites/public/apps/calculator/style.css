@@ -55,7 +55,11 @@ button {
 }
 
 .scroll {
-  overflow-y: auto;
+  overflow: auto;
+}
+
+.undo-gap-horz {
+  margin-left: -0.5rem;
 }
 
 .text {
@@ -80,7 +84,7 @@ body {
 button {
   border-radius: 0.4rem;
   border: 0.05rem solid gray;
-  padding: 0 0.3rem 0;
+  padding: 0.3rem 0.3rem 0.3rem;
   font-size: inherit;
 }
 
@@ -109,6 +113,7 @@ input[type = text], input[type = number] {
   top: 0.8rem;
   right: 0.8rem;
   aspect-ratio: 1;
+  padding-top: 0.1rem;
   padding-bottom: 0.1rem;
 }
 
@@ -117,7 +122,7 @@ input[type = text], input[type = number] {
 }
 
 .variable-pane {
-  width: 15rem;
+  flex-basis: 15rem;
 }
 
 .corner-banner {
