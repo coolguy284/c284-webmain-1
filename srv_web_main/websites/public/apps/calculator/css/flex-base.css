@@ -1,0 +1,70 @@
+html, body {
+  height: 100%;
+}
+
+:where(body, body *:not(script)) {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  gap: 0.5rem;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+hr {
+  width: 100%;
+  margin: 0;
+}
+
+button {
+  flex-direction: row;
+  align-items: center;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.unshrinkable {
+  flex-shrink: 0;
+}
+
+.growable {
+  flex-grow: 1;
+}
+
+.left {
+  align-items: start;
+}
+
+.wrap {
+  word-wrap: break-word;
+}
+
+.no-overflow {
+  overflow: hidden;
+}
+
+.scroll {
+  overflow: auto;
+}
+
+.undo-gap-horz {
+  margin-left: -0.5rem;
+}
+
+.text {
+  /* TODO fix */
+  display: block;
+  
+  *:not(h1, h2, h3, h4, h5, h6) {
+    display: inline;
+  }
+}
