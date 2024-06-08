@@ -15,11 +15,19 @@ calculator_input.addEventListener('keydown', evt => {
     calculator_input.value = '';
     if (state.commandHistory.length == 0 || state.commandHistory.at(-1) != commandStr) {
       state.commandHistory.push(commandStr);
+      if (state.commandHistory.length > MAX_COMMAND_HISTORY) {
+        state.commandHistory.splice(0, state.commandHistory.length - MAX_COMMAND_HISTORY);
+      }
     }
     if (resultStr != null) {
       state.resultHistory.push(`-> ${commandStr}`);
       state.resultHistory.push(`<- ${resultStr}`);
-      appendUpdateResultHistory(2);
+      if (state.resultHistory.length > MAX_RESULT_HISTORY) {
+        state.resultHistory.splice(0, state.resultHistory.length - MAX_RESULT_HISTORY);
+        updateResultHistory();
+      } else {
+        appendUpdateResultHistory(2);
+      }
     } else {
       updateResultHistory();
     }
