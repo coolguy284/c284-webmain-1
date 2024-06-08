@@ -48,6 +48,10 @@ button {
   overflow: hidden;
 }
 
+.unshrinkable {
+  flex-shrink: 0;
+}
+
 .scroll {
   overflow: auto;
 }

@@ -22,7 +22,7 @@
   </head>
   
   <body>
-    <div class = 'row no-overflow scroll'>
+    <div class = 'row no-overflow scroll unshrinkable'>
       <button onclick = 'setViewMode("output");'>Output</button>
       <button onclick = 'setViewMode("variables");'>Variables</button>
       <button onclick = 'setViewMode("both");'>Both</button>
@@ -32,8 +32,8 @@
     </div>
     
     <div class = 'row growable no-overflow'>
-      <div id = 'calculator_output' class = 'growable'>-</div>
-      <div id = 'vars_list' class = 'variable-pane' style = 'display: none;'>-</div>
+      <div id = 'calculator_output' class = 'growable wrap no-overflow scroll'>-</div>
+      <div id = 'vars_list' class = 'variable-pane wrap no-overflow scroll unshrinkable' style = 'display: none;'>-</div>
     </div>
     
     <input type = 'text' id = 'calculator_input'>
