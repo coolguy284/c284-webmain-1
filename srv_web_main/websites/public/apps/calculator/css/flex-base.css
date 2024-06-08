@@ -32,10 +32,6 @@ button {
   flex-direction: row;
 }
 
-.unshrinkable {
-  flex-shrink: 0;
-}
-
 .growable {
   flex-grow: 1;
 }

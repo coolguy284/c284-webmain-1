@@ -19,18 +19,22 @@ function setViewMode(mode) {
     case 'output':
       calculator_output.style.display = '';
       vars_list.style.display = 'none';
+      vars_list.classList.remove('growable');
       break;
     
     case 'variables':
       calculator_output.style.display = 'none';
       vars_list.style.display = '';
+      vars_list.classList.add('growable');
       break;
     
     case 'both':
       calculator_output.style.display = '';
       vars_list.style.display = '';
+      vars_list.classList.remove('growable');
       break;
   }
+  
   stateUpdated = true;
 }
 
