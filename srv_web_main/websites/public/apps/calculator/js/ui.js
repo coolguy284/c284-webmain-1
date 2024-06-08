@@ -31,6 +31,19 @@ function setViewMode(mode) {
       vars_list.style.display = '';
       break;
   }
+  stateUpdated = true;
+}
+
+function getViewMode() {
+  if (calculator_output.style.display == 'none') {
+    return 'variables';
+  } else {
+    if (vars_list.style.display == 'none') {
+      return 'output';
+    } else {
+      return 'both';
+    }
+  }
 }
 
 function updateResultHistory() {

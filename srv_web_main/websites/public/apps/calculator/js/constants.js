@@ -1,6 +1,7 @@
 let MAX_COMMAND_HISTORY = 1000;
 let MAX_RESULT_HISTORY = 2000;
 let DEFAULT_PRECISION = 64;
+let DEFAULT_VIEW_MODE = 'output';
 let LOCALSTORAGE_KEY = 'calculator_storage';
 let ENGLISH_WORDS = null;
 let ENGLISH_WORDS_ALPHA = null;

@@ -6,12 +6,16 @@ function loadFromLocalStorage() {
   state.cfg = {};
   state.cfg.precision = stateFromSave.cfg?.precision ?? DEFAULT_PRECISION;
   stateSetVars(stateFromSave.vars ?? []);
+  setViewMode(stateFromSave.ui?.viewMode ?? DEFAULT_VIEW_MODE);
 }
 
 function saveToLocalStorage() {
   let stateToSave = {
     ...state,
     vars: stateGetVars(),
+    ui: {
+      viewMode: getViewMode(),
+    },
   };
   let data = JSON.stringify(stateToSave, mathCtx.replacer);
   localStorage[LOCALSTORAGE_KEY] = data;
