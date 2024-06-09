@@ -12,7 +12,7 @@ mathCtx.import({
       prop = obj;
       return calcParser.get(prop);
     } else {
-      return obj[prop];
+      return Object.getOwnPropertyDescriptor(obj, prop)?.value;
     }
   },
   set: (obj, prop, value) => {
@@ -79,10 +79,6 @@ mathCtx.import({
     return ENGLISH_WORDS_ALPHA;
   },
   
-  wordSearchBasic: (query, includeNonAlphanumeric) => {
-    return mathCtx.wordSearchRegex('^' + query.replaceAll('*', '.') + '$', includeNonAlphanumeric);
-  },
-  
   wordSearchRegex: (queryRegex, includeNonAlphanumeric) => {
     if (ENGLISH_WORDS == null) {
       throw new Error('Words list not initialized yet');
@@ -90,5 +86,9 @@ mathCtx.import({
     let wordList = includeNonAlphanumeric ? ENGLISH_WORDS : ENGLISH_WORDS_ALPHA;
     queryRegex = new RegExp(queryRegex);
     return wordList.filter(word => queryRegex.test(word));
+  },
+  
+  wordSearchBasic: (query, includeNonAlphanumeric) => {
+    return mathCtx.wordSearchRegex('^' + query.replaceAll('*', '.') + '$', includeNonAlphanumeric);
   },
 });
