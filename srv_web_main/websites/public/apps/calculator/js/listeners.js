@@ -1,11 +1,34 @@
-setting_mathjs_precision.addEventListener('change', () => {
-  if (setting_mathjs_precision.value == '') {
-    setting_mathjs_precision.value = DEFAULT_PRECISION;
-  }
-  state.cfg.precision = Number(setting_mathjs_precision.value);
-  stateUpdated = true;
-  mathCtx.config({ precision: state.cfg.precision });
-});
+function createNumberListener(elem, configName, defaultValue, afterAction) {
+  elem.addEventListener('change', () => {
+    if (elem.value == '') {
+      elem.value = defaultValue;
+    }
+    state.cfg[configName] = Number(elem.value);
+    stateUpdated = true;
+    if (afterAction != null) {
+      afterAction(state.cfg[configName]);
+    }
+  });
+}
+
+createNumberListener(
+  setting_mathjs_precision,
+  'precision',
+  DEFAULT_PRECISION,
+  val => mathCtx.config({ precision: val })
+);
+
+createNumberListener(
+  setting_max_command_history,
+  'maxCommandHistory',
+  DEFAULT_MAX_COMMAND_HISTORY
+);
+
+createNumberListener(
+  setting_max_result_history,
+  'maxResultHistory',
+  DEFAULT_MAX_RESULT_HISTORY
+);
 
 calculator_input.addEventListener('keydown', evt => {
   if (evt.key == 'Enter') {
@@ -15,15 +38,15 @@ calculator_input.addEventListener('keydown', evt => {
     calculator_input.value = '';
     if (state.commandHistory.length == 0 || state.commandHistory.at(-1) != commandStr) {
       state.commandHistory.push(commandStr);
-      if (state.commandHistory.length > MAX_COMMAND_HISTORY) {
-        state.commandHistory.splice(0, state.commandHistory.length - MAX_COMMAND_HISTORY);
+      if (state.commandHistory.length > state.cfg.maxCommandHistory) {
+        state.commandHistory.splice(0, state.commandHistory.length - state.cfg.maxCommandHistory);
       }
     }
     if (resultStr != null) {
       state.resultHistory.push(`-> ${commandStr}`);
       state.resultHistory.push(`<- ${resultStr}`);
-      if (state.resultHistory.length > MAX_RESULT_HISTORY) {
-        state.resultHistory.splice(0, state.resultHistory.length - MAX_RESULT_HISTORY);
+      if (state.resultHistory.length > state.cfg.maxResultHistory) {
+        state.resultHistory.splice(0, state.resultHistory.length - state.cfg.maxResultHistory);
         updateResultHistory();
       } else {
         appendUpdateResultHistory(2);

@@ -39,10 +39,21 @@
     <input type = 'text' id = 'calculator_input'>
     
     <div id = 'settings_div' class = 'popup left scroll' style = 'display: none;'>
+      <h3>Math</h3>
+      
       <h5>Number Precision (Digits)</h5>
       <input type = 'number' id = 'setting_mathjs_precision' value = 1 min = 1 step = 1 required>
       
-      <h5 class = 'top-margin'>Persistence</h5>
+      <h3 class = 'top-margin'>History</h3>
+      
+      <h5>Max Command History</h5>
+      <input type = 'number' id = 'setting_max_command_history' value = 0 min = 0 step = 1 required>
+      
+      <h5>Max Result History</h5>
+      <input type = 'number' id = 'setting_max_result_history' value = 0 min = 0 step = 1 required>
+      
+      <h3 class = 'top-margin'>Persistence</h3>
+      
       <label for = 'setting_save_history' class = 'row'>
         <input type = 'checkbox' id = 'setting_save_history'>
         Save History

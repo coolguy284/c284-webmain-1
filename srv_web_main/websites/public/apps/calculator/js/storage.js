@@ -5,6 +5,8 @@ function loadFromLocalStorage() {
   state.resultHistory = stateFromSave.resultHistory ?? [];
   state.cfg = {};
   state.cfg.precision = stateFromSave.cfg?.precision ?? DEFAULT_PRECISION;
+  state.cfg.maxCommandHistory = stateFromSave.cfg?.maxCommandHistory ?? DEFAULT_MAX_COMMAND_HISTORY;
+  state.cfg.maxResultHistory = stateFromSave.cfg?.maxResultHistory ?? DEFAULT_MAX_RESULT_HISTORY;
   setting_save_history.checked = stateFromSave.cfg?.saveHistory ?? DEFAULT_SAVE_HISTORY;
   setting_save_results.checked = stateFromSave.cfg?.saveResults ?? DEFAULT_SAVE_RESULTS;
   setting_save_variables.checked = stateFromSave.cfg?.saveVariables ?? DEFAULT_SAVE_VARIABLES;
