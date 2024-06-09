@@ -20,6 +20,12 @@ input[type = text], input[type = number] {
   font-size: inherit;
 }
 
+input[type = checkbox] {
+  width: 0.8rem;
+  aspect-ratio: 1;
+  padding: 0.1rem;
+}
+
 .popup {
   z-index: 1;
   position: fixed;
@@ -51,4 +57,8 @@ input[type = text], input[type = number] {
   bottom: 0.2rem;
   right: 0.2rem;
   font-size: 0.4rem;
+}
+
+.top-margin {
+  margin-top: 1rem;
 }
