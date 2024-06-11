@@ -163,7 +163,7 @@ async function compressAndEtags(...params) {
   if (exceptMode) {
     if (DEBUG) console.log('selfreferential etag');
     
-    let path = 'misc/debug/config/etags.json';
+    let path = 'debug/config/etags.json';
     let fullPath = 'websites/public/' + path;
     
     let etagsBufHash = crypto.createHash('sha256').update(etagsBuf).digest('base64');

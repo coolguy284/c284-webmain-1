@@ -11,15 +11,15 @@ node-server:
 ➡️ /debug/prep/alphabet.html
 ➡️ /debug/prep/index.html
 ➡️ /debug/acetest.html
-✅ /debug/char.html (/misc/debug/useful_characters.html)
+✅ /debug/char.html (/debug/useful_characters.html)
 ➡️ /debug/chatview.html
 ➡️ /debug/commrun.html
 ➡️ /debug/evtsrc.html
 ➡️ /debug/hecc.html
 ➡️ /debug/htmleditor.html
-✅ /debug/index.html (/misc/debug/index.html)
-✅ /debug/latency.html (/misc/debug/latency_test.html)
-✅ /debug/localstorage.html (/misc/debug/localstorage_editor.html)
+✅ /debug/index.html (/debug/index.html)
+✅ /debug/latency.html (/debug/latency_test.html)
+✅ /debug/localstorage.html (/debug/localstorage_editor.html)
 ➡️ /debug/malloc.html
 ➡️ /debug/notiftest.html
 ✅ /debug/owneyes.html (/misc/own_eyes.html)
@@ -92,11 +92,11 @@ node-server:
 ✅ /index.html (/)
 ✅ /indexredirect.html (/r?u=%2F)
 ➡️ /mchat.html
-✅ /p404.html (/misc/debug/templates/404.html)
-✅ /perr.html (/misc/debug/templates/500.html)
+✅ /p404.html (/debug/templates/404.html)
+✅ /perr.html (/debug/templates/500.html)
 ➡️ /perrmsg.html
 ✅ /rectangles.html (/misc/rectangles.html)
-✅ /redirecttemplate.html (/misc/debug/templates/meta_redirect.html)
+✅ /redirecttemplate.html (/debug/templates/meta_redirect.html)
 ✅ /robots.txt
 ✅ /sitemap.xml
 ✅ /todo.html (https://github.com/coolguy284/c284-webmain-1/blob/main/todo.txt)
@@ -110,8 +110,8 @@ node-server-new:
 ✅ /chat.html (/chat/)
 ✅ /favicon.ico
 ✅ /index.html (/)
-✅ /page_404.html (/misc/debug/templates/404.html)
-✅ /page_500.html (/misc/debug/templates/500.html)
+✅ /page_404.html (/debug/templates/404.html)
+✅ /page_500.html (/debug/templates/500.html)
 ✅ /robots.txt
 ✅ /sitemap.xml
 
@@ -124,20 +124,20 @@ coolguy284.github.io:
 ➡️ /grapher/index.html
 ✅ /htmleditor/index.html (/old/debug/htmleditor.html)
 ➡️ /infloop/index.html
-✅ /localstorage/index.html (/misc/debug/localstorage_editor.html)
+✅ /localstorage/index.html (/debug/localstorage_editor.html)
 ➡️ /noise/index.html 
 ➡️ /note/index.html
 ➡️ /pressspeed/index.html
-✅ /spacetypes/index.html (/misc/debug/space_lengths.html)
+✅ /spacetypes/index.html (/debug/space_lengths.html)
 ➡️ /texteditor/index.html
 ➡️ /wordsearchsolver/index.html
 ➡️ /bellringlog-2017-2018.html
 ➡️ /bellringlog-2018-2019.html
 ✅ /favicon.ico
 ✅ /robots.txt
-✅ /simple.html (/misc/debug/simple_page.html)
+✅ /simple.html (/debug/simple_page.html)
 ✅ /sitemap.xml
-✅ /technical.html (/misc/debug/)
+✅ /technical.html (/debug/)
 
 repls:
 - old/Apps/Universe
@@ -169,7 +169,7 @@ repls:
 ✅ old/Html-Apps/Advanced Time (/misc/old/tools/advancedtime.html)
 ❌ old/Html-Apps/Relativistic Gravity
 ✅ old/Html-Apps/Note Taker (/oldg/note/index.html)
-✅ old/Html-Apps/Localstorage Editor (/misc/debug/localstorage_editor.html)
+✅ old/Html-Apps/Localstorage Editor (/debug/localstorage_editor.html)
 ✅ old/Html-Apps/Countdown 1 (/oldg/countdown/index.html)
 ✅ old/Html-Apps/Countdown 2 (/oldg/countdown2/index.html)
 - old/Libraries/Sympy Experiments

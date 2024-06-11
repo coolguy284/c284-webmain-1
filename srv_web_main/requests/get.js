@@ -213,14 +213,14 @@ module.exports = async function getMethod(requestProps) {
   
   else if (requestProps.url.pathname == '/r') {
     if (requestProps.url.search.startsWith('?u=')) {
-      let file = Buffer.from((env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/misc/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
+      let file = Buffer.from((env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', decodeURIComponent(requestProps.url.search.slice(3))));
       await resp.headers(requestProps, 200, resp.getBasicFileHeaders(requestProps, file, 'text/html; charset=utf-8'));
       await resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?uh=')) {
       await resp.headers(requestProps, 303, { 'location': decodeURIComponent(requestProps.url.search.slice(4)) });
       await resp.end(requestProps);
     } else if (requestProps.url.search.startsWith('?e=')) {
-      let file = Buffer.from((env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/misc/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
+      let file = Buffer.from((env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/debug/templates/meta_redirect.html'] : (await fs.promises.readFile('websites/public/debug/templates/meta_redirect.html'))).toString().replace('{redirect-url}', Buffer.from(requestProps.url.search.slice(3), 'base64').toString()));
       await resp.headers(requestProps, 200, resp.getBasicFileHeaders(requestProps, file, 'text/html; charset=utf-8'));
       await resp.end(requestProps, file);
     } else if (requestProps.url.search.startsWith('?eh=')) {
@@ -259,7 +259,7 @@ module.exports = async function getMethod(requestProps) {
       let codePoint = match[1];
       let unicodeChar = unicode.getEntry(codePoint);
       let file = Buffer.from(
-        (env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/misc/debug/templates/unicode.html'] : (await fs.promises.readFile('websites/public/misc/debug/templates/unicode.html'))).toString()
+        (env.SRV_WEB_MAIN_CACHE_MODE == 1 ? global.filesCache['websites/public/debug/templates/unicode.html'] : (await fs.promises.readFile('websites/public/debug/templates/unicode.html'))).toString()
           .replaceAll('{code_point}', codePoint)
           .replaceAll('{category}', unicodeChar[1] ? unicode.categoryAbbr[unicodeChar[1]] : 'N/A')
           .replaceAll('{name}', unicodeChar[0] || 'N/A')

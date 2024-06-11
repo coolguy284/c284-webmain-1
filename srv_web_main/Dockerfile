@@ -103,7 +103,7 @@ COPY --chown=webmain:webmain srv_web_main/common common
 COPY --chown=webmain:webmain srv_web_main/requests requests
 COPY --chown=webmain:webmain srv_web_main/websites websites
 
-COPY --chown=webmain:webmain srv_web_main/websites/redirects.txt srv_web_main/websites/website_data.txt websites/public/misc/debug/config/
+COPY --chown=webmain:webmain srv_web_main/websites/redirects.txt srv_web_main/websites/website_data.txt websites/public/debug/config/
 
 COPY --chown=webmain:webmain .git .git
 

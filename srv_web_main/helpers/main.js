@@ -96,18 +96,18 @@ function getGitModDate(repoPath, filePath) {
   pageNamesFiltered.sort();
   pageNames.splice(pageNamesFilteredAddIndex, pageNamesFiltered.length - 1, ...pageNamesFiltered);
   
-  var pageNamesFiltered2 = pageNames.filter(x => x.startsWith('misc/debug/config/'));
+  var pageNamesFiltered2 = pageNames.filter(x => x.startsWith('debug/config/'));
   var pageNamesFiltered2AddIndex = pageNames.indexOf(pageNamesFiltered2[0]);
-  pageNamesFiltered2.push('misc/debug/config/modtimes.json');
-  pageNamesFiltered2.push('misc/debug/config/etags.json');
+  pageNamesFiltered2.push('debug/config/modtimes.json');
+  pageNamesFiltered2.push('debug/config/etags.json');
   pageNamesFiltered2.sort();
   pageNames.splice(pageNamesFiltered2AddIndex, pageNamesFiltered2.length - 2, ...pageNamesFiltered2);
   
-  var pageModTimeExtraEntries = new Set(['sitemap.xml', 'misc/debug/config/modtimes.json', 'misc/debug/config/etags.json']);
+  var pageModTimeExtraEntries = new Set(['sitemap.xml', 'debug/config/modtimes.json', 'debug/config/etags.json']);
   
   var pageModTimeEntries = (await Promise.all(pageNames.map(async pageName => {
     var pagePath;
-    if (pageName.startsWith('misc/debug/config/'))
+    if (pageName.startsWith('debug/config/'))
       pagePath = 'websites/' + pageName.slice(18);
     else
       pagePath = 'websites/public/' + pageName;
@@ -152,8 +152,8 @@ function getGitModDate(repoPath, filePath) {
   var latestSitemapModTime = crawledPageModTimeValues.reduce((a, c) => c > a ? c : a, crawledPageModTimeValues[0]);
   
   pageModTimes['sitemap.xml'] = latestSitemapModTime;
-  pageModTimes['misc/debug/config/modtimes.json'] = latestModTime;
-  pageModTimes['misc/debug/config/etags.json'] = latestModTime;
+  pageModTimes['debug/config/modtimes.json'] = latestModTime;
+  pageModTimes['debug/config/etags.json'] = latestModTime;
   
   var pageModTimeKeys = [];
   pageModTimes = Object.entries(pageModTimes).reduce((a, c) => {
@@ -199,7 +199,7 @@ function getGitModDate(repoPath, filePath) {
   
   // copy file in preperation for etag creation
   
-  await fs.promises.copyFile('websites/modtimes.json', 'websites/public/misc/debug/config/modtimes.json');
+  await fs.promises.copyFile('websites/modtimes.json', 'websites/public/debug/config/modtimes.json');
   
   
   // compress files and create etags

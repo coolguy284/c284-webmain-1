@@ -57,7 +57,7 @@ module.exports = async function headMethod(requestProps) {
       let codePoint = match[2].toUpperCase();
       let unicodeChar = unicode.getEntry(codePoint);
       let fileLength = Buffer.from(
-        (await fs.promises.readFile('websites/public/misc/debug/templates/unicode.html')).toString()
+        (await fs.promises.readFile('websites/public/debug/templates/unicode.html')).toString()
           .replaceAll('{code_point}', codePoint)
           .replaceAll('{category}', unicodeChar[1] ? unicode.categoryAbbr[unicodeChar[1]] : 'N/A')
           .replaceAll('{name}', unicodeChar[0] || 'N/A')

@@ -138,28 +138,28 @@ FPS /tools/system_data.html                  /misc/old/tools/systemdata.html
 FPS /tools/systemdata.html                   /misc/old/tools/systemdata.html
 
 # redirects to hosted old server
-FTS /misc/debug/aprilfools/index-old.html    /old/debug/aprilfools/index-old.html
-FTS /misc/debug/aprilfools/index-old.js      /old/debug/aprilfools/index-old.js
-FTS /misc/debug/aprilfools/                  /old/debug/aprilfools/index.html
-FTS /misc/debug/aprilfools/index.js          /old/debug/aprilfools/index.js
-FTS /misc/debug/dial/                        /old/debug/dial/index.html
-FTS /misc/debug/dial/index.js                /old/debug/dial/index.js
-FTS /misc/debug/prep/alphabet.html           /old/debug/prep/alphabet.html
-FTS /misc/debug/prep/                        /old/debug/prep/index.html
-FTS /misc/debug/acetest.html                 /old/debug/acetest.html
-FTS /misc/debug/chatview.html                /old/debug/chatview.html
-FTS /misc/debug/commrun.html                 /old/debug/commrun.html
-FTS /misc/debug/evtsrc.html                  /old/debug/evtsrc.html
-FTS /misc/debug/hecc.html                    /old/debug/hecc.html
+FTS /debug/aprilfools/index-old.html         /old/debug/aprilfools/index-old.html
+FTS /debug/aprilfools/index-old.js           /old/debug/aprilfools/index-old.js
+FTS /debug/aprilfools/                       /old/debug/aprilfools/index.html
+FTS /debug/aprilfools/index.js               /old/debug/aprilfools/index.js
+FTS /debug/dial/                             /old/debug/dial/index.html
+FTS /debug/dial/index.js                     /old/debug/dial/index.js
+FTS /debug/prep/alphabet.html                /old/debug/prep/alphabet.html
+FTS /debug/prep/                             /old/debug/prep/index.html
+FTS /debug/acetest.html                      /old/debug/acetest.html
+FTS /debug/chatview.html                     /old/debug/chatview.html
+FTS /debug/commrun.html                      /old/debug/commrun.html
+FTS /debug/evtsrc.html                       /old/debug/evtsrc.html
+FTS /debug/hecc.html                         /old/debug/hecc.html
 
-FPS /htmleditor/                             /misc/debug/htmleditor.html
-FTS /misc/debug/htmleditor.html              /old/debug/htmleditor.html
+FPS /htmleditor/                             /debug/htmleditor.html
+FTS /debug/htmleditor.html                   /old/debug/htmleditor.html
 
-FTS /misc/debug/malloc.html                  /old/debug/malloc.html
-FTS /misc/debug/notiftest.html               /old/debug/notiftest.html
-FTS /misc/debug/sdstor.html                  /old/debug/sdstor.html
-FTS /misc/debug/sha256coll.html              /old/debug/sha256coll.html
-FTS /misc/debug/unleaveable.html             /old/debug/unleaveable.html
+FTS /debug/malloc.html                       /old/debug/malloc.html
+FTS /debug/notiftest.html                    /old/debug/notiftest.html
+FTS /debug/sdstor.html                       /old/debug/sdstor.html
+FTS /debug/sha256coll.html                   /old/debug/sha256coll.html
+FTS /debug/unleaveable.html                  /old/debug/unleaveable.html
 FTS /old/mover.html                          /old/old/mover.html
 FTS /old/p404.html                           /old/old/p404.html
 FTS /old/perr.html                           /old/old/perr.html

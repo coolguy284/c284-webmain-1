@@ -373,7 +373,7 @@ module.exports = exports = {
   
   s404: async (requestProps, headOnly) => {
     try {
-      await exports.file(requestProps, 'websites/public/misc/debug/templates/404.html', 404, headOnly);
+      await exports.file(requestProps, 'websites/public/debug/templates/404.html', 404, headOnly);
     } catch (err) {
       if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
         logger.warn('http2 stream unexpectedly closed');
@@ -389,7 +389,7 @@ module.exports = exports = {
   
   s500: async (requestProps, headOnly) => {
     try {
-      await exports.file(requestProps, 'websites/public/misc/debug/templates/500.html', 500, headOnly);
+      await exports.file(requestProps, 'websites/public/debug/templates/500.html', 500, headOnly);
     } catch (err) {
       if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
         logger.warn('http2 stream unexpectedly closed');
@@ -405,7 +405,7 @@ module.exports = exports = {
   
   s502_subsrv_offline: async requestProps => {
     try {
-      await exports.file(requestProps, 'websites/public/misc/debug/templates/502_subsrv_offline.html', 502);
+      await exports.file(requestProps, 'websites/public/debug/templates/502_subsrv_offline.html', 502);
     } catch (err) {
       if (err.code == 'ERR_HTTP2_INVALID_STREAM') {
         logger.warn('http2 stream unexpectedly closed');
