@@ -57,28 +57,28 @@ node-server:
 ➡️ /tools/systemdata/index.html
 ➡️ /tools/systemdata/systemdata.js
 ⛔ /tools/advancedtime.html
-✅ /tools/aes.html (/misc/tools/aes.html)
-✅ /tools/base64.html (/misc/tools/base64.html)
+✅ /tools/aes.html
+✅ /tools/base64.html
 ⛔ /tools/calculator.html
 ⛔ /tools/coderunner.html
-✅ /tools/dataurl.html (/misc/tools/data_url.html)
-✅ /tools/downloader.html (/misc/tools/file_downloader.html)
+✅ /tools/dataurl.html (/tools/data_url.html)
+✅ /tools/downloader.html (/tools/file_downloader.html)
 ⛔ /tools/enigma.html
 ➡️ /tools/god.html
 ✅ /tools/halloween.html (/misc/strange/halloween_name_gen.html)
-✅ /tools/html.html (/misc/tools/html_escape.html)
-✅ /tools/index.html (/misc/tools/index.html)
-✅ /tools/morsecode.html (/misc/tools/morse_code.html)
-✅ /tools/qrcode.html (/misc/tools/qr_code_gen.html)
-✅ /tools/rsa.html (/misc/tools/rsa.html)
-✅ /tools/sha256.html (/misc/tools/sha.html)
+✅ /tools/html.html (/tools/html_escape.html)
+✅ /tools/index.html (/tools/)
+✅ /tools/morsecode.html (/tools/morse_code.html)
+✅ /tools/qrcode.html (/tools/qr_code_gen.html)
+✅ /tools/rsa.html
+✅ /tools/sha256.html (/tools/sha.html)
 ⛔ /tools/systemdata.html
 ➡️ /tools/unicode.html
-✅ /tools/unitconv.html (/misc/tools/unit_converter.html)
-✅ /tools/uri.html (/misc/tools/uri.html)
-✅ /tools/uricomp.html (/misc/tools/uri_comp.html)
-✅ /tools/widelatin.html (/misc/tools/wide_latin.html)
-✅ /user/login.html
+✅ /tools/unitconv.html (/tools/unit_converter.html)
+✅ /tools/uri.html
+✅ /tools/uricomp.html (/tools/uri_comp.html)
+✅ /tools/widelatin.html (/tools/wide_latin.html)
+❌ /user/login.html
 ❌ /user/logout.html
 ❌ /user/signedout.html
 ➡️ /admin-fs.html
@@ -155,7 +155,7 @@ repls:
 ✅ old/Html-Apps/Calculator (/misc/old/tools/calculator.html)
 ❌ old/Html-Apps/April Fools 2 (potential add)
 ❌ old/Html-Apps/Special Relativity
-✅ old/Html-Apps/Morse Code (/misc/tools/morse_code.html)
+✅ old/Html-Apps/Morse Code (/tools/morse_code.html)
 ✅ old/Html-Apps/Enigma (/misc/old/tools/enigma.html)
 ❌ old/Html-Apps/Table Data
 ❌ old/Html-Apps/Planck Blackbody Thing

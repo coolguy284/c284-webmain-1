@@ -13,8 +13,8 @@ DPS /misc/unicode/                           /unicode/
 
 
 # main file redirects
-FPS /misc/tools/calculator.html              /apps/calculator/
-FPS /misc/tools/calculator/                  /apps/calculator/
+FPS /tools/calculator.html                   /apps/calculator/
+FPS /tools/calculator/                       /apps/calculator/
 
 FPS /tools/halloween.html                    /debug/halloween.html
 FPS /debug/halloween.html                    /strange/halloween.html
