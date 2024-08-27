@@ -4,9 +4,16 @@ STOPSIGNAL SIGINT
 RUN adduser webmain -u 2201
 WORKDIR /home/webmain
 
-RUN apt-get update && apt-get upgrade -y
+RUN apt-get update && apt-get upgrade -y && apt-get install curl git -y
 
-RUN apt-get install curl git gcc make -y
+# install node.js
+ARG NODE_MAJOR_VER
+ARG NODE_FULL_VER
+RUN curl -fsSL https://deb.nodesource.com/nsolid_setup_deb.sh | bash -s $NODE_MAJOR_VER
+RUN apt-get install nodejs -y
+RUN npm install -g npm
+
+RUN apt-get install gcc make -y
 
 ARG NGINX_VER
 ARG ZLIB_VER
