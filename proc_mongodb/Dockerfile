@@ -14,6 +14,8 @@ RUN apt-get install nodejs fontconfig fonts-liberation pkg-config build-essentia
 RUN npm install -g npm
 
 # install mongodb
+# https://stackoverflow.com/questions/25019183/docker-java7-install-fail/25020555#25020555
+ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get install curl gnupg -y
 # next line is hotfix to enable mongodb to install, will be removed once mongodb officially supports 22.04
 RUN (echo "deb http://security.ubuntu.com/ubuntu focal-security main" | tee /etc/apt/sources.list.d/focal-security.list; apt-get update; apt-get install libssl1.1)
