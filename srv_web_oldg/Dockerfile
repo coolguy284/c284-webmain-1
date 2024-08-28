@@ -10,7 +10,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install curl git -y
 ARG NODE_MAJOR_VER
 ARG NODE_FULL_VER
 RUN curl -fsSL https://deb.nodesource.com/nsolid_setup_deb.sh | bash -s $NODE_MAJOR_VER
-RUN apt-get install nodejs -y
+RUN apt-get install nodejs fontconfig fonts-liberation pkg-config build-essential libpixman-1-dev libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev make gcc -y
 RUN npm install -g npm
 
 RUN apt-get install gcc make -y
