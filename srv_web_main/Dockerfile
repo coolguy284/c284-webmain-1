@@ -1,4 +1,6 @@
-FROM ubuntu:22.04
+ARG branch=debug
+
+FROM ubuntu:22.04 AS base
 STOPSIGNAL SIGINT
 
 RUN adduser webmain -u 2201
@@ -56,54 +58,109 @@ COPY --chown=webmain:webmain srv_web_main/dockerenv.list dockerenv.list
 RUN mkdir -p websites/public/apps
 WORKDIR /home/webmain/websites/public/apps
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/mandel-viewer-v2/commits?per_page=1' mandel-viewer-v2_latest_commit
-RUN rm mandel-viewer-v2_latest_commit
-RUN git clone https://github.com/coolguy284/mandel-viewer-v2.git
+# dockerfile if-else
+# https://stackoverflow.com/questions/43654656/dockerfile-if-else-condition-with-external-arguments/60820156#60820156
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/special-relativity-sim/commits?per_page=1' special-relativity-sim_latest_commit
-RUN rm special-relativity-sim_latest_commit
-RUN git clone https://github.com/coolguy284/special-relativity-sim.git
+FROM base AS production
+  # production mode
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/mandel-viewer-v2/commits?per_page=1' mandel-viewer-v2_latest_commit
+  RUN rm mandel-viewer-v2_latest_commit
+  RUN git clone https://github.com/coolguy284/mandel-viewer-v2.git
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-gravity/commits?per_page=1' 3d-gravity_latest_commit
-RUN rm 3d-gravity_latest_commit
-RUN git clone https://github.com/coolguy284/3d-gravity.git
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/special-relativity-sim/commits?per_page=1' special-relativity-sim_latest_commit
+  RUN rm special-relativity-sim_latest_commit
+  RUN git clone https://github.com/coolguy284/special-relativity-sim.git
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-fancy-clock/commits?per_page=1' html5-fancy-clock_latest_commit
-RUN rm html5-fancy-clock_latest_commit
-RUN git clone https://github.com/coolguy284/html5-fancy-clock.git
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-gravity/commits?per_page=1' 3d-gravity_latest_commit
+  RUN rm 3d-gravity_latest_commit
+  RUN git clone https://github.com/coolguy284/3d-gravity.git
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-temporal-conways-life/commits?per_page=1' html5-temporal-conways-life_latest_commit
-RUN rm html5-temporal-conways-life_latest_commit
-RUN git clone https://github.com/coolguy284/html5-temporal-conways-life.git
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-fancy-clock/commits?per_page=1' html5-fancy-clock_latest_commit
+  RUN rm html5-fancy-clock_latest_commit
+  RUN git clone https://github.com/coolguy284/html5-fancy-clock.git
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-raymarcher/commits?per_page=1' 3d-raymarcher_latest_commit
-RUN rm 3d-raymarcher_latest_commit
-RUN git clone https://github.com/coolguy284/3d-raymarcher.git
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-temporal-conways-life/commits?per_page=1' html5-temporal-conways-life_latest_commit
+  RUN rm html5-temporal-conways-life_latest_commit
+  RUN git clone https://github.com/coolguy284/html5-temporal-conways-life.git
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/inf-voxel-test/commits?per_page=1' inf-voxel-test_latest_commit
-RUN rm inf-voxel-test_latest_commit
-RUN git clone https://github.com/coolguy284/inf-voxel-test.git
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-raymarcher/commits?per_page=1' 3d-raymarcher_latest_commit
+  RUN rm 3d-raymarcher_latest_commit
+  RUN git clone https://github.com/coolguy284/3d-raymarcher.git
 
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-time-tracker/commits?per_page=1' html5-time-tracker_latest_commit
-RUN rm html5-time-tracker_latest_commit
-RUN git clone https://github.com/coolguy284/html5-time-tracker.git
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/inf-voxel-test/commits?per_page=1' inf-voxel-test_latest_commit
+  RUN rm inf-voxel-test_latest_commit
+  RUN git clone https://github.com/coolguy284/inf-voxel-test.git
 
-# Change workdir back for rest of dockerfile
-WORKDIR /home/webmain
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-time-tracker/commits?per_page=1' html5-time-tracker_latest_commit
+  RUN rm html5-time-tracker_latest_commit
+  RUN git clone https://github.com/coolguy284/html5-time-tracker.git
+  
+  # Change workdir back for rest of dockerfile
+  WORKDIR /home/webmain
+  
+  RUN node helpers/compress_and_etags.js --only '^apps/inf-voxel-test/lib_extern/.*$'
+  
+  COPY --chown=webmain:webmain srv_web_main/package.json package.json
+  
+  COPY --chown=webmain:webmain srv_web_main/helpers helpers
+  COPY --chown=webmain:webmain srv_web_main/index.js index.js
+  COPY --chown=webmain:webmain srv_web_main/common common
+  COPY --chown=webmain:webmain srv_web_main/requests requests
+  COPY --chown=webmain:webmain srv_web_main/websites websites
+  
+  COPY --chown=webmain:webmain srv_web_main/websites/redirects.txt srv_web_main/websites/website_data.txt websites/public/debug/config/
+  
+  COPY --chown=webmain:webmain .git .git
+FROM base AS debug
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/mandel-viewer-v2/commits?per_page=1' mandel-viewer-v2_latest_commit
+  #RUN rm mandel-viewer-v2_latest_commit
+  RUN git clone https://github.com/coolguy284/mandel-viewer-v2.git
 
-RUN node helpers/compress_and_etags.js --only '^apps/inf-voxel-test/lib_extern/.*$'
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/special-relativity-sim/commits?per_page=1' special-relativity-sim_latest_commit
+  #RUN rm special-relativity-sim_latest_commit
+  RUN git clone https://github.com/coolguy284/special-relativity-sim.git
 
-COPY --chown=webmain:webmain srv_web_main/package.json package.json
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-gravity/commits?per_page=1' 3d-gravity_latest_commit
+  #RUN rm 3d-gravity_latest_commit
+  RUN git clone https://github.com/coolguy284/3d-gravity.git
 
-COPY --chown=webmain:webmain srv_web_main/helpers helpers
-COPY --chown=webmain:webmain srv_web_main/index.js index.js
-COPY --chown=webmain:webmain srv_web_main/common common
-COPY --chown=webmain:webmain srv_web_main/requests requests
-COPY --chown=webmain:webmain srv_web_main/websites websites
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-fancy-clock/commits?per_page=1' html5-fancy-clock_latest_commit
+  #RUN rm html5-fancy-clock_latest_commit
+  RUN git clone https://github.com/coolguy284/html5-fancy-clock.git
 
-COPY --chown=webmain:webmain srv_web_main/websites/redirects.txt srv_web_main/websites/website_data.txt websites/public/debug/config/
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-temporal-conways-life/commits?per_page=1' html5-temporal-conways-life_latest_commit
+  #RUN rm html5-temporal-conways-life_latest_commit
+  RUN git clone https://github.com/coolguy284/html5-temporal-conways-life.git
 
-COPY --chown=webmain:webmain .git .git
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-raymarcher/commits?per_page=1' 3d-raymarcher_latest_commit
+  #RUN rm 3d-raymarcher_latest_commit
+  RUN git clone https://github.com/coolguy284/3d-raymarcher.git
+
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/inf-voxel-test/commits?per_page=1' inf-voxel-test_latest_commit
+  #RUN rm inf-voxel-test_latest_commit
+  RUN git clone https://github.com/coolguy284/inf-voxel-test.git
+
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-time-tracker/commits?per_page=1' html5-time-tracker_latest_commit
+  #RUN rm html5-time-tracker_latest_commit
+  RUN git clone https://github.com/coolguy284/html5-time-tracker.git
+  
+  # Change workdir back for rest of dockerfile
+  WORKDIR /home/webmain
+  
+  RUN node helpers/compress_and_etags.js --only '^apps/inf-voxel-test/lib_extern/.*$'
+  
+  COPY --chown=webmain:webmain .git .git
+  
+  COPY --chown=webmain:webmain srv_web_main/package.json package.json
+  
+  COPY --chown=webmain:webmain srv_web_main/helpers helpers
+  COPY --chown=webmain:webmain srv_web_main/index.js index.js
+  COPY --chown=webmain:webmain srv_web_main/common common
+  COPY --chown=webmain:webmain srv_web_main/requests requests
+  COPY --chown=webmain:webmain srv_web_main/websites websites
+  
+  COPY --chown=webmain:webmain srv_web_main/websites/redirects.txt srv_web_main/websites/website_data.txt websites/public/debug/config/
+FROM ${branch} AS final
 
 RUN ln -s . srv_web_main && node helpers/main.js && rm srv_web_main
 
