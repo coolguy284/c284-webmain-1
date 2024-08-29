@@ -1,4 +1,6 @@
-FROM ubuntu:22.04
+ARG branch=debug
+
+FROM ubuntu:22.04 AS base
 STOPSIGNAL SIGINT
 
 RUN adduser webmain -u 2201
@@ -19,10 +21,21 @@ RUN touch .env && mkdir data
 
 # uses this CLEVER solution to invalidate cache when repo is updated (the comment):
 # https://stackoverflow.com/questions/27529191/how-to-update-code-from-git-to-a-docker-container/41361409#41361409
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/node-server-new/commits?per_page=1' node-server-new_latest_commit
-RUN rm node-server-new_latest_commit
-RUN git clone --depth 1 https://github.com/coolguy284/node-server-new.git
-RUN mv node-server-new/* ./ && mv node-server-new/.[^.]* ./ && rmdir node-server-new
+
+# dockerfile if-else
+# https://stackoverflow.com/questions/43654656/dockerfile-if-else-condition-with-external-arguments/60820156#60820156
+
+FROM base AS production
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/node-server-new/commits?per_page=1' node-server-new_latest_commit
+  RUN rm node-server-new_latest_commit
+  RUN git clone --depth 1 https://github.com/coolguy284/node-server-new.git
+  RUN mv node-server-new/* ./ && mv node-server-new/.[^.]* ./ && rmdir node-server-new
+FROM base AS debug
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/node-server-new/commits?per_page=1' node-server-new_latest_commit
+  #RUN rm node-server-new_latest_commit
+  RUN git clone --depth 1 https://github.com/coolguy284/node-server-new.git
+  RUN mv node-server-new/* ./ && mv node-server-new/.[^.]* ./ && rmdir node-server-new
+FROM ${branch} AS final
 
 RUN npm install
 

@@ -1,4 +1,6 @@
-FROM ubuntu:22.04
+ARG branch=debug
+
+FROM ubuntu:22.04 AS base
 STOPSIGNAL SIGINT
 
 RUN adduser webmain -u 2201
@@ -40,9 +42,17 @@ COPY --chown=webmain:webmain usr_local_nginx_conf/nginx.conf /usr/local/nginx/co
 
 # uses this CLEVER solution to invalidate cache when repo is updated (the comment):
 # https://stackoverflow.com/questions/27529191/how-to-update-code-from-git-to-a-docker-container/41361409#41361409
-ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/coolguy284.github.io/commits?per_page=1' coolguy284.github.io_latest_commit
-RUN rm coolguy284.github.io_latest_commit
-RUN git clone --depth 1 https://github.com/coolguy284/coolguy284.github.io.git
-RUN mv coolguy284.github.io site
+
+FROM base AS production
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/coolguy284.github.io/commits?per_page=1' coolguy284.github.io_latest_commit
+  RUN rm coolguy284.github.io_latest_commit
+  RUN git clone --depth 1 https://github.com/coolguy284/coolguy284.github.io.git
+  RUN mv coolguy284.github.io site
+FROM base AS debug
+  #ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/coolguy284.github.io/commits?per_page=1' coolguy284.github.io_latest_commit
+  #RUN rm coolguy284.github.io_latest_commit
+  RUN git clone --depth 1 https://github.com/coolguy284/coolguy284.github.io.git
+  RUN mv coolguy284.github.io site
+FROM ${branch} AS final
 
 ENTRYPOINT ["/usr/local/nginx/sbin/nginx", "-g", "daemon off;"]
