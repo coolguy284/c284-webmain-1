@@ -70,6 +70,7 @@ async function createSitemap(sites, siteModTimesObj) {
     'debug/big_scroll_area.html': 0.4,
     'misc/own_eyes.html': 0.4,
     'misc/no_source.html': 0.4,
+    'misc/service_worker.html': 0.4,
     
     // low priority
     'misc/old/tools/coderunner.html': 0.3,

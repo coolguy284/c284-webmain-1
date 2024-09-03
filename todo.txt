@@ -1,4 +1,8 @@
 current:
+add dalton unit to unit converter
+internal library for unit conversion
+periodic table / molecular db
+fundamental particles db
 rename debug to development
 create adhd visualizer
 modtime of each html page should be the latest modtime of the script files / css files / favicon files / image / video files it contains
