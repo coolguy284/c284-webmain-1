@@ -44,7 +44,9 @@
         </tbody>
       </table>
       <br>
-      <button id = 'service_worker_btn_install' class = 'btn btn-primary disabled' onclick = 'installServiceWorker();'>Install / Update</button>
+      <button id = 'service_worker_btn_install' class = 'btn btn-primary disabled' onclick = 'installServiceWorker();'>Install</button>
+      <button id = 'service_worker_btn_update' class = 'btn btn-primary disabled' onclick = 'updateServiceWorker();'>Update</button>
+      <button id = 'service_worker_btn_uninstall' class = 'btn btn-primary disabled' onclick = 'uninstallServiceWorker();'>Uninstall</button>
     </div>
     
     <script>
@@ -52,43 +54,154 @@
       
       // https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers
       
+      let trackedRegistrations = new Set();
+      let trackedWorkers = new Set();
+      let currentRegistration = null;
+      
+      let registrationData = [
+        // text, description
+        ['unavailable', 'Service workers unavailable'],
+        ['not-installed', 'Service worker not installed'],
+        ['parsed', 'Service worker parsed'],
+        ['installing', 'Service worker installing'],
+        ['installed', 'Service worker installed'],
+        ['activating', 'Service worker activating'],
+        ['activated', 'Service worker active'],
+        ['redundant', 'Service worker redundant'],
+      ];
+      let registrationTextToNum = new Map(registrationData.map(([text, _], i) => [text, i]));
+      let registrationNumToText = new Map(registrationData.map(([text, _], i) => [i, text]));
+      let registrationTextToDesc = new Map(registrationData.map(([text, description]) => [text, description]));
+      
+      function addToTrackedRegistrations(registration) {
+        if (!trackedRegistrations.has(registration)) {
+          trackedRegistrations.add(registration);
+          registration.addEventListener('updatefound', getRegistrationStatus);
+        }
+      }
+      
+      function addToTrackedWorkers(worker) {
+        if (!trackedWorkers.has(worker)) {
+          trackedWorkers.add(worker);
+          worker.addEventListener('statechange', getRegistrationStatus);
+        }
+      }
+      
+      function setButtonEnabled(btn, enabled) {
+        if (enabled) {
+          btn.classList.remove('disabled');
+        } else {
+          btn.classList.add('disabled');
+        }
+      }
+      
+      function updateAllRegistrationButtons(install, update, uninstall) {
+        setButtonEnabled(service_worker_btn_install, install);
+        setButtonEnabled(service_worker_btn_update, update);
+        setButtonEnabled(service_worker_btn_uninstall, uninstall);
+      }
+      
+      function updateRegistrationTextAndButtons(registrationStatusArr) {
+        service_worker_status.textContent = registrationStatusArr.map(x => registrationTextToDesc.get(x)).join(', ');
+        let highestStatusNum = Math.max(...registrationStatusArr.map(x => registrationTextToNum.get(x)));
+        let highestStatusText = registrationNumToText.get(highestStatusNum);
+        switch (highestStatusText) {
+          case 'unavailable': updateAllRegistrationButtons(false, false, false); break;
+          case 'not-installed': updateAllRegistrationButtons(true, false, false); break;
+          case 'parsed': updateAllRegistrationButtons(false, true, true); break;
+          case 'installing': updateAllRegistrationButtons(false, true, true); break;
+          case 'installed': updateAllRegistrationButtons(false, true, true); break;
+          case 'activating': updateAllRegistrationButtons(false, true, true); break;
+          case 'activated': updateAllRegistrationButtons(false, true, true); break;
+          case 'redundant': updateAllRegistrationButtons(false, true, true); break;
+        }
+      }
+      
       function updateRegistrationStatus(registration) {
         if (!registration) {
-          service_worker_status.textContent = 'Service worker not installed';
+          updateRegistrationTextAndButtons(['not-installed']);
         } else {
+          addToTrackedRegistrations(registration);
+          currentRegistration = registration;
+          
+          let serviceWorkerStatuses = [];
+          
           if (registration.installing) {
-            service_worker_status.textContent = 'Service worker installing';
-          } else if (registration.waiting) {
-            service_worker_status.textContent = 'Service worker installed';
-          } else if (registration.active) {
-            service_worker_status.textContent = 'Service worker active';
+            serviceWorkerStatuses.push(registration.installing.state);
+            addToTrackedWorkers(registration.installing);
           }
+          
+          if (registration.waiting) {
+            serviceWorkerStatuses.push(registration.waiting.state);
+            addToTrackedWorkers(registration.waiting);
+          }
+          
+          if (registration.active) {
+            serviceWorkerStatuses.push(registration.active.state);
+            addToTrackedWorkers(registration.active);
+          }
+          
+          updateRegistrationTextAndButtons(serviceWorkerStatuses);
         }
+      }
+      
+      async function getRegistrationStatus() {
+        let registration = await navigator.serviceWorker.getRegistration(SERVICE_WORKER_URL);
+        updateRegistrationStatus(registration);
       }
       
       async function installServiceWorker() {
         service_worker_btn_install.classList.add('disabled');
         
         try {
-          return;
           let registration = await navigator.serviceWorker.register(SERVICE_WORKER_URL);
           
           updateRegistrationStatus(registration);
-        } catch {
+        } catch (err) {
           alert('Service worker registration failure');
+          console.error(err);
+        }
+      }
+      
+      async function updateServiceWorker() {
+        service_worker_btn_update.classList.add('disabled');
+        
+        try {
+          let registration = await currentRegistration.update();
+          
+          updateRegistrationStatus(registration);
+        } catch (err) {
+          alert('Service worker update failure');
+          console.error(err);
         } finally {
-          service_worker_btn_install.classList.remove('disabled');
+          service_worker_btn_update.classList.remove('disabled');
+        }
+      }
+      
+      async function uninstallServiceWorker() {
+        service_worker_btn_uninstall.classList.add('disabled');
+        
+        try {
+          let success = await currentRegistration.unregister();
+          
+          if (!success) {
+            alert('No service worker registration found');
+          } else {
+            await getRegistrationStatus();
+          }
+        } catch (err) {
+          alert('Service worker uninstall failure');
+          console.error(err);
         }
       }
       
       if (!('serviceWorker' in navigator)) {
-        service_worker_status.textContent = 'service workers unavailable';
+        updateRegistrationTextAndButtons(['unavailable']);
       } else {
-        service_worker_btn_install.classList.remove('disabled');
         (async () => {
-          let registration = await navigator.serviceWorker.getRegistration(SERVICE_WORKER_URL);
+          await getRegistrationStatus();
           
-          updateRegistrationStatus(registration);
+          navigator.serviceWorker.addEventListener('controllerchange', getRegistrationStatus);
         })();
       }
     </script>
