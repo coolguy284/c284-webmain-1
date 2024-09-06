@@ -188,11 +188,11 @@
       }
       
       function updateWorkerStatus(data) {
-        let { currentServiceWorkerHash } = data;
-        
         if (data == null) {
           service_worker_latest_version.textContent = '-';
         } else {
+          let { currentServiceWorkerHash } = data;
+          
           if (currentServiceWorkerHash == '{currentServiceWorkerHash}' || latestServiceWorkerHash == '{latestServiceWorkerHash}') {
             service_worker_latest_version.textContent = `Version Check Invalid (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
           } else {
