@@ -184,22 +184,22 @@ function getGitModDate(repoPath, filePath) {
   
   // add hash of service worker files
   
-  let contents = await fs.promises.readFile('websites/public/misc/service_worker.html');
+  let serviceWorkerBytes = await fs.promises.readFile('websites/public/service_worker.js');
+  let serviceWorkerHTMLBytes = await fs.promises.readFile('websites/public/misc/service_worker.html');
+  let serviceWorkerHash = crypto.createHash('sha256').update(serviceWorkerBytes).digest('base64').replaceAll('=', '');
   
   await fs.promises.writeFile(
     'websites/public/misc/service_worker.html',
-    contents
+    serviceWorkerHTMLBytes
       .toString()
-      .replace('{latestServiceWorkerHash}', crypto.createHash('sha256').update(contents).digest('base64').replaceAll('=', ''))
+      .replace('{latestServiceWorkerHash}', serviceWorkerHash)
   );
-  
-  contents = await fs.promises.readFile('websites/public/service_worker.js');
   
   await fs.promises.writeFile(
     'websites/public/service_worker.js',
-    contents
+    serviceWorkerBytes
       .toString()
-      .replace('{currentServiceWorkerHash}', crypto.createHash('sha256').update(contents).digest('base64').replaceAll('=', ''))
+      .replace('{currentServiceWorkerHash}', serviceWorkerHash)
   );
   
   
