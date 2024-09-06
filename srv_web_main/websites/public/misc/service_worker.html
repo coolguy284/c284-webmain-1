@@ -41,6 +41,10 @@
             <td>Status:</td>
             <td id = 'service_worker_status'>-</td>
           </tr>
+          <tr>
+            <td>Latest Version:</td>
+            <td id = 'service_worker_latest_version'>-</td>
+          </tr>
         </tbody>
       </table>
       <br>
@@ -59,6 +63,7 @@
       let trackedRegistrations = new Set();
       let trackedWorkers = new Set();
       let currentRegistration = null;
+      let activeWorker = null;
       
       let registrationData = [
         // text, description
@@ -107,19 +112,41 @@
         service_worker_status.textContent = registrationStatusArr.map(x => registrationTextToDesc.get(x)).join(', ');
         let highestStatusNum = Math.max(...registrationStatusArr.map(x => registrationTextToNum.get(x)));
         let highestStatusText = registrationNumToText.get(highestStatusNum);
+        
         switch (highestStatusText) {
-          case 'unavailable': updateAllRegistrationButtons(false, false, false); break;
-          case 'not-installed': updateAllRegistrationButtons(true, false, false); break;
-          case 'parsed': updateAllRegistrationButtons(false, true, true); break;
-          case 'installing': updateAllRegistrationButtons(false, true, true); break;
-          case 'installed': updateAllRegistrationButtons(false, true, true); break;
-          case 'activating': updateAllRegistrationButtons(false, true, true); break;
-          case 'activated': updateAllRegistrationButtons(false, true, true); break;
-          case 'redundant': updateAllRegistrationButtons(false, true, true); break;
+          case 'unavailable':
+            updateAllRegistrationButtons(false, false, false);
+            updateWorkerStatus(null);
+            break;
+          case 'not-installed':
+            updateAllRegistrationButtons(true, false, false);
+            updateWorkerStatus(null);
+            break;
+          case 'parsed':
+            updateAllRegistrationButtons(false, true, true);
+            updateWorkerStatus(null);
+            break;
+          case 'installing':
+            updateAllRegistrationButtons(false, true, true);
+            break;
+          case 'installed':
+            updateAllRegistrationButtons(false, true, true);
+            break;
+          case 'activating':
+            updateAllRegistrationButtons(false, true, true);
+            break;
+          case 'activated':
+            updateAllRegistrationButtons(false, true, true);
+            break;
+          case 'redundant':
+            updateAllRegistrationButtons(false, true, true);
+            break;
         }
       }
       
       function updateRegistrationStatus(registration) {
+        activeWorker = null;
+        
         if (!registration) {
           updateRegistrationTextAndButtons(['not-installed']);
         } else {
@@ -141,6 +168,7 @@
           if (registration.active) {
             serviceWorkerStatuses.push(registration.active.state);
             addToTrackedWorkers(registration.active);
+            activeWorker = registration.active;
           }
           
           updateRegistrationTextAndButtons(serviceWorkerStatuses);
@@ -149,7 +177,32 @@
       
       async function getRegistrationStatus() {
         let registration = await navigator.serviceWorker.getRegistration(SERVICE_WORKER_URL);
+        
         updateRegistrationStatus(registration);
+        
+        if (activeWorker) {
+          activeWorker.postMessage({
+            type: 'getStatus',
+          });
+        }
+      }
+      
+      function updateWorkerStatus(data) {
+        let { currentServiceWorkerHash } = data;
+        
+        if (data == null) {
+          service_worker_latest_version.textContent = '-';
+        } else {
+          if (currentServiceWorkerHash == '{currentServiceWorkerHash}' || latestServiceWorkerHash == '{latestServiceWorkerHash}') {
+            service_worker_latest_version.textContent = `Version Check Invalid (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
+          } else {
+            if (currentServiceWorkerHash == latestServiceWorkerHash) {
+              service_worker_latest_version.textContent = `Yes (${latestServiceWorkerHash})`;
+            } else {
+              service_worker_latest_version.textContent = `No (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
+            }
+          }
+        }
       }
       
       async function installServiceWorker() {
@@ -204,6 +257,14 @@
           await getRegistrationStatus();
           
           navigator.serviceWorker.addEventListener('controllerchange', getRegistrationStatus);
+          
+          navigator.serviceWorker.addEventListener('message', evt => {
+            switch (evt.data.type) {
+              case 'status':
+                updateWorkerStatus(evt.data.data);
+                break;
+            }
+          });
         })();
       }
     </script>
