@@ -42,8 +42,8 @@
             <td id = 'service_worker_status'>-</td>
           </tr>
           <tr>
-            <td>Latest Version:</td>
-            <td id = 'service_worker_latest_version'>-</td>
+            <td>Version:</td>
+            <td id = 'service_worker_version'>-</td>
           </tr>
         </tbody>
       </table>
@@ -189,17 +189,17 @@
       
       function updateWorkerStatus(data) {
         if (data == null) {
-          service_worker_latest_version.textContent = '-';
+          service_worker_version.textContent = '-';
         } else {
           let { currentServiceWorkerHash } = data;
           
           if (currentServiceWorkerHash == '{currentServiceWorkerHash}' || latestServiceWorkerHash == '{latestServiceWorkerHash}') {
-            service_worker_latest_version.textContent = `Version Check Invalid (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
+            service_worker_version.textContent = `Version Check Invalid (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
           } else {
             if (currentServiceWorkerHash == latestServiceWorkerHash) {
-              service_worker_latest_version.textContent = `Yes (${latestServiceWorkerHash})`;
+              service_worker_version.textContent = `Yes (${latestServiceWorkerHash})`;
             } else {
-              service_worker_latest_version.textContent = `No (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
+              service_worker_version.textContent = `No (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
             }
           }
         }
