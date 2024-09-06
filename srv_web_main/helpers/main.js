@@ -1,4 +1,5 @@
 var cp = require('child_process');
+var crypto = require('crypto');
 var fs = require('fs');
 
 var crawler = require('../common/sitemap_crawler');
@@ -181,6 +182,27 @@ function getGitModDate(repoPath, filePath) {
   );
   
   
+  // add hash of service worker files
+  
+  let contents = await fs.promises.readFile('websites/public/misc/service_worker.html');
+  
+  await fs.promises.writeFile(
+    'websites/public/misc/service_worker.html',
+    contents
+      .toString()
+      .replace('{latestServiceWorkerHash}', crypto.createHash('sha256').update(contents).digest('base64').replaceAll('=', ''))
+  );
+  
+  contents = await fs.promises.readFile('websites/public/service_worker.js');
+  
+  await fs.promises.writeFile(
+    'websites/public/service_worker.js',
+    contents
+      .toString()
+      .replace('{currentServiceWorkerHash}', crypto.createHash('sha256').update(contents).digest('base64').replaceAll('=', ''))
+  );
+  
+  
   // set contact info from dockerenv.list
   
   await fs.promises.writeFile(
@@ -197,7 +219,7 @@ function getGitModDate(repoPath, filePath) {
   await require('./create_sitemap')(sites, pageModTimes);
   
   
-  // copy file in preperation for etag creation
+  // copy file in preparation for etag creation
   
   await fs.promises.copyFile('websites/modtimes.json', 'websites/public/debug/config/modtimes.json');
   
