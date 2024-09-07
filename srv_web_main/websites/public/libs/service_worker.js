@@ -10,7 +10,7 @@ let SERVICE_WORKER_SETTING_DEFAULTS = {
   maxCacheSize: 4000,
 };
 
-async function loadFromStorage() {
+async function loadSettingsFromStorage() {
   let baseDir = await navigator.storage.getDirectory();
   let fileContents = null;
   try {
@@ -62,7 +62,7 @@ async function loadFromStorage() {
   };
 }
 
-async function saveToStorage(settings) {
+async function saveSettingsToStorage(settings) {
   if (typeof settings != 'object') {
     throw new Error('settings object invalid');
   }

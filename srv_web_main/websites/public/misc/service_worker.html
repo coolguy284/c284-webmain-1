@@ -22,10 +22,33 @@
       body { background-color: #e8e8ff; }
       
       td { padding-right: 1rem; }
+      
+      .cache-entry {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.4rem;
+        
+        &> button {
+          &> svg {
+            color: red;
+            width: 1em;
+            height: 1.2em;
+          }
+        }
+      }
     </style>
   </head>
   
   <body>
+    <!--https://icons.getbootstrap.com/icons/trash/-->
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+      <symbol id = 'bi-trash'>
+        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" fill="red"/>
+        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" fill="red"/>
+      </symbol>
+    </svg>
+    
     <div class = 'container-lg'>
       <noscript>
         <div class = 'alert alert-warning' role = 'alert' style = 'padding: 0.5rem 2rem 0.5rem;'>
@@ -125,23 +148,17 @@
       </label>
       <br>
       <h3>Cache</h3>
-      <button class = 'btn btn-primary'>Clear All</button>
-      <button class = 'btn btn-primary'>Add Site</button>
-      <table>
-        <thead>
-          <tr>
-            <th>URL</th>
-            <th>Options</th>
-          </tr>
-        </thead>
-        
-        <tbody id = 'cache_entries'>
-          <tr>
-            <td>-</td>
-            <td>-</td>
-          </tr>
-        </tbody>
-      </table>
+      <button class = 'btn btn-primary' onclick = 'removeAllCacheEntries();'>Clear All</button>
+      <button class = 'btn btn-primary' onclick = 'addCacheEntry(prompt("Site URL:"));'>Add Site</button>
+      <div id = 'cache_entries'>
+        -
+        <!--
+          <div class = 'cache-entry'>
+            <button class = 'btn btn-outline-danger px-1 py-0'><svg class = 'bi'><use xlink:href = '#bi-trash'></svg></button>
+            Text
+          </div>
+        -->
+      </div>
     </div>
     
     <script src = '/libs/service_worker.js'></script>
@@ -282,8 +299,9 @@
       function updateWorkerStatus(data) {
         if (data == null) {
           service_worker_version.textContent = '-';
+          cache_entries.textContent = '-';
         } else {
-          let { currentServiceWorkerHash } = data;
+          let { currentServiceWorkerHash, cachedPages } = data;
           
           if (currentServiceWorkerHash == '{currentServiceWorkerHash}' || latestServiceWorkerHash == '{latestServiceWorkerHash}') {
             service_worker_version.textContent = `Version Check Invalid (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
@@ -293,6 +311,31 @@
             } else {
               service_worker_version.textContent = `No (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
             }
+          }
+          
+          while (cache_entries.children.length > 0) {
+            cache_entries.children.remove(0);
+          }
+          
+          if (cachedPages.length > 0) {
+            for (let url of cachedPages) {
+              let mainDiv = document.createElement('div');
+              mainDiv.classList.add('cache-entry');
+              let button = document.createElement('button');
+              button.classList.add('btn', 'btn-outline-danger', 'px-1', 'py-0');
+              button.addEventListener('click', removeCacheEntries.bind(null, url));
+              let svg = document.createElement('svg');
+              svg.classList.add('bi');
+              let use = document.createElement('use');
+              use.setAttribute('xlink:href', '#bi-trash');
+              svg.children.add(use);
+              button.children.add(svg);
+              mainDiv.children.add(button);
+              mainDiv.children.add(document.createTextNode(url));
+              cache_entries.children.add(mainDiv);
+            }
+          } else {
+            cache_entries.textContent = 'Empty';
           }
         }
       }
@@ -339,6 +382,44 @@
         } catch (err) {
           alert('Service worker uninstall failure');
           console.error(err);
+        }
+      }
+      
+      function removeCacheEntry(url) {
+        if (activeWorker) {
+          activeWorker.postMessage({
+            type: 'removeCacheEntry',
+            data: url,
+          });
+          
+          // TODO do this more efficiently
+          activeWorker.postMessage({
+            type: 'getStatus',
+          });
+        }
+      }
+      
+      function removeAllCacheEntries() {
+        if (activeWorker) {
+          activeWorker.postMessage({
+            type: 'removeAllCacheEntries',
+            data: url,
+          });
+          cache_entries.textContent = 'Empty';
+        }
+      }
+      
+      function addCacheEntry(url) {
+        if (activeWorker) {
+          activeWorker.postMessage({
+            type: 'addCacheEntry',
+            data: url,
+          });
+          
+          // TODO do this more efficiently
+          activeWorker.postMessage({
+            type: 'getStatus',
+          });
         }
       }
       
