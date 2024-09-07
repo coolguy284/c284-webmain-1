@@ -5,6 +5,10 @@ let SERVICE_WORKER_CONFIG_PAGES = new Set([
   '/libs/service_worker.js',
 ]);
 
+let NON_CACHED_MIME_TYPES = new Set([
+  'text/event-stream',
+]);
+
 let currentServiceWorkerHash = '{currentServiceWorkerHash}';
 
 let settings = null;
@@ -68,9 +72,14 @@ addEventListener('activate', evt => {
   evt.waitUntil(serviceWorkerInitFunc());
 });
 
-async function putInCache(request, response) {
-  let cache = await caches.open(currentServiceWorkerHash);
-  await cache.put(request, response);
+async function putInCache(request, response, filterInvalidMimeTypes) {
+  if (!(filterInvalidMimeTypes && NON_CACHED_MIME_TYPES.has(response.headers.get('content-type').split('; ')[0]))) {
+    let cache = await caches.open(currentServiceWorkerHash);
+    await cache.put(request, response);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 let offlineIndicatorResponse = null;
@@ -112,8 +121,11 @@ async function fetchProcessing(request) {
       } else {
         if ((settings.serviceWorkerPageAlwaysAccessible || settings.autoAddNewPagesToCache) && cachedPagesCount < settings.maxCacheSize) {
           result = await fetch(request);
-          putInCache(request, result); // intentionally not awaited
           cachedPagesCount++;
+          (async () => {
+            let success = await putInCache(request, result, true);
+            if (!success) cachedPagesCount--;
+          })(); // intentionally not awaited
         } else {
           result = await fetch(request);
         }
@@ -128,13 +140,16 @@ async function fetchProcessing(request) {
           })(); // intentionally not awaited
         } else {
           result = await fetch(request);
-          putInCache(request, result);
+          putInCache(request, result); // intentionally not awaited
         }
       } else {
         if (settings.autoAddNewPagesToCache && cachedPagesCount < settings.maxCacheSize) {
           result = await fetch(request);
-          putInCache(request, result); // intentionally not awaited
           cachedPagesCount++;
+          (async () => {
+            let success = await putInCache(request, result, true);
+            if (!success) cachedPagesCount--;
+          })(); // intentionally not awaited
         } else {
           result = await fetch(request);
         }
