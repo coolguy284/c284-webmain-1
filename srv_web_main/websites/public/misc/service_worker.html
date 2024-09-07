@@ -484,16 +484,18 @@
             break;
           
           case service_worker_max_cache_size: {
-            let maxCacheSize = Number(service_worker_enable.value);
+            let maxCacheSize = Number(service_worker_max_cache_size.value);
             if (maxCacheSize == Infinity || Number.isSafeInteger(maxCacheSize) && maxCacheSize >= 0) {
               settings.maxCacheSize = maxCacheSize;
             } else {
               settings.maxCacheSize = Infinity;
-              service_worker_enable.value = Infinity;
+              service_worker_max_cache_size.value = Infinity;
             }
             updateWorkerSettings({ maxCacheSize: settings.maxCacheSize });
           } break;
         }
+        
+        saveSettingsToStorage(settings);
       }
       
       let checkMaxCacheSizeInput_allowedString = 'Infinity';

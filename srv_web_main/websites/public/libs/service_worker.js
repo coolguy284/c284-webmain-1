@@ -23,6 +23,11 @@ async function loadSettingsFromStorage() {
     }
   } catch { /* empty */ }
   
+  let maxCacheSize = Number.isSafeInteger(fileContents?.maxCacheSize) && fileContents?.maxCacheSize >= 0 ||
+      fileContents?.maxCacheSize == Infinity ?
+    fileContents?.maxCacheSize :
+    null;
+  
   return {
     enabled:
       typeof fileContents?.enabled == 'boolean' ?
@@ -55,10 +60,11 @@ async function loadSettingsFromStorage() {
       SERVICE_WORKER_SETTING_DEFAULTS.sendOfflineIndicatorForNonCachedPagesWhenOffline,
     
     maxCacheSize:
-      Number.isSafeInteger(fileContents?.maxCacheSize) && fileContents?.maxCacheSize >= 0 ||
-        fileContents?.maxCacheSize == Infinity ?
-      fileContents?.maxCacheSize :
-      SERVICE_WORKER_SETTING_DEFAULTS.maxCacheSize,
+      maxCacheSize == 'Infinity' ?
+        Infinity :
+        maxCacheSize == null ?
+          SERVICE_WORKER_SETTING_DEFAULTS.maxCacheSize :
+          maxCacheSize,
   };
 }
 
@@ -66,6 +72,11 @@ async function saveSettingsToStorage(settings) {
   if (typeof settings != 'object') {
     throw new Error('settings object invalid');
   }
+  
+  settings = {
+    ...settings,
+    maxCacheSize: settings.maxCacheSize == Infinity ? 'Infinity' : settings.maxCacheSize,
+  };
   
   let baseDir = await navigator.storage.getDirectory();
   let mainFolder = await baseDir.getDirectoryHandle(SERVICE_WORKER_OPFS_MAIN_FOLDER, { create: true });
