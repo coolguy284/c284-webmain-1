@@ -501,7 +501,7 @@
         let currentValue = service_worker_max_cache_size.value;
         
         let newValue;
-        if (currentValue == '') {
+        if (currentValue == '' || currentValue == '0') {
           newValue = currentValue;
         } else {
           let doElse = true;
@@ -516,7 +516,10 @@
           }
           
           if (doElse) {
-            newValue = currentValue.replaceAll(/[^0-9]/g, '');
+            newValue = currentValue.replaceAll(/[^0-9]/g, '').replace(/^0+/, '');
+            if (newValue.length == '0') {
+              newValue = '0';
+            }
           }
         }
         
