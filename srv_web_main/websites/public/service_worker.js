@@ -41,7 +41,17 @@ addEventListener('message', evt => {
 });
 
 async function serviceWorkerInitFunc() {
+  // load settings
   settings = await loadSettingsFromStorage();
+  
+  // claim clients
+  await clients.claim();
+  
+  // delete old caches
+  let cacheSet = new Set(await caches.keys());
+  cacheSet.remove(currentServiceWorkerHash);
+  
+  await Promise.allSettled(Array.from(cacheSet).map(x => caches.delete(x)));
 }
 
 addEventListener('activate', evt => {
