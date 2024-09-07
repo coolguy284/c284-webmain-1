@@ -30,6 +30,10 @@ addEventListener('message', evt => {
       case 'addCacheEntry':
         break;
       
+      case 'settingsUpdate':
+        mergeSettingsObject(settings, data);
+        break;
+      
       default:
         console.error(`Invalid message type: ${data.type}`);
     }

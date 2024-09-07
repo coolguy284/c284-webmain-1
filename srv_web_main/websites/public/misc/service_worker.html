@@ -112,39 +112,39 @@
           max: pages can always be added until every page is cached
           lru(nonnegative integer): after a certain amount, oldest page is removed
       -->
-      <label for = ''>
-        <input type = 'checkbox' id = ''>
+      <label for = 'service_worker_enable'>
+        <input type = 'checkbox' id = 'service_worker_enable' onchange = 'setSettingsFromUI(this);'>
         Enable service worker
       </label>
       <br>
-      <label for = ''>
-        <input type = 'checkbox' id = ''>
+      <label for = 'service_worker_page_always_accessible'>
+        <input type = 'checkbox' id = 'service_worker_page_always_accessible' onchange = 'setSettingsFromUI(this);'>
         Service worker page always accessible (RECOMMENDED)
       </label>
       <br>
-      <label for = ''>
-        <input type = 'checkbox' id = ''>
+      <label for = 'service_worker_cache_before_fetch'>
+        <input type = 'checkbox' id = 'service_worker_cache_before_fetch' onchange = 'setSettingsFromUI(this);'>
         Send cache before fetch
       </label>
       <br>
-      <label for = ''>
-        <input type = 'checkbox' id = ''>
+      <label for = 'service_worker_add_new_pages'>
+        <input type = 'checkbox' id = 'service_worker_add_new_pages' onchange = 'setSettingsFromUI(this);'>
         Automatically add new pages to cache
       </label>
       <br>
-      <label for = ''>
-        <input type = 'checkbox' id = ''>
+      <label for = 'service_worker_offline_cached_pages'>
+        <input type = 'checkbox' id = 'service_worker_offline_cached_pages' onchange = 'setSettingsFromUI(this);'>
         Send cached pages when offline
       </label>
       <br>
-      <label for = ''>
-        <input type = 'checkbox' id = ''>
+      <label for = 'service_worker_offline_indicator'>
+        <input type = 'checkbox' id = 'service_worker_offline_indicator' onchange = 'setSettingsFromUI(this);'>
         Send offline indicator page for non-cached pages
       </label>
       <br>
-      <label for = ''>
-        Max Cache Size:
-        <input type = 'text' id = ''>
+      <label for = 'service_worker_max_cache_size'>
+        Max Cache Size (Infinity for no limit):
+        <input type = 'text' id = 'service_worker_max_cache_size' oninput = 'checkMaxCacheSizeInput();' onchange = 'setSettingsFromUI(this);'>
       </label>
       <br>
       <h3>Cache</h3>
@@ -173,6 +173,7 @@
       let trackedWorkers = new Set();
       let currentRegistration = null;
       let activeWorker = null;
+      let settings;
       
       let registrationData = [
         // text, description
@@ -423,10 +424,124 @@
         }
       }
       
+      function setUIFromSettings(settings) {
+        service_worker_enable.checked = settings.enabled;
+        service_worker_page_always_accessible.checked = settings.serviceWorkerPageAlwaysAccessible;
+        service_worker_cache_before_fetch.checked = settings.sendCacheBeforeFetch;
+        service_worker_add_new_pages.checked = settings.autoAddNewPagesToCache;
+        service_worker_offline_cached_pages.checked = settings.sendCachedPagesWhenOffline;
+        service_worker_offline_indicator.checked = settings.sendOfflineIndicatorForNonCachedPagesWhenOffline;
+        service_worker_max_cache_size.value = settings.maxCacheSize;
+      }
+      
+      function setSettingsFromUI(elem) {
+        switch (elem) {
+          case undefined:
+          case null: {
+            settings.enabled = service_worker_enable.checked;
+            settings.serviceWorkerPageAlwaysAccessible = service_worker_page_always_accessible.checked;
+            settings.sendCacheBeforeFetch = service_worker_cache_before_fetch.checked;
+            settings.autoAddNewPagesToCache = service_worker_add_new_pages.checked;
+            settings.sendCachedPagesWhenOffline = service_worker_offline_cached_pages.checked;
+            settings.sendOfflineIndicatorForNonCachedPagesWhenOffline = service_worker_offline_indicator.checked;
+            let maxCacheSize = Number(service_worker_enable.value);
+            if (maxCacheSize == Infinity || Number.isSafeInteger(maxCacheSize) && maxCacheSize >= 0) {
+              settings.maxCacheSize = maxCacheSize;
+            } else {
+              settings.maxCacheSize = Infinity;
+            }
+            updateWorkerSettings(settings);
+          } break;
+          
+          case service_worker_enable:
+            settings.enabled = service_worker_enable.checked;
+            updateWorkerSettings({ enabled: settings.enabled });
+            break;
+          
+          case service_worker_page_always_accessible:
+            settings.serviceWorkerPageAlwaysAccessible = service_worker_page_always_accessible.checked;
+            updateWorkerSettings({ serviceWorkerPageAlwaysAccessible: settings.serviceWorkerPageAlwaysAccessible });
+            break;
+          
+          case service_worker_cache_before_fetch:
+            settings.sendCacheBeforeFetch = service_worker_cache_before_fetch.checked;
+            updateWorkerSettings({ sendCacheBeforeFetch: settings.sendCacheBeforeFetch });
+            break;
+          
+          case service_worker_add_new_pages:
+            settings.autoAddNewPagesToCache = service_worker_add_new_pages.checked;
+            updateWorkerSettings({ autoAddNewPagesToCache: settings.autoAddNewPagesToCache });
+            break;
+          
+          case service_worker_offline_cached_pages:
+            settings.sendCachedPagesWhenOffline = service_worker_offline_cached_pages.checked;
+            updateWorkerSettings({ sendCachedPagesWhenOffline: settings.sendCachedPagesWhenOffline });
+            break;
+          
+          case service_worker_offline_indicator:
+            settings.sendOfflineIndicatorForNonCachedPagesWhenOffline = service_worker_offline_indicator.checked;
+            updateWorkerSettings({ sendOfflineIndicatorForNonCachedPagesWhenOffline: settings.sendOfflineIndicatorForNonCachedPagesWhenOffline });
+            break;
+          
+          case service_worker_max_cache_size: {
+            let maxCacheSize = Number(service_worker_enable.value);
+            if (maxCacheSize == Infinity || Number.isSafeInteger(maxCacheSize) && maxCacheSize >= 0) {
+              settings.maxCacheSize = maxCacheSize;
+            } else {
+              settings.maxCacheSize = Infinity;
+              service_worker_enable.value = Infinity;
+            }
+            updateWorkerSettings({ maxCacheSize: settings.maxCacheSize });
+          } break;
+        }
+      }
+      
+      let checkMaxCacheSizeInput_allowedString = 'Infinity';
+      function checkMaxCacheSizeInput() {
+        let currentValue = service_worker_max_cache_size.value;
+        
+        let newValue;
+        if (currentValue == '') {
+          newValue = currentValue;
+        } else {
+          let doElse = true;
+          
+          for (let i = checkMaxCacheSizeInput_allowedString.length; i >= 1; i--) {
+            let stringSlice = checkMaxCacheSizeInput_allowedString.slice(0, i);
+            if (currentValue.startsWith(stringSlice)) {
+              newValue = stringSlice;
+              doElse = false;
+              break;
+            }
+          }
+          
+          if (doElse) {
+            newValue = currentValue.replaceAll(/[^0-9]/g, '');
+          }
+        }
+        
+        if (currentValue != newValue) {
+          service_worker_max_cache_size.value = newValue;
+        }
+      }
+      
+      function updateWorkerSettings(partialSettings) {
+        if (activeWorker) {
+          activeWorker.postMessage({
+            type: 'settingsUpdate',
+            data: partialSettings,
+          });
+        }
+      }
+      
       if (!('serviceWorker' in navigator)) {
         updateRegistrationTextAndButtons(['unavailable']);
       } else {
         (async () => {
+          settings = await loadSettingsFromStorage();
+          
+          setUIFromSettings(settings);
+          
           await getRegistrationStatus();
           
           navigator.serviceWorker.addEventListener('controllerchange', getRegistrationStatus);
