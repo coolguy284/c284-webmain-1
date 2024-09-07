@@ -83,33 +83,33 @@
                 if "send cache first": respond with cache, then fetch and possibly update cache
                 else: fetch, then respond, then possibly update cache
               else:
-                if "service worker page always accessible" or "add to cache": fetch, then respond, then add to cache
+                if ("service worker page always accessible" or "add to cache") and cache not full: fetch, then respond, then add to cache
                 else: fetch, then respond
             else:
               if page in cache:
                 if "send cache first": respond with cache, then fetch and possibly update cache
                 else: fetch, then respond, then possibly update cache
               else:
-                if "add to cache": fetch, then respond, then add to cache
+                if "add to cache" and cache not full: fetch, then respond, then add to cache
                 else: fetch, then respond
           if offline:
             if service worker page:
               if page in cache:
                 if "service worker page always accesible" or "when offline, send page from cache": send cached page
-                else: default browser action (fetch, possibly timeout)
+                else: emulate default browser action (fetch, possibly timeout)
               else:
                 if "send offline indicator page": send offline indicator page
-                else: default browser action (fetch, possibly timeout)
+                else: emulate default browser action (fetch, possibly timeout)
             else:
               if page in cache:
                 if "when offline, send page from cache": send cached page
-                else: default browser action (fetch, possibly timeout)
+                else: emulate default browser action (fetch, possibly timeout)
               else:
                 if "send offline indicator page": send offline indicator page
-                else: default browser action (fetch, possibly timeout)
+                else: emulate default browser action (fetch, possibly timeout)
         else: default browser action (fetch, possibly timeout)
-        cache size:
-          max: pages can always be added until every page is cached
+        cache size [not implemented, just a fixed cap for now]:
+          Infinity: pages can always be added until every page is cached
           lru(nonnegative integer): after a certain amount, oldest page is removed
       -->
       <label for = 'service_worker_enable'>

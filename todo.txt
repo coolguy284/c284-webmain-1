@@ -1,4 +1,5 @@
 current:
+serviceworker: properly implement maxcachesize handling
 add dalton unit to unit converter
 internal library for unit conversion
 periodic table / molecular db
