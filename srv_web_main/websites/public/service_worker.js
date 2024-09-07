@@ -1,3 +1,5 @@
+importScripts('/libs/service_worker.js');
+
 let currentServiceWorkerHash = '{currentServiceWorkerHash}';
 
 addEventListener('message', evt => {
@@ -12,6 +14,7 @@ addEventListener('message', evt => {
           type: 'status',
           data: {
             currentServiceWorkerHash,
+            cachedPages: [],
           },
         });
         break;

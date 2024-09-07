@@ -51,8 +51,100 @@
       <button id = 'service_worker_btn_install' class = 'btn btn-primary disabled' onclick = 'installServiceWorker();'>Install</button>
       <button id = 'service_worker_btn_update' class = 'btn btn-primary disabled' onclick = 'updateServiceWorker();'>Update</button>
       <button id = 'service_worker_btn_uninstall' class = 'btn btn-primary disabled' onclick = 'uninstallServiceWorker();'>Uninstall</button>
+      <br>
+      <!--
+        if "enable service worker":
+          if online:
+            if service worker page:
+              if page in cache:
+                if "send cache first": respond with cache, then fetch and possibly update cache
+                else: fetch, then respond, then possibly update cache
+              else:
+                if "service worker page always accessible" or "add to cache": fetch, then respond, then add to cache
+                else: fetch, then respond
+            else:
+              if page in cache:
+                if "send cache first": respond with cache, then fetch and possibly update cache
+                else: fetch, then respond, then possibly update cache
+              else:
+                if "add to cache": fetch, then respond, then add to cache
+                else: fetch, then respond
+          if offline:
+            if service worker page:
+              if page in cache:
+                if "service worker page always accesible" or "when offline, send page from cache": send cached page
+                else: default browser action (fetch, possibly timeout)
+              else:
+                if "send offline indicator page": send offline indicator page
+                else: default browser action (fetch, possibly timeout)
+            else:
+              if page in cache:
+                if "when offline, send page from cache": send cached page
+                else: default browser action (fetch, possibly timeout)
+              else:
+                if "send offline indicator page": send offline indicator page
+                else: default browser action (fetch, possibly timeout)
+        else: default browser action (fetch, possibly timeout)
+        cache size:
+          max: pages can always be added until every page is cached
+          lru(nonnegative integer): after a certain amount, oldest page is removed
+      -->
+      <label for = ''>
+        <input type = 'checkbox' id = ''>
+        Enable service worker
+      </label>
+      <br>
+      <label for = ''>
+        <input type = 'checkbox' id = ''>
+        Service worker page always accessible (RECOMMENDED)
+      </label>
+      <br>
+      <label for = ''>
+        <input type = 'checkbox' id = ''>
+        Send cache before fetch
+      </label>
+      <br>
+      <label for = ''>
+        <input type = 'checkbox' id = ''>
+        Automatically add new pages to cache
+      </label>
+      <br>
+      <label for = ''>
+        <input type = 'checkbox' id = ''>
+        Send cached pages when offline
+      </label>
+      <br>
+      <label for = ''>
+        <input type = 'checkbox' id = ''>
+        Send offline indicator page for non-cached pages
+      </label>
+      <br>
+      <label for = ''>
+        Max Cache Size:
+        <input type = 'text' id = ''>
+      </label>
+      <br>
+      <h3>Cache</h3>
+      <button class = 'btn btn-primary'>Clear All</button>
+      <button class = 'btn btn-primary'>Add Site</button>
+      <table>
+        <thead>
+          <tr>
+            <th>URL</th>
+            <th>Options</th>
+          </tr>
+        </thead>
+        
+        <tbody id = 'cache_entries'>
+          <tr>
+            <td>-</td>
+            <td>-</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     
+    <script src = '/libs/service_worker.js'></script>
     <script>
       let SERVICE_WORKER_URL = '/service_worker.js';
       
