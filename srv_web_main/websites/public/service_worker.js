@@ -4,6 +4,7 @@ let SERVICE_WORKER_CONFIG_PAGES = new Set([
   '/misc/service_worker.html',
   '/libs/service_worker.js',
 ]);
+let SERVICE_WORKER_CONFIG_PAGE = '/misc/service_worker.html';
 
 let NON_CACHED_MIME_TYPES = new Set([
   'text/event-stream',
@@ -14,7 +15,34 @@ let currentServiceWorkerHash = '{currentServiceWorkerHash}';
 let settings = null;
 let cachedPagesCount = 0;
 
-addEventListener('message', evt => {
+async function getStatusMessage() {
+  return {
+    type: 'status',
+    data: {
+      currentServiceWorkerHash,
+      cachedPages: await getCacheEntries(),
+    },
+  };
+}
+
+async function postStatusMessage(source) {
+  if (source == null) {
+    let clientsList = await clients.matchAll();
+    if (clientsList.length > 0) {
+      let statusMsg = await getStatusMessage();
+      await Promise.allSettled(clientsList.map(x => {
+        let pathname = new URL(x.url).pathname;
+        if (pathname == SERVICE_WORKER_CONFIG_PAGE) {
+          x.postMessage(statusMsg);
+        }
+      }));
+    }
+  } else {
+    source.postMessage(await getStatusMessage());
+  }
+}
+
+addEventListener('message', async evt => {
   let data = evt.data;
   
   if (typeof data != 'object') {
@@ -22,22 +50,25 @@ addEventListener('message', evt => {
   } else {
     switch (data.type) {
       case 'getStatus':
-        evt.source.postMessage({
-          type: 'status',
-          data: {
-            currentServiceWorkerHash,
-            cachedPages: [],
-          },
-        });
+        await postStatusMessage(evt.source);
         break;
       
       case 'removeCacheEntry':
+        await removeCacheEntry(data.data);
+        // TODO do this more efficiently
+        await postStatusMessage();
         break;
       
       case 'removeAllCacheEntries':
+        await removeAllCacheEntries();
+        // TODO do this more efficiently
+        await postStatusMessage();
         break;
       
       case 'addCacheEntry':
+        await addCacheEntry(data.data);
+        // TODO do this more efficiently
+        await postStatusMessage();
         break;
       
       case 'settingsUpdate':
@@ -76,10 +107,35 @@ async function putInCache(request, response, filterInvalidMimeTypes) {
   if (!(filterInvalidMimeTypes && NON_CACHED_MIME_TYPES.has(response.headers.get('content-type').split('; ')[0]))) {
     let cache = await caches.open(currentServiceWorkerHash);
     await cache.put(request, response);
+    if (filterInvalidMimeTypes) {
+      // this code path triggered if something is intended to be added to cache
+      await postStatusMessage();
+    }
     return true;
   } else {
     return false;
   }
+}
+
+async function getCacheEntries() {
+  let cache = await caches.open(currentServiceWorkerHash);
+  let requests = await cache.keys();
+  return requests.map(x => new URL(x.url).pathname);
+}
+
+async function removeCacheEntry(url) {
+  let cache = await caches.open(currentServiceWorkerHash);
+  await cache.delete(url);
+}
+
+async function removeAllCacheEntries() {
+  let cache = await caches.open(currentServiceWorkerHash);
+  let requests = await cache.keys();
+  await Promise.allSettled(requests.map(x => cache.delete(x)));
+}
+
+async function addCacheEntry(url) {
+  
 }
 
 let offlineIndicatorResponse = null;

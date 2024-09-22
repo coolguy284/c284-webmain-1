@@ -1,4 +1,8 @@
 current:
+serviceworker:
+  cached pages arr returning empty instead of true cached pages on serviceworker js
+  client show len of array as well as contents
+  ui update
 serviceworker: properly implement maxcachesize handling
 add dalton unit to unit converter
 internal library for unit conversion

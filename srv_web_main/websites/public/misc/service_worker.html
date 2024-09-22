@@ -392,11 +392,6 @@
             type: 'removeCacheEntry',
             data: url,
           });
-          
-          // TODO do this more efficiently
-          activeWorker.postMessage({
-            type: 'getStatus',
-          });
         }
       }
       
@@ -406,7 +401,6 @@
             type: 'removeAllCacheEntries',
             data: url,
           });
-          cache_entries.textContent = 'Empty';
         }
       }
       
@@ -415,11 +409,6 @@
           activeWorker.postMessage({
             type: 'addCacheEntry',
             data: url,
-          });
-          
-          // TODO do this more efficiently
-          activeWorker.postMessage({
-            type: 'getStatus',
           });
         }
       }
