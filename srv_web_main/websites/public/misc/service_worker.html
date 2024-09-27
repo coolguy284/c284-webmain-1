@@ -154,7 +154,7 @@
         -
         <!--
           <div class = 'cache-entry'>
-            <button class = 'btn btn-outline-danger px-1 py-0'><svg class = 'bi'><use xlink:href = '#bi-trash'></use></svg></button>
+            <button class = 'btn btn-outline-danger px-1 py-0'><svg class = 'bi'><use href = '#bi-trash'></use></svg></button>
             Text
           </div>
         -->
@@ -332,7 +332,7 @@
               let svg = document.createElement('svg');
               svg.classList.add('bi');
               let use = document.createElement('use');
-              use.setAttribute('xlink:href', '#bi-trash');
+              use.setAttribute('href', '#bi-trash');
               svg.appendChild(use);
               button.appendChild(svg);
               mainDiv.appendChild(button);
