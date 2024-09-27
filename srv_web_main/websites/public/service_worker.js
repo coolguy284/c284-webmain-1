@@ -1,8 +1,10 @@
 importScripts('/libs/service_worker.js');
 
-let SERVICE_WORKER_CONFIG_PAGES = new Set([
-  '/misc/service_worker.html',
+let SERVICE_WORKER_CONFIG_PAGE_REQUIREMENTS = new Set([
+  '/libs/extern/bootstrap_5.0.0.min.css',
   '/libs/service_worker.js',
+  '/misc/service_worker.html',
+  '/favicon.ico',
 ]);
 let SERVICE_WORKER_CONFIG_PAGE = '/misc/service_worker.html';
 
@@ -97,6 +99,11 @@ async function serviceWorkerInitFunc() {
   // set cache counter
   let cache = await caches.open(currentServiceWorkerHash);
   cachedPagesCount = (await cache.keys()).length;
+  
+  // add config page requirements to cache if service worker page always accessible
+  if (settings.serviceWorkerPageAlwaysAccessible) {
+    await addConfigPageRequirementsToCache();
+  }
 }
 
 addEventListener('activate', evt => {
@@ -139,6 +146,16 @@ async function addCacheEntry(url) {
   await cache.add(url);
 }
 
+async function addConfigPageRequirementsToCache() {
+  let cache = await caches.open(currentServiceWorkerHash);
+  let result = await Promise.allSettled(Array.from(SERVICE_WORKER_CONFIG_PAGE_REQUIREMENTS).map(x => cache.add(x)));
+  for (let resultPart of result) {
+    if (resultPart instanceof Error) {
+      throw resultPart;
+    }
+  }
+}
+
 let offlineIndicatorResponse = null;
 
 function getOfflineIndicatorResponse() {
@@ -163,7 +180,7 @@ async function fetchProcessing(request) {
   let url = new URL(request.url);
   
   if (navigator.onLine) {
-    if (SERVICE_WORKER_CONFIG_PAGES.has(url.pathname)) {
+    if (SERVICE_WORKER_CONFIG_PAGE_REQUIREMENTS.has(url.pathname)) {
       let response = await caches.match(request);
       if (response) {
         if (settings.sendCacheBeforeFetch) {
@@ -213,7 +230,7 @@ async function fetchProcessing(request) {
       }
     }
   } else {
-    if (SERVICE_WORKER_CONFIG_PAGES.has(url.pathname)) {
+    if (SERVICE_WORKER_CONFIG_PAGE_REQUIREMENTS.has(url.pathname)) {
       let response = await caches.match(request);
       if (response) {
         if (settings.serviceWorkerPageAlwaysAccessible || settings.sendCachedPagesWhenOffline) {
