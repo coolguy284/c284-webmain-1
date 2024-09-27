@@ -319,6 +319,10 @@
           }
           
           if (cachedPages.length > 0) {
+            let cacheSize = document.createElement('div');
+            cacheSize.textContent = `${cachedPages.length} items`;
+            cache_entries.children.add(cacheSize);
+            
             for (let url of cachedPages) {
               let mainDiv = document.createElement('div');
               mainDiv.classList.add('cache-entry');
