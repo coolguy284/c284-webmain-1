@@ -135,7 +135,8 @@ async function removeAllCacheEntries() {
 }
 
 async function addCacheEntry(url) {
-  
+  let cache = await caches.open(currentServiceWorkerHash);
+  await cache.add(url);
 }
 
 let offlineIndicatorResponse = null;
