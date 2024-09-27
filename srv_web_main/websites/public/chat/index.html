@@ -165,7 +165,7 @@
       
       app.component('chat-item', {
         props: ['msg', 'username'],
-        template: '<div class = \'chat-item\'><b>[{{ msg.timestamp }}] &lt;{{ msg.author }}&gt;</b> {{ msg.content }}<span class = \'chat-item-helper float-end\' v-if = \'msg.author == username\'><svg class="bi" @click="editMsg(msg.id, msg.content)"><use xlink:href="#bi-pencil"></svg> <svg class="bi" @click="deleteMsg(msg.id, $event)"><use xlink:href="#bi-trash"></svg></span></div>',
+        template: '<div class = \'chat-item\'><b>[{{ msg.timestamp }}] &lt;{{ msg.author }}&gt;</b> {{ msg.content }}<span class = \'chat-item-helper float-end\' v-if = \'msg.author == username\'><svg class="bi" @click="editMsg(msg.id, msg.content)"><use href="#bi-pencil"></svg> <svg class="bi" @click="deleteMsg(msg.id, $event)"><use href="#bi-trash"></svg></span></div>',
         methods: {
           editMsg(id, content) {
             if (editModalObj) editModalObj.dispose();
