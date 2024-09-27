@@ -314,30 +314,30 @@
             }
           }
           
-          while (cache_entries.children.length > 0) {
-            cache_entries.children.remove(0);
+          while (cache_entries.childNodes.length > 0) {
+            cache_entries.removeChild(cache_entries.childNodes[0]);
           }
           
           if (cachedPages.length > 0) {
             let cacheSize = document.createElement('div');
             cacheSize.textContent = `${cachedPages.length} items`;
-            cache_entries.children.add(cacheSize);
+            cache_entries.appendChild(cacheSize);
             
             for (let url of cachedPages) {
               let mainDiv = document.createElement('div');
               mainDiv.classList.add('cache-entry');
               let button = document.createElement('button');
               button.classList.add('btn', 'btn-outline-danger', 'px-1', 'py-0');
-              button.addEventListener('click', removeCacheEntries.bind(null, url));
+              button.addEventListener('click', removeCacheEntry.bind(null, url));
               let svg = document.createElement('svg');
               svg.classList.add('bi');
               let use = document.createElement('use');
               use.setAttribute('xlink:href', '#bi-trash');
-              svg.children.add(use);
-              button.children.add(svg);
-              mainDiv.children.add(button);
-              mainDiv.children.add(document.createTextNode(url));
-              cache_entries.children.add(mainDiv);
+              svg.appendChild(use);
+              button.appendChild(svg);
+              mainDiv.appendChild(button);
+              mainDiv.appendChild(document.createTextNode(url));
+              cache_entries.appendChild(mainDiv);
             }
           } else {
             cache_entries.textContent = 'Empty';
@@ -403,7 +403,6 @@
         if (activeWorker) {
           activeWorker.postMessage({
             type: 'removeAllCacheEntries',
-            data: url,
           });
         }
       }
