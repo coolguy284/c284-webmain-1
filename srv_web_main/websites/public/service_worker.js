@@ -17,6 +17,9 @@ let currentServiceWorkerHash = '{currentServiceWorkerHash}';
 let settings = null;
 let cachedPagesCount = 0;
 
+let offlineIndicatorResponse = null;
+let serviceWorkerInitPromise = null;
+
 async function getStatusMessage() {
   return {
     type: 'status',
@@ -44,48 +47,21 @@ async function postStatusMessage(source) {
   }
 }
 
-addEventListener('message', async evt => {
-  let data = evt.data;
-  
-  if (typeof data != 'object') {
-    console.error(`Invalid message: ${data}`);
-  } else {
-    switch (data.type) {
-      case 'getStatus':
-        await postStatusMessage(evt.source);
-        break;
-      
-      case 'removeCacheEntry':
-        await removeCacheEntry(data.data);
-        // TODO do this more efficiently
-        await postStatusMessage();
-        break;
-      
-      case 'removeAllCacheEntries':
-        await removeAllCacheEntries();
-        // TODO do this more efficiently
-        await postStatusMessage();
-        break;
-      
-      case 'addCacheEntry':
-        await addCacheEntry(data.data);
-        // TODO do this more efficiently
-        await postStatusMessage();
-        break;
-      
-      case 'settingsUpdate':
-        mergeSettingsObject(settings, data);
-        break;
-      
-      default:
-        console.error(`Invalid message type: ${data.type}`);
-    }
-  }
-});
-
 async function serviceWorkerInitFunc() {
   // load settings
   settings = await loadSettingsFromStorage();
+  
+  // mark init promise as done
+  serviceWorkerInitPromise = true;
+}
+
+async function serviceWorkerActivateFunc() {
+  // await service worker initialization
+  if (serviceWorkerInitPromise instanceof Promise) {
+    await serviceWorkerInitPromise;
+  } else if (serviceWorkerInitPromise == null) {
+    // somehow init func not started, should error but will ignore
+  }
   
   // claim clients
   await clients.claim();
@@ -105,10 +81,6 @@ async function serviceWorkerInitFunc() {
     await addConfigPageRequirementsToCache();
   }
 }
-
-addEventListener('activate', evt => {
-  evt.waitUntil(serviceWorkerInitFunc());
-});
 
 async function putInCache(request, response, filterInvalidMimeTypes) {
   if (!(filterInvalidMimeTypes && NON_CACHED_MIME_TYPES.has(response.headers.get('content-type').split('; ')[0]))) {
@@ -155,8 +127,6 @@ async function addConfigPageRequirementsToCache() {
     }
   }
 }
-
-let offlineIndicatorResponse = null;
 
 function getOfflineIndicatorResponse() {
   if (offlineIndicatorResponse == null) {
@@ -270,8 +240,61 @@ async function fetchProcessing(request) {
   return result;
 }
 
+addEventListener('activate', evt => {
+  evt.waitUntil(serviceWorkerActivateFunc());
+});
+
+addEventListener('message', async evt => {
+  let data = evt.data;
+  
+  if (typeof data != 'object') {
+    console.error(`Invalid message: ${data}`);
+  } else {
+    switch (data.type) {
+      case 'getStatus':
+        await postStatusMessage(evt.source);
+        break;
+      
+      case 'removeCacheEntry':
+        await removeCacheEntry(data.data);
+        // TODO do this more efficiently
+        await postStatusMessage();
+        break;
+      
+      case 'removeAllCacheEntries':
+        await removeAllCacheEntries();
+        // TODO do this more efficiently
+        await postStatusMessage();
+        break;
+      
+      case 'addCacheEntry':
+        await addCacheEntry(data.data);
+        // TODO do this more efficiently
+        await postStatusMessage();
+        break;
+      
+      case 'settingsUpdate': {
+        let result = mergeSettingsObject(settings, data.data, addConfigPageRequirementsToCache);
+        
+        // if result is promise instead of null, then mergesettingsobject did an action that would require posting a status update
+        if (result instanceof Promise) {
+          await result;
+          // TODO do this more efficiently
+          await postStatusMessage();
+        }
+        break;
+      }
+      
+      default:
+        console.error(`Invalid message type: ${data.type}`);
+    }
+  }
+});
+
 addEventListener('fetch', evt => {
   if (settings.enabled) {
     evt.respondWith(fetchProcessing(evt.request));
   }
 });
+
+serviceWorkerInitPromise = serviceWorkerInitFunc();

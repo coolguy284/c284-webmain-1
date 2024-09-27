@@ -154,7 +154,7 @@
         -
         <!--
           <div class = 'cache-entry'>
-            <button class = 'btn btn-outline-danger px-1 py-0'><svg class = 'bi'><use xlink:href = '#bi-trash'></svg></button>
+            <button class = 'btn btn-outline-danger px-1 py-0'><svg class = 'bi'><use xlink:href = '#bi-trash'></use></svg></button>
             Text
           </div>
         -->
@@ -305,7 +305,7 @@
           let { currentServiceWorkerHash, cachedPages } = data;
           
           if (currentServiceWorkerHash == '{currentServiceWorkerHash}' || latestServiceWorkerHash == '{latestServiceWorkerHash}') {
-            service_worker_version.textContent = `Version Check Invalid (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
+            service_worker_version.textContent = `Version check invalid (current: ${currentServiceWorkerHash}, latest: ${latestServiceWorkerHash})`;
           } else {
             if (currentServiceWorkerHash == latestServiceWorkerHash) {
               service_worker_version.textContent = `Yes (${latestServiceWorkerHash})`;

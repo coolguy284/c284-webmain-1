@@ -87,7 +87,9 @@ async function saveSettingsToStorage(settings) {
 }
 
 // Updates settings with newsettings
-function mergeSettingsObject(settings, newSettings) {
+function mergeSettingsObject(settings, newSettings, addConfigPageRequirementsToCache) {
+  let oldServiceWorkerAlwaysAccessible = settings.serviceWorkerPageAlwaysAccessible;
+  
   Object.assign(settings, {
     enabled:
       typeof newSettings?.enabled == 'boolean' ?
@@ -95,27 +97,27 @@ function mergeSettingsObject(settings, newSettings) {
       settings.enabled,
     
     serviceWorkerPageAlwaysAccessible:
-      typeof newSettings?.enabled == 'boolean' ?
+      typeof newSettings?.serviceWorkerPageAlwaysAccessible == 'boolean' ?
       newSettings?.serviceWorkerPageAlwaysAccessible :
       settings.serviceWorkerPageAlwaysAccessible,
     
     sendCacheBeforeFetch:
-      typeof newSettings?.enabled == 'boolean' ?
+      typeof newSettings?.sendCacheBeforeFetch == 'boolean' ?
       newSettings?.sendCacheBeforeFetch :
       settings.sendCacheBeforeFetch,
     
     autoAddNewPagesToCache:
-      typeof newSettings?.enabled == 'boolean' ?
+      typeof newSettings?.autoAddNewPagesToCache == 'boolean' ?
       newSettings?.autoAddNewPagesToCache :
       settings.autoAddNewPagesToCache,
     
     sendCachedPagesWhenOffline:
-      typeof newSettings?.enabled == 'boolean' ?
+      typeof newSettings?.sendCachedPagesWhenOffline == 'boolean' ?
       newSettings?.sendCachedPagesWhenOffline :
       settings.sendCachedPagesWhenOffline,
     
     sendOfflineIndicatorForNonCachedPagesWhenOffline:
-      typeof newSettings?.enabled == 'boolean' ?
+      typeof newSettings?.sendOfflineIndicatorForNonCachedPagesWhenOffline == 'boolean' ?
       newSettings?.sendOfflineIndicatorForNonCachedPagesWhenOffline :
       settings.sendOfflineIndicatorForNonCachedPagesWhenOffline,
     
@@ -125,4 +127,10 @@ function mergeSettingsObject(settings, newSettings) {
       newSettings?.maxCacheSize :
       settings.maxCacheSize,
   });
+  
+  let newServiceWorkerAlwaysAccessible = settings.serviceWorkerPageAlwaysAccessible;
+  
+  if (newServiceWorkerAlwaysAccessible && !oldServiceWorkerAlwaysAccessible) {
+    return addConfigPageRequirementsToCache();
+  }
 }

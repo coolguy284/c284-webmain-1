@@ -1,6 +1,7 @@
 current:
 serviceworker:
   ui update
+  unable to see cache if worker not installed
 serviceworker: properly implement maxcachesize handling
 add dalton unit to unit converter
 internal library for unit conversion
