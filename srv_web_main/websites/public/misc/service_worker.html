@@ -70,11 +70,13 @@
           </tr>
         </tbody>
       </table>
-      <br>
-      <button id = 'service_worker_btn_install' class = 'btn btn-primary disabled' onclick = 'installServiceWorker();'>Install</button>
-      <button id = 'service_worker_btn_update' class = 'btn btn-primary disabled' onclick = 'updateServiceWorker();'>Update</button>
-      <button id = 'service_worker_btn_uninstall' class = 'btn btn-primary disabled' onclick = 'uninstallServiceWorker();'>Uninstall</button>
-      <br>
+      
+      <div class = 'col-auto mt-3'>
+        <button id = 'service_worker_btn_install' class = 'btn btn-primary disabled' onclick = 'installServiceWorker();'>Install</button>
+        <button id = 'service_worker_btn_update' class = 'btn btn-primary disabled' onclick = 'updateServiceWorker();'>Update</button>
+        <button id = 'service_worker_btn_uninstall' class = 'btn btn-primary disabled' onclick = 'uninstallServiceWorker();'>Uninstall</button>
+      </div>
+      
       <!--
         if "enable service worker":
           if online:
@@ -112,45 +114,64 @@
           Infinity: pages can always be added until every page is cached
           lru(nonnegative integer): after a certain amount, oldest page is removed
       -->
-      <label for = 'service_worker_enable'>
-        <input type = 'checkbox' id = 'service_worker_enable' onchange = 'setSettingsFromUI(this);'>
-        Enable service worker
-      </label>
-      <br>
-      <label for = 'service_worker_page_always_accessible'>
-        <input type = 'checkbox' id = 'service_worker_page_always_accessible' onchange = 'setSettingsFromUI(this);'>
-        Service worker page always accessible (RECOMMENDED)
-      </label>
-      <br>
-      <label for = 'service_worker_cache_before_fetch'>
-        <input type = 'checkbox' id = 'service_worker_cache_before_fetch' onchange = 'setSettingsFromUI(this);'>
-        Send cache before fetch
-      </label>
-      <br>
-      <label for = 'service_worker_add_new_pages'>
-        <input type = 'checkbox' id = 'service_worker_add_new_pages' onchange = 'setSettingsFromUI(this);'>
-        Automatically add new pages to cache
-      </label>
-      <br>
-      <label for = 'service_worker_offline_cached_pages'>
-        <input type = 'checkbox' id = 'service_worker_offline_cached_pages' onchange = 'setSettingsFromUI(this);'>
-        Send cached pages when offline
-      </label>
-      <br>
-      <label for = 'service_worker_offline_indicator'>
-        <input type = 'checkbox' id = 'service_worker_offline_indicator' onchange = 'setSettingsFromUI(this);'>
-        Send offline indicator page for non-cached pages
-      </label>
-      <br>
-      <label for = 'service_worker_max_cache_size'>
-        Max Cache Size (Infinity for no limit):
-        <input type = 'text' id = 'service_worker_max_cache_size' oninput = 'checkMaxCacheSizeInput();' onchange = 'setSettingsFromUI(this);'>
-      </label>
-      <br>
-      <h3>Cache</h3>
-      <button class = 'btn btn-primary' onclick = 'removeAllCacheEntries();'>Clear All</button>
-      <button class = 'btn btn-primary' onclick = 'addCacheEntry(prompt("Site URL:"));'>Add Site</button>
-      <div id = 'cache_entries'>
+      
+      <div class = 'form-check mt-3'>
+        <input type = 'checkbox' id = 'service_worker_enable' class = 'form-check-input' onchange = 'setSettingsFromUI(this);'>
+        <label class = 'form-check-label' for = 'service_worker_enable'>
+          Enable service worker
+        </label>
+      </div>
+      
+      <div class = 'form-check'>
+        <input type = 'checkbox' id = 'service_worker_page_always_accessible' class = 'form-check-input' onchange = 'setSettingsFromUI(this);'>
+        <label class = 'form-check-label' for = 'service_worker_page_always_accessible'>
+          Service worker page always accessible (RECOMMENDED)
+        </label>
+      </div>
+      
+      <div class = 'form-check'>
+        <input type = 'checkbox' id = 'service_worker_cache_before_fetch' class = 'form-check-input' onchange = 'setSettingsFromUI(this);'>
+        <label class = 'form-check-label' for = 'service_worker_cache_before_fetch'>
+          Send cache before fetch
+        </label>
+      </div>
+      
+      <div class = 'form-check'>
+        <input type = 'checkbox' id = 'service_worker_add_new_pages' class = 'form-check-input' onchange = 'setSettingsFromUI(this);'>
+        <label class = 'form-check-label' for = 'service_worker_add_new_pages'>
+          Automatically add new pages to cache
+        </label>
+      </div>
+      
+      <div class = 'form-check'>
+        <input type = 'checkbox' id = 'service_worker_offline_cached_pages' class = 'form-check-input' onchange = 'setSettingsFromUI(this);'>
+        <label class = 'form-check-label' for = 'service_worker_offline_cached_pages'>
+          Send cached pages when offline
+        </label>
+      </div>
+      
+      <div class = 'form-check'>
+        <input type = 'checkbox' id = 'service_worker_offline_indicator' class = 'form-check-input' onchange = 'setSettingsFromUI(this);'>
+        <label class = 'form-check-label' for = 'service_worker_offline_indicator'>
+          Send offline indicator page for non-cached pages
+        </label>
+      </div>
+      
+      <div class = 'd-flex flex-sm-nowrap flex-wrap mb-2 mt-2'>
+        <label class = 'col-form-label' for = 'service_worker_max_cache_size'>
+          Max Cache Size (Infinity for no limit):
+        </label>
+        <input type = 'text' id = 'service_worker_max_cache_size' class = 'form-control ms-2' style = 'width: 10rem;' oninput = 'checkMaxCacheSizeInput();' onchange = 'setSettingsFromUI(this);'>
+      </div>
+      
+      <h3 style = 'margin-bottom: 0.8rem;'>Cache</h3>
+      
+      <div class = 'col-auto'>
+        <button class = 'btn btn-primary' onclick = 'removeAllCacheEntries();'>Clear All</button>
+        <button class = 'btn btn-primary' onclick = 'addCacheEntry(prompt("Site URL:"));'>Add Site</button>
+      </div>
+      
+      <div id = 'cache_entries' class = 'mt-2'>
         -
         <!--
           <div class = 'cache-entry'>
