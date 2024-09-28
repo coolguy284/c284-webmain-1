@@ -360,6 +360,10 @@
               mainDiv.appendChild(document.createTextNode(url));
               cache_entries.appendChild(mainDiv);
             }
+            
+            // seemingly useless reassign needed to get the trash icons to actually render
+            // eslint-disable-next-line no-self-assign
+            cache_entries.innerHTML = cache_entries.innerHTML;
           } else {
             cache_entries.textContent = 'Empty';
           }
