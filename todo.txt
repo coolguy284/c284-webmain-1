@@ -7,7 +7,7 @@ add dalton unit to unit converter
 internal library for unit conversion
 periodic table / molecular db
 fundamental particles db
-rename debug to development
+rename debug to development for docker files
 create adhd visualizer
 modtime of each html page should be the latest modtime of the script files / css files / favicon files / image / video files it contains
 srv_web_main has memory leak? (851MiB after a month or two)

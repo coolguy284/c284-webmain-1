@@ -61,6 +61,8 @@ async function serviceWorkerActivateFunc() {
     await serviceWorkerInitPromise;
   } else if (serviceWorkerInitPromise == null) {
     // somehow init func not started, should error but will ignore
+  } else if (serviceWorkerInitPromise == true) {
+    // service worker init done, so can just continue
   }
   
   // claim clients
@@ -68,7 +70,7 @@ async function serviceWorkerActivateFunc() {
   
   // delete old caches
   let cacheSet = new Set(await caches.keys());
-  cacheSet.remove(currentServiceWorkerHash);
+  cacheSet.delete(currentServiceWorkerHash);
   
   await Promise.allSettled(Array.from(cacheSet).map(x => caches.delete(x)));
   

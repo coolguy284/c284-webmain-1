@@ -23,10 +23,11 @@ async function loadSettingsFromStorage() {
     }
   } catch { /* empty */ }
   
-  let maxCacheSize = Number.isSafeInteger(fileContents?.maxCacheSize) && fileContents?.maxCacheSize >= 0 ||
+  let maxCacheSize =
+    Number.isSafeInteger(fileContents?.maxCacheSize) && fileContents?.maxCacheSize >= 0 ||
       fileContents?.maxCacheSize == Infinity ?
-    fileContents?.maxCacheSize :
-    null;
+        fileContents?.maxCacheSize :
+        null;
   
   return {
     enabled:
