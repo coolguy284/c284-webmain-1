@@ -171,7 +171,7 @@
         <button class = 'btn btn-primary' onclick = 'addCacheEntry(prompt("Site URL:"));'>Add Site</button>
       </div>
       
-      <div id = 'cache_entries' class = 'mt-2'>
+      <div id = 'cache_entries' class = 'd-flex flex-column mt-2 gap-1'>
         -
         <!--
           <div class = 'cache-entry'>
@@ -342,6 +342,7 @@
           if (cachedPages.length > 0) {
             let cacheSize = document.createElement('div');
             cacheSize.textContent = `${cachedPages.length} items`;
+            cacheSize.style.marginBottom = '0.1rem';
             cache_entries.appendChild(cacheSize);
             
             for (let url of cachedPages) {
