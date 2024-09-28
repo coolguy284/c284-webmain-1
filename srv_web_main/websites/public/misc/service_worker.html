@@ -349,7 +349,7 @@
               mainDiv.classList.add('cache-entry');
               let button = document.createElement('button');
               button.classList.add('btn', 'btn-outline-danger', 'px-1', 'py-0');
-              button.addEventListener('click', removeCacheEntry.bind(null, url));
+              button.setAttribute('onclick', `removeCacheEntry(decodeURIComponent("${encodeURIComponent(url)}"));`);
               let svg = document.createElement('svg');
               svg.classList.add('bi');
               let use = document.createElement('use');
