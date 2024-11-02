@@ -1,5 +1,8 @@
 current:
+support global privacy control on srv_web_main, old, old2, oldg
 serviceworker:
+  simulate being offline checkbox
+  auto add dnt header checkbox
   unable to see cache if worker not installed
 serviceworker: properly implement maxcachesize handling
 add dalton unit to unit converter
