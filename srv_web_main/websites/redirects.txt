@@ -22,6 +22,8 @@ FPS /strange/halloween.html                  /misc/strange/halloween.html
 FPS /misc/strange/halloween.html             /misc/strange/halloween_name_gen.html
 FPS /misc/strange/halloween_name_gen.html    /apps/halloween_name_gen.html
 
+FPS /apps/html5-temporal-conways-life/       /apps/html5-advanced-conways-life/
+
 FPS /apps/html5-time-planner/                /apps/html5-time-tracker/
 
 FPS /rectangles.html                         /misc/rectangles.html
