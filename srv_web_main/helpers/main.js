@@ -12,7 +12,7 @@ let gitSubrepos = [
   'apps/special-relativity-sim/',
   'apps/3d-gravity/',
   'apps/html5-fancy-clock/',
-  'apps/html5-temporal-conways-life/',
+  'apps/html5-advanced-conways-life/',
   'apps/3d-raymarcher/',
   'apps/inf-voxel-test/',
   'apps/html5-time-tracker/',

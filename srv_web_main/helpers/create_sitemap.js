@@ -46,7 +46,7 @@ async function createSitemap(sites, siteModTimesObj) {
     
     'apps/halloween_name_gen.html': 0.6,
     'apps/html5-time-tracker/index.html': 0.6,
-    'apps/html5-temporal-conways-life/index.html': 0.6,
+    'apps/html5-advanced-conways-life/index.html': 0.6,
     
     'apps/rectangles.html': 0.5,
     'debug/solid_color.html': 0.5,

@@ -79,9 +79,9 @@ FROM base AS production
   RUN rm html5-fancy-clock_latest_commit
   RUN git clone https://github.com/coolguy284/html5-fancy-clock.git
   
-  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-temporal-conways-life/commits?per_page=1' html5-temporal-conways-life_latest_commit
-  RUN rm html5-temporal-conways-life_latest_commit
-  RUN git clone https://github.com/coolguy284/html5-temporal-conways-life.git
+  ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/html5-advanced-conways-life/commits?per_page=1' html5-advanced-conways-life_latest_commit
+  RUN rm html5-advanced-conways-life_latest_commit
+  RUN git clone https://github.com/coolguy284/html5-advanced-conways-life.git
   
   ADD --chown=webmain:webmain 'https://api.github.com/repos/coolguy284/3d-raymarcher/commits?per_page=1' 3d-raymarcher_latest_commit
   RUN rm 3d-raymarcher_latest_commit
