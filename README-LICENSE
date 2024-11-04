@@ -1,0 +1,30 @@
+Can choose to follow either MIT or Unlicense; MIT made available in case
+Unlicense does not legally apply in your jurisdiction.
+
+Note:
+  Parts taken from elsewhere and thus (probably) does not follow the same
+  MIT+Unlicense as rest of repo:
+    file "websites/public/misc/old/tools/systemdata.html", lines 96-190,
+    file "proc_main/Dockerfile", lines 10-14, 17-20,
+    file "proc_mongodb/Dockerfile", lines 10-14, 17-27,
+    file "srv_web_main/Dockerfile", lines 12-16,
+    file "srv_web_old/Dockerfile", lines 12-16,
+    file "srv_web_old2/Dockerfile", lines 12-16,
+    file "srv_web_oldg/Dockerfile", lines 12-16, lines 18-33,
+    file "websites/public/chat/index.html", lines 65-66,
+    file "websites/public/misc/service_worker.html" lines 45-50.
+  
+  Parts copied in from template and modified / copied many times so licensing
+  unclear:
+    file "srv_web_main/Dockerfile", lines 55-163,
+    file "srv_web_old/Dockerfile", lines 20-36,
+    file "srv_web_old2/Dockerfile", lines 22-38,
+    file "srv_web_oldg/Dockerfile", lines 43-56.
+  
+  the files in "websites/public/libs/extern" that are there in the repo or
+  appear there during docker build, are files from elsewhere that the repo-wide
+  MIT+Unlicense license does not apply to. Only "README_original_urls.txt"
+  is a file written by coolguy284 and thus follows the MIT+Unlicense license.
+  
+  the files in "websites/public/misc/old/js" are files from elsewhere that
+  the repo-wide MIT+Unlicense license does not apply to.
