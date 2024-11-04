@@ -1,13 +1,13 @@
 {
   "dependencies": {
-    "bson": "^6.8.0",
+    "bson": "^6.9.0",
     "bufferutil": "^4.0.8",
     "canvas": "^2.11.2",
-    "mathjs": "^13.1.1",
+    "mathjs": "^13.2.0",
     "mime": "^4.0.4",
-    "mongodb": "^6.9.0",
-    "utf-8-validate": "^6.0.4",
-    "winston": "^3.14.2",
+    "mongodb": "^6.10.0",
+    "utf-8-validate": "^6.0.5",
+    "winston": "^3.16.0",
     "ws": "^8.18.0"
   }
 }
