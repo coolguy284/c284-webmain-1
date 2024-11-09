@@ -149,7 +149,7 @@ async function createSitemap(sites, siteModTimesObj) {
           
           let priorityEntry = pagePriority[relativeURLShort];
           
-          let priority = pagePriority[relativeURLShort].toFixed(1);
+          let priority = priorityEntry.toFixed(1);
           
           return {
             lastModDateMS,
