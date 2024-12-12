@@ -112,6 +112,8 @@ FPS /tools/rsa-new.html                      /tools/rsa_new.html
 
 FPS /tools/sha256.html                       /tools/sha.html
 
+FPS /debug/solid_color.html                  /tools/solid_color.html
+
 FPS /tools/unitconv.html                     /tools/unit_converter.html
 
 FPS /tools/uricomp.html                      /tools/uri_comp.html

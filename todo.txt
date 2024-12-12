@@ -1,4 +1,8 @@
 current:
+debug build should not run no cache builds, there should be separate no cache file debug build sh
+untracked requests shouldn't increment request counter
+  maybe not even even log request counter in first place
+c284wm special docker container to make "build_cache" folder with the github repos, and UnicodeData.txt
 support global privacy control on srv_web_main, old, old2, oldg
 serviceworker:
   simulate being offline checkbox

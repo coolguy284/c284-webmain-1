@@ -49,7 +49,6 @@ async function createSitemap(sites, siteModTimesObj) {
     'apps/html5-advanced-conways-life/index.html': 0.6,
     
     'apps/rectangles.html': 0.5,
-    'debug/solid_color.html': 0.5,
     'debug/time_syncer_2/index.html': 0.5,
     'misc/old/tools/enigma.html': 0.5,
     'misc/old/tools/systemdata.html': 0.5,
@@ -64,6 +63,7 @@ async function createSitemap(sites, siteModTimesObj) {
     'tools/rsa.html': 0.5,
     'tools/rsa_new.html': 0.5,
     'tools/sha.html': 0.5,
+    'tools/solid_color.html': 0.5,
     'tools/uri.html': 0.5,
     'tools/uri_comp.html': 0.5,
     
