@@ -44,7 +44,7 @@ module.exports = async function headMethod(requestProps) {
     );
   }
   
-  else if (requestProps.url.pathname.startsWith('/unicode/') && (match = /^\/misc\/unicode\/([Uu])\+((?:|0?[0-9A-Fa-f]|10)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
+  else if (requestProps.url.pathname.startsWith('/unicode/') && (match = /^\/unicode\/([Uu])\+((?:|0?[0-9A-Fa-f]|10)[0-9A-Fa-f]{4})$/.exec(requestProps.url.pathname))) {
     let fancyCodePoint = parseInt(match[2], 16).toString(16).toUpperCase().padStart(4, '0');
     if (match[1] == 'u' || fancyCodePoint != match[2]) {
       let newURL = new URL(requestProps.url);
