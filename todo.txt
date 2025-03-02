@@ -23,6 +23,9 @@ halloween name generator should spookify when pressing enter on input (listen fo
 fix advancedtime and calculator table elems not having a tbody
 
 tier 1:
+physics:
+  the neutrino's mass
+  room temperature superconductor
 make pefect mode for rectangles.html that covers the edges as well
 add md5 hashing and old mds like md4 to sha hasher page
 add chat page noscript tag (maybe calc page too)
