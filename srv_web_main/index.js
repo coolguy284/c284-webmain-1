@@ -51,7 +51,7 @@ if (env.PROC_MONGODB_ENABLED) {
     // initalize mongo client
     var mongodb = require('mongodb');
     
-    vars.mongoClient = new mongodb.MongoClient('mongodb://127.0.0.1');
+    vars.mongoClient = new mongodb.MongoClient('mongodb://127.0.0.1', { directConnection: true });
     
     await new Promise(r => setTimeout(r, 3000));
     await vars.mongoClient.connect();
@@ -60,7 +60,7 @@ if (env.PROC_MONGODB_ENABLED) {
     try {
       await vars.mongoClient.db().admin().command({ replSetGetStatus: {} });
       logger.info('Replica set already created');
-    } catch (e) {
+    } catch {
       await vars.mongoClient.db().admin().command({ replSetInitiate: {} });
       logger.info('Initialized replica set');
     }
