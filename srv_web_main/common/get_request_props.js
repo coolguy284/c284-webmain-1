@@ -155,6 +155,7 @@ module.exports = (httpVersion, ...args) => {
     requestProps.rawDoLogNotPriv =
       !constVars.noLogHosts.has(requestProps.host) &&
       requestProps.headers.dnt != '1' &&
+      requestProps.headers['Sec-GPC'] != '1' &&
       requestProps.cookie.dnt != '1' &&
       requestProps.headers['x-c284-nolog'] != '1';
     
