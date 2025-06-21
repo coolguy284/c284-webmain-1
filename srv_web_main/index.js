@@ -51,10 +51,31 @@ if (env.PROC_MONGODB_ENABLED) {
     // initalize mongo client
     var mongodb = require('mongodb');
     
-    vars.mongoClient = new mongodb.MongoClient('mongodb://127.0.0.1', { directConnection: true });
+    vars.mongoClient = new mongodb.MongoClient(
+      'mongodb://127.0.0.1',
+      {
+        connectTimeoutMS: 3000,
+        serverSelectionTimeoutMS: 3000,
+      }
+    );
     
-    await new Promise(r => setTimeout(r, 3000));
-    await vars.mongoClient.connect();
+    try {
+      await vars.mongoClient.connect();
+    } catch {
+      logger.error('MongoDB non direct connection error, attempting a direct connection');
+      
+      vars.mongoClient = new mongodb.MongoClient(
+        'mongodb://127.0.0.1',
+        {
+          connectTimeoutMS: 3000,
+          serverSelectionTimeoutMS: 3000,
+          directConnection: true,
+        }
+      );
+      
+      await vars.mongoClient.connect();
+    }
+    
     logger.info('Connected to mongodb server');
     
     try {
