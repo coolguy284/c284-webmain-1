@@ -1,9 +1,9 @@
 ARG branch=debug
 
-FROM ubuntu:22.04 AS base
+FROM ubuntu:24.04 AS base
 STOPSIGNAL SIGINT
 
-RUN adduser webmain -u 2201
+RUN useradd webmain -u 2201 -m
 WORKDIR /home/webmain
 
 RUN apt-get update && apt-get upgrade -y && apt-get install curl git -y

@@ -1,7 +1,7 @@
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 STOPSIGNAL SIGINT
 
-RUN adduser webmain -u 2201
+RUN useradd webmain -u 2201 -m
 WORKDIR /home/webmain
 
 RUN apt-get update && apt-get upgrade -y && apt-get install curl git -y
