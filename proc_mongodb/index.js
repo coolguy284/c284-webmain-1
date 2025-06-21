@@ -24,9 +24,12 @@
   
   
   // start reverse proxy
-  var srv_web_main_addrs = new Set((await dns.promises.lookup('srv_web_main', { all: true })).map(x => x.family == 4 ? '::ffff:' + x.address : x.address));
+  var srv_web_main_addrs = null;
   var serverConns = new Set();
-  var server = net.createServer(conn => {
+  var server = net.createServer(async conn => {
+    if (srv_web_main_addrs == null) {
+      srv_web_main_addrs = new Set((await dns.promises.lookup('srv_web_main', { all: true })).map(x => x.family == 4 ? '::ffff:' + x.address : x.address));
+    }
     if (!srv_web_main_addrs.has(conn.remoteAddress)) {
       console.log(`{"t":{"$date":"${new Date().toISOString().slice(0, -1)}+00:00"},"ctx":"c284-node","c":"MAIN","msg":"Error: Invalid connection, ${conn.remoteAddress}:${conn.remotePort} is not permitted to connect to the reverse proxy."}`);
       conn.destroy();
