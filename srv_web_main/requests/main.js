@@ -6,7 +6,10 @@ var { getReqLogStr } = require('../common/get_request_misc');
 var getRequestProps = require('../common/get_request_props');
 var redirects = require('../common/redirects');
 var resp = require('../common/resp');
-var { constVars: { _otherServerInvalidHeaders }, vars: commonVars } = require('../common/vars');
+var {
+  constVars: { _otherServerInvalidHeaders, _redirectStatusCodes },
+  vars: commonVars,
+} = require('../common/vars');
 
 var methods = {
   options: require('./options'),
@@ -79,16 +82,36 @@ module.exports = async function main(httpVersion, ...args) {
           setHost: false,
           timeout: 10000,
         }, async res => {
-          await resp.headers(requestProps, res.statusCode, {
-            ...(
-              requestProps.httpVersion == 1 ?
-                res.headers :
-                Object.fromEntries(
-                  Object.entries(res.headers)
-                    .filter(x => !resp._httpInvalidHttp2Headers.has(x[0].toLowerCase()))
-                )
-            ),
-          });
+          let responseHeaders =
+            requestProps.httpVersion == 1 ?
+              res.headers :
+              Object.fromEntries(
+                Object.entries(res.headers)
+                  .filter(x => !resp._httpInvalidHttp2Headers.has(x[0].toLowerCase()))
+              );
+          
+          // if other server responds with a redirect, and it is intended to be a relative redirect
+          // (same host), then translate the location field as appropriate
+          
+          if (_redirectStatusCodes.has(res.statusCode) && 'location' in responseHeaders) {
+            let relativeRedirectStart = `http://${sendHeaders.host}/`;
+            
+            if (responseHeaders.location.startsWith(relativeRedirectStart)) {
+              let relativeRedirectPart = responseHeaders.location.slice(relativeRedirectStart.length);
+              
+              let newURL = new URL(requestProps.url);
+              
+              if (requestProps.otherServer.isHost) {
+                newURL.pathname = `/${relativeRedirectPart}`;
+              } else {
+                newURL.pathname = `${requestProps.otherServer.pathnamePrefix}${relativeRedirectPart}`;
+              }
+              
+              responseHeaders.location = newURL.href;
+            }
+          }
+          
+          await resp.headers(requestProps, res.statusCode, { ...responseHeaders });
           await resp.stream(requestProps, res);
         });
         commonVars.httpServerProxyConns.add(srvReq);
@@ -100,7 +123,7 @@ module.exports = async function main(httpVersion, ...args) {
       // main server processing
       
       if (!requestProps.otherServerOnline) {
-        // if server is offline but a request is sent to it show an error message
+        // if server is offline but a request is sent to it, show an error message
         if (requestProps.otherServer) {
           await resp.s502_subsrv_offline(requestProps);
           return;

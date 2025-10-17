@@ -58,6 +58,7 @@ module.exports = exports = {
     otherServerURLStartsArr: null,
     
     _otherServerInvalidHeaders: new Set(['content-length', 'x-c284-nolog']),
+    _redirectStatusCodes: new Set([301, 302, 303, 307, 308]),
   },
   
   vars: {

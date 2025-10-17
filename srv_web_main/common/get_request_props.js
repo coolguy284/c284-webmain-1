@@ -137,6 +137,7 @@ module.exports = (httpVersion, ...args) => {
       type: isHost ? 'host' : 'prefix',
       isHost,
       isPrefix,
+      pathnamePrefix: otherServerURLStartStr,
       host: otherServerInfo.host,
       port: otherServerInfo.port,
       forceHttps: otherServerInfo.forceHttps,
