@@ -198,7 +198,7 @@ module.exports = exports = {
       mtime = modtimes[shortPath] ? new Date(modtimes[shortPath]) : stats.mtime;
     }
     
-    var mimeType = mime.getType(filename);
+    var mimeType = mime.getType(filename) || 'application/octet-stream';
     mimeType = mimeType ? `${mimeType}${mimeType.split('/')[0] == 'text' || mimeType == 'application/javascript' ? '; charset=utf-8' : ''}` : null;
     
     // range headers
