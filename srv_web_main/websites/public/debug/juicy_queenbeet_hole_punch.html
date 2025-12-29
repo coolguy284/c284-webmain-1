@@ -42,21 +42,74 @@
       
       <br>
       
-      <label class = 'form-control mt-3'>
-        Seedless to Nay Achievement Gotten:
-        <input type = 'checkbox'>
-      </label>
+      <div class = 'form-check'>
+        <label for = 'seedless_to_nay_gotten' class = 'form-check-label'>
+          Seedless to Nay Achievement Gotten
+        </label>
+        
+        <input type = 'checkbox' id = 'seedless_to_nay_gotten' class = 'form-check-input'>
+      </div>
       
       <br>
       
-      <button class = 'btn btn-primary mt-3'>Calculate</button>
+      <button class = 'btn btn-primary'>Calculate</button>
       
       <p class = 'mt-3'>Results:</p>
       <p id = 'results'></p>
     </div>
     
     <script type = 'module'>
+      /**
+       * The length of ticks a Juicy Queenbeet is mature when the "Seedless to nay" achievment is not unlocked.
+       */
+      const JQB_MATURE_TICKS_NO_STN = 17;
       
+      /**
+       * The length of ticks a Juicy Queenbeet is mature when the "Seedless to nay" achievment is unlocked.
+       */
+      const JQB_MATURE_TICKS_STN = 19;
+      
+      /**
+       * The [x, y] offsets that make up the Moore neighborhood of a point.
+       */
+      const MOORE_NEIGHBORHOOD_OFFSETS = [
+        [-1, -1],
+        [-1, 0],
+        [-1, 1],
+        [0, -1],
+        [0, 1],
+        [1, -1],
+        [1, 0],
+        [1, 1],
+      ];
+      
+      /**
+       * Parses a string containing Juicy Queenbeet age data into an intermediate representation.
+       */
+      function parseJQBData(jqbData) {
+        const garden2d =
+          jqbData
+            .split('\n')
+            .filter(x => x != '')
+            .map(
+              x =>
+                x
+                  .split(/ +/g)
+                  .filter(x => x != '')
+                  .map(y => {
+                    if (y.startsWith('-')) {
+                      return Number(y.slice(1)) + MATURE_TICKS;
+                    } else {
+                      return Number(y);
+                    }
+                  })
+            )
+        
+        return {
+          garden: garden2d.flat(),
+          gardenWidth: garden2d[0].length,
+        }
+      }
     </script>
   </body>
 </html>
