@@ -126,7 +126,7 @@
        * }
        */
       function parseJQBData(seedlessToNayUnlocked, jqbData) {
-        const garden2d =
+        const garden2dWithLineNums =
           jqbData
             .split('\n')
             .map((line, index) => [index + 1, line]) // map to [line number, content]
@@ -170,11 +170,11 @@
                         ) +
                           ticksTillNextStage;
                     }
-                  })
+                  }),
               ]
             );
         
-        const gardenRowLengths = garden2d.map(([lineNumber, line, row]) => [lineNumber, line, row.length]);
+        const gardenRowLengths = garden2dWithLineNums.map(([lineNumber, line, row]) => [lineNumber, line, row.length]);
         
         if (gardenRowLengths.length > 1) {
           const firstRowLength = gardenRowLengths[0][2];
@@ -188,11 +188,10 @@
           }
         }
         
+        const garden2d = garden2dWithLineNums.map(([_lineNumber, _line, row]) => row);
+        
         return {
-          garden:
-            garden2d
-              .map(([_lineNumber, _line, row]) => row)
-              .flat(),
+          garden: garden2d.flat(),
           gardenWidth: garden2d[0].length,
         }
       }
