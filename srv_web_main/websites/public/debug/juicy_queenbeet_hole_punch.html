@@ -87,23 +87,52 @@
       
       /**
        * Parses a string containing Juicy Queenbeet age data into an intermediate representation.
+       * 
+       * @param jqbData the string containing Juicy Queenbeet age data. Format:
+       * Rectangular grid of entries, seperated by spaces horizontally and newlines vertically.
+       * Each entry is an integer representing garden ticks till next stage. If plant is in bloom phase, a "B" is prefixed to the integer.
+       * 
+       * @return {
+       *   garden: Array<Integer>,
+       *     Each entry in the array is the ticks till decay of a single Queenbeet in the garden. Array is 1-dimensional, and contents are left-to-right, top-to-bottom representation of garden.
+       *   gardenWidth: integer,
+       *     Width of the garden.
+       * }
        */
       function parseJQBData(jqbData) {
         const garden2d =
           jqbData
             .split('\n')
-            .filter(x => x != '')
+            .map((line, index) => [index + 1, line]) // map to [line number, content]
+            .filter(([_lineNumber, line]) => line != '')
             .map(
-              x =>
-                x
+              ([lineNumber, line]) =>
+                line
                   .split(/ +/g)
-                  .filter(x => x != '')
-                  .map(y => {
-                    if (y.startsWith('-')) {
-                      return Number(y.slice(1)) + MATURE_TICKS;
+                  .filter(plantAgeData => plantAgeData != '')
+                  .map(plantAgeData => {
+                    let numberString;
+                    let beforeMaturity;
+                    
+                    if (y.startsWith('B')) {
+                      numberString = y.slice(1);
+                      beforeMaturity = true;
                     } else {
-                      return Number(y);
+                      numberString = y;
+                      beforeMaturity = false;
                     }
+                    
+                    const ticksTillNextStage = Number(numberString);
+                    
+                    if (!Number.isSafeInteger(ticksTillNextStage)) {
+                      throw new Error(`plantAgeData invalid: not small integer: ${JSON.stringify(ticksTillNextStage)}`);
+                    }
+                    
+                    if (ticksTillNextStage < 0 || ticksTillNextStage > 99) {
+                      throw new Error(`plantAgeData invalid: not in range: ${JSON.stringify(ticksTillNextStage)}`);
+                    }
+                    
+                    return (beforeMaturity ? MATURE_TICKS : 0) + ticksTillNextStage;
                   })
             )
         
