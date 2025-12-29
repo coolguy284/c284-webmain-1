@@ -49,6 +49,7 @@ update localstorage editor to refresh view when checking auto get/set
 jqb calculator:
   fancify ui
   jsdoc all functions, comment code
+if production build fails, try special production no-git-add branch that uses the debug section of dockerfile for git building; before then trying no cache builds of production and production no-git-add
 
 tier 2:
 rename /data/UnicodeData.txt to /unicode/UnicodeData.txt
