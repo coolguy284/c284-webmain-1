@@ -284,8 +284,10 @@
         const maxHolesPossible = maxHolesPossibleX * maxHolesPossibleY;
         const matureTicks = getMatureTicks(seedlessToNayUnlocked);
         
+        const holePunchCoordSets = generateUpToHolePunchCoords(garden.length, maxHolesPossible);
+        
         const holeMutationTicks =
-          generateUpToHolePunchCoords(garden.length, maxHolesPossible)
+          holePunchCoordSets
             .map(punchCoords => {
               const punchedGarden = punchHoles(garden, punchCoords);
               
@@ -354,7 +356,10 @@
             }
           }, null);
         
-        return bestPunchSetups;
+        return {
+          setupsChecked: holePunchCoordSets.length,
+          ...bestPunchSetups,
+        };
       }
       
       function visualizePunchCoords(gardenWidth, gardenHeight, punchCoords) {
@@ -386,15 +391,21 @@
         const { garden, gardenWidth } = parseJQBData(seedlessToNayUnlocked, jqbData);
         const gardenHeight = getGardenHeight(garden, gardenWidth);
         
-        const { totalMutationTicks, punchCoordSets } = findMaxMutateSetups(seedlessToNayUnlocked, garden, gardenWidth);
+        const {
+          setupsChecked,
+          totalMutationTicks,
+          punchCoordSets,
+        } = findMaxMutateSetups(seedlessToNayUnlocked, garden, gardenWidth);
         
         let result = '';
         
-        result += `Mutation Ticks: ${totalMutationTicks}`;
+        result += `Setups Checked: ${setupsChecked}\n`;
+        result += `Maximal Tick Setups: ${punchCoordSets.length}\n`;
+        result += `Mutation Ticks: ${totalMutationTicks}\n`;
         result += '\n';
         
         for (const punchCoords of punchCoordSets) {
-          result += visualizePunchCoords(gardenWidth, gardenHeight, punchCoords);
+          result += visualizePunchCoords(gardenWidth, gardenHeight, punchCoords) + '\n';
           result += '\n';
         }
         
