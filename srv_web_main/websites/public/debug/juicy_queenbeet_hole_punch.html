@@ -38,7 +38,7 @@
       
       <p>Calculates optimal hole-punch locations for a 6x6 field of Queenbeets to maximize Juicy Queenbeet spawn chance ticks in the game Cookie Clicker.</p>
       
-      <textarea id = 'input' class = 'form-control'></textarea>
+      <textarea id = 'jqb_data' class = 'form-control'></textarea>
       
       <br>
       
@@ -52,13 +52,17 @@
       
       <br>
       
-      <button class = 'btn btn-primary'>Calculate</button>
+      <button id = 'calculate_btn' class = 'btn btn-primary'>Calculate</button>
       
       <p class = 'mt-3'>Results:</p>
       <p id = 'results'></p>
     </div>
     
     <script type = 'module'>
+      const JQB_DATA_ELEM = jqb_data;
+      const RESULT_ELEM = results;
+      const CALCULATE_BTN = calculate_btn;
+      
       // Next 2 constants might need to be incremented by 1
       
       /**
@@ -90,6 +94,8 @@
         [1, 0],
         [1, 1],
       ];
+      
+      class InputError extends Error {}
       
       function getMatureTicks(seedlessToNayUnlocked) {
         return seedlessToNayUnlocked ?
@@ -144,11 +150,11 @@
                       const ticksTillNextStage = Number(numberString);
                       
                       if (!Number.isSafeInteger(ticksTillNextStage)) {
-                        throw new Error(`plantAgeData invalid: not small integer: ${JSON.stringify(ticksTillNextStage)} (line #${lineNumber}: ${JSON.stringify(line)})`);
+                        throw new InputError(`plantAgeData invalid: not small integer: ${JSON.stringify(ticksTillNextStage)} (line #${lineNumber}: ${JSON.stringify(line)})`);
                       }
                       
                       if (ticksTillNextStage < 0) {
-                        throw new Error(`plantAgeData invalid: not in range: ${JSON.stringify(ticksTillNextStage)} (line #${lineNumber}: ${JSON.stringify(line)})`);
+                        throw new InputError(`plantAgeData invalid: not in range: ${JSON.stringify(ticksTillNextStage)} (line #${lineNumber}: ${JSON.stringify(line)})`);
                       }
                       
                       return (
@@ -171,7 +177,7 @@
             const [ lineNumber, line, rowLength ] = gardenRowLengths[i];
             
             if (rowLength != firstRowLength) {
-              throw new Error(`jqbData invalid: row length ${rowLength} != first row length ${firstRowLength} (line #${lineNumber}: ${JSON.stringify(line)})`);
+              throw new InputError(`jqbData invalid: row length ${rowLength} != first row length ${firstRowLength} (line #${lineNumber}: ${JSON.stringify(line)})`);
             }
           }
         }
@@ -389,6 +395,18 @@
         
         return result;
       }
+      
+      CALCULATE_BTN.addEventListener('click', () => {
+        try {
+          RESULT_ELEM.textContent = parseFindPrintMutateSetups(JQB_DATA_ELEM.value);
+        } catch (err) {
+          if (!(err instanceof InputError)) {
+            console.error(err);
+          }
+          
+          alert(err.toString());
+        }
+      });
     </script>
   </body>
 </html>
