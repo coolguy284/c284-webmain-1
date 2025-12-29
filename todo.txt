@@ -46,6 +46,9 @@ check if x-robots-tag: noindex, nofollow, noarchive, nocache, noimageindex, nood
 add bootstrap credit
 rename /misc/status.html to /misc/server_status.html and add appropriate redirect
 update localstorage editor to refresh view when checking auto get/set
+jqb calculator:
+  fancify ui
+  jsdoc all functions, comment code
 
 tier 2:
 rename /data/UnicodeData.txt to /unicode/UnicodeData.txt

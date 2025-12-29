@@ -44,10 +44,10 @@
       
       <div class = 'form-check'>
         <label for = 'seedless_to_nay_gotten' class = 'form-check-label'>
-          Seedless to Nay Achievement Gotten
+          Seedless to Nay Achievement Unlocked
         </label>
         
-        <input type = 'checkbox' id = 'seedless_to_nay_gotten' class = 'form-check-input'>
+        <input type = 'checkbox' id = 'seedless_to_nay_unlocked' class = 'form-check-input'>
       </div>
       
       <br>
@@ -63,16 +63,22 @@
       
       /**
        * The length of ticks a Juicy Queenbeet is mature when the "Seedless to nay" achievment is not unlocked.
+       * @constant
+       * @type {integer}
        */
       const JQB_MATURE_TICKS_NO_STN = 16; // Might be 17
       
       /**
        * The length of ticks a Juicy Queenbeet is mature when the "Seedless to nay" achievment is unlocked.
+       * @constant
+       * @type {integer}
        */
       const JQB_MATURE_TICKS_STN = 19; // Might be 20
       
       /**
        * The [x, y] offsets that make up the Moore neighborhood of a point.
+       * @constant
+       * @type {Array<Array<integer>>}
        */
       const MOORE_NEIGHBORHOOD_OFFSETS = [
         [-1, -1],
@@ -85,61 +91,303 @@
         [1, 1],
       ];
       
+      function getMatureTicks(seedlessToNayUnlocked) {
+        return seedlessToNayUnlocked ?
+          JQB_MATURE_TICKS_STN :
+          JQB_MATURE_TICKS_NO_STN;
+      }
+      
       /**
-       * Parses a string containing Juicy Queenbeet age data into an intermediate representation.
+       * Parses a string containing Juicy Queenbeet age data into an intermediate representation. Errors if string is invalid.
        * 
-       * @param jqbData the string containing Juicy Queenbeet age data. Format:
+       * @param {Boolean} seedlessToNayUnlocked - True if achievement "Seedless to nay" is unlocked.
+       * 
+       * @param {string} jqbData - The string containing Juicy Queenbeet age data. Format:
        * Rectangular grid of entries, seperated by spaces horizontally and newlines vertically.
-       * Each entry is an integer representing garden ticks till next stage. If plant is in bloom phase, a "B" is prefixed to the integer.
+       * Each entry is an integer representing garden ticks till next stage. If plant is in bloom phase, a "B" is prefixed to the integer. If the plant is not a Queenbeet or is empty, an "-" is used and no integer is included.
        * 
-       * @return {
-       *   garden: Array<Integer>,
-       *     Each entry in the array is the ticks till decay of a single Queenbeet in the garden. Array is 1-dimensional, and contents are left-to-right, top-to-bottom representation of garden.
+       * @returns {{ garden: Array<integer>, gardenWidth: integer }} {
+       *   garden: Array<integer | null>,
+       *     Each entry in the array is the ticks till decay of a single Queenbeet in the garden, or null if there is no Queenbeet there. Array is 1-dimensional, and contents are left-to-right, top-to-bottom representation of garden.
        *   gardenWidth: integer,
        *     Width of the garden.
        * }
        */
-      function parseJQBData(jqbData) {
+      function parseJQBData(seedlessToNayUnlocked, jqbData) {
         const garden2d =
           jqbData
             .split('\n')
             .map((line, index) => [index + 1, line]) // map to [line number, content]
             .filter(([_lineNumber, line]) => line != '')
             .map(
-              ([lineNumber, line]) =>
+              ([lineNumber, line]) => [
+                lineNumber,
+                line,
                 line
                   .split(/ +/g)
                   .filter(plantAgeData => plantAgeData != '')
                   .map(plantAgeData => {
-                    let numberString;
-                    let beforeMaturity;
-                    
-                    if (y.startsWith('B')) {
-                      numberString = y.slice(1);
-                      beforeMaturity = true;
+                    if (plantAgeData == '-') {
+                      return null;
                     } else {
-                      numberString = y;
-                      beforeMaturity = false;
+                      let numberString;
+                      let beforeMaturity;
+                      
+                      if (y.startsWith('B')) {
+                        numberString = y.slice(1);
+                        beforeMaturity = true;
+                      } else {
+                        numberString = y;
+                        beforeMaturity = false;
+                      }
+                      
+                      const ticksTillNextStage = Number(numberString);
+                      
+                      if (!Number.isSafeInteger(ticksTillNextStage)) {
+                        throw new Error(`plantAgeData invalid: not small integer: ${JSON.stringify(ticksTillNextStage)} (line #${lineNumber}: ${JSON.stringify(line)})`);
+                      }
+                      
+                      if (ticksTillNextStage < 0) {
+                        throw new Error(`plantAgeData invalid: not in range: ${JSON.stringify(ticksTillNextStage)} (line #${lineNumber}: ${JSON.stringify(line)})`);
+                      }
+                      
+                      return (
+                          beforeMaturity ?
+                            getMatureTicks(seedlessToNayUnlocked) :
+                            0
+                        ) +
+                          ticksTillNextStage;
                     }
-                    
-                    const ticksTillNextStage = Number(numberString);
-                    
-                    if (!Number.isSafeInteger(ticksTillNextStage)) {
-                      throw new Error(`plantAgeData invalid: not small integer: ${JSON.stringify(ticksTillNextStage)}`);
-                    }
-                    
-                    if (ticksTillNextStage < 0 || ticksTillNextStage > 99) {
-                      throw new Error(`plantAgeData invalid: not in range: ${JSON.stringify(ticksTillNextStage)}`);
-                    }
-                    
-                    return (beforeMaturity ? MATURE_TICKS : 0) + ticksTillNextStage;
                   })
-            )
+              ]
+            );
+        
+        const gardenRowLengths = garden2d.map(([lineNumber, line, row]) => [lineNumber, line, row.length]);
+        
+        if (gardenRowLengths.length > 1) {
+          const firstRowLength = gardenRowLengths[0][2];
+          
+          for (let i = 1; i < gardenRowLengths.length; i++) {
+            const [ lineNumber, line, rowLength ] = gardenRowLengths[i];
+            
+            if (rowLength != firstRowLength) {
+              throw new Error(`jqbData invalid: row length ${rowLength} != first row length ${firstRowLength} (line #${lineNumber}: ${JSON.stringify(line)})`);
+            }
+          }
+        }
         
         return {
-          garden: garden2d.flat(),
+          garden:
+            garden2d
+              .map(([_lineNumber, _line, row]) => row)
+              .flat(),
           gardenWidth: garden2d[0].length,
         }
+      }
+      
+      /**
+       * Returns the amount of ticks till decay of the plant that will last the longest before decaying.
+       * 
+       * @param {Array<integer>} garden - The ticks till decay of every Queenbeet in the garden.
+       * 
+       * @returns {integer} The ticks till decay of the plant that will last the longest before decaying.
+       */
+      function getMaxLife(garden) {
+        return garden.reduce((a, c) => Math.max(a, c));
+      }
+      
+      /**
+       * Returns the amount of ticks till decay of the plant that will last the shortest before decaying.
+       * 
+       * @param {Array<integer>} garden - The ticks till decay of every Queenbeet in the garden.
+       * 
+       * @returns {integer} The ticks till decay of the plant that will last the shortest before decaying.
+       */
+      function getMinLife(garden) {
+        return garden.reduce((a, c) => Math.min(a, c));
+      }
+      
+      function generateHolePunchCoords(gardenSize, holeCount) {
+        if (holeCount == 0) {
+          return [[]];
+        } else if (holeCount == 1) {
+          return new Array(gardenSize - (holeCount - 1))
+            .fill()
+            .map((_, i) => [i]);
+        } else {
+          return new Array(gardenSize - (holeCount - 1))
+            .fill()
+            .map((_, i) => {
+              return generateHolePunchCoords(gardenSize - i - 1, holeCount - 1)
+                .map(holeList => {
+                  return [
+                    i,
+                    ...holeList.map(hole => hole + i + 1)
+                  ];
+                });
+            })
+            .flat();
+        }
+      }
+      
+      function generateUpToHolePunchCoords(gardenSize, maxHoleCount) {
+        return new Array(maxHoleCount + 1)
+          .fill()
+          .map((_, holeCount) => generateHolePunchCoords(gardenSize, holeCount))
+          .flat();
+      }
+      
+      function punchHoles(garden, punchCoords) {
+        let result = [ ...garden ];
+        
+        for (const coord of punchCoords) {
+          result[coord] = null;
+        }
+        
+        return result;
+      }
+      
+      function getMooreNeighborhoodPlots(garden, gardenWidth, coordX, coordY) {
+        return MOORE_NEIGHBORHOOD_OFFSETS
+          .map(
+            ([ deltaX, deltaY ]) =>
+              garden[(coordX + deltaX) + (coordY + deltaY) * gardenWidth]
+          );
+      }
+      
+      function splitCoordToXY(gardenWidth, coord) {
+        return {
+          coordX: coord % gardenWidth,
+          coordY: Math.floor(coord / gardenWidth),
+        };
+      }
+      
+      function getGardenHeight(garden, gardenWidth) {
+        return Math.round(garden.length / gardenWidth);
+      }
+      
+      function findMaxMutateSetups(seedlessToNayUnlocked, garden, gardenWidth) {
+        const gardenHeight = getGardenHeight(garden, gardenWidth);
+        const maxHolesPossibleX = Math.floor((gardenWidth - 1) / 2);
+        const maxHolesPossibleY = Math.floor((gardenHeight - 1) / 2);
+        const maxHolesPossible = maxHolesPossibleX * maxHolesPossibleY;
+        const matureTicks = getMatureTicks(seedlessToNayUnlocked);
+        
+        const holeMutationTicks =
+          generateUpToHolePunchCoords(garden.length, maxHolesPossible)
+            .map(punchCoords => {
+              const punchedGarden = punchHoles(garden, punchCoords);
+              
+              let totalMutationTicks = 0;
+              
+              for (const coord of punchCoords) {
+                const { coordX, coordY } = splitCoordToXY(gardenWidth, coord);
+                
+                // Check basic bounds on hole
+                
+                if (coordX < 1 || coordX > gardenWidth - 2) {
+                  // bad hole
+                  continue;
+                }
+                
+                if (coordY < 1 || coordY > gardenHeight - 2) {
+                  // bad hole
+                  continue;
+                }
+                
+                // Get Moore neighborhood of hole
+                
+                const mooreGarden = getMooreNeighborhoodPlots(punchedGarden, gardenWidth, coordX, coordY);
+                
+                // Check that every plot around is valid
+                
+                if (mooreGarden.some(life => life == null)) {
+                  // bad hole
+                  continue;
+                }
+                
+                // Hole passes preliminary checks, now calculate life
+                
+                const maxLife = getMaxLife(mooreGarden);
+                let mutationTicks = getMinLife(mooreGarden);
+                
+                if (maxLife > matureTicks) {
+                  mutationTicks -= maxLife - matureTicks;
+                }
+                
+                if (mutationTicks < 0) {
+                  mutationTicks = 0;
+                }
+                
+                totalMutationTicks += mutationTicks;
+              }
+              
+              return {
+                punchCoords,
+                totalMutationTicks,
+              };
+            });
+        
+        const bestPunchSetups =
+          holeMutationTicks.reduce((a, c) => {
+            if (a == null || c.totalMutationTicks > a.totalMutationTicks) {
+              return {
+                totalMutationTicks: c.totalMutationTicks,
+                punchCoordSets: [c.punchCoords],
+              };
+            } else if (c.totalMutationTicks == a.totalMutationTicks) {
+              a.punchCoordSets.push(c.punchCoords);
+              return a;
+            } else {
+              return a;
+            }
+          }, null);
+        
+        return bestPunchSetups;
+      }
+      
+      function visualizePunchCoords(gardenWidth, gardenHeight, punchCoords) {
+        let visualGarden =
+          new Array(gardenHeight)
+          .fill()
+          .map(
+            () =>
+              new Array(gardenWidth)
+                .fill('Q')
+          );
+        
+        for (const coord of punchCoords) {
+          const { coordX, coordY } = splitCoordToXY(gardenWidth, coord);
+          
+          visualGarden[coordY][coordX] = '-';
+        }
+        
+        return visualGarden
+          .map(
+              visualGardenRow =>
+                visualGardenRow
+                  .join('')
+          )
+          .join('\n');
+      }
+
+      function parseFindPrintMutateSetups(jqbData) {
+        const { garden, gardenWidth } = parseJQBData(jqbData);
+        const gardenHeight = getGardenHeight(garden, gardenWidth);
+        
+        const { totalMutationTicks, punchCoordSets } = findMaxMutateSetups(garden, gardenWidth);
+        
+        let result = '';
+        
+        result += `Mutation Ticks: ${totalMutationTicks}`;
+        result += '\n';
+        
+        for (const punchCoords of punchCoordSets) {
+          result += visualizePunchCoords(gardenWidth, gardenHeight, punchCoords);
+          result += '\n';
+        }
+        
+        return result;
       }
     </script>
   </body>
