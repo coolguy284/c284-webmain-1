@@ -1,6 +1,6 @@
 {
   "name": "c284-webmain-1-srv_web_main",
-  "version": "1.6.210",
+  "version": "1.6.210.1",
   "description": "Main node.js server for c284-webmain-1.",
   "main": "index.js",
   "scripts": {
@@ -27,13 +27,13 @@
   "license": "MIT",
   "dependencies": {
     "bson": "^7.0.0",
-    "bufferutil": "^4.0.9",
+    "bufferutil": "^4.1.0",
     "canvas": "^3.2.0",
     "mathjs": "^15.1.0",
     "mime": "^4.1.0",
     "mongodb": "^7.0.0",
-    "utf-8-validate": "^6.0.5",
-    "winston": "^3.18.3",
+    "utf-8-validate": "^6.0.6",
+    "winston": "^3.19.0",
     "ws": "^8.18.3"
   },
   "repository": {

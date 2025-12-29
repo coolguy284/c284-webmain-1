@@ -6,6 +6,6 @@ echo -n ' --build-arg NODE_MAJOR_VER=25'
 echo -n ' --build-arg NODE_FULL_VER=25.2.1'
 
 if [ "$path_name" = "srv_web_oldg" ]; then
-  echo -n ' --build-arg NGINX_VER=1.29.3'
+  echo -n ' --build-arg NGINX_VER=1.29.4'
   echo -n ' --build-arg ZLIB_VER=1.3.1'
 fi
