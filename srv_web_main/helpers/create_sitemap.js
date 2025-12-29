@@ -77,6 +77,7 @@ async function createSitemap(sites, siteModTimesObj) {
     
     'debug/screen_resolutions.html': 0.2,
     
+    'debug/juicy_queenbeet_hole_punch.html': 0.1,
     'debug/latency_test.html': 0.1,
     'debug/localstorage_editor.html': 0.1,
     'debug/simple_page.html': 0.1,
