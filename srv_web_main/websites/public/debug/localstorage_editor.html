@@ -61,7 +61,7 @@
         </div>
         
         <div class = 'col-auto mb-2'>
-          <label class = 'btn btn-outline-primary' for = 'auto_get_set'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_get_set' oninput = 'GeneralUpdate();' checked>Auto Get and Set</label>
+          <label class = 'btn btn-outline-primary' for = 'auto_get_set'><input type = 'checkbox' class = 'form-check-input me-2' value = '' id = 'auto_get_set' checked>Auto Get and Set</label>
         </div>
       </div>
       
@@ -179,7 +179,7 @@
           case 'localstorage':
           case 'sessionstorage': {
             let value = (storageType == 'localstorage' ? localStorage : sessionStorage).getItem(fieldName);
-            if (value) {
+            if (value != null) {
               field_value.value = TextToTextArea(value);
             } else {
               if (!field_value.classList.contains('is-invalid')) field_value.classList.add('is-invalid');
@@ -230,12 +230,6 @@
             break;
         }
         TypeUpdate();
-      }
-      
-      var lastUpdated = 1;
-      
-      function GeneralUpdate() {
-        if (lastUpdated == 1) ;
       }
       
       onload = () => {
