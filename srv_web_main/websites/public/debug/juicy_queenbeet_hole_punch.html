@@ -23,6 +23,11 @@
         font-family: monospace;
         height: 200px;
       }
+      
+      #results {
+        font-family: monospace;
+        white-space: pre;
+      }
     </style>
   </head>
   
@@ -60,8 +65,9 @@
     
     <script type = 'module'>
       const JQB_DATA_ELEM = jqb_data;
-      const RESULT_ELEM = results;
+      const STN_UNLOCKED_CHECK = seedless_to_nay_unlocked;
       const CALCULATE_BTN = calculate_btn;
+      const RESULT_ELEM = results;
       
       // Next 2 constants might need to be incremented by 1
       
@@ -139,11 +145,11 @@
                       let numberString;
                       let beforeMaturity;
                       
-                      if (y.startsWith('B')) {
-                        numberString = y.slice(1);
+                      if (plantAgeData.startsWith('B')) {
+                        numberString = plantAgeData.slice(1);
                         beforeMaturity = true;
                       } else {
-                        numberString = y;
+                        numberString = plantAgeData;
                         beforeMaturity = false;
                       }
                       
@@ -376,12 +382,12 @@
           )
           .join('\n');
       }
-
-      function parseFindPrintMutateSetups(jqbData) {
-        const { garden, gardenWidth } = parseJQBData(jqbData);
+      
+      function parseFindPrintMutateSetups(seedlessToNayUnlocked, jqbData) {
+        const { garden, gardenWidth } = parseJQBData(seedlessToNayUnlocked, jqbData);
         const gardenHeight = getGardenHeight(garden, gardenWidth);
         
-        const { totalMutationTicks, punchCoordSets } = findMaxMutateSetups(garden, gardenWidth);
+        const { totalMutationTicks, punchCoordSets } = findMaxMutateSetups(seedlessToNayUnlocked, garden, gardenWidth);
         
         let result = '';
         
@@ -398,7 +404,7 @@
       
       CALCULATE_BTN.addEventListener('click', () => {
         try {
-          RESULT_ELEM.textContent = parseFindPrintMutateSetups(JQB_DATA_ELEM.value);
+          RESULT_ELEM.textContent = parseFindPrintMutateSetups(STN_UNLOCKED_CHECK.checked, JQB_DATA_ELEM.value);
         } catch (err) {
           if (!(err instanceof InputError)) {
             console.error(err);
