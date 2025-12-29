@@ -18,6 +18,12 @@
     <meta name = 'og:url' content = 'https://coolguy284.com/tools/juicy_queenbeet_hole_punch.html'>
     
     <link rel = 'stylesheet' href = '/libs/extern/bootstrap_5.0.0.min.css'>
+    <style>
+      textarea {
+        font-family: monospace;
+        height: 200px;
+      }
+    </style>
   </head>
   
   <body>
@@ -32,12 +38,25 @@
       
       <p>Calculates optimal hole-punch locations for a 6x6 field of Queenbeets to maximize Juicy Queenbeet spawn chance ticks in the game Cookie Clicker.</p>
       
-      <textarea id = 'input'></textarea><br>
+      <textarea id = 'input' class = 'form-control'></textarea>
+      
+      <br>
+      
+      <label class = 'form-control mt-3'>
+        Seedless to Nay Achievement Gotten:
+        <input type = 'checkbox'>
+      </label>
+      
+      <br>
       
       <button class = 'btn btn-primary mt-3'>Calculate</button>
       
       <p class = 'mt-3'>Results:</p>
       <p id = 'results'></p>
     </div>
+    
+    <script type = 'module'>
+      
+    </script>
   </body>
 </html>
