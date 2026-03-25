@@ -26,15 +26,15 @@
   "author": "coolguy284 <coolguy284v64@gmail.com> (https://github.com/coolguy284)",
   "license": "MIT",
   "dependencies": {
-    "bson": "^7.0.0",
+    "bson": "^7.2.0",
     "bufferutil": "^4.1.0",
-    "canvas": "^3.2.0",
-    "mathjs": "^15.1.0",
+    "canvas": "^3.2.2",
+    "mathjs": "^15.1.1",
     "mime": "^4.1.0",
-    "mongodb": "^7.0.0",
+    "mongodb": "^7.1.1",
     "utf-8-validate": "^6.0.6",
     "winston": "^3.19.0",
-    "ws": "^8.18.3"
+    "ws": "^8.20.0"
   },
   "repository": {
     "type": "git",
