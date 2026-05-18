@@ -1,6 +1,6 @@
 {
   "name": "c284-webmain-1-srv_web_main",
-  "version": "1.6.214",
+  "version": "1.6.214.1",
   "description": "Main node.js server for c284-webmain-1.",
   "main": "index.js",
   "scripts": {
@@ -31,10 +31,10 @@
     "canvas": "^3.2.3",
     "mathjs": "^15.2.0",
     "mime": "^4.1.0",
-    "mongodb": "^7.1.1",
+    "mongodb": "^7.2.0",
     "utf-8-validate": "^6.0.6",
     "winston": "^3.19.0",
-    "ws": "^8.20.0"
+    "ws": "^8.20.1"
   },
   "repository": {
     "type": "git",
