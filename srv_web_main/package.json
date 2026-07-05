@@ -1,6 +1,6 @@
 {
   "name": "c284-webmain-1-srv_web_main",
-  "version": "1.6.214.1",
+  "version": "1.6.214.2",
   "description": "Main node.js server for c284-webmain-1.",
   "main": "index.js",
   "scripts": {
@@ -26,15 +26,15 @@
   "author": "coolguy284 <coolguy284v64@gmail.com> (https://github.com/coolguy284)",
   "license": "MIT",
   "dependencies": {
-    "bson": "^7.2.0",
+    "bson": "^7.3.1",
     "bufferutil": "^4.1.0",
     "canvas": "^3.2.3",
     "mathjs": "^15.2.0",
     "mime": "^4.1.0",
-    "mongodb": "^7.2.0",
+    "mongodb": "^7.4.0",
     "utf-8-validate": "^6.0.6",
     "winston": "^3.19.0",
-    "ws": "^8.20.1"
+    "ws": "^8.21.0"
   },
   "repository": {
     "type": "git",

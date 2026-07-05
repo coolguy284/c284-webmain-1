@@ -3,9 +3,9 @@
 path_name="${PWD##*/}"
 
 echo -n ' --build-arg NODE_MAJOR_VER=26'
-echo -n ' --build-arg NODE_FULL_VER=26.1.0'
+echo -n ' --build-arg NODE_FULL_VER=26.4.0'
 
 if [ "$path_name" = "srv_web_oldg" ]; then
-  echo -n ' --build-arg NGINX_VER=1.31.0'
+  echo -n ' --build-arg NGINX_VER=1.31.2'
   echo -n ' --build-arg ZLIB_VER=1.3.2'
 fi
