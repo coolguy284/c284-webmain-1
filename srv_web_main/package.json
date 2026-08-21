@@ -36,6 +36,11 @@
     "winston": "^3.19.0",
     "ws": "^8.21.3"
   },
+  "allowScripts": {
+    "bufferutil@4.1.0": true,
+    "canvas@3.2.3": true,
+    "utf-8-validate@6.0.6": true
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/coolguy284/c284-webmain-1.git"
