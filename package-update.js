@@ -1,78 +1,212 @@
-var projectFolders = ['proc_main', 'srv_web_main', '.'];
+// from https://github.com/coolguy284/zextra/blob/54d880b4fa89ccf191eced17711534a2aa30f3ea/package_update.mjs
 
-var filesToCheck = ['package.json', 'package-basic.json'];
+import {
+  access,
+  readdir,
+  readFile,
+  rename,
+  writeFile,
+} from 'node:fs/promises';
+import { get } from 'node:https';
+import {
+  basename,
+  dirname,
+} from 'node:path';
 
-var fs = require('fs');
-var https = require('https');
+const FILES_TO_CHECK = ['package.json', 'package-basic.json'];
+const DEPS_TO_CHECK = ['dependencies', 'optionalDependencies', 'devDependencies'];
+
+async function exists(path) {
+  try {
+    await access(path);
+    return true;
+  } catch (err) {
+    if (err.code == 'ENOENT') {
+      return false;
+    } else {
+      throw err;
+    }
+  }
+}
+
+async function getTempPath(path) {
+  const folderPath = dirname(path);
+  const fileName = basename(path);
+  
+  const folderFiles = new Set(await readdir(folderPath));
+  
+  let tempPath;
+  
+  let index = 0;
+  
+  while (folderFiles.has(tempPath = `${folderPath}/${fileName}.tmp.${index}`)) {
+    index++;
+  }
+  
+  return tempPath;
+}
 
 async function processPackages(projectFolders) {
-  var file, packageName, path;
+  // Get all files
   
-  // get all files
-  var files = {};
+  const files = new Map();
   
-  for (var folder of projectFolders) {
-    for (file of filesToCheck) {
-      path = folder + '/' + file;
-      if (fs.existsSync(path)) {
-        var fileText = fs.readFileSync(path).toString();
-        var fileJson = JSON.parse(fileText);
-        if ('dependencies' in fileJson) {
-          console.log(`Processing file ${path}`);
-          var fileLines = fileText.split(/\r?\n/);
-          var fileBlankLines = [];
-          for (var i = 0; i < fileLines.length; i++)
-            if (/^ +$/.test(fileLines[i])) fileBlankLines.push(i);
-          files[path] = {
+  for (const folder of projectFolders) {
+    for (const file of FILES_TO_CHECK) {
+      const path = folder + '/' + file;
+      
+      console.log(`Processing file ${path}`);
+      
+      if (await exists(path)) {
+        const fileText = (await readFile(path)).toString();
+        const fileJson = JSON.parse(fileText);
+        const fileLines = fileText.split(/\r?\n/);
+        
+        let fileBlankLines = [];
+          
+        for (let i = 0; i < fileLines.length; i++) {
+          if (/^ +$/.test(fileLines[i])) fileBlankLines.push(i);
+        }
+        
+        files.set(
+          path,
+          {
             text: fileText,
             json: fileJson,
             line: fileLines,
             blankLines: fileBlankLines,
-          };
+          },
+        );
+      }
+    }
+  }
+  
+  // Get packages
+  
+  const packages = new Set();
+  
+  for (const { json } of files.values()) {
+    for (const dependencyPath of DEPS_TO_CHECK) {
+      if (dependencyPath in json) {
+        for (const [ packageName, currentVersion ] of Object.entries(json[dependencyPath])) {
+          // Ignore git repo or other complicated dependencies:
+          if (!currentVersion.includes('/')) {
+            packages.add(packageName);
+          }
         }
       }
     }
   }
   
-  // get packages
-  var packages = new Set();
+  // Get package info
   
-  for (file of Object.values(files))
-    Object.keys(file.json.dependencies).forEach(x => packages.add(x));
+  const packageVersion = new Map();
   
-  // get package info
-  var packageVersion = {};
-  
-  for (packageName of packages) {
+  for (const packageName of packages) {
     console.log(`Getting package ${packageName}`);
-    packageVersion[packageName] = await new Promise(r => {
-      https.get(`https://registry.npmjs.org/${packageName}`, {
-        headers: {
-          'accept': 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*',
-        },
-      }, res => {
-        var chunks = [];
-        res.on('data', c => chunks.push(c));
-        res.on('end', () => r(JSON.parse(Buffer.concat(chunks).toString())['dist-tags'].latest));
-      });
-    });
+    
+    try {
+      const npmResponse =
+        await new Promise((r, j) => {
+          const req = get(`https://registry.npmjs.org/${packageName}`, {
+            headers: {
+              'accept': 'application/vnd.npm.install-v1+json; q=1.0, application/json; q=0.8, */*',
+            },
+          }, res => {
+            let errored = false;
+            
+            if (res.statusCode != 200) {
+              j(new Error('package not found'));
+              res.socket.destroySoon();
+              errored = true;
+            }
+            
+            let chunks = [];
+            
+            res.on('data', c => {
+              if (!errored) {
+                chunks.push(c);
+              }
+            });
+            
+            res.on('end', () => {
+              if (!errored) {
+                r(
+                  Buffer
+                    .concat(chunks)
+                    .toString()
+                );
+              }
+            });
+            
+            res.on('error', err => {
+              if (!errored) {
+                j(err);
+                errored = true;
+              }
+            });
+          });
+          
+          req.on('error', err => {
+            j(err);
+          });
+          
+          req.end();
+        });
+      
+      const version =
+        JSON.parse(npmResponse)
+          ['dist-tags']
+          .latest;
+      
+      packageVersion.set(packageName, version);
+    } catch (err) {
+      console.error(`Error getting package: ${packageName}`);
+      console.error(err);
+    }
   }
   
-  // replace version numbers
-  for (file of Object.values(files)) {
-    for (packageName in file.json.dependencies)
-      file.json.dependencies[packageName] = '^' + packageVersion[packageName];
-    file.lines = JSON.stringify(file.json, null, 2).split('\n');
-    for (var line of file.blankLines)
-      file.lines.splice(line, 0, '    ');
-    file.text = file.lines.join('\n') + '\n';
+  // Replace version numbers
+  
+  for (const file of files.values()) {
+    const { json, blankLines } = file;
+    
+    for (const dependencyPath of DEPS_TO_CHECK) {
+      if (dependencyPath in json) {
+        for (const [ packageName, oldVersion ] of Object.entries(json[dependencyPath])) {
+          // First if is for ignore git repo or other complicated dependencies:
+          if (!oldVersion.includes('/')) {
+            if (packageVersion.has(packageName)) {
+              json[dependencyPath][packageName] = `^${packageVersion.get(packageName)}`;
+            }
+          }
+        }
+      }
+    }
+    
+    const newLines =
+      JSON.stringify(json, null, 2)
+      .split('\n');
+    
+    for (const line of blankLines) {
+      newLines.splice(line, 0, '    ');
+    }
+    
+    file.newText =
+      newLines.join('\n') +
+      '\n';
   }
   
-  // replace files
-  for (path in files) {
+  // Replace files
+  
+  for (const [ path, { newText } ] of files) {
     console.log(`Updating file ${path}`);
-    fs.writeFileSync(path, files[path].text);
+    
+    const tempPath = await getTempPath(path);
+    
+    await writeFile(tempPath, newText);
+    await rename(tempPath, path);
   }
 }
 
-processPackages(projectFolders);
+processPackages(['proc_main', 'srv_web_main', '.']);
