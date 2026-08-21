@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "eslint": "^8.19.0",
+    "eslint-plugin-html": "^6.2.0",
+    "eslint-plugin-vue": "^9.1.1"
+  }
+}

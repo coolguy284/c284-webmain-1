@@ -1,9 +1,6 @@
 {
   "files.exclude": {
     ".vs": true,
-    "**/node_modules": true,
-    "package.json": true,
-    "**/package-lock.json": true,
     "**/*.br": true,
     "**/*.gz": true
   }
