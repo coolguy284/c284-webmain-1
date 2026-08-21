@@ -12,7 +12,6 @@ srv_web_main/websites/public/sitemap.xml
 srv_web_main/websites/etags.json
 srv_web_main/env.list
 srv_web_main/in-dockerenv.list
-srv_web_main/package-lock.json
 srv_web_main/**/*.gz
 srv_web_main/**/*.br
 srv_web_old
