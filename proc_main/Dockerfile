@@ -21,7 +21,7 @@ RUN apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin 
 
 COPY package-basic.json package.json
 COPY package-lock.json package-lock.json
-RUN npm install
+RUN npm ci
 
 COPY package.json index.js ./
 
