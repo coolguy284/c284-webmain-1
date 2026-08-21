@@ -24,7 +24,7 @@
     "http2-server"
   ],
   "author": "coolguy284 <coolguy284v64@gmail.com> (https://github.com/coolguy284)",
-  "license": "MIT",
+  "license": "(Unlicense OR MIT)",
   "dependencies": {
     "bson": "^7.3.2",
     "bufferutil": "^4.1.0",

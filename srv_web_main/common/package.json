@@ -1,10 +1,10 @@
 {
-  "name": "c284-webmain-1-common",
+  "name": "c284-webmain-1-srv_web_main-common",
   "description": "The common library package for c284-webmain-1-srv_web_main, not intended to be used by itself without the server.",
   "main": "common.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "coolguy284",
-  "license": "MIT"
+  "author": "coolguy284 <coolguy284v64@gmail.com> (https://github.com/coolguy284)",
+  "license": "(Unlicense OR MIT)"
 }
