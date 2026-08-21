@@ -37,7 +37,7 @@ FROM base AS debug
   RUN bash -c 'shopt -s dotglob && mv node-server-new/* ./' && rmdir node-server-new
 FROM ${branch} AS final
 
-RUN npm install
+RUN npm ci
 
 RUN sed -i 's/terminal: true/terminal: false/' index.js && sed -i 's/preview: true/preview: false/' index.js
 

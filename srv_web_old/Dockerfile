@@ -35,6 +35,6 @@ FROM base AS debug
   RUN bash -c 'shopt -s dotglob && mv node-server/* ./' && rmdir node-server
 FROM ${branch} AS final
 
-RUN npm install
+RUN npm ci
 
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]

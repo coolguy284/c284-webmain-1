@@ -38,7 +38,8 @@ RUN node helpers/compress_and_etags.js --only '^data/[a-zA-Z]+\.txt(?:\.br|\.gz)
 COPY --chown=webmain:webmain srv_web_main/log_utils.js log_utils.js
 
 COPY --chown=webmain:webmain srv_web_main/package-basic.json package.json
-RUN npm install
+COPY --chown=webmain:webmain srv_web_main/package-lock.json package-lock.json
+RUN npm ci
 
 RUN mkdir -p websites/public/libs/extern && \
   cp node_modules/bson/lib/bson.bundle.js websites/public/libs/extern/bson.bundle.js && \
