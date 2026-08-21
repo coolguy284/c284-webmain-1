@@ -20,6 +20,63 @@ var { mergeIPPort, uncastIPv6 } = require('./common/misc');
 var { vars } = require('./common/vars');
 
 
+async function mongoDBCreateAndConnect(mongodb, willRetry) {
+  let mongoClient;
+  
+  mongoClient = new mongodb.MongoClient(
+    'mongodb://127.0.0.1',
+    {
+      connectTimeoutMS: 3000,
+      serverSelectionTimeoutMS: 3000,
+    }
+  );
+  
+  try {
+    await mongoClient.connect();
+  } catch {
+    logger.error('MongoDB non-direct connection error, attempting a direct connection');
+    
+    mongoClient = new mongodb.MongoClient(
+      'mongodb://127.0.0.1',
+      {
+        connectTimeoutMS: 3000,
+        serverSelectionTimeoutMS: 3000,
+        directConnection: true,
+      }
+    );
+    
+    try {
+      await mongoClient.connect();
+    } catch (err) {
+      logger.error(`MongoDB direct connection error${willRetry ? ', retrying in 10 seconds' : ''}`);
+      
+      if (willRetry) {
+        await new Promise(r => setTimeout(r, 10_000));
+        return null;
+      } else {
+        throw err;
+      }
+    }
+  }
+  
+  return mongoClient;
+}
+
+async function mongoDBCreateAndConnectAndRetry(mongodb) {
+  let retriesLeft = 1;
+  
+  while (retriesLeft >= 0) {
+    const mongoClient = mongoDBCreateAndConnect(mongodb, retriesLeft > 0);
+    
+    if (mongoClient != null) {
+      return mongoClient;
+    }
+    
+    retriesLeft--;
+  }
+}
+
+
 if (env.PROC_MONGODB_ENABLED) {
   (async () => {
     // start reverse proxy
@@ -51,30 +108,7 @@ if (env.PROC_MONGODB_ENABLED) {
     // initalize mongo client
     var mongodb = require('mongodb');
     
-    vars.mongoClient = new mongodb.MongoClient(
-      'mongodb://127.0.0.1',
-      {
-        connectTimeoutMS: 3000,
-        serverSelectionTimeoutMS: 3000,
-      }
-    );
-    
-    try {
-      await vars.mongoClient.connect();
-    } catch {
-      logger.error('MongoDB non direct connection error, attempting a direct connection');
-      
-      vars.mongoClient = new mongodb.MongoClient(
-        'mongodb://127.0.0.1',
-        {
-          connectTimeoutMS: 3000,
-          serverSelectionTimeoutMS: 3000,
-          directConnection: true,
-        }
-      );
-      
-      await vars.mongoClient.connect();
-    }
+    vars.mongoClient = await mongoDBCreateAndConnectAndRetry(mongodb);
     
     logger.info('Connected to mongodb server');
     
