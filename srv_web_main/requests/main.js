@@ -35,11 +35,21 @@ module.exports = async function main(httpVersion, ...args) {
     // redirect http to https (if https enforce enabled) and www.coolguy284.com to coolguy284.com
     let doPreRedirect = false, preRedirNewURL;
     if (env.SRV_WEB_MAIN_HTTPS_ENFORCE) {
-      if (requestProps.proto == 'http' && !requestProps.otherServer?.isHost ||
-          requestProps.host == 'www.coolguy284.com') {
+      if (
+        (
+          requestProps.proto == 'http' &&
+          !requestProps.otherServer?.isHost &&
+          requestProps.host != 'insecure.coolguy284.com'
+        ) ||
+          requestProps.host == 'www.coolguy284.com'
+      ) {
         doPreRedirect = true;
         preRedirNewURL = new URL(requestProps.url);
-        if (requestProps.proto == 'http') preRedirNewURL.protocol = 'https:';
+        if (
+          requestProps.proto == 'http' &&
+          !requestProps.otherServer?.isHost &&
+          requestProps.host != 'insecure.coolguy284.com'
+        ) preRedirNewURL.protocol = 'https:';
         if (requestProps.host == 'www.coolguy284.com') preRedirNewURL.host = 'coolguy284.com';
       }
     } else {
