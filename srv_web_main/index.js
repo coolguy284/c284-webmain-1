@@ -51,7 +51,6 @@ async function mongoDBCreateAndConnect(mongodb, willRetry) {
       logger.error(`MongoDB direct connection error${willRetry ? ', retrying in 10 seconds' : ''}`);
       
       if (willRetry) {
-        await new Promise(r => setTimeout(r, 10_000));
         return null;
       } else {
         throw err;
@@ -66,13 +65,17 @@ async function mongoDBCreateAndConnectAndRetry(mongodb) {
   let retriesLeft = 1;
   
   while (retriesLeft >= 0) {
-    const mongoClient = mongoDBCreateAndConnect(mongodb, retriesLeft > 0);
+    const mongoClient = await mongoDBCreateAndConnect(mongodb, retriesLeft > 0);
     
     if (mongoClient != null) {
       return mongoClient;
     }
     
     retriesLeft--;
+    
+    if (retriesLeft >= 0) {
+      await new Promise(r => setTimeout(r, 10_000));
+    }
   }
 }
 
