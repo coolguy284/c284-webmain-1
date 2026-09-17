@@ -101,9 +101,23 @@ if (env.PROC_MONGODB_ENABLED) {
         logger.debug(`Mongodb proxy connection from localhost:${conn.remotePort} closed ${hadError ? 'with' : 'without'} error`);
       });
     });
+    
     vars.mongoProxyServer.on('error', err => logger.error('Proxy ' + err.toString()));
     
-    vars.mongoProxyServer.listen(27017, () => logger.info('Mongodb proxy server listening'));
+    await new Promise((r, j) => {
+      try {
+        const errorHandler = err => {
+          j(err);
+          vars.mongoProxyServer.off('error', errorHandler);
+        };
+        vars.mongoProxyServer.once('error', errorHandler);
+        vars.mongoProxyServer.listen(27017, () => { r(); });
+      } catch (err) {
+        j(err);
+      }
+    });
+    
+    logger.info('Mongodb proxy server listening');
     
     // initalize mongo client
     var mongodb = require('mongodb');
