@@ -1,5 +1,5 @@
 low prio:
-  use docker add to directly add github repos in websites/public/apps instead of calling git clone
+  add caching to dockerfile run git clone for websites/public/apps
     but specify repo commit hash to make builds reproducible
   
   current:
