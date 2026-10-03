@@ -1,3 +1,7 @@
+low prio:
+use docker add to directly add github repos in websites/public/apps instead of calling git clone
+  but specify repo commit hash to make builds reproducible
+
 current:
 create data collection explanation page
 fix graceful shutdown behavior
@@ -27,6 +31,7 @@ tier 1:
 physics:
   the neutrino's mass
   room temperature superconductor
+  theory of everything
 make pefect mode for rectangles.html that covers the edges as well
 add md5 hashing and old mds like md4 to sha hasher page
 add chat page noscript tag (maybe calc page too)
@@ -378,7 +383,7 @@ corrections api, ability to request a correction, however minor, on any page of 
 extra:
 experiment with unsorted readdirs using fuse, if works potential necessity to sort c284-webmain-1 modtimes.json or maybe just sort it anyway
 
-low priority:
+lower priority:
 add text lines sorter page using contenteditable div
 general: update packages (on old servers also), user acc system
 advanced time:
