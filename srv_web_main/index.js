@@ -178,7 +178,7 @@ if (env.SRV_WEB_MAIN_HTTP_IP) {
 }
 
 if (env.SRV_WEB_MAIN_HTTPS_IP) {
-  const makeOptions =
+  const getTLSOptions =
     () =>
       ({
         secureOptions:
@@ -228,7 +228,7 @@ if (env.SRV_WEB_MAIN_HTTPS_IP) {
         ALPNProtocols: ['h2', 'http/1.1'],
       });
   
-  vars.tlsServer = tls.createServer(options, conn => {
+  vars.tlsServer = tls.createServer(getTLSOptions(), conn => {
     if (conn.destroyed) {
       if (env.SRV_WEB_MAIN_LOG_DEBUG)
         logger.debug(`TLS open-instaclose ${mergeIPPort(uncastIPv6(conn.remoteAddress), conn.remotePort)}`);
@@ -280,7 +280,7 @@ if (env.SRV_WEB_MAIN_HTTPS_IP) {
       
       await new Promise(r => setTimeout(r, env.SRV_WEB_MAIN_TLS_FILE_CHANGE_TIMEOUT));
       
-      vars.tlsServer.setSecureContext(options);
+      vars.tlsServer.setSecureContext(getTLSOptions());
     } finally {
       updatingCerts = false;
     }
