@@ -12,6 +12,8 @@ var envTypeConverts = new Map([
   ['SRV_WEB_MAIN_LOG_REQUESTS', toBool],
   ['SRV_WEB_MAIN_LOG_REQUESTS_ALWAYS', toBool],
   ['SRV_WEB_MAIN_LOG_DEBUG', toBool],
+  ['SRV_WEB_MAIN_WATCH_FOR_TLS_FILE_CHANGES', toBool],
+  ['SRV_WEB_MAIN_TLS_FILE_CHANGE_TIMEOUT', Number],
   ['SRV_WEB_MAIN_TLS_KEY_FILE', null],
   ['SRV_WEB_MAIN_TLS_CERT_FILE', null],
   ['SRV_WEB_MAIN_TLS_CERT_ROOT_FILE', null],

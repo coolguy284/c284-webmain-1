@@ -178,54 +178,55 @@ if (env.SRV_WEB_MAIN_HTTP_IP) {
 }
 
 if (env.SRV_WEB_MAIN_HTTPS_IP) {
-  const options =
-    {
-      secureOptions:
-        crypto.constants.SSL_OP_NO_SSLv2 |
-        crypto.constants.SSL_OP_NO_SSLv3 |
-        crypto.constants.SSL_OP_NO_TLSv1 |
-        crypto.constants.SSL_OP_NO_TLSv1_1,
-      /*
-      ciphers: [
-        crypto.constants.defaultCoreCipherList, // contains many ciphers separated by ':' iirc
-        '!TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256',
-        '!TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384',
-        '!TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA',
-        '!TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA',
-        '!TLS_RSA_WITH_AES_256_GCM_SHA384',
-        '!TLS_RSA_WITH_AES_256_CCM_8',
-        '!TLS_RSA_WITH_AES_256_CCM',
-        '!TLS_RSA_WITH_ARIA_256_GCM_SHA384',
-        '!TLS_RSA_WITH_AES_128_GCM_SHA256',
-        '!TLS_RSA_WITH_AES_128_CCM_8',
-        '!TLS_RSA_WITH_AES_128_CCM',
-        '!TLS_RSA_WITH_ARIA_128_GCM_SHA256',
-        '!TLS_RSA_WITH_AES_256_CBC_SHA256',
-        '!TLS_RSA_WITH_AES_128_CBC_SHA256',
-        '!TLS_RSA_WITH_AES_256_CBC_SHA',
-        '!TLS_RSA_WITH_AES_128_CBC_SHA',
-        '@STRENGTH',
-      ].join(':'),
-      */
-      ciphers: [
-        'TLS_AES_256_GCM_SHA384',
-        'TLS_CHACHA20_POLY1305_SHA256',
-        'TLS_AES_128_GCM_SHA256',
-        'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
-        'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
-        'TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256',
-        'TLS_ECDHE_RSA_WITH_ARIA_256_GCM_SHA384',
-        'TLS_ECDHE_RSA_WITH_ARIA_128_GCM_SHA256',
-        '@STRENGTH',
-      ].join(':'),
-      key: fs.readFileSync(env.SRV_WEB_MAIN_TLS_KEY_FILE),
-      cert: Buffer.concat([
-        fs.readFileSync(env.SRV_WEB_MAIN_TLS_CERT_FILE),
-        fs.readFileSync(env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE),
-      ]),
-      
-      ALPNProtocols: ['h2', 'http/1.1'],
-    };
+  const makeOptions =
+    () =>
+      ({
+        secureOptions:
+          crypto.constants.SSL_OP_NO_SSLv2 |
+          crypto.constants.SSL_OP_NO_SSLv3 |
+          crypto.constants.SSL_OP_NO_TLSv1 |
+          crypto.constants.SSL_OP_NO_TLSv1_1,
+        /*
+        ciphers: [
+          crypto.constants.defaultCoreCipherList, // contains many ciphers separated by ':' iirc
+          '!TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256',
+          '!TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384',
+          '!TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA',
+          '!TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA',
+          '!TLS_RSA_WITH_AES_256_GCM_SHA384',
+          '!TLS_RSA_WITH_AES_256_CCM_8',
+          '!TLS_RSA_WITH_AES_256_CCM',
+          '!TLS_RSA_WITH_ARIA_256_GCM_SHA384',
+          '!TLS_RSA_WITH_AES_128_GCM_SHA256',
+          '!TLS_RSA_WITH_AES_128_CCM_8',
+          '!TLS_RSA_WITH_AES_128_CCM',
+          '!TLS_RSA_WITH_ARIA_128_GCM_SHA256',
+          '!TLS_RSA_WITH_AES_256_CBC_SHA256',
+          '!TLS_RSA_WITH_AES_128_CBC_SHA256',
+          '!TLS_RSA_WITH_AES_256_CBC_SHA',
+          '!TLS_RSA_WITH_AES_128_CBC_SHA',
+          '@STRENGTH',
+        ].join(':'),
+        */
+        ciphers: [
+          'TLS_AES_256_GCM_SHA384',
+          'TLS_CHACHA20_POLY1305_SHA256',
+          'TLS_AES_128_GCM_SHA256',
+          'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256',
+          'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384',
+          'TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256',
+          'TLS_ECDHE_RSA_WITH_ARIA_256_GCM_SHA384',
+          'TLS_ECDHE_RSA_WITH_ARIA_128_GCM_SHA256',
+          '@STRENGTH',
+        ].join(':'),
+        key: fs.readFileSync(env.SRV_WEB_MAIN_TLS_KEY_FILE),
+        cert: Buffer.concat([
+          fs.readFileSync(env.SRV_WEB_MAIN_TLS_CERT_FILE),
+          fs.readFileSync(env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE),
+        ]),
+        
+        ALPNProtocols: ['h2', 'http/1.1'],
+      });
   
   vars.tlsServer = tls.createServer(options, conn => {
     if (conn.destroyed) {
@@ -263,6 +264,34 @@ if (env.SRV_WEB_MAIN_HTTPS_IP) {
   vars.tlsServer.listen({ host: env.SRV_WEB_MAIN_HTTPS_IP, port: env.SRV_WEB_MAIN_HTTPS_PORT }, () => {
     logger.info(`HTTPS/H2 server listening on ${mergeIPPort(env.SRV_WEB_MAIN_HTTPS_IP, env.SRV_WEB_MAIN_HTTPS_PORT)}`);
   });
+  
+  let updatingCerts = false;
+  
+  const updateSecureContext = async () => {
+    if (updatingCerts) {
+      logger.info(`Certificate file change detected, waiting already in progress...`);
+      return;
+    }
+    
+    updatingCerts = true;
+    
+    try {
+      logger.info(`Certificate file change detected, waiting ${env.SRV_WEB_MAIN_TLS_FILE_CHANGE_TIMEOUT}ms then updating...`);
+      
+      await new Promise(r => setTimeout(r, env.SRV_WEB_MAIN_TLS_FILE_CHANGE_TIMEOUT));
+      
+      vars.tlsServer.setSecureContext(options);
+    } finally {
+      updatingCerts = false;
+    }
+  };
+  
+  if (env.SRV_WEB_MAIN_WATCH_FOR_TLS_FILE_CHANGES) {
+    logger.info('Listening for certificate file changes');
+    fs.watch(env.SRV_WEB_MAIN_TLS_KEY_FILE, { persistent: false }, updateSecureContext);
+    fs.watch(env.SRV_WEB_MAIN_TLS_CERT_FILE, { persistent: false }, updateSecureContext);
+    fs.watch(env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE, { persistent: false }, updateSecureContext);
+  }
   
   vars.httpsServerConns = new Set();
   vars.httpsServer = https.createServer(require('./requests/main').bind(null, 1));
