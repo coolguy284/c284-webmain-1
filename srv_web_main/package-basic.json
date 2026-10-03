@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "bson": "^7.3.2",
+    "bson": "^7.3.3",
     "bufferutil": "^4.1.0",
     "canvas": "^3.2.3",
     "mathjs": "^15.2.0",
