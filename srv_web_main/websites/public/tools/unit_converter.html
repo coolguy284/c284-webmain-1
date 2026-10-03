@@ -176,7 +176,10 @@
           'mph': 0.44704, 'kmph': 0.2777777777777778,
           'mips': 1609.344, 'kmps': 1000,
           'knt': 0.5144444444444445,
-          'mach': 340, 'c': c,
+          // https://en.wikipedia.org/wiki/Speed_of_sound, Accessed 2026-10-02
+          // Speed of sound in air at 20C
+          'mach': 343,
+          'c': c,
         },
         'density': { 'kgm3': 1, 'gcm3': 0.001, 'kgl': 0.001 },
         'temperature': { 'C': [1, 273.15], 'F': [5 / 9, 45967 / 180], 'K': [1, 0], 'R': [5 / 9, 0] },
