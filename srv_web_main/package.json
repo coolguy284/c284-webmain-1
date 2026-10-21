@@ -30,11 +30,11 @@
     "bufferutil": "^4.1.0",
     "canvas": "^3.2.3",
     "mathjs": "^15.2.0",
-    "mime": "^4.1.0",
-    "mongodb": "^7.6.0",
+    "mime": "^4.1.1",
+    "mongodb": "^7.7.0",
     "utf-8-validate": "^6.0.6",
     "winston": "^3.19.0",
-    "ws": "^8.21.3"
+    "ws": "^8.22.0"
   },
   "allowScripts": {
     "bufferutil@4.1.0": true,
