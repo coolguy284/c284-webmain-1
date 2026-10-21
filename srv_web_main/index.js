@@ -10,6 +10,7 @@ var http = require('http');
 var https = require('https');
 var http2 = require('http2');
 var net = require('net');
+var path = require('path');
 var repl = require('repl');
 var tls = require('tls');
 var util = require('util');
@@ -288,9 +289,33 @@ if (env.SRV_WEB_MAIN_HTTPS_IP) {
   
   if (env.SRV_WEB_MAIN_WATCH_FOR_TLS_FILE_CHANGES) {
     logger.info('Listening for certificate file changes');
-    fs.watch(env.SRV_WEB_MAIN_TLS_KEY_FILE, { persistent: false }, updateSecureContext);
-    fs.watch(env.SRV_WEB_MAIN_TLS_CERT_FILE, { persistent: false }, updateSecureContext);
-    fs.watch(env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE, { persistent: false }, updateSecureContext);
+    
+    const certFolders = new Map();
+    
+    [
+      env.SRV_WEB_MAIN_TLS_KEY_FILE,
+      env.SRV_WEB_MAIN_TLS_CERT_FILE,
+      env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE,
+    ]
+      .forEach(fileName => {
+        const dirName = path.dirname(fileName);
+        const baseName = path.basename(fileName);
+        
+        if (certFolders.has(dirName)) {
+          certFolders.get(dirName).add(baseName);
+        } else {
+          certFolders.set(dirName, new Set([baseName]));
+        }
+      });
+    
+    Array.from(certFolders)
+      .map(([ dirName, files ]) => {
+        fs.watch(dirName, { persistent: false }, (_eventType, fileName) => {
+          if (files.has(fileName)) {
+            updateSecureContext();
+          }
+        });
+      });
   }
   
   vars.httpsServerConns = new Set();
