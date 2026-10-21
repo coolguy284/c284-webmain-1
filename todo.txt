@@ -28,7 +28,7 @@ low prio:
   fix advancedtime and calculator table elems not having a tbody
   
   tier 1:
-  physics:
+  physics news updates page:
     the neutrino's mass
     room temperature superconductor
     theory of everything
