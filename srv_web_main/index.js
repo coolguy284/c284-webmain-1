@@ -282,6 +282,8 @@ if (env.SRV_WEB_MAIN_HTTPS_IP) {
       await new Promise(r => setTimeout(r, env.SRV_WEB_MAIN_TLS_FILE_CHANGE_TIMEOUT));
       
       vars.tlsServer.setSecureContext(getTLSOptions());
+      
+      logger.info(`Certificate file change successful`);
     } finally {
       updatingCerts = false;
     }
@@ -290,32 +292,14 @@ if (env.SRV_WEB_MAIN_HTTPS_IP) {
   if (env.SRV_WEB_MAIN_WATCH_FOR_TLS_FILE_CHANGES) {
     logger.info('Listening for certificate file changes');
     
-    const certFolders = new Map();
+    const options = {
+      persistent: false,
+      interval: 24 * 60 * 60 * 1_000,
+    };
     
-    [
-      env.SRV_WEB_MAIN_TLS_KEY_FILE,
-      env.SRV_WEB_MAIN_TLS_CERT_FILE,
-      env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE,
-    ]
-      .forEach(fileName => {
-        const dirName = path.dirname(fileName);
-        const baseName = path.basename(fileName);
-        
-        if (certFolders.has(dirName)) {
-          certFolders.get(dirName).add(baseName);
-        } else {
-          certFolders.set(dirName, new Set([baseName]));
-        }
-      });
-    
-    Array.from(certFolders)
-      .map(([ dirName, files ]) => {
-        fs.watch(dirName, { persistent: false }, (_eventType, fileName) => {
-          if (files.has(fileName)) {
-            updateSecureContext();
-          }
-        });
-      });
+    fs.watchFile(env.SRV_WEB_MAIN_TLS_KEY_FILE, options, updateSecureContext);
+    fs.watchFile(env.SRV_WEB_MAIN_TLS_CERT_FILE, options, updateSecureContext);
+    fs.watchFile(env.SRV_WEB_MAIN_TLS_CERT_ROOT_FILE, options, updateSecureContext);
   }
   
   vars.httpsServerConns = new Set();
