@@ -283,7 +283,7 @@ if (env.SRV_WEB_MAIN_HTTPS_IP) {
       
       vars.tlsServer.setSecureContext(getTLSOptions());
       
-      logger.info(`Certificate file change successful`);
+      logger.info('Certificate update from new file successful');
     } finally {
       updatingCerts = false;
     }
