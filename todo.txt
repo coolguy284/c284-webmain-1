@@ -1,4 +1,6 @@
 low prio:
+  add kg of natural uranium, u235, maybe u238, d-t fuel, hydrogen fusion, coal, natural gas, hydrogen combustion to unit converter
+  
   add caching to dockerfile run git clone for websites/public/apps
     but specify repo commit hash to make builds reproducible
   
