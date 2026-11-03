@@ -1,4 +1,8 @@
 low prio:
+  remove private requests from request counter
+  trim end of ipv4 and v6 addresses
+  random number generator page to be better version of parts of random.org
+  
   add kg of natural uranium, u235, maybe u238, d-t fuel, hydrogen fusion, coal, natural gas, hydrogen combustion to unit converter
   
   add caching to dockerfile run git clone for websites/public/apps
