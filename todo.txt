@@ -1,6 +1,4 @@
 low prio:
-  remove private requests from request counter
-  
   add kg of natural uranium, u235, maybe u238, d-t fuel, hydrogen fusion, coal, natural gas, hydrogen combustion to unit converter
   
   random number generator page to be better version of parts of random.org

@@ -23,7 +23,8 @@ module.exports = (httpVersion, ...args) => {
     urlString: null,
     url: null,
     timestamp: new Date(),
-    id: vars.currentRequestID++,
+    // id is for logging purposes only, private requests don't increment id, and id is null for private requests
+    id: null,
     rawDoLogNotPriv: null,
     rawDoLog: null,
     doLogNotPriv: null,
@@ -181,6 +182,10 @@ module.exports = (httpVersion, ...args) => {
       
       requestProps.doLogNotPriv = true;
       requestProps.doLog = true;
+    }
+    
+    if (requestProps.doLog) {
+      requestProps.id = vars.currentRequestID++;
     }
   } else {
     requestProps.rawDoLogNotPriv = false;
