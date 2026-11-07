@@ -161,24 +161,22 @@ module.exports = (httpVersion, ...args) => {
       requestProps.cookie.dnt != '1' &&
       requestProps.headers['x-c284-nolog'] != '1';
     
-    if (!env.SRV_WEB_MAIN_LOG_REQUESTS_ALWAYS) {
-      requestProps.rawDoLog =
-        requestProps.rawDoLogNotPriv &&
-        !requestProps.url.pathname.startsWith('/api/') &&
+    const rawDoLogPart =
+      !requestProps.url.pathname.startsWith('/api/') &&
         !(otherServerBool && (
           otherServer.noLogURLs.has(slicedPath) ||
           otherServer.noLogUrlStarts.some(x => slicedPath.startsWith(x))
         ));
+    
+    if (!env.SRV_WEB_MAIN_LOG_REQUESTS_ALWAYS) {
+      requestProps.rawDoLog =
+        requestProps.rawDoLogNotPriv &&
+        rawDoLogPart;
       
       requestProps.doLogNotPriv = requestProps.rawDoLogNotPriv;
       requestProps.doLog = requestProps.rawDoLog;
     } else {
-      requestProps.rawDoLog =
-        !requestProps.url.pathname.startsWith('/api/') &&
-        !(otherServerBool && (
-          otherServer.noLogURLs.has(slicedPath) ||
-          otherServer.noLogUrlStarts.some(x => slicedPath.startsWith(x))
-        ));
+      requestProps.rawDoLog = rawDoLogPart;
       
       requestProps.doLogNotPriv = true;
       requestProps.doLog = true;
