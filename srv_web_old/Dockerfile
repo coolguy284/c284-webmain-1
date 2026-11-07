@@ -37,4 +37,7 @@ FROM ${branch} AS final
 
 RUN npm ci
 
+# Uncomment to disable remote control of server through its own webpages:
+#RUN sed -i 's/cons: true/cons: false/' datajs/feat.js && sed -i 's/user: true/user: false/' datajs/feat.js
+
 ENTRYPOINT ["node", "--trace-warnings", "--pending-deprecation", "--trace-deprecation", "index.js"]
