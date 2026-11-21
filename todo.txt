@@ -17,7 +17,7 @@ low prio:
       add dummy convert button that gets users to click off of box
         add caption to dummy button to clarify its purpose
           The unit converter will perform the conversion when clicking off of the input box or pressing enter on the input box. This button merely serves to get the user to click off the input box and does nothing on its own.
-    swap L & R button
+    swap LHS & RHS units and values button
     option at bottom to choose between double (~<replace this with the correct number> digits of precision) and Math.JS (which adds box for configurable precision)
   
   current:
