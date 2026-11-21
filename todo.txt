@@ -6,6 +6,20 @@ low prio:
   add caching to dockerfile run git clone for websites/public/apps
     but specify repo commit hash to make builds reproducible
   
+  unit converter improvements
+    new boxes
+      box to entire entire conversion sequence, i.e. "5 in to cm"
+      box that shows combined unit and prefix and can just type it in
+        maybe it autoselects entire field on first click inside box since its usually going to be retyped anyway?
+          maybe not because it would defy intuition
+    both boxes will automatically set the dropdowns for picking the measured quantity, and the units and prefixes associated with it
+    update on click off of box not on type
+      add dummy convert button that gets users to click off of box
+        add caption to dummy button to clarify its purpose
+          The unit converter will perform the conversion when clicking off of the input box or pressing enter on the input box. This button merely serves to get the user to click off the input box and does nothing on its own.
+    swap L & R button
+    option at bottom to choose between double (~<replace this with the correct number> digits of precision) and Math.JS (which adds box for configurable precision)
+  
   current:
   create data collection explanation page
   fix graceful shutdown behavior
