@@ -37,7 +37,7 @@
     "ws": "^8.23.0"
   },
   "allowScripts": {
-    "bufferutil@4.1.0": true,
+    "bufferutil@4.2.0": true,
     "canvas@3.2.3": true,
     "utf-8-validate@6.0.6": true
   },
